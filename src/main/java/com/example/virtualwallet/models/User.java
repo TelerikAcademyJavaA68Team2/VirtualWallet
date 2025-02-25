@@ -36,17 +36,11 @@ public class User implements UserDetails {
     private String phoneNumber;
 
     @Column(nullable = false)
-    boolean isEnabled = true;
+    private boolean isEnabled = true;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    Role role = Role.USER;
-
-    @OneToOne
-    private Wallet wallet;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    TreeSet<CreditCard> creditCards;
+    private Role role = Role.USER;
 
     @Column
     private String photo;
@@ -58,16 +52,16 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 }

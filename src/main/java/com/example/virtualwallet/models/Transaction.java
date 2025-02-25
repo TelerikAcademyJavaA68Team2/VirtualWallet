@@ -30,21 +30,19 @@ public class Transaction {
     @Column(nullable = false)
     private Date date;
 
-    @ManyToOne
-    private User sender;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_wallet_id", referencedColumnName = "id", nullable = false)
+    private Wallet senderWallet;
 
-    @ManyToOne
-    private User recipient;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipient_wallet_id", referencedColumnName = "id", nullable = false)
+    private Wallet recipientWallet;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private TransactionType type;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private TransactionStatus status;
-
-    @ManyToOne
-    private Wallet wallet;
-
 }

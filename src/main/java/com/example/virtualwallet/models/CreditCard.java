@@ -33,7 +33,10 @@ public class CreditCard {
     @Column(nullable = false)
     private int cvv;
 
-    @ManyToMany(mappedBy = "creditCards")
-    private Set<User> users;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private User user;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
 }
