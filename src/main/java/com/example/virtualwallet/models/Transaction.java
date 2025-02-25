@@ -1,6 +1,5 @@
 package com.example.virtualwallet.models;
 
-
 import com.example.virtualwallet.models.enums.TransactionStatus;
 import com.example.virtualwallet.models.enums.TransactionType;
 import jakarta.persistence.*;
