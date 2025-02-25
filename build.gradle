@@ -39,6 +39,9 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'com.cloudinary:cloudinary-http44:1.39.0'
+
+    implementation 'org.flywaydb:flyway-mysql:10.20.1'
+
 }
 
 tasks.named('test') {

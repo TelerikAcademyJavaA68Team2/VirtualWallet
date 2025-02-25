@@ -9,11 +9,11 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
 public class User {
 
     @Id
@@ -31,5 +31,4 @@ public class User {
 
     @Column(unique = true)
     private String phoneNumber;
-
 }
