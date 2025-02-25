@@ -38,8 +38,11 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'com.cloudinary:cloudinary-http44:1.39.0'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+tasks.withType(Test).configureEach {    jvmArgs '-Xshare:off'}
