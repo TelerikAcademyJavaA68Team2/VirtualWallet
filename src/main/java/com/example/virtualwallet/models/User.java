@@ -24,6 +24,12 @@ public class User implements UserDetails {
     @GeneratedValue(generator = "UUID")
     private UUID id;
 
+    @Column(unique = true, nullable = false)
+    private String firstName;
+
+    @Column(unique = true, nullable = false)
+    private String lastName;
+
     @Column(unique = true, nullable = false, updatable = false)
     private String username;
 
