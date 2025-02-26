@@ -1,4 +1,4 @@
 package com.example.virtualwallet.models.Dtos;
 
-public class UserRegisterRequest {
+public class UserRegisterInput {
 }

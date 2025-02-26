@@ -1,4 +1,4 @@
 package com.example.virtualwallet.models.Dtos;
 
-public class WalletResponse {
+public class CardOutput {
 }
