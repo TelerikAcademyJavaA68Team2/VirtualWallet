@@ -1,7 +1,6 @@
 package com.example.virtualwallet.models;
 
 import com.example.virtualwallet.models.enums.TransactionStatus;
-import com.example.virtualwallet.models.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,10 +35,6 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet recipientWallet;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TransactionType type;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
