@@ -31,10 +31,10 @@ public class Wallet {
     @JoinColumn(name = "wallet_owner_id", referencedColumnName = "id", nullable = false, unique = true)
     private User walletOwner;
 
-    @OneToMany(mappedBy = "senderWallet", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "senderWallet", fetch = FetchType.LAZY)
     private Set<Transaction> sentTransactions;
 
-    @OneToMany(mappedBy = "recipientWallet", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recipientWallet", fetch = FetchType.LAZY)
     private Set<Transaction> receivedTransactions;
 
     @Column(nullable = false)
