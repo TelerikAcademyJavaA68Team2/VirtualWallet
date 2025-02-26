@@ -1,4 +1,48 @@
 package com.example.virtualwallet.services;
 
-public class UserServiceImpl {
+import com.example.virtualwallet.exceptions.EntityNotFoundException;
+import com.example.virtualwallet.exceptions.NoResultsFoundForFilterException;
+import com.example.virtualwallet.helpers.ModelMapper;
+import com.example.virtualwallet.models.Dtos.UserOutput;
+import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
+import com.example.virtualwallet.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
+
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
+    }
+
+    @Override
+    public User getUserById(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+    }
+
+    @Override
+    public Page<UserOutput> filterUsers(UserFilterOptions userFilterOptions, Pageable pageable) {
+
+        Page<Object[]> result = userRepository.findFilteredUsers(
+                userFilterOptions.getUsername().orElse(null),
+                userFilterOptions.getEmail().orElse(null),
+                userFilterOptions.getPhoneNumber().orElse(null),
+                userFilterOptions.getAccount_type().orElse(null),
+                userFilterOptions.getAccount_status().orElse(null),
+                userFilterOptions.getMinNumberOfTransactions().orElse(0),
+                userFilterOptions.getMaxNumberOfTransactions().orElse(Integer.MAX_VALUE),
+                userFilterOptions.getOrderBy().orElse("username"), pageable);
+        if (!result.hasContent()) {
+            throw new NoResultsFoundForFilterException("No results");
+        }
+        return modelMapper.mapObjectPageToUserOutputPage(result);
+    }
 }
