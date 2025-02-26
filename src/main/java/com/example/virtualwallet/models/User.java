@@ -45,6 +45,9 @@ public class User implements UserDetails {
     @Column
     private String photo;
 
+
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(getRole().name()));

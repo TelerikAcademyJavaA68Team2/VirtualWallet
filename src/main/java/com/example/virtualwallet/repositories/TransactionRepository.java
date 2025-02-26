@@ -14,7 +14,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
     @Query("""
             SELECT t FROM Transaction t
-             WHERE t.recipientWallet.walletOwner.id = :userId
+             WHERE t.senderWallet.walletOwner.id = :userId
                  or t.recipientWallet.walletOwner.id = :userId
             """)
     Set<Transaction> findAllTransactionsByUserId(@Param("userId") UUID userId);
