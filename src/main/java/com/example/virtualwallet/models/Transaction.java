@@ -1,6 +1,7 @@
 package com.example.virtualwallet.models;
 
 import com.example.virtualwallet.models.enums.TransactionStatus;
+import com.example.virtualwallet.models.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,4 +40,8 @@ public class Transaction {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
 }
