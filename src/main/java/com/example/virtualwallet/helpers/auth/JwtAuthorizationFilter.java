@@ -1,4 +1,4 @@
-package com.example.virtualwallet.auth;
+package com.example.virtualwallet.helpers.auth;
 
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.services.contracts.JwtService;
