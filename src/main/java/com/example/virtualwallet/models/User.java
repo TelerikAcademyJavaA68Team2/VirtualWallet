@@ -1,5 +1,6 @@
 package com.example.virtualwallet.models;
 
+import com.example.virtualwallet.models.enums.MainCurrency;
 import com.example.virtualwallet.models.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.USER;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MainCurrency mainCurrency;
 
     @Column
     private String photo;
