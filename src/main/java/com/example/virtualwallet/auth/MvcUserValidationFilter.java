@@ -2,7 +2,7 @@ package com.example.virtualwallet.auth;
 
 
 import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.services.UserService;
+import com.example.virtualwallet.services.contracts.UserService;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

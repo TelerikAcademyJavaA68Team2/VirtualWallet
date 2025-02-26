@@ -6,6 +6,7 @@ import com.example.virtualwallet.models.Dtos.UserOutput;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.repositories.UserRepository;
+import com.example.virtualwallet.services.contracts.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

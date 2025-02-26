@@ -1,8 +1,8 @@
 package com.example.virtualwallet.auth;
 
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
-import com.example.virtualwallet.services.JwtService;
-import com.example.virtualwallet.services.UserService;
+import com.example.virtualwallet.services.contracts.JwtService;
+import com.example.virtualwallet.services.contracts.UserService;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

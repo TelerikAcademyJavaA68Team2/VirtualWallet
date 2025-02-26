@@ -1,4 +1,4 @@
-package com.example.virtualwallet.services;
+package com.example.virtualwallet.services.contracts;
 
 import com.example.virtualwallet.models.User;
 import io.jsonwebtoken.Claims;

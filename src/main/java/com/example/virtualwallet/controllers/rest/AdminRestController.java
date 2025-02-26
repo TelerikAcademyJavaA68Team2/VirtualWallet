@@ -2,7 +2,7 @@ package com.example.virtualwallet.controllers.rest;
 
 import com.example.virtualwallet.models.Dtos.UserOutput;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
-import com.example.virtualwallet.services.UserService;
+import com.example.virtualwallet.services.contracts.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

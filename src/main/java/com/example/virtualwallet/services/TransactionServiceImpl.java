@@ -2,6 +2,7 @@ package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.models.Transaction;
 import com.example.virtualwallet.repositories.TransactionRepository;
+import com.example.virtualwallet.services.contracts.TransactionService;
 
 import java.util.Set;
 import java.util.UUID;
