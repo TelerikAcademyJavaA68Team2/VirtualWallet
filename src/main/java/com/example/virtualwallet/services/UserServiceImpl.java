@@ -1,7 +1,6 @@
 package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
-import com.example.virtualwallet.exceptions.NoResultsFoundForFilterException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Dtos.UserOutput;
 import com.example.virtualwallet.models.User;
@@ -40,9 +39,6 @@ public class UserServiceImpl implements UserService {
                 userFilterOptions.getMinNumberOfTransactions().orElse(0),
                 userFilterOptions.getMaxNumberOfTransactions().orElse(Integer.MAX_VALUE),
                 userFilterOptions.getOrderBy().orElse("username"), pageable);
-        if (!result.hasContent()) {
-            throw new NoResultsFoundForFilterException("No results");
-        }
         return modelMapper.mapObjectPageToUserOutputPage(result);
     }
 }
