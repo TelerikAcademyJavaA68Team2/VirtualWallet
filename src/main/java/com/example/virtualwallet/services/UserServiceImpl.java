@@ -8,6 +8,7 @@ import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -40,5 +41,12 @@ public class UserServiceImpl implements UserService {
                 userFilterOptions.getMaxNumberOfTransactions().orElse(Integer.MAX_VALUE),
                 userFilterOptions.getOrderBy().orElse("username"), pageable);
         return modelMapper.mapObjectPageToUserOutputPage(result);
+    }
+
+    @Override
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format("User with username: %s not found!", username)));
     }
 }
