@@ -37,5 +37,5 @@ public class CreditCard {
     private User user;
 
     @Column(nullable = false)
-    private boolean deleted = false;
+    private boolean is_deleted = false;
 }

@@ -38,5 +38,5 @@ public class Wallet {
     private Set<Transaction> receivedTransactions;
 
     @Column(nullable = false)
-    private boolean deleted = false;
+    private boolean is_deleted = false;
 }
