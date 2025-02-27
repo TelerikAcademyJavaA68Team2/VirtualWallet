@@ -35,7 +35,4 @@ public class CreditCard {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
-
-    @Column(nullable = false)
-    private boolean is_deleted = false;
 }
