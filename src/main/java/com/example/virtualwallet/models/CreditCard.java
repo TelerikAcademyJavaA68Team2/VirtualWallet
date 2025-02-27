@@ -21,7 +21,7 @@ public class CreditCard {
     private UUID id;
 
     @Column(unique = true, nullable = false)
-    private int cardNumber;
+    private String cardNumber;
 
     @Column(nullable = false)
     private String cardHolder;
@@ -30,7 +30,7 @@ public class CreditCard {
     private Date expirationDate;
 
     @Column(nullable = false)
-    private int cvv;
+    private String cvv;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
