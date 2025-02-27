@@ -6,7 +6,7 @@ import com.example.virtualwallet.helpers.auth.MvcUserValidationFilter;
 import com.example.virtualwallet.models.User;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -25,9 +25,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private static final String[] WHITE_LIST_SWAGGER_URL = {""};
+    private static final String[] WHITE_LIST_SWAGGER_URL = {"/pesho"};
     private static final String[] PUBLIC_REST_URL_LIST =
             {"/api/home/**", "/api/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**"};
     private static final String[] RESTRICTED_REST_URL_LIST = {"/api/admin/**"};
@@ -41,13 +42,6 @@ public class SecurityConfig {
     private final MvcUserValidationFilter mvcUserValidationFilter;
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
-    @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService, JwtAuthorizationFilter authorizationFilter, MvcUserValidationFilter mvcUserValidationFilter, CustomAuthenticationFailureHandler customAuthenticationFailureHandler) {
-        this.userDetailsService = userDetailsService;
-        this.jwtAuthorizationFilter = authorizationFilter;
-        this.mvcUserValidationFilter = mvcUserValidationFilter;
-        this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
-    }
 
     @Bean
     @Order(1)
