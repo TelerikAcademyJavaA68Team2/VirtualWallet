@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -33,13 +34,29 @@ public class CreditCard {
     @Column(nullable = false)
     private String cvv;
 
-    @Column(nullable = false)
-    private boolean is_deleted = false;
-
-    @OneToMany(mappedBy = "creditCard", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Transfer> transfers;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
     private User owner;
+
+    @OneToMany(mappedBy = "creditCard", fetch = FetchType.LAZY)
+    private Set<Transfer> transfers;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime deletedAt;
+
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public void markAsDeleted() {
+        this.deletedAt = LocalDateTime.now();
+        this.isDeleted = true;
+    }
 }
