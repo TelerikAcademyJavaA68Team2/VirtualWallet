@@ -1,17 +1,14 @@
 package com.example.virtualwallet.models;
 
-import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -19,16 +16,17 @@ import java.util.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String firstName;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String lastName;
 
     @Column(unique = true, nullable = false, updatable = false)
@@ -44,33 +42,53 @@ public class User implements UserDetails {
     private String phoneNumber;
 
     @Column(nullable = false)
-    private boolean isEnabled = true;
+    private boolean isBlocked = false;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.USER;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Currency currency;
-
     @Column
     private String photo;
 
-    @OneToMany(mappedBy = "walletOwner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     @SQLRestriction("is_deleted = false")
-    private Set<Wallet> wallets;
+    private Set<Wallet> wallets = new HashSet<>();
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     @SQLRestriction("is_deleted = false")
-    private Set<CreditCard> creditCards;
+    private Set<CreditCard> creditCards = new HashSet<>();
 
-    @Column(nullable = false)
-    private boolean is_deleted = false;
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime deletedAt;
+
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreRemove
+    protected void onDelete() {
+        this.markAsDeleted();
+    }
+
+    public void markAsDeleted() {
+        this.deletedAt = LocalDateTime.now();
+        this.isDeleted = true;
+
+        this.wallets.forEach(Wallet::markAsDeleted);
+        this.creditCards.forEach(CreditCard::markAsDeleted);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(getRole().name()));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
@@ -80,11 +98,16 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !isBlocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !isDeleted && !isBlocked;
     }
 }
