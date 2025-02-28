@@ -50,15 +50,15 @@ public class AdminRestController {
                 maxNumberOfTransactions,
                 orderBy);
 
-        Pageable pageable = PageRequest.of(page, size, sort);
+   /*     Pageable pageable = PageRequest.of(page, size, sort);
         Page<UserOutput> userPage = userService.filterUsers(userFilterOptions, pageable);
 
         if (userPage.hasContent()) {
             return ResponseEntity.ok(userPage);
         } else {
             return ResponseEntity.noContent().build();
-        }
-
+        }*/
+        return ResponseEntity.ok("userPage");
     }
 
 }

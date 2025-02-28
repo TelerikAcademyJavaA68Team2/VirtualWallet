@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    @Query(value = """
+  /*  @Query(value = """
             USE virtual_wallet;
             SELECT u.username, u.email, u.phone_number, u.role, u.is_enabled, COUNT(t.id) AS transaction_count
             FROM user u
@@ -41,7 +41,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             @Param("minNumberOfTransactions") Integer minNumberOfTransactions,
             @Param("maxNumberOfTransactions") Integer maxNumberOfTransactions,
             @Param("orderBy") String orderBy,
-            Pageable pageable);
+            Pageable pageable);*/
 
     Optional<User> findByUsername(String username);
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
-    @Query("""
+   /* @Query("""
             SELECT DISTINCT t FROM Transaction t
             LEFT JOIN FETCH t.senderWallet sw
             LEFT JOIN FETCH sw.walletOwner swo
@@ -28,5 +28,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             LEFT JOIN FETCH t.recipientWallet rw
             WHERE sw.id = :walletId OR rw.id = :walletId
             """)
-    Set<Transaction> findAllTransactionsByWalletId(@Param("walletId") UUID walletId);
+    Set<Transaction> findAllTransactionsByWalletId(@Param("walletId") UUID walletId);*/
 }

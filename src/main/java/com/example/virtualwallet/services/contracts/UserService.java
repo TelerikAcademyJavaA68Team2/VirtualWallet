@@ -13,7 +13,9 @@ public interface UserService extends UserDetailsService {
 
     User getUserById(UUID id);
 
+/*
     Page<UserOutput> filterUsers(UserFilterOptions userFilterOptions, Pageable pageable);
+*/
 
     User loadUserByUsername(String username);
 }

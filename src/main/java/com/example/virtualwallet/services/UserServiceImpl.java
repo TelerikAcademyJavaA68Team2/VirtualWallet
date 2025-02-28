@@ -29,10 +29,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
     }
 
-    @Override
+   /* @Override
     public Page<UserOutput> filterUsers(UserFilterOptions userFilterOptions, Pageable pageable) {
-
-        Page<Object[]> result = userRepository.findFilteredUsers(
+        Page<Object[]> result = null; *//*userRepository.findFilteredUsers(
                 userFilterOptions.getUsername().orElse(null),
                 userFilterOptions.getEmail().orElse(null),
                 userFilterOptions.getPhoneNumber().orElse(null),
@@ -40,9 +39,9 @@ public class UserServiceImpl implements UserService {
                 userFilterOptions.getAccount_status().orElse(null),
                 userFilterOptions.getMinNumberOfTransactions().orElse(0),
                 userFilterOptions.getMaxNumberOfTransactions().orElse(Integer.MAX_VALUE),
-                userFilterOptions.getOrderBy().orElse("username"), pageable);
+                userFilterOptions.getOrderBy().orElse("username"), pageable);*//*
         return modelMapper.mapObjectPageToUserOutputPage(result);
-    }
+    }*/
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -23,11 +23,11 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Set<Transaction> findAllTransactionsByUserId(UUID userId) {
-        return transactionRepository.findAllTransactionsByUserId(userId);
+        return null/* transactionRepository.findAllTransactionsByUserId(userId)*/;
     }
 
     @Override
     public Set<Transaction> findAllTransactionsByWalletId(UUID walletId) {
-        return transactionRepository.findAllTransactionsByWalletId(walletId);
+        return null/* transactionRepository.findAllTransactionsByWalletId(walletId)*/;
     }
 }
