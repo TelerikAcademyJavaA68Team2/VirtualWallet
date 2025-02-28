@@ -1,7 +1,6 @@
 package com.example.virtualwallet.models;
 
-import com.example.virtualwallet.models.enums.TransactionStatus;
-import com.example.virtualwallet.models.enums.TransactionType;
+import com.example.virtualwallet.models.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,8 +22,12 @@ public class Transaction {
     @GeneratedValue(generator = "UUID")
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Currency currency;
 
     @Column(nullable = false)
     private LocalDateTime date;
@@ -37,5 +40,8 @@ public class Transaction {
     @JoinColumn(name = "recipient_wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet recipientWallet;
 
-
+    @PrePersist
+    protected void onCreate() {
+        this.date = LocalDateTime.now();
+    }
 }
