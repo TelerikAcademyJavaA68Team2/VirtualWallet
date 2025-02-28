@@ -1,6 +1,7 @@
 package com.example.virtualwallet.models;
 
 import com.example.virtualwallet.models.enums.TransactionStatus;
+import com.example.virtualwallet.models.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +26,10 @@ public class Transfer {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Currency currency;
+
     @Column(nullable = false)
     private LocalDateTime date;
 
@@ -40,4 +45,8 @@ public class Transfer {
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 
+    @PrePersist
+    protected void onCreate() {
+        this.date = LocalDateTime.now();
+    }
 }
