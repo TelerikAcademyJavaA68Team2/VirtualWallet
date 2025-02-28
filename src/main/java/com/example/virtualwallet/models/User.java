@@ -1,12 +1,13 @@
 package com.example.virtualwallet.models;
 
-import com.example.virtualwallet.models.enums.MainCurrency;
+import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,11 +52,21 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MainCurrency mainCurrency;
+    private Currency currency;
 
     @Column
     private String photo;
 
+    @OneToMany(mappedBy = "walletOwner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @SQLRestriction("is_deleted = false")
+    private Set<Wallet> wallets;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @SQLRestriction("is_deleted = false")
+    private Set<CreditCard> creditCards;
+
+    @Column(nullable = false)
+    private boolean is_deleted = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

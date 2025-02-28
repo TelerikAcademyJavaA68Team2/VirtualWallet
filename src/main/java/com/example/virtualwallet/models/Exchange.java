@@ -1,7 +1,6 @@
 package com.example.virtualwallet.models;
 
-import com.example.virtualwallet.models.enums.TransactionStatus;
-import com.example.virtualwallet.models.enums.TransactionType;
+import com.example.virtualwallet.models.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -17,25 +15,29 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Transaction {
+public class Exchange {
 
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
 
     @Column(nullable = false)
-    private BigDecimal amount;
+    private BigDecimal exchangeRate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private LocalDateTime date;
+    private Currency currency;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_wallet_id", referencedColumnName = "id", nullable = false)
-    private Wallet senderWallet;
+    @JoinColumn(name = "from_wallet_id", nullable = false)
+    private Wallet fromWallet;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipient_wallet_id", referencedColumnName = "id", nullable = false)
-    private Wallet recipientWallet;
+    @JoinColumn(name = "to_wallet_id", nullable = false)
+    private Wallet toWallet;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
 }

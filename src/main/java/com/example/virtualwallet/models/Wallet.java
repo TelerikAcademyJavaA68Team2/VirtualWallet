@@ -1,5 +1,6 @@
 package com.example.virtualwallet.models;
 
+import com.example.virtualwallet.models.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,11 +25,12 @@ public class Wallet {
     @Column(nullable = false)
     private BigDecimal balance;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String currency;
+    private Currency currency;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wallet_owner_id", referencedColumnName = "id", nullable = false, unique = true)
+    @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
     private User walletOwner;
 
     @OneToMany(mappedBy = "senderWallet", fetch = FetchType.LAZY)
@@ -36,6 +38,15 @@ public class Wallet {
 
     @OneToMany(mappedBy = "recipientWallet", fetch = FetchType.LAZY)
     private Set<Transaction> receivedTransactions;
+
+    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Transfer> transfers;
+
+    @OneToMany(mappedBy = "fromWallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Exchange> exchangesFromWallet;
+
+    @OneToMany(mappedBy = "toWallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Exchange> exchangesToWallet;
 
     @Column(nullable = false)
     private boolean is_deleted = false;

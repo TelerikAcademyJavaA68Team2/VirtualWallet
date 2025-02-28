@@ -1,6 +1,6 @@
 package com.example.virtualwallet.models.enums;
 
-public enum MainCurrency {
+public enum Currency {
 
     USD,
     BGN,

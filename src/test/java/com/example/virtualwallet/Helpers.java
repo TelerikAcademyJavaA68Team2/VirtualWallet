@@ -2,7 +2,7 @@ package com.example.virtualwallet;
 
 import com.example.virtualwallet.models.Dtos.UserOutput;
 import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.enums.MainCurrency;
+import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import org.springframework.data.domain.*;
@@ -35,7 +35,7 @@ public class Helpers {
         mockUser.setUsername(MOCK_USER_USERNAME);
         mockUser.setPassword(MOCK_PASSWORD);
         mockUser.setRole(Role.USER);
-        mockUser.setMainCurrency(MainCurrency.BGN);
+        mockUser.setCurrency(Currency.BGN);
         return mockUser;
     }
 
@@ -59,7 +59,7 @@ public class Helpers {
         mockUser.setEmail(MOCK_ADMIN_EMAIL);
         mockUser.setPhoneNumber(MOCK_PHONE_NUMBER);
         mockUser.setRole(Role.ADMIN);
-        mockUser.setMainCurrency(MainCurrency.BGN);
+        mockUser.setCurrency(Currency.BGN);
         return mockUser;
     }
 

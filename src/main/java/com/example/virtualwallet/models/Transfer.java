@@ -1,7 +1,6 @@
 package com.example.virtualwallet.models;
 
 import com.example.virtualwallet.models.enums.TransactionStatus;
-import com.example.virtualwallet.models.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +16,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Transaction {
+public class Transfer {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -30,12 +29,15 @@ public class Transaction {
     private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_wallet_id", referencedColumnName = "id", nullable = false)
-    private Wallet senderWallet;
+    @JoinColumn(name = "credit_card_id", referencedColumnName = "id", nullable = false)
+    private CreditCard creditCard;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipient_wallet_id", referencedColumnName = "id", nullable = false)
-    private Wallet recipientWallet;
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
+    private Wallet wallet;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
 
 }
