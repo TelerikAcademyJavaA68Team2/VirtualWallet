@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -24,9 +25,15 @@ public class Exchange {
     @Column(nullable = false)
     private BigDecimal exchangeRate;
 
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal amount;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Currency currency;
+
+    @Column(nullable = false)
+    private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_wallet_id", nullable = false)
@@ -36,8 +43,8 @@ public class Exchange {
     @JoinColumn(name = "to_wallet_id", nullable = false)
     private Wallet toWallet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
+    @PrePersist
+    protected void onCreate() {
+        this.date = LocalDateTime.now();
+    }
 }
