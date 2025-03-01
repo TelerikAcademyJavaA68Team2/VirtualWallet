@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -16,7 +18,9 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreditCard {
+@SQLDelete(sql = "UPDATE virtual_wallet.credit_card SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
+public class Card {
 
     @Id
     @GeneratedValue(generator = "UUID")
