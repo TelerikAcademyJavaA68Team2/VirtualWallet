@@ -1,7 +1,7 @@
 /*
 package com.example.virtualwallet;
 
-import com.example.virtualwallet.models.Dtos.UserOutput;
+import com.example.virtualwallet.models.dtos.UserOutput;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.Role;
