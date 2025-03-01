@@ -1,11 +1,10 @@
-package com.example.virtualwallet.models.Dtos;
+package com.example.virtualwallet.models.dtos;
 
 import com.example.virtualwallet.models.enums.Role;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.UUID;
-
 
 @Data
 public class UserOutput {

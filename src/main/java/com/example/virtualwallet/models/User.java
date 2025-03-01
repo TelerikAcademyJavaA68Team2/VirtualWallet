@@ -42,10 +42,12 @@ public class User implements UserDetails {
     private String phoneNumber;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isBlocked = false;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private Role role = Role.USER;
 
     @Column
@@ -53,11 +55,13 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     @SQLRestriction("is_deleted = false")
+    @Builder.Default
     private Set<Wallet> wallets = new HashSet<>();
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     @SQLRestriction("is_deleted = false")
-    private Set<CreditCard> creditCards = new HashSet<>();
+    @Builder.Default
+    private Set<Card> cards = new HashSet<>();
 
     @Column
     private LocalDateTime createdAt;
@@ -83,7 +87,7 @@ public class User implements UserDetails {
         this.isDeleted = true;
 
         this.wallets.forEach(Wallet::markAsDeleted);
-        this.creditCards.forEach(CreditCard::markAsDeleted);
+        this.cards.forEach(Card::markAsDeleted);
     }
 
     @Override
