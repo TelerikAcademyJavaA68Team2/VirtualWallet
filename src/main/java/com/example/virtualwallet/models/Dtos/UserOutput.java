@@ -1,23 +1,29 @@
 package com.example.virtualwallet.models.Dtos;
 
+import com.example.virtualwallet.models.enums.Role;
 import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
 
 @Data
 public class UserOutput {
-
+    private UUID id;
     private String username;
     private String email;
     private String phoneNumber;
-    private String role;
-    private boolean isEnabled;
-    private long transactionCount;
+    private Role role;
+    private String accountStatus;
+    private BigDecimal totalBalance;
 
-    public UserOutput(String username, String email, String phoneNumber, String role, boolean isEnabled, long transactionCount) {
+    public UserOutput(UUID id, String username, String email, String phoneNumber, Role role, String accountStatus, BigDecimal totalBalance) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.isEnabled = isEnabled;
-        this.transactionCount = transactionCount;
+        this.accountStatus = accountStatus;
+        this.totalBalance = totalBalance;
     }
 }
