@@ -1,47 +1,69 @@
 package com.example.virtualwallet.repositories;
 
+import com.example.virtualwallet.models.Dtos.UserOutput;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.enums.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-  /*  @Query(value = """
-            USE virtual_wallet;
-            SELECT u.username, u.email, u.phone_number, u.role, u.is_enabled, COUNT(t.id) AS transaction_count
-            FROM user u
-            LEFT JOIN wallet w ON u.id = w.wallet_owner_id
-            LEFT JOIN transaction t ON w.id = t.sender_wallet_id OR w.id = t.recipient_wallet_id
-            WHERE (:username IS NULL OR u.username LIKE CONCAT('%', :username, '%'))
-              AND (:email IS NULL OR u.email LIKE CONCAT('%', :email, '%'))
-              AND (:phoneNumber IS NULL OR u.phone_number LIKE CONCAT(:phoneNumber, '%'))
-              AND (:accountType IS NULL OR u.role = :accountType)
-              AND (:accountStatus IS NULL OR (u.is_enabled = CASE WHEN :accountStatus = 'active' THEN TRUE ELSE FALSE END))
-            GROUP BY u.username, u.email, u.phone_number, u.role, u.is_enabled
-            HAVING COUNT(t.id) >= COALESCE(:minNumberOfTransactions, 0)
-               AND COUNT(t.id) <= COALESCE(:maxNumberOfTransactions, 999999)
-            ORDER BY CASE WHEN :orderBy = 'username' THEN u.username END ASC,
-                     CASE WHEN :orderBy = 'email' THEN u.email END ASC,
-                     CASE WHEN :orderBy = 'phone_number' THEN u.phone_number END ASC,
-                     CASE WHEN :orderBy = 'role' THEN CASE WHEN u.role = 'ADMIN' THEN 1 ELSE 2 END END ASC,
-                     CASE WHEN :orderBy = 'transactions' THEN COUNT(t.id) END DESC
-            """, nativeQuery = true)
-    Page<Object[]> findFilteredUsers(
+    @Query("""
+            SELECT NEW com.example.virtualwallet.models.Dtos.UserOutput(
+                u.id,
+                u.username,
+                u.email,
+                u.phoneNumber,
+                u.role,
+                CASE WHEN u.isBlocked = TRUE THEN 'BLOCKED' ELSE 'ACTIVE' END,
+                CAST(COALESCE(SUM(w.balance), 0) AS BIGDECIMAL)
+            )
+            FROM User u
+            LEFT JOIN Wallet w ON u.id = w.owner.id
+            WHERE (:username IS NULL OR u.username = :username)
+              AND (:email IS NULL OR u.email = :email)
+              AND (:phoneNumber IS NULL OR u.phoneNumber LIKE CONCAT('%', :phoneNumber, '%'))
+              AND (:role IS NULL OR u.role = :role)
+              AND (:accountStatus IS NULL OR (u.isBlocked = CASE WHEN :accountStatus = 'BLOCKED' THEN TRUE ELSE FALSE END))
+            GROUP BY u.id, u.username, u.email, u.phoneNumber, u.role, u.isBlocked
+            HAVING (:minTotalBalance IS NULL OR COALESCE(SUM(w.balance), 0) >= :minTotalBalance)
+               AND (:maxTotalBalance IS NULL OR COALESCE(SUM(w.balance), 0) <= :maxTotalBalance)
+            """)
+    Page<UserOutput> findUsersWithTotalBalance(
             @Param("username") String username,
             @Param("email") String email,
             @Param("phoneNumber") String phoneNumber,
-            @Param("accountType") String accountType,
+            @Param("role") Role role,
             @Param("accountStatus") String accountStatus,
-            @Param("minNumberOfTransactions") Integer minNumberOfTransactions,
-            @Param("maxNumberOfTransactions") Integer maxNumberOfTransactions,
-            @Param("orderBy") String orderBy,
-            Pageable pageable);*/
+            @Param("minTotalBalance") BigDecimal minTotalBalance,
+            @Param("maxTotalBalance") BigDecimal maxTotalBalance,
+            Pageable pageable);
+
+
+    @Query("""
+    SELECT NEW com.example.virtualwallet.models.Dtos.UserOutput(
+        u.id,
+        u.username,
+        u.email,
+        u.phoneNumber,
+        u.role,
+        CASE WHEN u.isBlocked = TRUE THEN 'BLOCKED' ELSE 'ACTIVE' END,
+        CAST(COALESCE(SUM(w.balance), 0) AS BIGDECIMAL)
+    )
+    FROM User u
+    LEFT JOIN Wallet w ON u.id = w.owner.id
+    GROUP BY u.id, u.username, u.email, u.phoneNumber, u.role, u.isBlocked
+    """)
+    List<UserOutput> findAllUsersWithTotalBalance();
+
 
     Optional<User> findByUsername(String username);
 }
