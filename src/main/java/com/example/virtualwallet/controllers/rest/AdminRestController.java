@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/api/admin")
 public class AdminRestController {
@@ -23,42 +25,50 @@ public class AdminRestController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<Object> getAllUsers(@RequestParam(required = false) String username,
-                                              @RequestParam(required = false) String email,
-                                              @RequestParam(required = false) String phoneNumber,
-                                              @RequestParam(required = false) String account_type,
-                                              @RequestParam(required = false) String account_status,
-                                              @RequestParam(required = false) Integer minNumberOfTransactions,
-                                              @RequestParam(required = false) Integer maxNumberOfTransactions,
-                                              @RequestParam(required = false) String orderBy,
-                                              @RequestParam(required = false) String orderType,
-                                              @RequestParam(defaultValue = "0") int page,
-                                              @RequestParam(defaultValue = "20") int size) {
+    @GetMapping("/usersWIthFilter")
+    public ResponseEntity<?> getAllUsers(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String accountStatus,
+            @RequestParam(required = false) BigDecimal minTotalBalance,
+            @RequestParam(required = false) BigDecimal maxTotalBalance,
+            @RequestParam(defaultValue = "username") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        Sort sort = (orderBy != null && orderType != null)
-                ? Sort.by(Sort.Direction.fromString(orderType), orderBy)
+        if (page < 1 || size <= 0) {
+            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+        }
+
+        Sort sort = (sortBy != null && sortOrder != null)
+                ? Sort.by(Sort.Direction.fromString(sortOrder), sortBy)
                 : Sort.unsorted();
 
         UserFilterOptions userFilterOptions = new UserFilterOptions(
                 username,
                 email,
                 phoneNumber,
-                account_type,
-                account_status,
-                minNumberOfTransactions,
-                maxNumberOfTransactions,
-                orderBy);
+                role,
+                accountStatus,
+                minTotalBalance,
+                maxTotalBalance);
 
-   /*     Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
         Page<UserOutput> userPage = userService.filterUsers(userFilterOptions, pageable);
 
         if (userPage.hasContent()) {
             return ResponseEntity.ok(userPage);
         } else {
             return ResponseEntity.noContent().build();
-        }*/
-        return ResponseEntity.ok("userPage");
+        }
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> getAllUsersNoFilters() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
 }
