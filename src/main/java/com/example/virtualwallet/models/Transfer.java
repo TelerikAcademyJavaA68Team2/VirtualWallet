@@ -34,8 +34,8 @@ public class Transfer {
     private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "credit_card_id", referencedColumnName = "id", nullable = false)
-    private CreditCard creditCard;
+    @JoinColumn(name = "card_id", referencedColumnName = "id", nullable = false)
+    private Card card;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
