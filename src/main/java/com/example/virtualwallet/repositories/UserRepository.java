@@ -1,6 +1,6 @@
 package com.example.virtualwallet.repositories;
 
-import com.example.virtualwallet.models.Dtos.UserOutput;
+import com.example.virtualwallet.models.dtos.UserOutput;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Role;
 import org.springframework.data.domain.Page;
@@ -17,7 +17,7 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("""
-            SELECT NEW com.example.virtualwallet.models.Dtos.UserOutput(
+            SELECT NEW com.example.virtualwallet.models.dtos.UserOutput(
                 u.id,
                 u.username,
                 u.email,
@@ -49,7 +49,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
 
     @Query("""
-    SELECT NEW com.example.virtualwallet.models.Dtos.UserOutput(
+    SELECT NEW com.example.virtualwallet.models.dtos.UserOutput(
         u.id,
         u.username,
         u.email,
@@ -66,4 +66,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
 
     Optional<User> findByUsername(String username);
+
+    User getUserById(UUID id);
 }

@@ -1,7 +1,7 @@
 package com.example.virtualwallet.services.contracts;
 
-import com.example.virtualwallet.models.Dtos.UserOutput;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.UserOutput;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,5 +21,7 @@ public interface UserService extends UserDetailsService {
     void save(User user);
 
     User loadUserByUsername(String username);
+
+    User getAuthenticatedUser();
 }
 
