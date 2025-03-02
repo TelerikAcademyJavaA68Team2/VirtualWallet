@@ -71,7 +71,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UUID tokenId = UUID.randomUUID();
         EmailConfirmationToken token = new EmailConfirmationToken(tokenId, user);
         emailConfirmationService.save(token);
-        emailService.sendVerificationEmail(request.getFirstName(),request.getEmail(),tokenId.toString());
+        emailService.sendVerificationEmail(request.getFirstName(), request.getEmail(), tokenId.toString());
         return "Thanks for registering please confirm your email";
     }
 
@@ -84,12 +84,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         boolean userExists = true;
         try {
             userService.loadUserByUsername(request.getUsername());
-            userService.getUserByEmail(request.getEmail());
-            userService.getUserByPhoneNumber(request.getPhoneNumber());
-        }catch (Exception ignored){
+            if (!userService.checkIfEmailIsTaken(request.getEmail()) && !userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())) {
+                userExists = false;
+            }
+        } catch (Exception ignored) {
             userExists = false;
         }
-        if(userExists){
+        if (userExists) {
             throw new DuplicateEntityException("User already exists");
         }
 
