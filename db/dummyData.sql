@@ -3,10 +3,12 @@ USE virtual_wallet;
 INSERT INTO user (id, created_at, deleted_at, email, first_name , status, last_name, password, phone_number, photo, role, username)
 VALUES
     ('123e4567-e89b-12d3-a456-426614174000', NOW(), NULL, 'john.doe@example.com', 'John', 'PENDING', 'Doe', 'password123', '+1234567890', NULL, 'USER', 'johndoe'),
-    ('123e4567-e89b-12d3-a456-426614174001', NOW(), NULL, 'admin@example.com', 'Admin',  'ACTIVE', 'User', 'adminpass', '+0987654321', NULL, 'ADMIN', 'adminuser');
+    ('123e4567-e89b-12d3-a456-426614174001', NOW(), NULL, 'admin@example.com', 'Admin',  'ACTIVE', 'User', 'adminpass', '+0987654322', NULL, 'ADMIN', 'adminuser'),
+    ('123e4567-e89b-12d3-a456-426614174002', NOW(), NULL, 'adminGeorgi@example.com', 'Georgi',  'ACTIVE', 'User', '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+0987654323', NULL, 'ADMIN', 'georgi'),
+    ('123e4567-e89b-12d3-a456-426614174003', NOW(), NULL, 'adminIvan@example.com', 'Ivan',  'ACTIVE', 'User', '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+0987654324', NULL, 'ADMIN', 'vankata');
 
 -- Insert dummy data into the `credit_card` table
-INSERT INTO credit_card (id, card_holder, card_number, created_at, cvv, deleted_at, expiration_date, is_deleted, owner_id)
+INSERT INTO card (id, card_holder, card_number, created_at, cvv, deleted_at, expiration_date, is_deleted, owner_id)
 VALUES
     ('123e4567-e89b-12d3-a456-426614174002', 'John Doe', '4111111111111111', NOW(), '123', NULL, DATE_ADD(NOW(), INTERVAL 2 YEAR), 0, '123e4567-e89b-12d3-a456-426614174000'),
     ('123e4567-e89b-12d3-a456-426614174003', 'Admin User', '5555555555554444', NOW(), '456', NULL, DATE_ADD(NOW(), INTERVAL 3 YEAR), 0, '123e4567-e89b-12d3-a456-426614174001');
@@ -28,6 +30,6 @@ VALUES
     ('123e4567-e89b-12d3-a456-426614174007', 50.00, 'USD', NOW(), '123e4567-e89b-12d3-a456-426614174005', '123e4567-e89b-12d3-a456-426614174004');
 
 -- Insert dummy data into the `transfer` table
-INSERT INTO transfer (id, amount, currency, date, status, credit_card_id, wallet_id)
+INSERT INTO transfer (id, amount, currency, date, status, card_id, wallet_id)
 VALUES
     ('123e4567-e89b-12d3-a456-426614174008', 200.00, 'USD', NOW(), 'APPROVED', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174004');

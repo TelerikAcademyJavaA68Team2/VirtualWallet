@@ -44,10 +44,11 @@ public class User implements UserDetails {
     private String photo = "default photo";
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
@@ -68,7 +69,7 @@ public class User implements UserDetails {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.role = Role.USER;
-        this.status = AccountStatus.PENDING;
+        this.status = AccountStatus.ACTIVE; // change to pending if email verification is active
         this.cards = new HashSet<>();
         this.wallets = new HashSet<>();
     }
