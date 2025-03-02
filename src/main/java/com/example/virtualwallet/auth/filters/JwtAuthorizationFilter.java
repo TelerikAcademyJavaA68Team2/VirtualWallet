@@ -66,6 +66,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 if (!userDetails.isEnabled()) {
                     throw new UnauthorizedAccessException("Your account is blocked!");
                 }
+                if (!userDetails.isAccountNonLocked()) {
+                    throw new UnauthorizedAccessException("Your account is not confirmed yet!");
+                }
+                if (!userDetails.isCredentialsNonExpired()) {
+                    throw new UnauthorizedAccessException("Your account was deleted!");
+                }
 
                 if (jwtService.isValid(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
