@@ -44,10 +44,11 @@ public class User implements UserDetails {
     private String photo = "default photo";
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)

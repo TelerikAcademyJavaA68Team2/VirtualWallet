@@ -2,8 +2,8 @@ package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
-import com.example.virtualwallet.models.dtos.UserOutput;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.UserOutput;
 import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.repositories.UserRepository;
@@ -25,9 +25,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @PropertySource("classpath:messages.properties")
 public class UserServiceImpl implements UserService {
-
     @Value("${error.userNotLoggedIn}")
     public static String LOGIN_FIRST;
+
     @Value("${error.userNotFound}")
     public static String USER_NOT_FOUND;
 
@@ -35,8 +35,50 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    @Override
     public User getUserById(UUID id) {
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+    }
+
+    @Override
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format("User with username: %s not found!", username)));
+    }
+
+    @Override
+    public User getUserByEmail(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
+                String.format("User with email: %s not found!", email)));
+    }
+
+    @Override
+    public User getUserByPhoneNumber(String phoneNumber) throws UsernameNotFoundException {
+        return userRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new EntityNotFoundException(
+                String.format("User with phone number: %s not found!", phoneNumber)));
+    }
+
+    public User getAuthenticatedUser() {
+        try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (user == null) {
+                throw new EntityNotFoundException(USER_NOT_FOUND);
+            }
+            return loadUserByUsername(user.getUsername());
+        } catch (Exception e) {
+            throw new UnauthorizedAccessException(LOGIN_FIRST);
+        }
+    }
+
+    @Override
+    public List<UserOutput> getAllUsers() {
+        return null;
+        /*return userRepository.findAllUsersWithTotalBalance();*/
     }
 
     @Override
@@ -65,36 +107,5 @@ public class UserServiceImpl implements UserService {
                 pageable
         );*/
         return null;
-    }
-
-
-    @Override
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        String.format("User with username: %s not found!", username)));
-    }
-
-    public User getAuthenticatedUser() {
-        try {
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (user == null) {
-                throw new jakarta.persistence.EntityNotFoundException(USER_NOT_FOUND);
-            }
-            return loadUserByUsername(user.getUsername());
-        } catch (Exception e) {
-            throw new UnauthorizedAccessException(LOGIN_FIRST);
-        }
-    }
-
-    @Override
-    public List<UserOutput> getAllUsers() {
-        return null;
-        /*return userRepository.findAllUsersWithTotalBalance();*/
-    }
-
-    @Override
-    public void save(User user) {
-        userRepository.save(user);
     }
 }

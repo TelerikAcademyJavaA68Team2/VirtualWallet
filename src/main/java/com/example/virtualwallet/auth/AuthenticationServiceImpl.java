@@ -1,10 +1,14 @@
 package com.example.virtualwallet.auth;
 
+import com.example.virtualwallet.auth.emailVerification.EmailConfirmationService;
+import com.example.virtualwallet.auth.emailVerification.EmailConfirmationToken;
+import com.example.virtualwallet.auth.emailVerification.EmailService;
 import com.example.virtualwallet.auth.jwt.JwtService;
+import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
-import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
-import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
+import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
 import com.example.virtualwallet.services.contracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,9 +16,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +33,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
+    private final EmailConfirmationService emailConfirmationService;
 
 
     @Override
@@ -56,9 +65,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!request.getPasswordConfirm().equals(request.getPassword())) {
             throw new InvalidUserInputException("Password Confirmation failed");
         }
-        User user = createUserFromRequest(request);
-        userService.save(user);
-        return jwtService.generateToken(user);
+        User newUser = createUserFromRequest(request);
+        // todo validate uniquenes of user
+        userService.save(newUser);
+        User user = userService.loadUserByUsername(request.getUsername());
+        UUID tokenId = UUID.randomUUID();
+        EmailConfirmationToken token = new EmailConfirmationToken(tokenId, user);
+        emailConfirmationService.save(token);
+        emailService.sendVerificationEmail(request.getFirstName(),request.getEmail(),tokenId.toString());
+        return "Thanks for registering please confirm your email";
     }
 
     @Override
@@ -67,6 +82,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private User createUserFromRequest(RegisterUserInput request) {
+        boolean userExists = true;
+        try {
+            userService.loadUserByUsername(request.getUsername());
+            userService.getUserByEmail(request.getEmail());
+            userService.getUserByPhoneNumber(request.getPhoneNumber());
+        }catch (Exception ignored){
+            userExists = false;
+        }
+        if(userExists){
+            throw new DuplicateEntityException("User already exists");
+        }
+
+
         User user = new User();
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
@@ -77,5 +105,4 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPhoto("/images/default-profile-pic.png");
         return user;
     }
-
 }

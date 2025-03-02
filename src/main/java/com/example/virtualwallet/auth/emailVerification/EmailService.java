@@ -1,5 +1,6 @@
 package com.example.virtualwallet.auth.emailVerification;
 
 public interface EmailService {
-    void sendEmail(String to, String email);
+
+    void sendVerificationEmail(String firstName, String toEmail, String tokenId);
 }
