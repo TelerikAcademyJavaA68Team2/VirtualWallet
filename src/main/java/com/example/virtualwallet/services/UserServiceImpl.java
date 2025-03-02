@@ -1,9 +1,12 @@
 package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
+import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
+import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.UserOutput;
+import com.example.virtualwallet.models.dtos.UserProfileOutput;
 import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.repositories.UserRepository;
@@ -14,6 +17,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +32,11 @@ public class UserServiceImpl implements UserService {
     @Value("${error.userNotLoggedIn}")
     public static String LOGIN_FIRST;
 
-    @Value("${error.userNotFound}")
-    public static String USER_NOT_FOUND;
+    @Value("${error.noAuthenticatedUser}")
+    public static String USER_NOT_AUTHENTICATED;
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
@@ -65,20 +70,32 @@ public class UserServiceImpl implements UserService {
 
     public User getAuthenticatedUser() {
         try {
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (user == null) {
-                throw new EntityNotFoundException(USER_NOT_FOUND);
+                throw new InvalidUserInputException(USER_NOT_AUTHENTICATED);
             }
             return loadUserByUsername(user.getUsername());
         } catch (Exception e) {
-            throw new UnauthorizedAccessException(LOGIN_FIRST);
+            throw new UnauthorizedAccessException(e.getMessage());
         }
     }
 
     @Override
+    public void softDeleteAuthenticatedUser() {
+        User user = getAuthenticatedUser();
+        user.markAsDeleted();
+        save(user);
+    }
+
+    @Override
+    public UserProfileOutput getAuthenticatedUserProfile() {
+        User user = getAuthenticatedUser();
+        return modelMapper.userProfileFromUser(user);
+    }
+
+    @Override
     public List<UserOutput> getAllUsers() {
-        return null;
-        /*return userRepository.findAllUsersWithTotalBalance();*/
+        return userRepository.findAllUsersWithTotalBalance();
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.example.virtualwallet.repositories;
 
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.UserOutput;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,9 +42,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             @Param("maxTotalBalance") BigDecimal maxTotalBalance,
             Pageable pageable);
 */
-/*
+
     @Query("""
-    SELECT NEW com.example.virtualwallet.models.Dtos.UserOutput(
+    SELECT NEW com.example.virtualwallet.models.dtos.UserOutput(
         u.id,
         u.username,
         u.email,
@@ -54,7 +57,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     LEFT JOIN Wallet w ON u.id = w.owner.id
     GROUP BY u.id, u.username, u.email, u.phoneNumber, u.role, u.status
     """)
-    List<UserOutput> findAllUsersWithTotalBalance();*/
+    List<UserOutput> findAllUsersWithTotalBalance();
 
 
     Optional<User> findByUsername(String username);

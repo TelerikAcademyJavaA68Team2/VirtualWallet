@@ -31,7 +31,7 @@ public class SecurityConfig {
     private static final String[] WHITE_LIST_SWAGGER_URL = {"/pesho"};
     private static final String[] PUBLIC_REST_URL_LIST =
             {"/api/home/**", "/api/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**","/api/admin/users"};
-    private static final String[] RESTRICTED_REST_URL_LIST = {"/api/pesho/**"};
+    private static final String[] RESTRICTED_REST_URL_LIST = {"/api/admin/**"};
 
     private static final String[] PUBLIC_MVC_URL_LIST =
             {"/mvc/home/**", "/mvc/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**"};

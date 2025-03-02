@@ -18,7 +18,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE virtual_wallet.credit_card SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE virtual_wallet.card SET is_deleted = true WHERE id = ?")
 @SQLRestriction("is_deleted = false")
 public class Card {
 
@@ -62,5 +62,9 @@ public class Card {
     public void markAsDeleted() {
         this.deletedAt = LocalDateTime.now();
         this.isDeleted = true;
+    }
+    public void markAsRestored() {
+        this.deletedAt = null;
+        this.isDeleted = false;
     }
 }

@@ -3,14 +3,11 @@ package com.example.virtualwallet.services.contracts;
 
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.UserOutput;
+import com.example.virtualwallet.models.dtos.UserProfileOutput;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
-
 
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +17,10 @@ public interface UserService extends UserDetailsService {
     void save(User user);
 
     User getUserById(UUID id);
+
+    void softDeleteAuthenticatedUser();
+
+    UserProfileOutput getAuthenticatedUserProfile();
 
     User getAuthenticatedUser();
 
@@ -32,5 +33,5 @@ public interface UserService extends UserDetailsService {
     List<UserOutput> getAllUsers();
 
     Page<UserOutput> filterUsers(UserFilterOptions userFilterOptions, Pageable pageable);
-}
 
+}

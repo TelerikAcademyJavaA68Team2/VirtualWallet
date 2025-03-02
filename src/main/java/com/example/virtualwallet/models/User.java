@@ -75,7 +75,7 @@ public class User implements UserDetails {
     }
 
     @PreRemove
-    protected void onDelete() {
+    protected void onDelete() { // mabby remove this later
         this.markAsDeleted();
     }
 

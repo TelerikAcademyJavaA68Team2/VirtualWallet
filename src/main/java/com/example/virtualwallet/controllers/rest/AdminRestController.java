@@ -3,6 +3,7 @@ package com.example.virtualwallet.controllers.rest;
 import com.example.virtualwallet.models.dtos.UserOutput;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.services.contracts.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,12 +18,14 @@ import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminRestController {
 
     private final UserService userService;
 
-    public AdminRestController(UserService userService) {
-        this.userService = userService;
+    @GetMapping("/users")
+    public ResponseEntity<?> getAllUsersNoFilters() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/usersWIthFilter")
@@ -66,9 +69,6 @@ public class AdminRestController {
         }
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<?> getAllUsersNoFilters() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
+
 
 }
