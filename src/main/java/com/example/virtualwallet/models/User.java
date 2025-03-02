@@ -69,7 +69,7 @@ public class User implements UserDetails {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.role = Role.USER;
-        this.status = AccountStatus.PENDING;
+        this.status = AccountStatus.ACTIVE; // change to pending if email verification is active
         this.cards = new HashSet<>();
         this.wallets = new HashSet<>();
     }
