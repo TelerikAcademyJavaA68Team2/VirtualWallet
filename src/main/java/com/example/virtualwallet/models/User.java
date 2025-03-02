@@ -1,5 +1,6 @@
 package com.example.virtualwallet.models;
 
+import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,9 +15,7 @@ import java.util.*;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class User implements UserDetails {
 
     @Id
@@ -41,27 +40,23 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String phoneNumber;
 
+    @Column
+    private String photo = "default photo";
+
     @Column(nullable = false)
-    @Builder.Default
-    private boolean isBlocked = false;
+    private AccountStatus status;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
-    private Role role = Role.USER;
-
-    @Column
-    private String photo;
+    private Role role;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     @SQLRestriction("is_deleted = false")
-    @Builder.Default
-    private Set<Wallet> wallets = new HashSet<>();
+    private Set<Wallet> wallets;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     @SQLRestriction("is_deleted = false")
-    @Builder.Default
-    private Set<Card> cards = new HashSet<>();
+    private Set<Card> cards;
 
     @Column
     private LocalDateTime createdAt;
@@ -69,12 +64,13 @@ public class User implements UserDetails {
     @Column
     private LocalDateTime deletedAt;
 
-    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean isDeleted;
-
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        this.role = Role.USER;
+        this.status = AccountStatus.PENDING;
+        this.cards = new HashSet<>();
+        this.wallets = new HashSet<>();
     }
 
     @PreRemove
@@ -84,7 +80,7 @@ public class User implements UserDetails {
 
     public void markAsDeleted() {
         this.deletedAt = LocalDateTime.now();
-        this.isDeleted = true;
+        this.status = AccountStatus.DELETED;
 
         this.wallets.forEach(Wallet::markAsDeleted);
         this.cards.forEach(Card::markAsDeleted);
@@ -102,16 +98,16 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !isBlocked;
+        return !status.equals(AccountStatus.PENDING);
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return !status.equals(AccountStatus.DELETED);
     }
 
     @Override
     public boolean isEnabled() {
-        return !isDeleted && !isBlocked;
+        return !status.equals(AccountStatus.BLOCKED);
     }
 }
