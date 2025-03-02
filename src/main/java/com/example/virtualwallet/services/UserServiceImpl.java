@@ -1,10 +1,12 @@
 package com.example.virtualwallet.services;
 
+import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.UserOutput;
 import com.example.virtualwallet.models.dtos.UserProfileOutput;
 import com.example.virtualwallet.models.enums.Role;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -55,7 +58,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException(
                         String.format("User with username: %s not found!", username)));
     }
-
+/*
     @Override
     public User getUserByEmail(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
@@ -66,6 +69,16 @@ public class UserServiceImpl implements UserService {
     public User getUserByPhoneNumber(String phoneNumber) throws UsernameNotFoundException {
         return userRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new EntityNotFoundException(
                 String.format("User with phone number: %s not found!", phoneNumber)));
+    }*/
+
+    @Override
+    public boolean checkIfPhoneNumberIsTaken(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber).isPresent();
+    }
+
+    @Override
+    public boolean checkIfEmailIsTaken(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 
     public User getAuthenticatedUser() {
@@ -78,6 +91,42 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             throw new UnauthorizedAccessException(e.getMessage());
         }
+    }
+
+    @Override
+    public void updateAuthenticatedUser(ProfileUpdateInput input) {
+        User user = getAuthenticatedUser();
+        if (!new BCryptPasswordEncoder().matches(input.getPassword(), user.getPassword())) {
+            throw new InvalidUserInputException("You provided wrong password");
+        }
+        if (input.getNewPassword() != null) {
+            if (input.getNewPasswordConfirm() == null) {
+                throw new InvalidUserInputException("You need to confirm your new password");
+            } else if (!input.getNewPassword().equals(input.getNewPasswordConfirm())) {
+                throw new InvalidUserInputException("Your password confirmation doesn't match your new password");
+            }
+            user.setPassword(new BCryptPasswordEncoder().encode(input.getNewPassword()));
+        }
+
+        if (input.getFirstName() != null) {
+            user.setFirstName(input.getFirstName());
+        }
+        if (input.getLastName() != null) {
+            user.setLastName(input.getLastName());
+        }
+        if (input.getEmail() != null) {
+            if (checkIfEmailIsTaken(input.getEmail())) {
+                throw new DuplicateEntityException("User", "Email", input.getEmail());
+            }
+            user.setEmail(input.getEmail());
+        }
+        if (input.getPhoneNumber() != null) {
+            if (checkIfPhoneNumberIsTaken(input.getPhoneNumber())) {
+                throw new DuplicateEntityException("User", "PhoneNumber", input.getPhoneNumber());
+            }
+            user.setPhoneNumber(input.getPhoneNumber());
+        }
+        save(user);
     }
 
     @Override
