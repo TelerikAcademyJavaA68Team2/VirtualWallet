@@ -1,4 +1,4 @@
-package com.example.virtualwallet.models.Dtos.auth;
+package com.example.virtualwallet.models.dtos.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

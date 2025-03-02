@@ -1,8 +1,8 @@
 package com.example.virtualwallet.controllers.rest;
 
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
-import com.example.virtualwallet.models.Dtos.auth.RegisterUserInput;
-import com.example.virtualwallet.models.Dtos.auth.LoginUserInput;
+import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
+import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.auth.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package com.example.virtualwallet.auth;
 
 
-import com.example.virtualwallet.models.Dtos.auth.RegisterUserInput;
-import com.example.virtualwallet.models.Dtos.auth.LoginUserInput;
+import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
+import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 
 public interface AuthenticationService {
 

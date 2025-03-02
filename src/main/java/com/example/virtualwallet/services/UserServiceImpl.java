@@ -2,8 +2,7 @@ package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
-import com.example.virtualwallet.helpers.ModelMapper;
-import com.example.virtualwallet.models.Dtos.UserOutput;
+import com.example.virtualwallet.models.dtos.UserOutput;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;

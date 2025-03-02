@@ -1,6 +1,6 @@
 package com.example.virtualwallet.services.contracts;
 
-import com.example.virtualwallet.models.Dtos.UserOutput;
+import com.example.virtualwallet.models.dtos.UserOutput;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import org.springframework.data.domain.Page;

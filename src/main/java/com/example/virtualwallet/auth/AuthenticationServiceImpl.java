@@ -2,8 +2,8 @@ package com.example.virtualwallet.auth;
 
 import com.example.virtualwallet.auth.jwt.JwtService;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
-import com.example.virtualwallet.models.Dtos.auth.RegisterUserInput;
-import com.example.virtualwallet.models.Dtos.auth.LoginUserInput;
+import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
+import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.services.contracts.UserService;
 import lombok.RequiredArgsConstructor;

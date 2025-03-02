@@ -1,4 +1,4 @@
-package com.example.virtualwallet.models.Dtos;
+package com.example.virtualwallet.models.dtos;
 
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Role;
