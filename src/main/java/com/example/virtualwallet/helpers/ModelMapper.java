@@ -6,6 +6,7 @@ import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.CardInput;
 import com.example.virtualwallet.models.dtos.CardOutput;
 import com.example.virtualwallet.models.dtos.CardOutputForList;
+import com.example.virtualwallet.models.dtos.UserProfileOutput;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -16,11 +17,7 @@ import static com.example.virtualwallet.helpers.ModelHelpers.maskCreditCard;
 public class ModelMapper {
 
 
-//    public Page<UserOutput> mapObjectPageToUserOutputPage(Page<Object[]> usersObjectArray) {
-//        return usersObjectArray.map(this::mapObjectToUserOutput);
-//    }
-
-    public Card createCardFromCardInput(CardInput cardInput, User user){
+    public Card createCardFromCardInput(CardInput cardInput, User user) {
         Card card = new Card();
         card.setCreatedAt(LocalDateTime.now());
         card.setCardNumber(card.getCardNumber());
@@ -31,7 +28,7 @@ public class ModelMapper {
         return card;
     }
 
-    public CardOutputForList displayForListCardOutputFromCreditCard(Card card){
+    public CardOutputForList displayForListCardOutputFromCreditCard(Card card) {
         CardOutputForList cardOutputForList = new CardOutputForList();
         cardOutputForList.setCardId(card.getId());
         cardOutputForList.setCardNumber(maskCreditCard(card.getCardNumber()));
@@ -39,7 +36,7 @@ public class ModelMapper {
         return cardOutputForList;
     }
 
-    public CardOutput cardOutputFromCard(Card card){
+    public CardOutput cardOutputFromCard(Card card) {
         CardOutput cardOutput = new CardOutput();
         cardOutput.setCardId(card.getId());
         cardOutput.setCardNumber(card.getCardNumber());
@@ -47,6 +44,17 @@ public class ModelMapper {
         cardOutput.setExpirationDate(card.getExpirationDate());
         cardOutput.setCcv(card.getCvv());
         return cardOutput;
+    }
+
+    public UserProfileOutput userProfileFromUser(User user) {
+        return new UserProfileOutput(user.getFirstName(),
+                user.getLastName(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getRole(),
+                user.getStatus(),
+                user.getCreatedAt());
     }
 
 
