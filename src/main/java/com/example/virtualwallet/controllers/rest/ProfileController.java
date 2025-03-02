@@ -1,13 +1,12 @@
 package com.example.virtualwallet.controllers.rest;
 
+import com.example.virtualwallet.models.dtos.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.UserProfileOutput;
 import com.example.virtualwallet.services.contracts.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -25,5 +24,12 @@ public class ProfileController {
     @GetMapping
     public ResponseEntity<UserProfileOutput> getProfile() {
         return ResponseEntity.ok( userService.getAuthenticatedUserProfile());
+    }
+
+    @PatchMapping
+    public ResponseEntity<String> updateProfile(@Valid @RequestBody ProfileUpdateInput input ) {
+        userService.updateAuthenticatedUser(input);
+
+        return ResponseEntity.ok("Account updated successfully");
     }
 }
