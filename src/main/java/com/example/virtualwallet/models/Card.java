@@ -42,7 +42,7 @@ public class Card {
     @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
     private User owner;
 
-    @OneToMany(mappedBy = "creditCard", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "card", fetch = FetchType.LAZY)
     private Set<Transfer> transfers;
 
     @Column(nullable = false, updatable = false)
