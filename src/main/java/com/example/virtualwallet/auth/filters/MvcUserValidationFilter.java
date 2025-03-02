@@ -1,4 +1,4 @@
-package com.example.virtualwallet.helpers.auth;
+package com.example.virtualwallet.auth.filters;
 
 
 import com.example.virtualwallet.models.User;

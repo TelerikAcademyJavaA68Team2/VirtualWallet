@@ -22,7 +22,6 @@ public class RegisterUserInput {
     @Size(min = 5, max = 200, message = "Email should be between 5 and 200 symbols!")
     private String email;
 
-
     @NotBlank(message = "Phone number is required.")
     @Pattern(regexp = "\\d{10}", message = "Phone number must be exactly 10 digits.")
     private String phoneNumber;
@@ -32,10 +31,11 @@ public class RegisterUserInput {
     private String username;
 
     @NotBlank(message = "Password is required!")
-    @Size(min = 8, max = 40, message = "Password should be between 2 and 20 symbols!")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[+\\-*&^%$#@!])[A-Za-z\\d+\\-*&^%$#@!]{8,}$",
+            message = "Password must be at least 8 characters long and include a capital letter, a digit, and a special symbol!")
+    @Size(min = 8, max = 40, message = "Password should be between 8 and 40 symbols!")
     private String password;
 
     @NotBlank(message = "Password confirmation is required!")
-    @Size(min = 8, max = 40, message = "Password should be between 2 and 20 symbols!")
     private String passwordConfirm;
 }

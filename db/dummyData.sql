@@ -1,9 +1,9 @@
 -- Insert dummy data into the `user` table
 USE virtual_wallet;
-INSERT INTO user (id, created_at, deleted_at, email, first_name, is_blocked, is_deleted, last_name, password, phone_number, photo, role, username)
+INSERT INTO user (id, created_at, deleted_at, email, first_name , status, last_name, password, phone_number, photo, role, username)
 VALUES
-    ('123e4567-e89b-12d3-a456-426614174000', NOW(), NULL, 'john.doe@example.com', 'John', 0, 0, 'Doe', 'password123', '+1234567890', NULL, 'USER', 'johndoe'),
-    ('123e4567-e89b-12d3-a456-426614174001', NOW(), NULL, 'admin@example.com', 'Admin', 0, 0, 'User', 'adminpass', '+0987654321', NULL, 'ADMIN', 'adminuser');
+    ('123e4567-e89b-12d3-a456-426614174000', NOW(), NULL, 'john.doe@example.com', 'John', 'PENDING', 'Doe', 'password123', '+1234567890', NULL, 'USER', 'johndoe'),
+    ('123e4567-e89b-12d3-a456-426614174001', NOW(), NULL, 'admin@example.com', 'Admin',  'ACTIVE', 'User', 'adminpass', '+0987654321', NULL, 'ADMIN', 'adminuser');
 
 -- Insert dummy data into the `credit_card` table
 INSERT INTO credit_card (id, card_holder, card_number, created_at, cvv, deleted_at, expiration_date, is_deleted, owner_id)

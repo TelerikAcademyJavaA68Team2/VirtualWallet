@@ -6,14 +6,13 @@ create table user
     deleted_at   datetime(6)            null,
     email        varchar(255)           not null,
     first_name   varchar(255)           not null,
-    is_blocked   bit                    not null,
-    is_deleted   tinyint(1) default 0   not null,
     last_name    varchar(255)           not null,
     password     varchar(255)           not null,
     phone_number varchar(255)           not null,
     photo        varchar(255)           null,
     role         enum ('ADMIN', 'USER') not null,
     username     varchar(255)           not null,
+    status       enum ('PENDING', 'ACTIVE', 'BLOCKED', 'DELETED') default 'PENDING' not null,
     constraint UK4bgmpi98dylab6qdvf9xyaxu4
         unique (phone_number),
     constraint UKob8kqyqqgmefl0aco34akdtpe

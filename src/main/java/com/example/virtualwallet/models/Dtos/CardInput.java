@@ -1,4 +1,4 @@
-package com.example.virtualwallet.models.dtos;
+package com.example.virtualwallet.models.Dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

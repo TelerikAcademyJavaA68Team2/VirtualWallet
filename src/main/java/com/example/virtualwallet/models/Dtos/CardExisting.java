@@ -1,4 +1,4 @@
-package com.example.virtualwallet.models.dtos;
+package com.example.virtualwallet.models.Dtos;
 
 import lombok.Data;
 

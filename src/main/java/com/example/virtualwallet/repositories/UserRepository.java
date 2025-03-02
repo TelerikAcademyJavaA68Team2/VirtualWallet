@@ -1,6 +1,6 @@
 package com.example.virtualwallet.repositories;
 
-import com.example.virtualwallet.models.dtos.UserOutput;
+import com.example.virtualwallet.models.Dtos.UserOutput;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Role;
 import org.springframework.data.domain.Page;
@@ -16,14 +16,14 @@ import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    @Query("""
-            SELECT NEW com.example.virtualwallet.models.dtos.UserOutput(
+ /*   @Query("""
+            SELECT NEW com.example.virtualwallet.models.Dtos.UserOutput(
                 u.id,
                 u.username,
                 u.email,
                 u.phoneNumber,
                 u.role,
-                CASE WHEN u.isBlocked = TRUE THEN 'BLOCKED' ELSE 'ACTIVE' END,
+                u.status,
                 CAST(COALESCE(SUM(w.balance), 0) AS BIGDECIMAL)
             )
             FROM User u
@@ -32,8 +32,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
               AND (:email IS NULL OR u.email = :email)
               AND (:phoneNumber IS NULL OR u.phoneNumber LIKE CONCAT('%', :phoneNumber, '%'))
               AND (:role IS NULL OR u.role = :role)
-              AND (:accountStatus IS NULL OR (u.isBlocked = CASE WHEN :accountStatus = 'BLOCKED' THEN TRUE ELSE FALSE END))
-            GROUP BY u.id, u.username, u.email, u.phoneNumber, u.role, u.isBlocked
+              AND (:accountStatus IS NULL OR (u.status = :acountStatus))
+            GROUP BY u.id, u.username, u.email, u.phoneNumber, u.role, u.status
             HAVING (:minTotalBalance IS NULL OR COALESCE(SUM(w.balance), 0) >= :minTotalBalance)
                AND (:maxTotalBalance IS NULL OR COALESCE(SUM(w.balance), 0) <= :maxTotalBalance)
             """)
@@ -46,26 +46,28 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             @Param("minTotalBalance") BigDecimal minTotalBalance,
             @Param("maxTotalBalance") BigDecimal maxTotalBalance,
             Pageable pageable);
-
-
+*/
+/*
     @Query("""
-    SELECT NEW com.example.virtualwallet.models.dtos.UserOutput(
+    SELECT NEW com.example.virtualwallet.models.Dtos.UserOutput(
         u.id,
         u.username,
         u.email,
         u.phoneNumber,
         u.role,
-        CASE WHEN u.isBlocked = TRUE THEN 'BLOCKED' ELSE 'ACTIVE' END,
+        u.status,
         CAST(COALESCE(SUM(w.balance), 0) AS BIGDECIMAL)
     )
     FROM User u
     LEFT JOIN Wallet w ON u.id = w.owner.id
-    GROUP BY u.id, u.username, u.email, u.phoneNumber, u.role, u.isBlocked
+    GROUP BY u.id, u.username, u.email, u.phoneNumber, u.role, u.status
     """)
-    List<UserOutput> findAllUsersWithTotalBalance();
+    List<UserOutput> findAllUsersWithTotalBalance();*/
 
 
     Optional<User> findByUsername(String username);
 
     User getUserById(UUID id);
+
+
 }

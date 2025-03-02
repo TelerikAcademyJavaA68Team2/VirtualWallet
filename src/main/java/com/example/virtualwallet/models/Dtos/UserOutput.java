@@ -1,5 +1,6 @@
-package com.example.virtualwallet.models.dtos;
+package com.example.virtualwallet.models.Dtos;
 
+import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Role;
 import lombok.Data;
 
@@ -13,10 +14,10 @@ public class UserOutput {
     private String email;
     private String phoneNumber;
     private Role role;
-    private String accountStatus;
+    private AccountStatus accountStatus;
     private BigDecimal totalBalance;
 
-    public UserOutput(UUID id, String username, String email, String phoneNumber, Role role, String accountStatus, BigDecimal totalBalance) {
+    public UserOutput(UUID id, String username, String email, String phoneNumber, Role role, AccountStatus accountStatus, BigDecimal totalBalance) {
         this.id = id;
         this.username = username;
         this.email = email;

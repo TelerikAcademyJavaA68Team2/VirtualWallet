@@ -1,8 +1,8 @@
 package com.example.virtualwallet.config;
 
-import com.example.virtualwallet.helpers.auth.CustomAuthenticationFailureHandler;
-import com.example.virtualwallet.helpers.auth.JwtAuthorizationFilter;
-import com.example.virtualwallet.helpers.auth.MvcUserValidationFilter;
+import com.example.virtualwallet.auth.CustomAuthenticationFailureHandler;
+import com.example.virtualwallet.auth.filters.JwtAuthorizationFilter;
+import com.example.virtualwallet.auth.filters.MvcUserValidationFilter;
 import com.example.virtualwallet.models.User;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

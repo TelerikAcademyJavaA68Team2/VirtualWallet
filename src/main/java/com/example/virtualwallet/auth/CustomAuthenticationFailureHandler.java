@@ -1,4 +1,4 @@
-package com.example.virtualwallet.helpers.auth;
+package com.example.virtualwallet.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,10 +1,10 @@
 package com.example.virtualwallet.services.contracts;
 
 import com.example.virtualwallet.models.Card;
-import com.example.virtualwallet.models.dtos.CardExisting;
-import com.example.virtualwallet.models.dtos.CardInput;
-import com.example.virtualwallet.models.dtos.CardOutput;
-import com.example.virtualwallet.models.dtos.CardOutputForList;
+import com.example.virtualwallet.models.Dtos.CardExisting;
+import com.example.virtualwallet.models.Dtos.CardInput;
+import com.example.virtualwallet.models.Dtos.CardOutput;
+import com.example.virtualwallet.models.Dtos.CardOutputForList;
 
 import java.util.List;
 import java.util.UUID;
