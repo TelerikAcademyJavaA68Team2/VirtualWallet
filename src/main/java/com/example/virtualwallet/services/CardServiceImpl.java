@@ -1,95 +1,127 @@
 package com.example.virtualwallet.services;
 
+import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Card;
-import com.example.virtualwallet.models.dtos.CardExisting;
+import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.CardInput;
 import com.example.virtualwallet.models.dtos.CardOutput;
 import com.example.virtualwallet.models.dtos.CardOutputForList;
 import com.example.virtualwallet.repositories.CardRepository;
 import com.example.virtualwallet.services.contracts.CardService;
+import com.example.virtualwallet.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
+import static com.example.virtualwallet.helpers.ValidationHelpers.validateUserIsCardOwner;
 
 @Service
 @PropertySource("classpath:messages.properties")
 public class CardServiceImpl implements CardService {
 
-    @Value("${error.cardNotFound}")
-    public static String CARD_NOT_FOUND;
-
     private final CardRepository cardRepository;
     private final ModelMapper modelMapper;
+    private final UserService userService;
 
     @Autowired
-    public CardServiceImpl(CardRepository cardRepository, ModelMapper modelMapper) {
+    public CardServiceImpl(CardRepository cardRepository, ModelMapper modelMapper, UserService userService) {
         this.cardRepository = cardRepository;
         this.modelMapper = modelMapper;
+        this.userService = userService;
     }
 
     @Override
-    public CardOutput getCardOutputById(UUID id) {
-        try {
-            return modelMapper.cardOutputFromCard(cardRepository.getCardById(id));
-        }catch (jakarta.persistence.EntityNotFoundException e){
-            throw new EntityNotFoundException(CARD_NOT_FOUND);
-        }
+    public CardOutput getCardOutputById(UUID cardId) {
+        Card card = findCardById(cardId);
+        return modelMapper.cardOutputFromCard(card);
     }
 
     @Override
-    public Card getCardById(UUID id) {
-        try {
-            return cardRepository.getCardById(id);
-        } catch (jakarta.persistence.EntityNotFoundException e){
-            throw new EntityNotFoundException(CARD_NOT_FOUND);
-        }
+    public Card getCardById(UUID cardId) {
+        return findCardById(cardId);
     }
 
     @Override
     public List<Card> getAllCardsByUser(UUID userId) {
-        return cardRepository.getAllByOwner_Id(userId);
+        return findAllCardsByUser(userId);
     }
 
     public List<CardOutputForList> getAllCardsOutputForListByUser(UUID userId) {
-        return cardRepository.getAllByOwner_Id(userId).stream()
+        return findAllCardsByUser(userId).stream()
                 .map(modelMapper::displayForListCardOutputFromCreditCard)
                 .toList();
     }
 
     @Override
     public CardOutput addCard(CardInput cardDto) {
-        return null;
+        User user = userService.getAuthenticatedUser();
+        Card existingCard = cardRepository.getCardByCardNumber(cardDto.getCardNumber());
+
+        if (existingCard != null) {
+            if (existingCard.isDeleted()) {
+                return restoreSoftDeletedCard(existingCard, user, cardDto);
+            } else {
+                throwIfCardWithSameNumberAlreadyExistsInSystem(cardDto.getCardNumber());
+            }
+        }
+
+        Card newCard = modelMapper.createCardFromCardInput(cardDto, user);
+        cardRepository.save(newCard);
+        return modelMapper.cardOutputFromCard(newCard);
+
     }
 
     @Override
-    public Card update(CardExisting existingCardDto, UUID cardId, String ownerUsername) {
-        return null;
+    public CardOutput updateCard(CardInput cardInput, UUID cardId) {
+        User user = userService.getAuthenticatedUser();
+        Card card = findCardById(cardId);
+        validateUserIsCardOwner(card, user);
+        if(!card.getCardNumber().equals(cardInput.getCardNumber())) {
+            throwIfCardWithSameNumberAlreadyExistsInSystem(cardInput.getCardNumber());
+        }
+        card = modelMapper.updateCardFromCardInput(cardInput, card);
+        cardRepository.save(card);
+        return modelMapper.cardOutputFromCard(card);
     }
 
     @Override
-    public Card update(CardExisting existingCardDto, UUID cardId, UUID userId) {
-        return null;
+    public void softDeleteCard(UUID cardId) {
+        User user = userService.getAuthenticatedUser();
+        Card card = findCardById(cardId);
+        validateUserIsCardOwner(card, user);
+        card.markAsDeleted();
+        cardRepository.save(card);
     }
 
-    @Override
-    public Card delete(UUID id, String ownerUsername) {
-        return null;
+    private Card findCardById(UUID cardId) {
+        return cardRepository.findById(cardId)
+                .orElseThrow(() -> new EntityNotFoundException("Card", cardId));
     }
 
-//    @Override
-//    public Card create(String cardOwnerUsername, CardInput cardDto) {
-//        Card card = new Card();
-//        throwIfCardWithSameNumberAlreadyExistsInSystem(card);
-//        setNameFromCardNumber(paymentInstrument, card);
-//        paymentInstrument = paymentInstrumentService.create(user, paymentInstrument);
-//        card.setId(paymentInstrument.getId());
-//        return cardRepository.create(card);
-//    }
+    private CardOutput restoreSoftDeletedCard(Card card, User user, CardInput cardInput) {
+        validateUserIsCardOwner(card, user);
+        card.markAsRestored();
+        card = modelMapper.modifySoftDeletedCardFromCardInput(card, cardInput);
+        cardRepository.save(card);
+
+        return modelMapper.cardOutputFromCard(card);
+    }
+
+    private void throwIfCardWithSameNumberAlreadyExistsInSystem(String cardNumber) {
+        if (cardRepository.getCardByCardNumber(cardNumber) != null) {
+            throw new DuplicateEntityException("Card", "number", cardNumber);
+        }
+    }
+
+    private List<Card> findAllCardsByUser(UUID userId) {
+        return cardRepository.getAllByOwner_Id(userId);
+    }
+
 
 }

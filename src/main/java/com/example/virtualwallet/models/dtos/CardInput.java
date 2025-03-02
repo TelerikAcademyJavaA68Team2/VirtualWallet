@@ -1,27 +1,33 @@
 package com.example.virtualwallet.models.dtos;
 
+import com.example.virtualwallet.helpers.YearMonthDeserializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-
-import java.util.Date;
+import java.time.YearMonth;
 
 @Data
 public class CardInput {
 
     @NotBlank(message = "error.cardNumberEmpty")
-    @Size(min = 16, max = 64, message = "Card Number should be between 16 and 64 symbols!")
+    @Pattern(regexp = "\\d{16}", message = "error.cardNumberDigits")
     private String cardNumber;
 
-    @NotBlank(message = "Content can't be empty")
-    @Size(min = 32, max = 8192, message = "Content should be between 32 and 8192 symbols")
+    @NotBlank(message = "error.cardHolderEmpty")
+    @Size(min = 2, max = 30, message = "error.cardHolderLength")
     private String cardHolder;
 
-    @NotBlank(message = "Content can't be empty")
-    @Size(min = 32, max = 8192, message = "Content should be between 32 and 8192 symbols")
-    private Date expirationDate;
+    @NotBlank(message = "error.expirationDateEmpty")
+    @JsonFormat(pattern = "MM/yy")
+    @JsonDeserialize(using = YearMonthDeserializer.class)
+    private YearMonth expirationDate;
 
-    private Date cvv;
+    @NotBlank(message = "error.cvvEmpty")
+    @Pattern(regexp = "\\d{3}", message = "error.cvvDigits")
+    private String cvv;
 
 }

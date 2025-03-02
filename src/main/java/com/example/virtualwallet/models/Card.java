@@ -9,6 +9,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -18,7 +19,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE virtual_wallet.card SET is_deleted = true WHERE id = ?")
 @SQLRestriction("is_deleted = false")
 public class Card {
 
@@ -33,7 +33,7 @@ public class Card {
     private String cardHolder;
 
     @Column(nullable = false)
-    private Date expirationDate;
+    private YearMonth expirationDate;
 
     @Column(nullable = false)
     private String cvv;

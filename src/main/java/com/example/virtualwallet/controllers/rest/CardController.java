@@ -59,7 +59,8 @@ public class CardController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Successfully added a card"),
                     @ApiResponse(responseCode = "401", description = "Unauthorized to add a card"),
-                    @ApiResponse(responseCode = "404", description = "User not found")
+                    @ApiResponse(responseCode = "404", description = "User not found"),
+                    @ApiResponse(responseCode = "409", description = "Duplicate entity conflict")
             }
     )
     @PostMapping
@@ -67,34 +68,35 @@ public class CardController {
         return ResponseEntity.ok(cardService.addCard(cardInput));
     }
 
-//    @PutMapping("/{cardId}")
-//    @Operation(
-//            description = "Update an existing card",
-//            summary = "Update a card",
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "Successfully updated card"),
-//                    @ApiResponse(responseCode = "404", description = "Card or user not found"),
-//                    @ApiResponse(responseCode = "401", description = "Unauthorized to update card"),
-//                    @ApiResponse(responseCode = "409", description = "Duplicate entity conflict")
-//            }
-//    )
-//    public Card updateCardDetails(@PathVariable int userId, @PathVariable int cardId,
-//                                  @Valid @RequestBody ExistingCardDto existingCardDto) {
-//        return cardService.update(existingCardDto, cardId, userId);
-//    }
-//
-//    @DeleteMapping("/{cardId}")
-//    @Operation(
-//            description = "Delete a card by ID",
-//            summary = "Delete a card",
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "Successfully deleted card"),
-//                    @ApiResponse(responseCode = "404", description = "Card or user not found"),
-//                    @ApiResponse(responseCode = "401", description = "Unauthorized to delete card")
-//            }
-//    )
-//    public Card deleteCard(@PathVariable UUID cardId){
-//        return cardService.delete(cardId, user.getUsername());
-//    }
+    @PutMapping("/{cardId}")
+    @Operation(
+            description = "Update an existing card",
+            summary = "Update a card",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully updated card"),
+                    @ApiResponse(responseCode = "404", description = "Card or user not found"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized to update card"),
+                    @ApiResponse(responseCode = "409", description = "Duplicate entity conflict")
+            }
+    )
+    public ResponseEntity<CardOutput> updateCardDetails(@PathVariable UUID cardId,
+                                  @Valid @RequestBody CardInput cardInput) {
+        return ResponseEntity.ok(cardService.updateCard(cardInput, cardId));
+    }
+
+    @DeleteMapping("/{cardId}")
+    @Operation(
+            description = "Delete a card by ID",
+            summary = "Delete a card",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Successfully marked card as deleted"),
+                    @ApiResponse(responseCode = "404", description = "Card or user not found"),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized to delete this card")
+            }
+    )
+    public ResponseEntity<Void> deleteCard(@PathVariable UUID cardId){
+        cardService.softDeleteCard(cardId);
+        return ResponseEntity.noContent().build();
+    }
 
 }

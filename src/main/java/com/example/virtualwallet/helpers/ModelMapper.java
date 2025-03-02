@@ -20,11 +20,18 @@ public class ModelMapper {
     public Card createCardFromCardInput(CardInput cardInput, User user) {
         Card card = new Card();
         card.setCreatedAt(LocalDateTime.now());
-        card.setCardNumber(card.getCardNumber());
-        card.setCardHolder(card.getCardHolder());
-        card.setCvv(card.getCvv());
-        card.setExpirationDate(card.getExpirationDate());
+        card.setCardNumber(cardInput.getCardNumber());
+        card.setCardHolder(cardInput.getCardHolder());
+        card.setCvv(cardInput.getCvv());
+        card.setExpirationDate(cardInput.getExpirationDate());
         card.setOwner(user);
+        return card;
+    }
+
+    public Card modifySoftDeletedCardFromCardInput(Card card, CardInput cardInput){
+        card.setCardHolder(cardInput.getCardHolder());
+        card.setCvv(cardInput.getCvv());
+        card.setExpirationDate(cardInput.getExpirationDate());
         return card;
     }
 
@@ -58,4 +65,11 @@ public class ModelMapper {
     }
 
 
+    public Card updateCardFromCardInput(CardInput cardInput, Card card) {
+        card.setCardNumber(cardInput.getCardNumber());
+        card.setCvv(cardInput.getCvv());
+        card.setCardHolder(cardInput.getCardHolder());
+        card.setExpirationDate(cardInput.getExpirationDate());
+        return card;
+    }
 }

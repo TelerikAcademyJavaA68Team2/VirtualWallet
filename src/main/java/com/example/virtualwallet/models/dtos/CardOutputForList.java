@@ -2,7 +2,7 @@ package com.example.virtualwallet.models.dtos;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.YearMonth;
 import java.util.UUID;
 
 @Data
@@ -12,6 +12,6 @@ public class CardOutputForList {
 
     private String cardNumber;
 
-    private Date expirationDate;
+    private YearMonth expirationDate;
 
 }
