@@ -27,6 +27,7 @@ import java.util.UUID;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     public static final String WRONG_CREDENTIALS = "Wrong username or password!";
+    public static final String USER_ALREADY_EXISTS = "User already exists!";
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -91,7 +92,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             userExists = false;
         }
         if (userExists) {
-            throw new DuplicateEntityException("User already exists");
+            throw new DuplicateEntityException(USER_ALREADY_EXISTS);
         }
 
 

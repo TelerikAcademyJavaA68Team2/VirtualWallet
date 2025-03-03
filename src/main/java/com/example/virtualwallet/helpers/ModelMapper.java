@@ -62,7 +62,6 @@ public class ModelMapper {
                 user.getCreatedAt());
     }
 
-
     public Card updateCardFromCardInput(CardEdit cardEdit, Card card) {
         if (cardEdit.getCardNumber() != null) {
             card.setCardNumber(cardEdit.getCardNumber());

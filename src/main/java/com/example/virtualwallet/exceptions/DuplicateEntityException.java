@@ -2,8 +2,8 @@ package com.example.virtualwallet.exceptions;
 
 public class DuplicateEntityException extends RuntimeException {
 
-    public DuplicateEntityException(String attribute) {
-        super(String.format("%s already exists.", attribute));
+    public DuplicateEntityException(String message) {
+        super(message);
     }
 
     public DuplicateEntityException(String attribute, String value) {
