@@ -28,20 +28,25 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private static final String[] WHITE_LIST_SWAGGER_URL = {"/pesho"};
+    private static final String[] WHITE_LIST_SWAGGER_URL = {"/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
+            "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
+            "/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
+            "/api/test/**", "/authenticate"};
+
     private static final String[] PUBLIC_REST_URL_LIST =
             {"/api/home/**", "/api/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**","/api/admin/users"};
+
     private static final String[] RESTRICTED_REST_URL_LIST = {"/api/admin/**"};
 
     private static final String[] PUBLIC_MVC_URL_LIST =
             {"/mvc/home/**", "/mvc/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**"};
+
     private static final String[] RESTRICTED_MVC_URL_LIST = {"/mvc/admin"};
 
     private final UserDetailsService userDetailsService;
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final MvcUserValidationFilter mvcUserValidationFilter;
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-
 
     @Bean
     @Order(1)
