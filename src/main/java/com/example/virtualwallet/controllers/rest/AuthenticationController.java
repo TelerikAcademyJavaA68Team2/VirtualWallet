@@ -22,7 +22,6 @@ public class AuthenticationController {
     private final AuthenticationService authService;
     private final EmailConfirmationService emailConfirmationService;
 
-
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterUserInput request) {
         return ResponseEntity.ok(authService.register(request));
