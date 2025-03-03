@@ -1,7 +1,7 @@
 package com.example.virtualwallet.controllers.rest;
 
-import com.example.virtualwallet.models.dtos.ProfileUpdateInput;
-import com.example.virtualwallet.models.dtos.UserProfileOutput;
+import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
+import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.services.contracts.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

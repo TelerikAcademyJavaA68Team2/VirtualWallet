@@ -1,7 +1,7 @@
 package com.example.virtualwallet.repositories;
 
 import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.dtos.UserOutput;
+import com.example.virtualwallet.models.dtos.user.UserOutput;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -44,7 +44,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 */
 
     @Query("""
-    SELECT NEW com.example.virtualwallet.models.dtos.UserOutput(
+    SELECT NEW com.example.virtualwallet.models.dtos.user.UserOutput(
         u.id,
         u.username,
         u.email,

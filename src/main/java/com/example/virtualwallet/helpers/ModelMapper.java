@@ -4,6 +4,7 @@ package com.example.virtualwallet.helpers;
 import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.*;
+import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
