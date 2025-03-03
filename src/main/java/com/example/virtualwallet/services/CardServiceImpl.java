@@ -2,7 +2,6 @@ package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
-import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.User;
