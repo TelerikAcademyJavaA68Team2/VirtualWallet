@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,16 +19,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/profile/cards")
+@RequiredArgsConstructor
 @Tag(name = "Card Management", description = "Endpoints for user card interactions like add/update/remove a card")
 public class CardController {
 
     private final CardService cardService;
     private final UserService userService;
-
-    public CardController(CardService cardService, UserService userService) {
-        this.cardService = cardService;
-        this.userService = userService;
-    }
 
     @Operation(
             summary = "Retrieve all of user's cards",
