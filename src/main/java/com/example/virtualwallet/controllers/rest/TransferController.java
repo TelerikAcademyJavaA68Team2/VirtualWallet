@@ -37,6 +37,13 @@ public class TransferController {
         return ResponseEntity.ok(transferService.processTransfer(transferInput));
     }
 
+    @Operation(
+            summary = "Randomly returns a true/false boolean to confirm/decline a transfer's withdraw status",
+            description = "Make an additional call to /withdraw api to confirm a transfer's status",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully returned a boolean"),
+            }
+    )
     @GetMapping("/withdraw")
     public ResponseEntity<Boolean> withdraw (){
         return ResponseEntity.ok(new Random().nextBoolean());
