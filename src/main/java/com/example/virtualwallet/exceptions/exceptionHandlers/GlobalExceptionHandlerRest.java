@@ -2,6 +2,8 @@ package com.example.virtualwallet.exceptions.exceptionHandlers;
 
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
+import com.example.virtualwallet.exceptions.InvalidUserInputException;
+import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,6 +22,18 @@ public class GlobalExceptionHandlerRest {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleDuplicateEntityException(DuplicateEntityException ex) {
         return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUnauthorizedAccessException(UnauthorizedAccessException ex){
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidUserInputException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidUserInputException(InvalidUserInputException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
     public record ErrorResponse(int status, String message) {}
