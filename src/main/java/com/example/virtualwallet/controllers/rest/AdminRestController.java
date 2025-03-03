@@ -3,6 +3,9 @@ package com.example.virtualwallet.controllers.rest;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.services.contracts.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,15 +22,30 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
+@Tag(name = "Admin Management", description = "Endpoints for admin actions like user, post, and comment management")
 public class AdminRestController {
 
     private final UserService userService;
 
+    @Operation(
+            summary = "Retrieve all users",
+            description = "Fetch a list of users",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200")
+            }
+    )
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsersNoFilters() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @Operation(
+            summary = "Retrieve all users",
+            description = "Fetch a list of users with optional filters and sorting options",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200")
+            }
+    )
     @GetMapping("/usersWIthFilter")
     public ResponseEntity<?> getAllUsers(
             @RequestParam(required = false) String username,
@@ -68,7 +86,4 @@ public class AdminRestController {
             return ResponseEntity.noContent().build();
         }
     }
-
-
-
 }
