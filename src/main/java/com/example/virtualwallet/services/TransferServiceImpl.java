@@ -16,10 +16,10 @@ import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Random;
+import org.springframework.web.client.RestTemplate;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndConvertCurrency;
 
@@ -31,6 +31,7 @@ public class TransferServiceImpl implements TransferService {
 
     private final TransferRepository transferRepository;
     private final WalletService walletService;
+    private final RestTemplate restTemplate;
     private final UserService userService;
     private final CardService cardService;
     private final ModelMapper modelMapper;
@@ -50,7 +51,7 @@ public class TransferServiceImpl implements TransferService {
         Wallet wallet = walletService.getOrCreateWalletByUsernameAndCurrency(user.getUsername(),
                 currency);
 
-        String transferStatus = callDummyTransferApi();
+        TransactionStatus transferStatus = callMockWithdrawApi();
 
         Transfer transfer = modelMapper.createTransferFromTransferInput(transferInput, card,
                 wallet, transferStatus, currency);
@@ -65,9 +66,15 @@ public class TransferServiceImpl implements TransferService {
         return modelMapper.transferToTransferOutput(transfer);
     }
 
-    private String callDummyTransferApi() {
-        boolean isApproved = new Random().nextBoolean();
-        return isApproved ? "APPROVED" : "DECLINED";
+    private TransactionStatus callMockWithdrawApi() {
+        String url = "http://localhost:8080/api/transfer/withdraw";
+
+        try {
+            ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
+            return Boolean.TRUE.equals(response.getBody()) ? TransactionStatus.APPROVED : TransactionStatus.DECLINED;
+        } catch (Exception e) {
+            throw new RuntimeException("Mock Withdraw API error: " + e.getMessage());
+        }
     }
 }
 

@@ -94,13 +94,13 @@ public class ModelMapper {
     }
 
     public Transfer createTransferFromTransferInput(TransferInput transferInput, Card card, Wallet wallet,
-                                                    String transferStatus, Currency currency) {
+                                                    TransactionStatus transferStatus, Currency currency) {
         Transfer transfer = new Transfer();
         transfer.setCard(card);
         transfer.setWallet(wallet);
         transfer.setAmount(transferInput.getAmount());
         transfer.setCurrency(currency);
-        transfer.setStatus(TransactionStatus.valueOf(transferStatus));
+        transfer.setStatus(transferStatus);
         return transfer;
     }
 }

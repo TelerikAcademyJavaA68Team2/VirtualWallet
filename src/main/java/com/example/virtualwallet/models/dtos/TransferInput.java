@@ -1,6 +1,5 @@
 package com.example.virtualwallet.models.dtos;
 
-import com.example.virtualwallet.models.enums.Currency;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

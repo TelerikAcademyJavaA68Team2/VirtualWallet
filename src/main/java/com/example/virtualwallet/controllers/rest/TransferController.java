@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Random;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/transfer")
@@ -20,8 +22,8 @@ public class TransferController {
     private final TransferService transferService;
 
     @Operation(
-            summary = "Make a withdraw",
-            description = "Make a withdraw from a user's card to the wallet of the specified currency. " +
+            summary = "Make a transfer",
+            description = "Make a transfer from a user's card to the wallet of the specified currency. " +
                     "Automatically creates a wallet if the user doesn't have any of that currency.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successfully made a withdrawal"),
@@ -30,8 +32,14 @@ public class TransferController {
                     @ApiResponse(responseCode = "404", description = "Entity not found")
             }
     )
-    @PostMapping("/withdraw")
-    public ResponseEntity<TransferOutput> withdraw(@Valid @RequestBody TransferInput transferInput) {
+    @PostMapping
+    public ResponseEntity<TransferOutput> transfer(@Valid @RequestBody TransferInput transferInput) {
         return ResponseEntity.ok(transferService.processTransfer(transferInput));
     }
+
+    @GetMapping("/withdraw")
+    public ResponseEntity<Boolean> withdraw (){
+        return ResponseEntity.ok(new Random().nextBoolean());
+    }
+
 }
