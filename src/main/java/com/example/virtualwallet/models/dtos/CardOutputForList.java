@@ -1,5 +1,8 @@
 package com.example.virtualwallet.models.dtos;
 
+import com.example.virtualwallet.helpers.YearMonthSerializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.time.YearMonth;
@@ -12,6 +15,8 @@ public class CardOutputForList {
 
     private String cardNumber;
 
+    @JsonFormat(pattern = "MM/yy")
+    @JsonSerialize(using = YearMonthSerializer.class)
     private YearMonth expirationDate;
 
 }

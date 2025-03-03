@@ -1,5 +1,6 @@
 package com.example.virtualwallet.controllers.rest;
 
+import com.example.virtualwallet.models.dtos.CardEdit;
 import com.example.virtualwallet.models.dtos.CardInput;
 import com.example.virtualwallet.models.dtos.CardOutput;
 import com.example.virtualwallet.models.dtos.CardOutputForList;
@@ -70,7 +71,8 @@ public class CardController {
 
     @PutMapping("/{cardId}")
     @Operation(
-            description = "Update an existing card",
+            description = "Update an existing card by optionally deciding which field you want to update:" +
+                    "card number, cardholder, expiration date, or CVV",
             summary = "Update a card",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated card"),
@@ -80,8 +82,8 @@ public class CardController {
             }
     )
     public ResponseEntity<CardOutput> updateCardDetails(@PathVariable UUID cardId,
-                                  @Valid @RequestBody CardInput cardInput) {
-        return ResponseEntity.ok(cardService.updateCard(cardInput, cardId));
+                                  @Valid @RequestBody CardEdit cardEdit) {
+        return ResponseEntity.ok(cardService.updateCard(cardEdit, cardId));
     }
 
     @DeleteMapping("/{cardId}")
@@ -98,5 +100,4 @@ public class CardController {
         cardService.softDeleteCard(cardId);
         return ResponseEntity.noContent().build();
     }
-
 }

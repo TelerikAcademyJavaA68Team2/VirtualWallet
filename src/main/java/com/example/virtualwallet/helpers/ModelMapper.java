@@ -3,10 +3,7 @@ package com.example.virtualwallet.helpers;
 
 import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.dtos.CardInput;
-import com.example.virtualwallet.models.dtos.CardOutput;
-import com.example.virtualwallet.models.dtos.CardOutputForList;
-import com.example.virtualwallet.models.dtos.UserProfileOutput;
+import com.example.virtualwallet.models.dtos.*;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -23,7 +20,7 @@ public class ModelMapper {
         card.setCardNumber(cardInput.getCardNumber());
         card.setCardHolder(cardInput.getCardHolder());
         card.setCvv(cardInput.getCvv());
-        card.setExpirationDate(cardInput.getExpirationDate());
+        card.setExpirationDate(cardInput.getExpirationDateAsYearMonth());
         card.setOwner(user);
         return card;
     }
@@ -31,7 +28,7 @@ public class ModelMapper {
     public Card modifySoftDeletedCardFromCardInput(Card card, CardInput cardInput){
         card.setCardHolder(cardInput.getCardHolder());
         card.setCvv(cardInput.getCvv());
-        card.setExpirationDate(cardInput.getExpirationDate());
+        card.setExpirationDate(cardInput.getExpirationDateAsYearMonth());
         return card;
     }
 
@@ -49,7 +46,7 @@ public class ModelMapper {
         cardOutput.setCardNumber(card.getCardNumber());
         cardOutput.setCardHolder(card.getCardHolder());
         cardOutput.setExpirationDate(card.getExpirationDate());
-        cardOutput.setCcv(card.getCvv());
+        cardOutput.setCvv(card.getCvv());
         return cardOutput;
     }
 
@@ -65,11 +62,19 @@ public class ModelMapper {
     }
 
 
-    public Card updateCardFromCardInput(CardInput cardInput, Card card) {
-        card.setCardNumber(cardInput.getCardNumber());
-        card.setCvv(cardInput.getCvv());
-        card.setCardHolder(cardInput.getCardHolder());
-        card.setExpirationDate(cardInput.getExpirationDate());
+    public Card updateCardFromCardInput(CardEdit cardEdit, Card card) {
+        if (cardEdit.getCardNumber() != null) {
+            card.setCardNumber(cardEdit.getCardNumber());
+        }
+        if (cardEdit.getCvv() != null) {
+            card.setCvv(cardEdit.getCvv());
+        }
+        if (cardEdit.getCardHolder() != null) {
+            card.setCardHolder(cardEdit.getCardHolder());
+        }
+        if (cardEdit.getExpirationDateAsYearMonth() != null) {
+            card.setExpirationDate(cardEdit.getExpirationDateAsYearMonth());
+        }
         return card;
     }
 }

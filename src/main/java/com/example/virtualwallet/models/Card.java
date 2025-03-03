@@ -1,5 +1,6 @@
 package com.example.virtualwallet.models;
 
+import com.example.virtualwallet.helpers.YearMonthConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,10 +31,11 @@ public class Card {
     @Column(nullable = false)
     private String cardHolder;
 
-    @Column(nullable = false)
+    @Convert(converter = YearMonthConverter.class)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private YearMonth expirationDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(5)")
     private String cvv;
 
     @ManyToOne(fetch = FetchType.LAZY)

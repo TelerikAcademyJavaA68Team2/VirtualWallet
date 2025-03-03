@@ -5,8 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.springframework.context.annotation.PropertySource;
 
 @Data
+@PropertySource("classpath:messages.properties")
 public class RegisterUserInput {
 
     @NotBlank(message = "First name cant be empty!")

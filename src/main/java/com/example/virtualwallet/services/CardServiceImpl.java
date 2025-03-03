@@ -5,6 +5,7 @@ import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.CardEdit;
 import com.example.virtualwallet.models.dtos.CardInput;
 import com.example.virtualwallet.models.dtos.CardOutput;
 import com.example.virtualwallet.models.dtos.CardOutputForList;
@@ -77,14 +78,14 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public CardOutput updateCard(CardInput cardInput, UUID cardId) {
+    public CardOutput updateCard(CardEdit cardEdit, UUID cardId) {
         User user = userService.getAuthenticatedUser();
         Card card = findCardById(cardId);
         validateUserIsCardOwner(card, user);
-        if(!card.getCardNumber().equals(cardInput.getCardNumber())) {
-            throwIfCardWithSameNumberAlreadyExistsInSystem(cardInput.getCardNumber());
+        if(!card.getCardNumber().equals(cardEdit.getCardNumber())) {
+            throwIfCardWithSameNumberAlreadyExistsInSystem(cardEdit.getCardNumber());
         }
-        card = modelMapper.updateCardFromCardInput(cardInput, card);
+        card = modelMapper.updateCardFromCardInput(cardEdit, card);
         cardRepository.save(card);
         return modelMapper.cardOutputFromCard(card);
     }

@@ -1,6 +1,7 @@
 package com.example.virtualwallet.services.contracts;
 
 import com.example.virtualwallet.models.Card;
+import com.example.virtualwallet.models.dtos.CardEdit;
 import com.example.virtualwallet.models.dtos.CardInput;
 import com.example.virtualwallet.models.dtos.CardOutput;
 import com.example.virtualwallet.models.dtos.CardOutputForList;
@@ -20,7 +21,7 @@ public interface CardService {
 
     CardOutput addCard(CardInput cardInput);
 
-    CardOutput updateCard(CardInput existingCardDto, UUID cardId);
+    CardOutput updateCard(CardEdit existingCardDto, UUID cardId);
 
     void softDeleteCard(UUID id);
 
