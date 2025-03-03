@@ -23,7 +23,7 @@ public class Wallet {
     private UUID id;
 
     @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal balance = BigDecimal.ZERO;
+    private BigDecimal balance;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -34,19 +34,19 @@ public class Wallet {
     private User owner;
 
     @OneToMany(mappedBy = "senderWallet", fetch = FetchType.LAZY)
-    private Set<Transaction> sentTransactions = new HashSet<>();
+    private Set<Transaction> sentTransactions;
 
     @OneToMany(mappedBy = "recipientWallet", fetch = FetchType.LAZY)
-    private Set<Transaction> receivedTransactions = new HashSet<>();
+    private Set<Transaction> receivedTransactions;
 
     @OneToMany(mappedBy = "wallet", fetch = FetchType.LAZY)
-    private Set<Transfer> transfers = new HashSet<>();
+    private Set<Transfer> transfers;
 
     @OneToMany(mappedBy = "fromWallet", fetch = FetchType.LAZY)
-    private Set<Exchange> exchangesFromWallet = new HashSet<>();
+    private Set<Exchange> exchangesFromWallet;
 
     @OneToMany(mappedBy = "toWallet", fetch = FetchType.LAZY)
-    private Set<Exchange> exchangesToWallet = new HashSet<>();
+    private Set<Exchange> exchangesToWallet;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -59,7 +59,14 @@ public class Wallet {
 
     @PrePersist
     protected void onCreate() {
+        this.balance = BigDecimal.ZERO;
+        this.sentTransactions = new HashSet<>();
+        this.receivedTransactions = new HashSet<>();
+        this.transfers = new HashSet<>();
+        this.exchangesFromWallet = new HashSet<>();
+        this.exchangesToWallet = new HashSet<>();
         this.createdAt = LocalDateTime.now();
+        this.isDeleted = false;
     }
 
     public void markAsDeleted() {
