@@ -5,18 +5,20 @@ import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
+import com.example.virtualwallet.helpers.UserQueryBuilderHelper;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
-import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.repositories.UserRepository;
 import com.example.virtualwallet.services.contracts.UserService;
+import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,8 +26,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -39,6 +41,8 @@ public class UserServiceImpl implements UserService {
     @Value("${error.noAuthenticatedUser}")
     public static String USER_NOT_AUTHENTICATED;
 
+    @PersistenceContext
+    private EntityManager entityManager;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
@@ -150,29 +154,43 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserOutput> filterUsers(UserFilterOptions userFilterOptions, Pageable pageable) {
+        UserQueryBuilderHelper queryBuilder = new UserQueryBuilderHelper();
 
-        String username = userFilterOptions.getUsername().orElse(null);
-        String email = userFilterOptions.getEmail().orElse(null);
+        queryBuilder.addUsernameFilter(userFilterOptions.getUsername());
+        queryBuilder.addEmailFilter(userFilterOptions.getEmail());
+        queryBuilder.addPhoneNumberFilter(userFilterOptions.getPhoneNumber());
+        queryBuilder.addRoleFilter(userFilterOptions.getRole());
+        queryBuilder.addAccountStatusFilter(userFilterOptions.getAccountStatus());
+        queryBuilder.addMinTotalBalanceFilter(userFilterOptions.getMinTotalBalance());
+        queryBuilder.addMaxTotalBalanceFilter(userFilterOptions.getMaxTotalBalance());
+        queryBuilder.finalizeQuery(
+                userFilterOptions.getSortBy().orElse("u.username"),
+                userFilterOptions.getSortOrder().orElse("ASC")
+        );
 
-        String phoneNumber = userFilterOptions.getPhoneNumber()
-                .map(number -> "%" + number + "%")
-                .orElse(null);
+        String queryString = queryBuilder.getQueryString();
+        Map<String, Object> parameters = queryBuilder.getParameters();
 
-        Role role = userFilterOptions.getRole().map(Role::valueOf).orElse(null);
-        String accountStatus = userFilterOptions.getAccountStatus().orElse(null); // Pass as string
-        BigDecimal minTotalBalance = userFilterOptions.getMinTotalBalance().orElse(null);
-        BigDecimal maxTotalBalance = userFilterOptions.getMaxTotalBalance().orElse(null);
+        TypedQuery<UserOutput> query = entityManager.createQuery(queryString, UserOutput.class);
+        parameters.forEach(query::setParameter);
 
-/*        return userRepository.findUsersWithTotalBalance(
-                username,
-                email,
-                phoneNumber, // Pass the constructed pattern
-                role,
-                accountStatus,
-                minTotalBalance,
-                maxTotalBalance,
-                pageable
-        );*/
-        return null;
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+        List<UserOutput> content = query.getResultList();
+        long total = countFilteredUsers(queryBuilder.getCountQuery(), parameters);
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    private long countFilteredUsers(String countQuery, Map<String, Object> parameters) {
+        Query query = entityManager.createQuery(countQuery);
+        parameters.forEach(query::setParameter);
+
+        try {
+            Number countResult = (Number) query.getSingleResult();
+            return countResult.longValue();
+        } catch (NoResultException | NullPointerException e) {
+            return 0;
+        }
     }
 }
