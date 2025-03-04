@@ -161,9 +161,10 @@ public class UserServiceImpl implements UserService {
         queryBuilder.addPhoneNumberFilter(userFilterOptions.getPhoneNumber());
         queryBuilder.addRoleFilter(userFilterOptions.getRole());
         queryBuilder.addAccountStatusFilter(userFilterOptions.getAccountStatus());
+        queryBuilder.addGroupBy();
         queryBuilder.addMinTotalBalanceFilter(userFilterOptions.getMinTotalBalance());
         queryBuilder.addMaxTotalBalanceFilter(userFilterOptions.getMaxTotalBalance());
-        queryBuilder.finalizeQuery(
+        queryBuilder.addSorting(
                 userFilterOptions.getSortBy().orElse("u.username"),
                 userFilterOptions.getSortOrder().orElse("ASC")
         );
