@@ -1,5 +1,7 @@
 package com.example.virtualwallet.helpers;
 
+import com.example.virtualwallet.models.enums.AccountStatus;
+import com.example.virtualwallet.models.enums.Role;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -13,10 +15,11 @@ public class UserQueryBuilderHelper {
     private final Map<String, Object> parameters = new HashMap<>();
     private final StringBuilder queryBuilder = new StringBuilder();
     private boolean hasFilters = false;
+    private boolean hasAggregateConditions = false;
 
     public UserQueryBuilderHelper() {
         queryBuilder.append("SELECT NEW com.example.virtualwallet.models.dtos.user.UserOutput(");
-        queryBuilder.append("u.id, u.username, u.email, u.phoneNumber, u.role, u.status, COALESCE(SUM(w.balance), 0) AS totalBalance) ");
+        queryBuilder.append("u.id, u.username, u.email, u.phoneNumber, u.role, u.status, COALESCE(SUM(w.balance), 0)) ");
         queryBuilder.append("FROM User u LEFT JOIN Wallet w ON u.id = w.owner.id ");
     }
 
@@ -32,28 +35,32 @@ public class UserQueryBuilderHelper {
         appendFilter(phoneNumber, "phoneNumber", "u.phoneNumber LIKE :phoneNumber");
     }
 
-    public void addRoleFilter(Optional<String> role) {
+    public void addRoleFilter(Optional<Role> role) {
         appendFilter(role, "role", "u.role = :role");
     }
 
-    public void addAccountStatusFilter(Optional<String> accountStatus) {
+    public void addAccountStatusFilter(Optional<AccountStatus> accountStatus) {
         appendFilter(accountStatus, "accountStatus", "u.status = :accountStatus");
     }
 
     public void addMinTotalBalanceFilter(Optional<BigDecimal> minTotalBalance) {
-        appendFilter(minTotalBalance, "minTotalBalance", "(COALESCE(SUM(w.balance), 0) >= :minTotalBalance OR w IS NULL)");
+        appendAggregateCondition(minTotalBalance, "minTotalBalance", "COALESCE(SUM(w.balance), 0) >= :minTotalBalance");
     }
 
     public void addMaxTotalBalanceFilter(Optional<BigDecimal> maxTotalBalance) {
-        appendFilter(maxTotalBalance, "maxTotalBalance", "(COALESCE(SUM(w.balance), 0) <= :maxTotalBalance OR w IS NULL)");
+        appendAggregateCondition(maxTotalBalance, "maxTotalBalance", "COALESCE(SUM(w.balance), 0) <= :maxTotalBalance");
     }
 
-    public void finalizeQuery(String sortBy, String sortOrder) {
-        if (!hasFilters) {
-            queryBuilder.append(" WHERE 1=1 ");
-        }
+    public void addGroupBy() {
         queryBuilder.append(" GROUP BY u.id, u.username, u.email, u.phoneNumber, u.role, u.status ");
+    }
+
+    public void addSorting(String sortBy, String sortOrder) {
+
         if (!sortBy.isEmpty() && !sortOrder.isEmpty()) {
+            if (sortBy.equals("balance")) {
+                sortBy = "COALESCE(SUM(w.balance), 0)";
+            }
             queryBuilder.append(" ORDER BY ").append(sortBy).append(" ").append(sortOrder);
         }
     }
@@ -63,11 +70,34 @@ public class UserQueryBuilderHelper {
     }
 
     public String getCountQuery() {
-        if (hasFilters) {
-            String filteringPart = queryBuilder.substring(queryBuilder.indexOf("WHERE"), queryBuilder.indexOf("GROUP BY"));
+        if (hasFilters || hasAggregateConditions) {
+            StringBuilder filteringPart = new StringBuilder();
+
+            if (hasFilters) {
+                int whereIndex = queryBuilder.indexOf("WHERE");
+                int groupByIndex = queryBuilder.indexOf("GROUP BY");
+
+                if (whereIndex != -1 && groupByIndex != -1) {
+                    filteringPart.append(queryBuilder.substring(whereIndex, groupByIndex));
+                }
+            }
+
+            filteringPart.append(" GROUP BY u.id ");
+
+            if (hasAggregateConditions) {
+                int havingIndex = queryBuilder.indexOf("HAVING");
+                int orderIndex = queryBuilder.indexOf("ORDER BY");
+
+                if (havingIndex != -1) {
+                    if (orderIndex != -1) {
+                        filteringPart.append(queryBuilder.substring(havingIndex, orderIndex));
+                    } else {
+                        filteringPart.append(queryBuilder.substring(havingIndex));
+                    }
+                }
+            }
             return "SELECT COUNT(DISTINCT u.id) FROM User u LEFT JOIN Wallet w ON u.id = w.owner.id " +
-                    filteringPart +
-                    " GROUP BY u.id";
+                    filteringPart.toString();
         } else {
             return "SELECT COUNT(DISTINCT u.id) FROM User u LEFT JOIN Wallet w ON u.id = w.owner.id GROUP BY u.id";
         }
@@ -83,6 +113,19 @@ public class UserQueryBuilderHelper {
             queryBuilder.append(condition).append(" ");
             parameters.put(parameterName, v instanceof String ? "%" + v + "%" : v);
             hasFilters = true;
+        });
+    }
+
+    private void appendAggregateCondition(Optional<BigDecimal> value, String parameterName, String condition) {
+        value.ifPresent(v -> {
+            if (!hasAggregateConditions) {
+                queryBuilder.append(" HAVING ");
+            } else {
+                queryBuilder.append(" AND ");
+            }
+            queryBuilder.append(condition).append(" ");
+            parameters.put(parameterName, v);
+            hasAggregateConditions = true;
         });
     }
 }
