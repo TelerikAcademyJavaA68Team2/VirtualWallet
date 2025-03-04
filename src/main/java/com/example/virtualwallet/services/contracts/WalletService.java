@@ -2,8 +2,10 @@ package com.example.virtualwallet.services.contracts;
 
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
+import com.example.virtualwallet.models.dtos.WalletBasicOutput;
 import com.example.virtualwallet.models.enums.Currency;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface WalletService {
@@ -14,4 +16,7 @@ public interface WalletService {
 
     void update(Wallet wallet, User user);
 
+    List<WalletBasicOutput> getActiveWalletsByUserId(UUID userId);
+
+    void softDeleteAuthenticatedUserWalletByCurrency(Currency currency);
 }
