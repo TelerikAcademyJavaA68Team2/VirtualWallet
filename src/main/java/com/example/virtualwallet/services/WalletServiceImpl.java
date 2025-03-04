@@ -1,6 +1,8 @@
 package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
+import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
+import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.repositories.UserRepository;
@@ -16,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
 
+    public static final String NOT_WALLET_OWNER = "You are not the wallet's owner!";
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
 
@@ -38,5 +41,11 @@ public class WalletServiceImpl implements WalletService {
         return newWallet;
     }
 
+    @Override
+    public void update(Wallet wallet, User user) {
+        if(wallet.getOwner().equals(user)){
+            walletRepository.save(wallet);
+        } else throw new UnauthorizedAccessException(NOT_WALLET_OWNER);
+    }
 
 }

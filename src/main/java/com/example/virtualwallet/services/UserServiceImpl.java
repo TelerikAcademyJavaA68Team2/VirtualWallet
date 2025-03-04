@@ -32,6 +32,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @PropertySource("classpath:messages.properties")
 public class UserServiceImpl implements UserService {
+
     @Value("${error.userNotLoggedIn}")
     public static String LOGIN_FIRST;
 

@@ -2,9 +2,13 @@ package com.example.virtualwallet.helpers;
 
 
 import com.example.virtualwallet.models.Card;
+import com.example.virtualwallet.models.Transfer;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.*;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
+import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.enums.TransactionStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -62,7 +66,6 @@ public class ModelMapper {
                 user.getCreatedAt());
     }
 
-
     public Card updateCardFromCardInput(CardEdit cardEdit, Card card) {
         if (cardEdit.getCardNumber() != null) {
             card.setCardNumber(cardEdit.getCardNumber());
@@ -77,5 +80,27 @@ public class ModelMapper {
             card.setExpirationDate(cardEdit.getExpirationDateAsYearMonth());
         }
         return card;
+    }
+
+    public TransferOutput transferToTransferOutput(Transfer transfer) {
+        TransferOutput transferOutput = new TransferOutput();
+        transferOutput.setTransferId(transfer.getId());
+        transferOutput.setStatus(String.valueOf(transfer.getStatus()));
+        transferOutput.setAmount(transfer.getAmount());
+        transferOutput.setCurrency(String.valueOf(transfer.getCurrency()));
+        transferOutput.setCardId(transfer.getCard().getId());
+        transferOutput.setWalletId(transfer.getWallet().getId());
+        return transferOutput;
+    }
+
+    public Transfer createTransferFromTransferInput(TransferInput transferInput, Card card, Wallet wallet,
+                                                    TransactionStatus transferStatus, Currency currency) {
+        Transfer transfer = new Transfer();
+        transfer.setCard(card);
+        transfer.setWallet(wallet);
+        transfer.setAmount(transferInput.getAmount());
+        transfer.setCurrency(currency);
+        transfer.setStatus(transferStatus);
+        return transfer;
     }
 }

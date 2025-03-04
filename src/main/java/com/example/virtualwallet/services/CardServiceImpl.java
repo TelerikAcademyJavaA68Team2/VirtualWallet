@@ -13,6 +13,7 @@ import com.example.virtualwallet.repositories.CardRepository;
 import com.example.virtualwallet.services.contracts.CardService;
 import com.example.virtualwallet.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,9 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.validateUserIs
 @Service
 @PropertySource("classpath:messages.properties")
 public class CardServiceImpl implements CardService {
+
+    @Value("${error.registeredAnotherUser}")
+    public static String REGISTERED_TO_ANOTHER_USER;
 
     private final CardRepository cardRepository;
     private final ModelMapper modelMapper;
@@ -64,6 +68,9 @@ public class CardServiceImpl implements CardService {
         Card existingCard = cardRepository.getCardByCardNumber(cardDto.getCardNumber());
 
         if (existingCard != null) {
+            if (!existingCard.getOwner().equals(user)) {
+                throw new DuplicateEntityException(REGISTERED_TO_ANOTHER_USER);
+            }
             if (existingCard.isDeleted()) {
                 return restoreSoftDeletedCard(existingCard, user, cardDto);
             } else {
@@ -71,9 +78,7 @@ public class CardServiceImpl implements CardService {
             }
         }
 
-        Card newCard = modelMapper.createCardFromCardInput(cardDto, user);
-        cardRepository.save(newCard);
-        return modelMapper.cardOutputFromCard(newCard);
+        return createAndSaveCard(cardDto, user);
 
     }
 
@@ -97,6 +102,12 @@ public class CardServiceImpl implements CardService {
         validateUserIsCardOwner(card, user);
         card.markAsDeleted();
         cardRepository.save(card);
+    }
+
+    private CardOutput createAndSaveCard(CardInput cardDto, User user) {
+        Card newCard = modelMapper.createCardFromCardInput(cardDto, user);
+        cardRepository.save(newCard);
+        return modelMapper.cardOutputFromCard(newCard);
     }
 
     private Card findCardById(UUID cardId) {
