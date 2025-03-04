@@ -10,8 +10,8 @@ VALUES
 -- Insert dummy data into the `credit_card` table
 INSERT INTO card (id, card_holder, card_number, created_at, cvv, deleted_at, expiration_date, is_deleted, owner_id)
 VALUES
-    ('123e4567-e89b-12d3-a456-426614174002', 'John Doe', '4111111111111111', NOW(), '123', NULL, DATE_ADD(NOW(), INTERVAL 2 YEAR), 0, '123e4567-e89b-12d3-a456-426614174000'),
-    ('123e4567-e89b-12d3-a456-426614174003', 'Admin User', '5555555555554444', NOW(), '456', NULL, DATE_ADD(NOW(), INTERVAL 3 YEAR), 0, '123e4567-e89b-12d3-a456-426614174001');
+    ('123e4567-e89b-12d3-a452-426614174002', 'John Doe', '4111111111111111', NOW(), '123', NULL, DATE_ADD(NOW(), INTERVAL 2 YEAR), 0, '123e4567-e89b-12d3-a456-426614174000'),
+    ('123e4567-e89b-12d3-a456-446614174003', 'Admin User', '5555555555554444', NOW(), '456', NULL, DATE_ADD(NOW(), INTERVAL 3 YEAR), 0, '123e4567-e89b-12d3-a456-426614174000');
 
 -- Insert dummy data into the `wallet` table
 INSERT INTO wallet (id, balance, created_at, currency, deleted_at, is_deleted, owner_id)
@@ -20,9 +20,9 @@ VALUES
     ('123e4567-e89b-12d3-a456-426614174005', 500.00, NOW(), 'EUR', NULL, 0, '123e4567-e89b-12d3-a456-426614174001');
 
 -- Insert dummy data into the `exchange` table
-INSERT INTO exchange (id, amount, currency, date, exchange_rate, from_wallet_id, to_wallet_id)
+INSERT INTO exchange (id, amount, from_currency,to_currency, date, exchange_rate, from_wallet_id, to_wallet_id)
 VALUES
-    ('123e4567-e89b-12d3-a456-426614174006', 100.00, 'USD', NOW(), 0.85, '123e4567-e89b-12d3-a456-426614174004', '123e4567-e89b-12d3-a456-426614174005');
+    ('123e4567-e89b-12d3-a456-426614174006', 100.00, 'USD', 'BGN', NOW(), 0.85, '123e4567-e89b-12d3-a456-426614174004', '123e4567-e89b-12d3-a456-426614174005');
 
 -- Insert dummy data into the `transaction` table
 INSERT INTO transaction (id, amount, currency, date, recipient_wallet_id, sender_wallet_id)

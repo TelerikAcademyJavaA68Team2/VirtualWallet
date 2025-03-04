@@ -30,7 +30,11 @@ public class Exchange {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Currency currency;
+    private Currency fromCurrency;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Currency toCurrency;
 
     @Column(nullable = false)
     private LocalDateTime date;
