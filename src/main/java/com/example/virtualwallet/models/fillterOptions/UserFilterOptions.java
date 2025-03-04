@@ -17,8 +17,8 @@ public class UserFilterOptions {
     private Optional<String> username;
     private Optional<String> email;
     private Optional<String> phoneNumber;
-    private Optional<String> role;
-    private Optional<String> accountStatus;
+    private Optional<Role> role;
+    private Optional<AccountStatus> accountStatus;
     private Optional<BigDecimal> minTotalBalance;
     private Optional<BigDecimal> maxTotalBalance;
     private Optional<String> sortBy;
@@ -49,22 +49,22 @@ public class UserFilterOptions {
         return (value == null || value.trim().isEmpty()) ? Optional.empty() : Optional.of(value);
     }
 
-    private Optional<String> validateRole(String role) {
+    private Optional<Role> validateRole(String role) {
         List<String> validRoles = Arrays.stream(Role.values())
                 .map(Enum::name)
                 .toList();
-        return validRoles.contains(role) ? Optional.of(role) : Optional.empty();
+        return validRoles.contains(role.toUpperCase()) ? Optional.of(Role.valueOf(role.toUpperCase())) : Optional.empty();
     }
 
-    private Optional<String> validateAccountStatus(String accountStatus) {
+    private Optional<AccountStatus> validateAccountStatus(String accountStatus) {
         List<String> validAccountStatuses = Arrays.stream(AccountStatus.values())
                 .map(Enum::name)
                 .toList();
-        return validAccountStatuses.contains(accountStatus) ? Optional.of(accountStatus) : Optional.empty();
+        return validAccountStatuses.contains(accountStatus.toUpperCase()) ? Optional.of(AccountStatus.valueOf(accountStatus.toUpperCase())) : Optional.empty();
     }
 
     private Optional<String> validateSortBy(String sortBy) {
-        List<String> validFields = Arrays.asList("username", "email", "phoneNumber", "role", "status", "totalBalance");
+        List<String> validFields = Arrays.asList("username", "email", "phoneNumber", "role", "status", "balance");
         return (sortBy == null || sortBy.isEmpty() || validFields.contains(sortBy))
                 ? Optional.ofNullable(sortBy)
                 : Optional.of("username");
