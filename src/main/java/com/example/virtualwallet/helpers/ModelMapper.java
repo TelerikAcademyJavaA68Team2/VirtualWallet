@@ -30,7 +30,7 @@ public class ModelMapper {
         return card;
     }
 
-    public Card modifySoftDeletedCardFromCardInput(Card card, CardInput cardInput){
+    public Card modifySoftDeletedCardFromCardInput(Card card, CardInput cardInput) {
         card.setCardHolder(cardInput.getCardHolder());
         card.setCvv(cardInput.getCvv());
         card.setExpirationDate(cardInput.getExpirationDateAsYearMonth());
@@ -102,5 +102,13 @@ public class ModelMapper {
         transfer.setCurrency(currency);
         transfer.setStatus(transferStatus);
         return transfer;
+    }
+
+    public WalletBasicOutput mapWalletToBasicWalletOutput(Wallet input) {
+        WalletBasicOutput output = new WalletBasicOutput();
+        output.setWalletId(input.getId());
+        output.setBalance(input.getBalance());
+        output.setCurrency(input.getCurrency());
+        return output;
     }
 }
