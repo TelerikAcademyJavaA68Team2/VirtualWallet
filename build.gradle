@@ -52,9 +52,8 @@ dependencies {
 
     // Jackson dependency for JSON processing
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
-    // Jackson Databind (serialization/deserialization)
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.0'  // Jackson Annotations (Optional)
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.0'  // Jackson Core (Optional)
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.0'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
@@ -72,7 +71,7 @@ dependencies {
     // OPENAPI dependency for Swagger documentation
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.3'
 
-    //Starter Mail for sending emails
+    // Starter Mail for sending emails
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 
