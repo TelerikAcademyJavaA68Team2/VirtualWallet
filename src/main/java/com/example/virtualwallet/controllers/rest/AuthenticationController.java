@@ -50,12 +50,12 @@ public class AuthenticationController {
     }
 
     @GetMapping("/register/confirm")
-    public ResponseEntity<String> confirmEmail(@RequestParam UUID tokenId) {
+    public ResponseEntity<String> confirmEmail(@RequestParam UUID token) {
         try {
-            emailConfirmationService.confirmEmailToken(tokenId);
+            emailConfirmationService.confirmEmailToken(token);
             return ResponseEntity.ok("Email confirmed successfully");
         } catch (EmailConfirmationException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 

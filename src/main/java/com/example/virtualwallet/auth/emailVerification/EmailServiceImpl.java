@@ -11,19 +11,19 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    /*private final JavaMailSender mailSender;*/
+    private final JavaMailSender mailSender;
 
     @Override
     @Async
     public void sendVerificationEmail(String firstName, String toEmail,String tokenId) {
         try {
-
-          /*  MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(buildEmail(firstName, "localhost:8080/api/auth/register/confirm?token=" + tokenId), true);
             helper.setTo(toEmail);
             helper.setSubject("Confirm your email");
-            helper.setFrom("virtual.wallet.a68@abv.bg","Virtual Wallet Team");*/
+            helper.setFrom("virtual.wallet.a68@gmail.com","Virtual Wallet Team");
+            mailSender.send(mimeMessage);
         } catch (Exception e) {
             throw new RuntimeException("Send email confirmation failed");
         }
