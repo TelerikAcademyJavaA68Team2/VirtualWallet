@@ -1,7 +1,7 @@
 package com.example.virtualwallet.auth;
 
 import com.example.virtualwallet.auth.emailVerification.EmailConfirmationService;
-import com.example.virtualwallet.auth.emailVerification.EmailConfirmationToken;
+import com.example.virtualwallet.models.EmailConfirmationToken;
 import com.example.virtualwallet.auth.emailVerification.EmailService;
 import com.example.virtualwallet.auth.jwt.JwtService;
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
@@ -67,7 +67,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         User newUser = createUserFromRequest(request);
         // todo validate uniquenes of user
-        userService.save(newUser);
+        userService.createUser(newUser);
         User user = userService.loadUserByUsername(request.getUsername());
         UUID tokenId = UUID.randomUUID();
         EmailConfirmationToken token = new EmailConfirmationToken(tokenId, user);
