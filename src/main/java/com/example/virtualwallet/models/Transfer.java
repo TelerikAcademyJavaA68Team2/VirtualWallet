@@ -3,10 +3,7 @@ package com.example.virtualwallet.models;
 import com.example.virtualwallet.models.enums.TransactionStatus;
 import com.example.virtualwallet.models.enums.Currency;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,10 +14,12 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Transfer {
 
     @Id
     @GeneratedValue(generator = "UUID")
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(nullable = false)
