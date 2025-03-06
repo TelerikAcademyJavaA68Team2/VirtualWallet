@@ -12,9 +12,9 @@ import com.example.virtualwallet.models.dtos.CardOutputForList;
 import com.example.virtualwallet.repositories.CardRepository;
 import com.example.virtualwallet.services.contracts.CardService;
 import com.example.virtualwallet.services.contracts.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,21 +24,13 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.validateUserIs
 
 @Service
 @PropertySource("classpath:messages.properties")
+@RequiredArgsConstructor
 public class CardServiceImpl implements CardService {
-
-    @Value("${error.registeredAnotherUser}")
-    public static String REGISTERED_TO_ANOTHER_USER;
 
     private final CardRepository cardRepository;
     private final ModelMapper modelMapper;
     private final UserService userService;
-
-    @Autowired
-    public CardServiceImpl(CardRepository cardRepository, ModelMapper modelMapper, UserService userService) {
-        this.cardRepository = cardRepository;
-        this.modelMapper = modelMapper;
-        this.userService = userService;
-    }
+    private final Environment env;
 
     @Override
     public CardOutput getCardOutputById(UUID cardId) {
@@ -56,6 +48,11 @@ public class CardServiceImpl implements CardService {
         return findAllCardsByUser(userId);
     }
 
+    @Override
+    public Integer getTotalNumberOfCardsByOwner_Id(UUID userId) {
+        return cardRepository.getTotalNumberOfCardsByOwner_Id(userId);
+    }
+
     public List<CardOutputForList> getAllCardsOutputForListByUser(UUID userId) {
         return findAllCardsByUser(userId).stream()
                 .map(modelMapper::displayForListCardOutputFromCreditCard)
@@ -68,9 +65,7 @@ public class CardServiceImpl implements CardService {
         Card existingCard = cardRepository.getCardByCardNumber(cardDto.getCardNumber());
 
         if (existingCard != null) {
-            if (!existingCard.getOwner().equals(user)) {
-                throw new DuplicateEntityException(REGISTERED_TO_ANOTHER_USER);
-            }
+            throwIfCardIsAlreadyAssignedToAnotherUser(existingCard, user);
             if (existingCard.isDeleted()) {
                 return restoreSoftDeletedCard(existingCard, user, cardDto);
             } else {
@@ -80,6 +75,12 @@ public class CardServiceImpl implements CardService {
 
         return createAndSaveCard(cardDto, user);
 
+    }
+
+    private void throwIfCardIsAlreadyAssignedToAnotherUser(Card existingCard, User user) {
+        if (!existingCard.getOwner().equals(user)) {
+            throw new DuplicateEntityException(env.getProperty("error.registeredAnotherUser"));
+        }
     }
 
     @Override
@@ -133,6 +134,4 @@ public class CardServiceImpl implements CardService {
     private List<Card> findAllCardsByUser(UUID userId) {
         return cardRepository.getAllByOwner_Id(userId);
     }
-
-
 }
