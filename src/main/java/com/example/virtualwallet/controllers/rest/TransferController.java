@@ -15,7 +15,7 @@ import java.util.Random;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/transfer")
+@RequestMapping("/api/transfers")
 @Tag(name = "Transfer Management", description = "API for making user transfers")
 public class TransferController {
 
@@ -32,8 +32,8 @@ public class TransferController {
                     @ApiResponse(responseCode = "404", description = "Entity not found")
             }
     )
-    @PostMapping
-    public ResponseEntity<TransferOutput> transfer(@Valid @RequestBody TransferInput transferInput) {
+    @PostMapping("/new")
+    public ResponseEntity<TransferOutput> makeTransfer(@Valid @RequestBody TransferInput transferInput) {
         return ResponseEntity.ok(transferService.processTransfer(transferInput));
     }
 
