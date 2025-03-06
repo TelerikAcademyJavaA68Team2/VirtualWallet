@@ -3,79 +3,82 @@ package com.example.virtualwallet.models.fillterOptions;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Role;
 import lombok.Getter;
-import lombok.Setter;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Getter
-@Setter
 public class UserFilterOptions {
 
     private Optional<String> username;
     private Optional<String> email;
     private Optional<String> phoneNumber;
-    private Optional<Role> role;
-    private Optional<AccountStatus> accountStatus;
-    private Optional<BigDecimal> minTotalBalance;
-    private Optional<BigDecimal> maxTotalBalance;
-    private Optional<String> sortBy;
-    private Optional<String> sortOrder;
+    private Optional<String> role;
+    private Optional<String> status;
+    private Optional<LocalDateTime> minCreatedAt;
+    private Optional<LocalDateTime> maxCreatedAt;
+    private String sortBy;
+    private String sortOrder;
+    private int page;
+    private int size;
+
 
     public UserFilterOptions(String username,
                              String email,
                              String phoneNumber,
                              String role,
-                             String accountStatus,
-                             BigDecimal minTotalBalance,
-                             BigDecimal maxTotalBalance,
+                             String status,
                              String sortBy,
-                             String sortOrder
+                             String sortOrder,
+                             int page,
+                             int size
     ) {
         this.username = sanitizeOptional(username);
         this.email = sanitizeOptional(email);
         this.phoneNumber = sanitizeOptional(phoneNumber);
         this.role = validateRole(role);
-        this.accountStatus = validateAccountStatus(accountStatus);
-        this.minTotalBalance = Optional.ofNullable(minTotalBalance);
-        this.maxTotalBalance = Optional.ofNullable(maxTotalBalance);
+        this.status = validateAccountStatus(status);
         this.sortBy = validateSortBy(sortBy);
-        this.sortOrder = validateSortOrder(sortBy,sortOrder);
+        this.sortOrder = validateSortOrder(sortOrder);
+        this.page = page;
+        this.size = size;
     }
 
     private Optional<String> sanitizeOptional(String value) {
         return (value == null || value.trim().isEmpty()) ? Optional.empty() : Optional.of(value);
     }
 
-    private Optional<Role> validateRole(String role) {
+    private Optional<String> validateRole(String role) {
+        if (role == null || role.trim().isEmpty()) {
+            return Optional.empty();
+        }
         List<String> validRoles = Arrays.stream(Role.values())
                 .map(Enum::name)
                 .toList();
-        return validRoles.contains(role.toUpperCase()) ? Optional.of(Role.valueOf(role.toUpperCase())) : Optional.empty();
+        return validRoles.contains(role) ? Optional.of(role) : Optional.empty();
     }
 
-    private Optional<AccountStatus> validateAccountStatus(String accountStatus) {
+    private Optional<String> validateAccountStatus(String accountStatus) {
+        if (accountStatus == null || accountStatus.trim().isEmpty()) {
+            return Optional.empty();
+        }
+
         List<String> validAccountStatuses = Arrays.stream(AccountStatus.values())
                 .map(Enum::name)
                 .toList();
-        return validAccountStatuses.contains(accountStatus.toUpperCase()) ? Optional.of(AccountStatus.valueOf(accountStatus.toUpperCase())) : Optional.empty();
+        return validAccountStatuses.contains(accountStatus) ? Optional.of(accountStatus) : Optional.empty();
     }
 
-    private Optional<String> validateSortBy(String sortBy) {
-        List<String> validFields = Arrays.asList("username", "email", "phoneNumber", "role", "status", "balance");
-        return (sortBy == null || sortBy.isEmpty() || validFields.contains(sortBy))
-                ? Optional.ofNullable(sortBy)
-                : Optional.of("username");
+    private String validateSortBy(String sortBy) {
+        List<String> validFields = Arrays.asList("username", "email", "phoneNumber", "role", "status", "date");
+        return (sortBy != null && !sortBy.isEmpty() && validFields.contains(sortBy)) ? sortBy : "date";
     }
 
-    private Optional<String> validateSortOrder(String sortBy, String sortOrder) {
-        if (sortBy == null || sortBy.isEmpty()) {
-            return Optional.empty();
-        }
-        return ("asc".equalsIgnoreCase(sortOrder) || "desc".equalsIgnoreCase(sortOrder))
-                ? Optional.of(sortOrder.toLowerCase())
-                : Optional.of("asc");
+    private String validateSortOrder(String sortOrder) {
+        return (sortOrder != null &&
+                !sortOrder.isEmpty() &&
+                (sortOrder.equals("asc") || sortOrder.equals("desc"))) ? sortOrder : "desc";
     }
 }
