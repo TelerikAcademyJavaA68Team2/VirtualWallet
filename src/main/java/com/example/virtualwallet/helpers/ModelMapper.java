@@ -1,10 +1,7 @@
 package com.example.virtualwallet.helpers;
 
 
-import com.example.virtualwallet.models.Card;
-import com.example.virtualwallet.models.Transfer;
-import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.Wallet;
+import com.example.virtualwallet.models.*;
 import com.example.virtualwallet.models.dtos.*;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.enums.Currency;
@@ -12,6 +9,7 @@ import com.example.virtualwallet.models.enums.TransactionStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelHelpers.maskCreditCard;
 
@@ -85,6 +83,7 @@ public class ModelMapper {
     public TransferOutput transferToTransferOutput(Transfer transfer) {
         TransferOutput transferOutput = new TransferOutput();
         transferOutput.setTransferId(transfer.getId());
+        transferOutput.setDate(transfer.getDate());
         transferOutput.setStatus(String.valueOf(transfer.getStatus()));
         transferOutput.setAmount(transfer.getAmount());
         transferOutput.setCurrency(String.valueOf(transfer.getCurrency()));
@@ -110,5 +109,28 @@ public class ModelMapper {
         output.setBalance(input.getBalance());
         output.setCurrency(input.getCurrency());
         return output;
+    }
+
+    public Transaction createTransactionFromTransactionInput(TransactionInput transactionInput,
+                                                             Currency currency,
+                                                             Wallet senderWallet,
+                                                             Wallet recipientWallet) {
+        Transaction transaction = new Transaction();
+        transaction.setAmount(transactionInput.getAmount());
+        transaction.setCurrency(currency);
+        transaction.setSenderWallet(senderWallet);
+        transaction.setRecipientWallet(recipientWallet);
+        return transaction;
+    }
+
+    public TransactionOutput transactionToTransactionOutput(Transaction transaction) {
+        TransactionOutput transactionOutput = new TransactionOutput();
+        transactionOutput.setTransactionId(transaction.getId());
+        transactionOutput.setDate(transaction.getDate());
+        transactionOutput.setCurrency(String.valueOf(transaction.getCurrency()));
+        transactionOutput.setAmount(transaction.getAmount());
+        transactionOutput.setSenderUsername(transaction.getSenderWallet().getOwner().getUsername());
+        transactionOutput.setRecipientUsername(transaction.getRecipientWallet().getOwner().getUsername());
+        return transactionOutput;
     }
 }
