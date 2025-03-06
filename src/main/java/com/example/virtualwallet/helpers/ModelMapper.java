@@ -9,7 +9,6 @@ import com.example.virtualwallet.models.enums.TransactionStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelHelpers.maskCreditCard;
 
