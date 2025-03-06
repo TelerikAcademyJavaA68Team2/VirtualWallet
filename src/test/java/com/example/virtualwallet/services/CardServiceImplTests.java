@@ -29,9 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-
 @ExtendWith(MockitoExtension.class)
-@TestPropertySource(locations = "classpath:messages.properties")
 public class CardServiceImplTests {
 
     public static final String REGISTERED_TO_ANOTHER_USER = "This card is already registered to another user!";
