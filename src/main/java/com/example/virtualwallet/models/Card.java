@@ -2,11 +2,7 @@ package com.example.virtualwallet.models;
 
 import com.example.virtualwallet.helpers.YearMonthConverter;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.SQLRestriction;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -18,11 +14,12 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLRestriction("is_deleted = false")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Card {
 
     @Id
     @GeneratedValue(generator = "UUID")
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(unique = true, nullable = false)
