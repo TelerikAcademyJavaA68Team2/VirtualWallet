@@ -17,6 +17,7 @@ import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -35,16 +36,11 @@ import java.util.UUID;
 @PropertySource("classpath:messages.properties")
 public class UserServiceImpl implements UserService {
 
-    @Value("${error.userNotLoggedIn}")
-    public static String LOGIN_FIRST;
-
-    @Value("${error.noAuthenticatedUser}")
-    public static String USER_NOT_AUTHENTICATED;
-
     @PersistenceContext
     private EntityManager entityManager;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final Environment environment;
 
 
     @Override
@@ -55,6 +51,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(UUID id) {
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+    }
+
+    @Override
+    public String findByUsernameOrEmailOrPhoneNumber(String usernameOrEmailOrPhoneNumber) {
+        return userRepository.findByUsernameOrEmailOrPhoneNumber(usernameOrEmailOrPhoneNumber).orElseThrow(() ->
+                new EntityNotFoundException("User"));
     }
 
     @Override
@@ -90,7 +92,7 @@ public class UserServiceImpl implements UserService {
         try {
             UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (user == null) {
-                throw new InvalidUserInputException(USER_NOT_AUTHENTICATED);
+                throw new InvalidUserInputException(environment.getProperty("error.userNotLoggedIn"));
             }
             return loadUserByUsername(user.getUsername());
         } catch (Exception e) {

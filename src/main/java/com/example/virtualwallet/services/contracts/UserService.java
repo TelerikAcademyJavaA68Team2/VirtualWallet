@@ -19,6 +19,8 @@ public interface UserService extends UserDetailsService {
 
     User getUserById(UUID id);
 
+    String findByUsernameOrEmailOrPhoneNumber(String input);
+
     UserProfileOutput getAuthenticatedUserProfile();
 
     void softDeleteAuthenticatedUser();
@@ -28,6 +30,8 @@ public interface UserService extends UserDetailsService {
     User getAuthenticatedUser();
 
     User loadUserByUsername(String username);
+
+
 
 /*    User getUserByEmail(String email);
 
