@@ -16,9 +16,11 @@ import com.example.virtualwallet.services.contracts.TransactionService;
 import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -85,8 +87,12 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Set<Transaction> findAllTransactionsByUserId(UUID userId) {
-        return null/* transactionRepository.findAllTransactionsByUserId(userId)*/;
+    public List<TransactionOutput> findAllTransactionsByUserId(UUID userId) {
+        return transactionRepository.findAllTransactionsBySenderWallet_Owner_IdOrRecipientWallet_Owner_Id
+                        (userId, userId, Sort.by(Sort.Direction.DESC, "date"))
+                .stream()
+                .map(modelMapper::transactionToTransactionOutput)
+                .toList();
     }
 
     @Override

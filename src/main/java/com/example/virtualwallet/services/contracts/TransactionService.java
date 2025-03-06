@@ -4,6 +4,7 @@ import com.example.virtualwallet.models.Transaction;
 import com.example.virtualwallet.models.dtos.TransactionInput;
 import com.example.virtualwallet.models.dtos.TransactionOutput;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public interface TransactionService {
 
     TransactionOutput createTransaction(TransactionInput transaction);
 
-    Set<Transaction> findAllTransactionsByUserId(UUID userId);
+    List<TransactionOutput> findAllTransactionsByUserId(UUID userId);
 
     Set<Transaction> findAllTransactionsByWalletId(UUID walletId);
 }
