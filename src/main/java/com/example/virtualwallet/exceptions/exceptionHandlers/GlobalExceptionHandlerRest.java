@@ -1,9 +1,6 @@
 package com.example.virtualwallet.exceptions.exceptionHandlers;
 
-import com.example.virtualwallet.exceptions.DuplicateEntityException;
-import com.example.virtualwallet.exceptions.EntityNotFoundException;
-import com.example.virtualwallet.exceptions.InvalidUserInputException;
-import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
+import com.example.virtualwallet.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +26,11 @@ public class GlobalExceptionHandlerRest {
 
     @ExceptionHandler(InvalidUserInputException.class)
     public ResponseEntity<ErrorResponse> handleInvalidUserInputException(InvalidUserInputException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InsufficientFundsException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientFundsException(InsufficientFundsException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
