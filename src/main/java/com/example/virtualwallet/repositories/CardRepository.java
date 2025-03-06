@@ -11,10 +11,11 @@ import java.util.UUID;
 @Repository
 public interface CardRepository extends JpaRepository<Card, UUID> {
 
+    @Query("SELECT c FROM Card c WHERE c.owner.id = :ownerId AND c.isDeleted = false")
     List<Card> getAllByOwner_Id(UUID ownerId);
 
-    @Query("SELECT COUNT(c) from Card c where c.owner.id = :ownerId")
-    Long getTotalNumberOfCardsByOwner_Id(UUID ownerId);
+    @Query("SELECT COUNT(c) FROM Card c WHERE c.owner.id = :ownerId AND c.isDeleted = false")
+    Integer getTotalNumberOfCardsByOwner_Id(UUID ownerId);
 
     Card getCardByCardNumber(String cardNumber);
 
