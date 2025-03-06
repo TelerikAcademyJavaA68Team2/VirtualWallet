@@ -1,32 +1,22 @@
 package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
-import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
-import com.example.virtualwallet.helpers.UserQueryBuilderHelper;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.UserPageOutput;
 import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
-import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.repositories.UserRepository;
 import com.example.virtualwallet.services.contracts.UserService;
-import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,57 +27,41 @@ public class UserServiceImpl implements UserService {
     public static final String PASSWORD_CONFIRM = "You need to confirm your new password";
     public static final String WRONG_PASSWORD = "You provided wrong password";
 
-    @PersistenceContext
-    private EntityManager entityManager;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
 
     @Override
-    public void save(User user) {
-        userRepository.save(user);
-    }
-
-    @Override
-    public User getUserById(UUID id) {
-        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+    public void createUser(User user) {
+        userRepository.createUser(user);
     }
 
     @Override
     public String findByUsernameOrEmailOrPhoneNumber(String usernameOrEmailOrPhoneNumber) {
-        return userRepository.findByUsernameOrEmailOrPhoneNumber(usernameOrEmailOrPhoneNumber).orElseThrow(() ->
-                new EntityNotFoundException("User"));
+        return userRepository.findByUsernameOrEmailOrPhoneNumber(usernameOrEmailOrPhoneNumber);
     }
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        String.format("User with username: %s not found!", username)));
-    }
-/*
-    @Override
-    public User getUserByEmail(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
-                String.format("User with email: %s not found!", email)));
+        return userRepository.getByUsername(username);
     }
 
     @Override
-    public User getUserByPhoneNumber(String phoneNumber) throws UsernameNotFoundException {
-        return userRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new EntityNotFoundException(
-                String.format("User with phone number: %s not found!", phoneNumber)));
-    }*/
+    public UserPageOutput filterUsers(UserFilterOptions userFilterOptions) {
+        return userRepository.filterUsers(userFilterOptions);
+    }
 
     @Override
     public boolean checkIfPhoneNumberIsTaken(String phoneNumber) {
-        return userRepository.findByPhoneNumber(phoneNumber).isPresent();
+        return userRepository.checkIfPhoneNumberIsTaken(phoneNumber);
     }
 
     @Override
     public boolean checkIfEmailIsTaken(String email) {
-        return userRepository.findByEmail(email).isPresent();
+        return userRepository.checkIfEmailIsTaken(email);
     }
 
+    @Override
     public User getAuthenticatedUser() {
         try {
             UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -133,14 +107,7 @@ public class UserServiceImpl implements UserService {
             }
             user.setPhoneNumber(input.getPhoneNumber());
         }
-        save(user);
-    }
-
-    @Override
-    public void softDeleteAuthenticatedUser() {
-        User user = getAuthenticatedUser();
-        user.markAsDeleted();
-        save(user);
+        userRepository.updateUser(user);
     }
 
     @Override
@@ -150,50 +117,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserOutput> getAllUsers() {
-        return userRepository.findAllUsersWithTotalBalance();
-    }
-
-    @Override
-    public Page<UserOutput> filterUsers(UserFilterOptions userFilterOptions, Pageable pageable) {
-        UserQueryBuilderHelper queryBuilder = new UserQueryBuilderHelper();
-
-        queryBuilder.addUsernameFilter(userFilterOptions.getUsername());
-        queryBuilder.addEmailFilter(userFilterOptions.getEmail());
-        queryBuilder.addPhoneNumberFilter(userFilterOptions.getPhoneNumber());
-        queryBuilder.addRoleFilter(userFilterOptions.getRole());
-        queryBuilder.addAccountStatusFilter(userFilterOptions.getAccountStatus());
-        queryBuilder.addGroupBy();
-        queryBuilder.addMinTotalBalanceFilter(userFilterOptions.getMinTotalBalance());
-        queryBuilder.addMaxTotalBalanceFilter(userFilterOptions.getMaxTotalBalance());
-        queryBuilder.addSorting(
-                userFilterOptions.getSortBy().orElse("u.username"),
-                userFilterOptions.getSortOrder().orElse("ASC")
-        );
-
-        String queryString = queryBuilder.getQueryString();
-        Map<String, Object> parameters = queryBuilder.getParameters();
-
-        TypedQuery<UserOutput> query = entityManager.createQuery(queryString, UserOutput.class);
-        parameters.forEach(query::setParameter);
-
-        query.setFirstResult((int) pageable.getOffset());
-        query.setMaxResults(pageable.getPageSize());
-        List<UserOutput> content = query.getResultList();
-        long total = countFilteredUsers(queryBuilder.getCountQuery(), parameters);
-
-        return new PageImpl<>(content, pageable, total);
-    }
-
-    private long countFilteredUsers(String countQuery, Map<String, Object> parameters) {
-        Query query = entityManager.createQuery(countQuery);
-        parameters.forEach(query::setParameter);
-
-        try {
-            Number countResult = (Number) query.getSingleResult();
-            return countResult.longValue();
-        } catch (NoResultException | NullPointerException e) {
-            return 0;
-        }
+    public void softDeleteAuthenticatedUser() {
+        User user = getAuthenticatedUser();
+        user.markAsDeleted();
+        userRepository.updateUser(user);
     }
 }

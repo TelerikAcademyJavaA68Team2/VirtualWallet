@@ -1,46 +1,22 @@
 package com.example.virtualwallet.repositories;
 
 import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.dtos.user.UserOutput;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import com.example.virtualwallet.models.dtos.UserPageOutput;
+import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+public interface UserRepository {
 
-@Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+    void createUser(User user);
 
+    void updateUser(User user);
 
-    @Query("""
-    SELECT NEW com.example.virtualwallet.models.dtos.user.UserOutput(
-        u.id,
-        u.username,
-        u.email,
-        u.phoneNumber,
-        u.role,
-        u.status,
-        CAST(COALESCE(SUM(w.balance), 0) AS BIGDECIMAL)
-    )
-    FROM User u
-    LEFT JOIN Wallet w ON u.id = w.owner.id
-    GROUP BY u.id, u.username, u.email, u.phoneNumber, u.role, u.status
-    """)
-    List<UserOutput> findAllUsersWithTotalBalance();
+    User getByUsername(String username);
 
-    @Query("SELECT u.username FROM User u " +
-            "WHERE u.status = 'ACTIVE' " +
-            "  AND (u.username = :input " +
-            "       OR u.email = :input " +
-            "       OR u.phoneNumber = :input)")
-    Optional<String> findByUsernameOrEmailOrPhoneNumber(@Param("input") String input);
+    String findByUsernameOrEmailOrPhoneNumber(String input);
 
-    Optional<User> findByUsername(String username);
+    UserPageOutput filterUsers(UserFilterOptions userFilterOptions);
 
-    Optional<User> findByEmail(String email);
+    boolean checkIfEmailIsTaken(String email);
 
-    Optional<User> findByPhoneNumber(String phoneNumber);
+    boolean checkIfPhoneNumberIsTaken(String phoneNumber);
 }

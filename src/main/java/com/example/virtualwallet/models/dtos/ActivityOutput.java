@@ -1,8 +1,5 @@
 package com.example.virtualwallet.models.dtos;
 
-import com.example.virtualwallet.models.enums.Currency;
-import com.example.virtualwallet.models.enums.TransactionStatus;
-import com.example.virtualwallet.models.enums.TransactionType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -17,9 +14,9 @@ public class ActivityOutput {
     private UUID id;
     private String transactionType;
     private BigDecimal amount;
-    private Currency currency;
-    private Currency fromCurrency;
-    private Currency toCurrency;
+    private String currency;
+    private String fromCurrency;
+    private String toCurrency;
     private BigDecimal exchangeRate;
     private String senderUsername;
     private String recipientUsername;
@@ -40,9 +37,9 @@ public class ActivityOutput {
         this.id = id;
         this.transactionType = transactionType;
         this.amount = amount;
-        this.currency = (currency != null) ? Currency.valueOf(currency) : null;
-        this.fromCurrency = (fromCurrency != null) ? Currency.valueOf(fromCurrency) : null;
-        this.toCurrency = (toCurrency != null) ? Currency.valueOf(toCurrency) : null;
+        this.currency = currency;
+        this.fromCurrency = fromCurrency;
+        this.toCurrency = toCurrency;
         this.exchangeRate = exchangeRate;
         this.senderUsername = senderUsername;
         this.recipientUsername = recipientUsername;

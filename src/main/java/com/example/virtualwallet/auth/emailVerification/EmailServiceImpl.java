@@ -15,14 +15,14 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    public void sendVerificationEmail(String firstName, String toEmail,String tokenId) {
+    public void sendVerificationEmail(String firstName, String toEmail, String tokenId) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(buildEmail(firstName, "localhost:8080/api/auth/register/confirm?token=" + tokenId), true);
             helper.setTo(toEmail);
             helper.setSubject("Confirm your email");
-            helper.setFrom("virtual.wallet.a68@gmail.com","Virtual Wallet");
+            helper.setFrom("60ca95.5670.e0c219cb3c2c72c5997f59462cba1c4a@g.maileroo.net", "Virtual Wallet");
 /*
             mailSender.send(mimeMessage);
 */

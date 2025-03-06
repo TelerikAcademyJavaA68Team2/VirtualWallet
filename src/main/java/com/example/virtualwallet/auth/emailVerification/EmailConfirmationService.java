@@ -1,5 +1,7 @@
 package com.example.virtualwallet.auth.emailVerification;
 
+import com.example.virtualwallet.models.EmailConfirmationToken;
+
 import java.util.UUID;
 
 public interface EmailConfirmationService {

@@ -3,6 +3,7 @@ package com.example.virtualwallet.helpers;
 
 import com.example.virtualwallet.models.*;
 import com.example.virtualwallet.models.dtos.*;
+import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransactionStatus;
@@ -16,7 +17,7 @@ import static com.example.virtualwallet.helpers.ModelHelpers.maskCreditCard;
 public class ModelMapper {
 
 
-    public Card createCardFromCardInput(CardInput cardInput, User user) {
+    public static Card createCardFromCardInput(CardInput cardInput, User user) {
         Card card = new Card();
         card.setCreatedAt(LocalDateTime.now());
         card.setCardNumber(cardInput.getCardNumber());
@@ -27,7 +28,7 @@ public class ModelMapper {
         return card;
     }
 
-    public Card modifySoftDeletedCardFromCardInput(Card card, CardInput cardInput) {
+    public static Card modifySoftDeletedCardFromCardInput(Card card, CardInput cardInput) {
         card.setCardHolder(cardInput.getCardHolder());
         card.setCvv(cardInput.getCvv());
         card.setExpirationDate(cardInput.getExpirationDateAsYearMonth());
@@ -55,6 +56,18 @@ public class ModelMapper {
     public UserProfileOutput userProfileFromUser(User user) {
         return new UserProfileOutput(user.getFirstName(),
                 user.getLastName(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getRole(),
+                user.getStatus(),
+                user.getCreatedAt());
+    }
+
+    public static UserOutput userOutputFromUser(User user) {
+        return new UserOutput(
+                user.getId(),
+                user.getPhoto(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getPhoneNumber(),
