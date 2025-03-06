@@ -15,7 +15,6 @@ import com.example.virtualwallet.repositories.UserRepository;
 import com.example.virtualwallet.services.contracts.UserService;
 import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
