@@ -16,10 +16,13 @@ import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndConvertCurrency;
 
@@ -64,6 +67,12 @@ public class TransferServiceImpl implements TransferService {
         }
 
         return modelMapper.transferToTransferOutput(transfer);
+    }
+
+    @Override
+    public List<TransferOutput> findAllTransfersByUserId(User user) {
+        return transferRepository.findTransferByWallet_Owner_Id((user.getId()), Sort.by(Sort.Direction.DESC, "date"))
+                .stream().map(modelMapper::transferToTransferOutput).toList();
     }
 
     private TransactionStatus callMockWithdrawApi() {
