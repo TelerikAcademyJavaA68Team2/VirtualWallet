@@ -1,13 +1,15 @@
 package com.example.virtualwallet.services.contracts;
 
 import com.example.virtualwallet.models.Transaction;
+import com.example.virtualwallet.models.dtos.TransactionInput;
+import com.example.virtualwallet.models.dtos.TransactionOutput;
 
 import java.util.Set;
 import java.util.UUID;
 
 public interface TransactionService {
 
-    void createTransaction(Transaction transaction);
+    TransactionOutput createTransaction(TransactionInput transaction);
 
     Set<Transaction> findAllTransactionsByUserId(UUID userId);
 
