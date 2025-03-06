@@ -104,7 +104,7 @@ public class CardServiceImpl implements CardService {
     }
 
     private CardOutput createAndSaveCard(CardInput cardDto, User user) {
-        Card newCard = modelMapper.createCardFromCardInput(cardDto, user);
+        Card newCard = ModelMapper.createCardFromCardInput(cardDto, user);
         cardRepository.save(newCard);
         return modelMapper.cardOutputFromCard(newCard);
     }
@@ -117,7 +117,7 @@ public class CardServiceImpl implements CardService {
     private CardOutput restoreSoftDeletedCard(Card card, User user, CardInput cardInput) {
         validateUserIsCardOwner(card, user);
         card.markAsRestored();
-        card = modelMapper.modifySoftDeletedCardFromCardInput(card, cardInput);
+        card = ModelMapper.modifySoftDeletedCardFromCardInput(card, cardInput);
         cardRepository.save(card);
 
         return modelMapper.cardOutputFromCard(card);

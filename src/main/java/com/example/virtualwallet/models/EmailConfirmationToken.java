@@ -1,6 +1,5 @@
-package com.example.virtualwallet.auth.emailVerification;
+package com.example.virtualwallet.models;
 
-import com.example.virtualwallet.models.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

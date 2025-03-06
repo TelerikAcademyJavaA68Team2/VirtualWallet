@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
+@Table(name = "user")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,32 +25,32 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "first_name")
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "last_name")
     private String lastName;
 
-    @Column(unique = true, nullable = false, updatable = false)
+    @Column(unique = true, nullable = false, updatable = false, name = "username")
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "password")
     private String password;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, name = "email")
     private String email;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, name = "phone_number")
     private String phoneNumber;
 
-    @Column
+    @Column(name = "photo")
     private String photo = "default photo";
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "status")
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -61,10 +62,10 @@ public class User implements UserDetails {
     @SQLRestriction("is_deleted = false")
     private Set<Card> cards;
 
-    @Column
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @PrePersist

@@ -2,6 +2,7 @@ package com.example.virtualwallet.auth.emailVerification;
 
 import com.example.virtualwallet.exceptions.EmailConfirmationException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
+import com.example.virtualwallet.models.EmailConfirmationToken;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.repositories.UserRepository;
@@ -34,7 +35,7 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
         User user = token.getUser();
         user.setStatus(AccountStatus.ACTIVE);
         token.setConfirmedAt(LocalDateTime.now());
-        userRepository.save(user);
+        userRepository.updateUser(user);
         emailConfirmationRepository.save(token);
     }
 

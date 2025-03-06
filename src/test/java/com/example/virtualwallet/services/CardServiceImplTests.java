@@ -193,7 +193,7 @@ public class CardServiceImplTests {
         when(userService.getAuthenticatedUser())
                 .thenReturn(user);
         when(cardRepository.getCardByCardNumber(card.getCardNumber())).thenReturn(null);
-        when(modelMapper.createCardFromCardInput(cardInput, user)).thenReturn(card);
+        when(ModelMapper.createCardFromCardInput(cardInput, user)).thenReturn(card);
         when(cardRepository.save(card)).thenReturn(card);
         when(modelMapper.cardOutputFromCard(card)).thenReturn(cardOutput);
 
@@ -218,7 +218,7 @@ public class CardServiceImplTests {
         when(userService.getAuthenticatedUser())
                 .thenReturn(user);
         when(cardRepository.getCardByCardNumber(card.getCardNumber())).thenReturn(card);
-        when(modelMapper.modifySoftDeletedCardFromCardInput(card, cardInput)).thenReturn(card);
+        when(ModelMapper.modifySoftDeletedCardFromCardInput(card, cardInput)).thenReturn(card);
         when(cardRepository.save(card)).thenReturn(card);
         when(modelMapper.cardOutputFromCard(card)).thenReturn(cardOutput);
 
