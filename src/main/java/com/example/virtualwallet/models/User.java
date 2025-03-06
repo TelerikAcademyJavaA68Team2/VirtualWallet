@@ -16,10 +16,12 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(generator = "UUID")
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(nullable = false)
@@ -111,4 +113,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return !status.equals(AccountStatus.BLOCKED);
     }
+
 }
