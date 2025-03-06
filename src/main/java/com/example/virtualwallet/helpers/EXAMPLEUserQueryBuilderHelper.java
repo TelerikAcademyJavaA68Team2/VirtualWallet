@@ -9,7 +9,44 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class UserQueryBuilderHelper {
+public class EXAMPLEUserQueryBuilderHelper {
+
+
+/*
+
+    public UserPageOutput filterUsers(UserFilterOptions userFilterOptions) {
+        UserQueryBuilderHelper queryBuilder = new UserQueryBuilderHelper();
+
+        queryBuilder.addUsernameFilter(userFilterOptions.getUsername());
+        queryBuilder.addEmailFilter(userFilterOptions.getEmail());
+        queryBuilder.addPhoneNumberFilter(userFilterOptions.getPhoneNumber());
+        queryBuilder.addRoleFilter(userFilterOptions.getRole());
+        queryBuilder.addAccountStatusFilter(userFilterOptions.getAccountStatus());
+        queryBuilder.addGroupBy();
+        queryBuilder.addMinTotalBalanceFilter(userFilterOptions.getMinTotalBalance());
+        queryBuilder.addMaxTotalBalanceFilter(userFilterOptions.getMaxTotalBalance());
+        queryBuilder.addSorting(
+                userFilterOptions.getSortBy().orElse("u.username"),
+                userFilterOptions.getSortOrder().orElse("ASC")
+        );
+
+        String queryString = queryBuilder.getQueryString();
+        Map<String, Object> parameters = queryBuilder.getParameters();
+
+        TypedQuery<UserOutput> query = entityManager.createQuery(queryString, UserOutput.class);
+        parameters.forEach(query::setParameter);
+
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+        List<UserOutput> content = query.getResultList();
+        long total = countFilteredUsers(queryBuilder.getCountQuery(), parameters);
+        UserPageOutput output = new UserPageOutput();
+        output.setContent(content);
+        return output;
+    }
+*/
+
+
 
     @Getter
     private final Map<String, Object> parameters = new HashMap<>();
@@ -17,7 +54,7 @@ public class UserQueryBuilderHelper {
     private boolean hasFilters = false;
     private boolean hasAggregateConditions = false;
 
-    public UserQueryBuilderHelper() {
+    public EXAMPLEUserQueryBuilderHelper() {
         queryBuilder.append("SELECT NEW com.example.virtualwallet.models.dtos.user.UserOutput(");
         queryBuilder.append("u.id, u.username, u.email, u.phoneNumber, u.role, u.status, COALESCE(SUM(w.balance), 0)) ");
         queryBuilder.append("FROM User u LEFT JOIN Wallet w ON u.id = w.owner.id ");
