@@ -19,7 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.*;
@@ -36,9 +35,6 @@ import static org.mockito.Mockito.*;
 public class CardServiceImplTests {
 
     public static final String REGISTERED_TO_ANOTHER_USER = "This card is already registered to another user!";
-
-    @Mock
-    private Environment env;
 
     @Mock
     private CardRepository cardRepository;
@@ -249,8 +245,6 @@ public class CardServiceImplTests {
 
         when(userService.getAuthenticatedUser()).thenReturn(user);
         when(cardRepository.getCardByCardNumber(card.getCardNumber())).thenReturn(card);
-        when(env.getProperty("error.registeredAnotherUser"))
-                .thenReturn(REGISTERED_TO_ANOTHER_USER);
 
         DuplicateEntityException duplicateEntityException = Assertions.assertThrows(DuplicateEntityException.class,
                 () -> cardService.addCard(cardInput));

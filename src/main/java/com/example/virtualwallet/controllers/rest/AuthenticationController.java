@@ -49,6 +49,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
+    //ToDo register confirm swagger documentation
     @GetMapping("/register/confirm")
     public ResponseEntity<String> confirmEmail(@RequestParam UUID token) {
         try {

@@ -23,6 +23,7 @@ import java.util.UUID;
 public class WalletServiceImpl implements WalletService {
 
     public static final String NOT_WALLET_OWNER = "You are not the wallet's owner!";
+
     private final WalletRepository walletRepository;
     private final ModelMapper modelMapper;
     private final UserService userService;

@@ -13,8 +13,6 @@ import com.example.virtualwallet.repositories.CardRepository;
 import com.example.virtualwallet.services.contracts.CardService;
 import com.example.virtualwallet.services.contracts.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,14 +21,14 @@ import java.util.UUID;
 import static com.example.virtualwallet.helpers.ValidationHelpers.validateUserIsCardOwner;
 
 @Service
-@PropertySource("classpath:messages.properties")
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardService {
+
+    public static final String REGISTERED_TO_ANOTHER_USER = "This card is already registered to another user!";
 
     private final CardRepository cardRepository;
     private final ModelMapper modelMapper;
     private final UserService userService;
-    private final Environment env;
 
     @Override
     public CardOutput getCardOutputById(UUID cardId) {
@@ -79,7 +77,7 @@ public class CardServiceImpl implements CardService {
 
     private void throwIfCardIsAlreadyAssignedToAnotherUser(Card existingCard, User user) {
         if (!existingCard.getOwner().equals(user)) {
-            throw new DuplicateEntityException(env.getProperty("error.registeredAnotherUser"));
+            throw new DuplicateEntityException(REGISTERED_TO_ANOTHER_USER);
         }
     }
 
