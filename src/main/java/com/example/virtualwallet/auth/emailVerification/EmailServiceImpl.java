@@ -22,8 +22,10 @@ public class EmailServiceImpl implements EmailService {
             helper.setText(buildEmail(firstName, "localhost:8080/api/auth/register/confirm?token=" + tokenId), true);
             helper.setTo(toEmail);
             helper.setSubject("Confirm your email");
-            helper.setFrom("virtual.wallet.a68@gmail.com","Virtual Wallet Team");
+            helper.setFrom("virtual.wallet.a68@gmail.com","Virtual Wallet");
+/*
             mailSender.send(mimeMessage);
+*/
         } catch (Exception e) {
             throw new RuntimeException("Send email confirmation failed");
         }
