@@ -17,6 +17,8 @@ public interface CardService {
 
     List<Card> getAllCardsByUser(UUID userId);
 
+    Integer getTotalNumberOfCardsByOwner_Id(UUID userId);
+
     List<CardOutputForList> getAllCardsOutputForListByUser(UUID userId);
 
     CardOutput addCard(CardInput cardInput);
