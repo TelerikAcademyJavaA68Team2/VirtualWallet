@@ -15,8 +15,6 @@ import com.example.virtualwallet.repositories.UserRepository;
 import com.example.virtualwallet.services.contracts.UserService;
 import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,14 +30,17 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@PropertySource("classpath:messages.properties")
 public class UserServiceImpl implements UserService {
+
+    public static final String LOG_IN_FIRST = "Please log in first!";
+    public static final String PASSWORD_DONT_MATCH = "Your password confirmation doesn't match your new password";
+    public static final String PASSWORD_CONFIRM = "You need to confirm your new password";
+    public static final String WRONG_PASSWORD = "You provided wrong password";
 
     @PersistenceContext
     private EntityManager entityManager;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final Environment environment;
 
 
     @Override
@@ -91,7 +92,7 @@ public class UserServiceImpl implements UserService {
         try {
             UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (user == null) {
-                throw new InvalidUserInputException(environment.getProperty("error.userNotLoggedIn"));
+                throw new InvalidUserInputException(LOG_IN_FIRST);
             }
             return loadUserByUsername(user.getUsername());
         } catch (Exception e) {
@@ -103,13 +104,13 @@ public class UserServiceImpl implements UserService {
     public void updateAuthenticatedUser(ProfileUpdateInput input) {
         User user = getAuthenticatedUser();
         if (!new BCryptPasswordEncoder().matches(input.getPassword(), user.getPassword())) {
-            throw new InvalidUserInputException("You provided wrong password");
+            throw new InvalidUserInputException(WRONG_PASSWORD);
         }
         if (input.getNewPassword() != null) {
             if (input.getNewPasswordConfirm() == null) {
-                throw new InvalidUserInputException("You need to confirm your new password");
+                throw new InvalidUserInputException(PASSWORD_CONFIRM);
             } else if (!input.getNewPassword().equals(input.getNewPasswordConfirm())) {
-                throw new InvalidUserInputException("Your password confirmation doesn't match your new password");
+                throw new InvalidUserInputException(PASSWORD_DONT_MATCH);
             }
             user.setPassword(new BCryptPasswordEncoder().encode(input.getNewPassword()));
         }

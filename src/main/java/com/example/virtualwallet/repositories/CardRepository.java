@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -18,5 +19,8 @@ public interface CardRepository extends JpaRepository<Card, UUID> {
     Integer getTotalNumberOfCardsByOwner_Id(UUID ownerId);
 
     Card getCardByCardNumber(String cardNumber);
+
+    @Query("SELECT c FROM Card c WHERE c.id = :cardId AND c.isDeleted = false")
+    Optional<Card> findById(UUID cardId);
 
 }
