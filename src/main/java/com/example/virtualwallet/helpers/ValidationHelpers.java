@@ -5,15 +5,12 @@ import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Currency;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.multipart.MultipartFile;
 
-@PropertySource("classpath:messages.properties")
+
 public class ValidationHelpers {
 
-    @Value("${error.unauthorizedCardModification}")
-    public static String UNAUTHORIZED_MESSAGE_POST;
+    public static final String UNAUTHORIZED_MESSAGE_POST = "Only the card's owner can modify cards!";
 
     public static boolean isValidImageFile(MultipartFile file) {
         String contentType = file.getContentType();
