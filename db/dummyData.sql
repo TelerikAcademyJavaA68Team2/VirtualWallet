@@ -23,7 +23,7 @@ VALUES
 INSERT INTO card (id, card_holder, card_number, created_at, cvv, deleted_at, expiration_date, is_deleted, owner_id)
 VALUES
     ('123e4567-e89b-12d3-a452-426614174002', 'John Doe', '4111111211111111', NOW(), '123', NULL, '12/28', 0, '123e4567-e89b-12d3-a456-426614174000'),
-    ('123e4567-e89b-12d3-a456-446614174003', 'Admin User', '5555555555554444', `NOW`(), '456', NULL, '12/26', 0, '123e4567-e89b-12d3-a456-426614174000');
+    ('123e4567-e89b-12d3-a456-446614174003', 'Admin User', '5555555555554444', NOW(), '456', NULL, '12/26', 0, '123e4567-e89b-12d3-a456-426614174000');
 
 
 INSERT INTO wallet (id, balance, created_at, currency, deleted_at, is_deleted, owner_id)
