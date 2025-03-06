@@ -1,18 +1,21 @@
+CREATE SCHEMA IF NOT EXISTS virtual_wallet;
+Use virtual_wallet;
+
 create table user
 (
-    id           uuid                   not null
+    id           uuid                                             not null
         primary key,
-    created_at   datetime(6)            null,
-    deleted_at   datetime(6)            null,
-    email        varchar(255)           not null,
-    first_name   varchar(255)           not null,
-    last_name    varchar(255)           not null,
-    password     varchar(255)           not null,
-    phone_number varchar(255)           not null,
-    photo        varchar(255)           null,
-    role         enum ('ADMIN', 'USER') not null,
-    username     varchar(255)           not null,
-    status       enum ('PENDING', 'ACTIVE', 'BLOCKED', 'DELETED') default 'PENDING' not null,
+    created_at   datetime(6)                                      null,
+    deleted_at   datetime(6)                                      null,
+    email        varchar(255)                                     not null,
+    first_name   varchar(255)                                     not null,
+    last_name    varchar(255)                                     not null,
+    password     varchar(255)                                     not null,
+    phone_number varchar(255)                                     not null,
+    photo        varchar(255)                                     null,
+    role         enum ('ADMIN', 'USER')                           not null,
+    status       enum ('ACTIVE', 'BLOCKED', 'DELETED', 'PENDING') not null,
+    username     varchar(255)                                     not null,
     constraint UK4bgmpi98dylab6qdvf9xyaxu4
         unique (phone_number),
     constraint UKob8kqyqqgmefl0aco34akdtpe
@@ -21,22 +24,34 @@ create table user
         unique (username)
 );
 
-create table credit_card
+create table card
 (
     id              uuid                 not null
         primary key,
     card_holder     varchar(255)         not null,
     card_number     varchar(255)         not null,
     created_at      datetime(6)          not null,
-    cvv             varchar(255)         not null,
+    cvv             varchar(5)           not null,
     deleted_at      datetime(6)          null,
-    expiration_date datetime(6)          not null,
+    expiration_date varchar(10)          not null,
     is_deleted      tinyint(1) default 0 not null,
     owner_id        uuid                 not null,
-    constraint UKdhq9mk9claw6xxkuitkchsr77
+    constraint UKby1nk98m2hq5onhl68bo09sc1
         unique (card_number),
-    constraint FKerr457ghbr3vkx6cslnwmget5
+    constraint FK8pspfj8x9rbqn67t0l8ir7im3
         foreign key (owner_id) references user (id)
+);
+
+create table email_confirmation_token
+(
+    id           uuid        not null
+        primary key,
+    confirmed_at datetime(6) null,
+    created_at   datetime(6) not null,
+    expires_at   datetime(6) not null,
+    user_id      uuid        not null,
+    constraint FKk1kk7ut1owm1c4ymjfxr1nr8f
+        foreign key (user_id) references user (id)
 );
 
 create table wallet
@@ -58,9 +73,10 @@ create table exchange
     id             uuid                       not null
         primary key,
     amount         decimal(15, 2)             not null,
-    currency       enum ('BGN', 'EUR', 'USD') not null,
     date           datetime(6)                not null,
     exchange_rate  decimal(38, 2)             not null,
+    from_currency  enum ('BGN', 'EUR', 'USD') not null,
+    to_currency    enum ('BGN', 'EUR', 'USD') not null,
     from_wallet_id uuid                       not null,
     to_wallet_id   uuid                       not null,
     constraint FK1nbx3jk9g0rr5xn270ep1vyar
@@ -86,16 +102,16 @@ create table transaction
 
 create table transfer
 (
-    id             uuid                          not null
+    id        uuid                          not null
         primary key,
-    amount         decimal(38, 2)                not null,
-    currency       enum ('BGN', 'EUR', 'USD')    not null,
-    date           datetime(6)                   not null,
-    status         enum ('APPROVED', 'DECLINED') not null,
-    credit_card_id uuid                          not null,
-    wallet_id      uuid                          not null,
-    constraint FKi8wgfuwe9t6p8jss1cyisp0q2
-        foreign key (credit_card_id) references credit_card (id),
+    amount    decimal(38, 2)                not null,
+    currency  enum ('BGN', 'EUR', 'USD')    not null,
+    date      datetime(6)                   not null,
+    status    enum ('APPROVED', 'DECLINED') not null,
+    card_id   uuid                          not null,
+    wallet_id uuid                          not null,
+    constraint FKt1ux5tr1t6r8ow1khvm5w3j2w
+        foreign key (card_id) references card (id),
     constraint FKtdhfxaei7nqto932210wmbmtk
         foreign key (wallet_id) references wallet (id)
 );
