@@ -20,9 +20,9 @@ public class WalletPageOutput {
 
     private Currency currency;
 
+    private List<ActivityOutput> activities;
+
     private int historyPages;
 
     private int historySize;
-
-    private List<ActivityOutput> activities;
 }
