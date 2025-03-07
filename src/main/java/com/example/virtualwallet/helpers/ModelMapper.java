@@ -149,4 +149,16 @@ public class ModelMapper {
         transactionOutput.setRecipientUsername(transaction.getRecipientWallet().getOwner().getUsername());
         return transactionOutput;
     }
+
+    public static TransactionOutput transactionToTransactionOutput(Transaction transaction,
+                                                                   String sender, String recipient) {
+        TransactionOutput transactionOutput = new TransactionOutput();
+        transactionOutput.setTransactionId(transaction.getId());
+        transactionOutput.setDate(transaction.getDate());
+        transactionOutput.setCurrency(String.valueOf(transaction.getCurrency()));
+        transactionOutput.setAmount(transaction.getAmount());
+        transactionOutput.setSenderUsername(sender);
+        transactionOutput.setRecipientUsername(recipient);
+        return transactionOutput;
+    }
 }
