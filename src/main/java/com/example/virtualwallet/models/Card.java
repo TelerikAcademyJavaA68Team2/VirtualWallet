@@ -15,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "card")
 public class Card {
 
     @Id
@@ -22,17 +23,17 @@ public class Card {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, name = "card_number")
     private String cardNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "card_holder")
     private String cardHolder;
 
     @Convert(converter = YearMonthConverter.class)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)", name = "expiration_date")
     private YearMonth expirationDate;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(5)")
+    @Column(nullable = false, columnDefinition = "VARCHAR(5)", name = "cvv")
     private String cvv;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,10 +43,10 @@ public class Card {
     @OneToMany(mappedBy = "card", fetch = FetchType.LAZY)
     private Set<Transfer> transfers;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
