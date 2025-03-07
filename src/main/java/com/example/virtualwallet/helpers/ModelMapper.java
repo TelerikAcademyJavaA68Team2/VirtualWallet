@@ -115,7 +115,7 @@ public class ModelMapper {
         return transfer;
     }
 
-    public WalletBasicOutput mapWalletToBasicWalletOutput(Wallet input) {
+    public static WalletBasicOutput mapWalletToBasicWalletOutput(Wallet input) {
         WalletBasicOutput output = new WalletBasicOutput();
         output.setWalletId(input.getId());
         output.setBalance(input.getBalance());

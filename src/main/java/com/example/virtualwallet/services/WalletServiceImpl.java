@@ -24,10 +24,7 @@ import java.util.UUID;
 public class WalletServiceImpl implements WalletService {
     public static final String NOT_WALLET_OWNER = "You are not the wallet's owner!";
 
-
     private final WalletRepository walletRepository;
-
-    private final ModelMapper modelMapper;
     private final UserService userService;
 
     @Override
@@ -53,7 +50,7 @@ public class WalletServiceImpl implements WalletService {
     public List<WalletBasicOutput> getActiveWalletsOfAuthenticatedUser() {
         User user = userService.getAuthenticatedUser();
         List<Wallet> wallets = walletRepository.getActiveWalletsByUserId(user.getId());
-        return wallets.stream().map(modelMapper::mapWalletToBasicWalletOutput).toList();
+        return wallets.stream().map(ModelMapper::mapWalletToBasicWalletOutput).toList();
     }
 
     @Override
@@ -62,14 +59,14 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void softDeleteAuthenticatedUserWalletByCurrency(Currency currency) {
+    public void softDeleteAuthenticatedUserWalletByCurrency(String currency) {
         User user = userService.getAuthenticatedUser();
 
-        Optional<Wallet> wallet = walletRepository.findByUsernameAndCurrency(user.getUsername(), currency.name());
+        Optional<Wallet> wallet = walletRepository.findByUsernameAndCurrency(user.getUsername(), currency);
         if (wallet.isEmpty()) {
-            throw new EntityNotFoundException("Wallet", "Currency", currency.name());
+            throw new EntityNotFoundException("Wallet", "Currency", currency);
         } else if (wallet.get().isDeleted()) {
-            throw new InvalidUserInputException("Your wallet with currency:" + currency.name() + " is already deleted!");
+            throw new InvalidUserInputException("Your wallet with currency:" + currency + " is already deleted!");
         }
         wallet.get().markAsDeleted();
     }
