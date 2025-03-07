@@ -19,6 +19,6 @@ public class WalletController {
     public ResponseEntity<?> getWalletHistory(@PathVariable UUID walletId,
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size) {
-        return new ResponseEntity<>(walletService.getWalletHistoryPageById(walletId, page, size), HttpStatus.OK);
+        return new ResponseEntity<>(walletService.getWalletPageById(walletId, page, size), HttpStatus.OK);
     }
 }

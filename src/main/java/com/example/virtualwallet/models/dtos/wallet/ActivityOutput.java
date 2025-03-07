@@ -22,28 +22,4 @@ public class ActivityOutput {
     private String recipientUsername;
     private String status;
     private LocalDateTime date;
-
-    public ActivityOutput(UUID id,
-                          String transactionType,
-                          BigDecimal amount,
-                          String currency,
-                          String fromCurrency,
-                          String toCurrency,
-                          BigDecimal exchangeRate,
-                          String senderUsername,
-                          String recipientUsername,
-                          String status,
-                          LocalDateTime date) {
-        this.id = id;
-        this.transactionType = transactionType;
-        this.amount = amount;
-        this.currency = currency;
-        this.fromCurrency = fromCurrency;
-        this.toCurrency = toCurrency;
-        this.exchangeRate = exchangeRate;
-        this.senderUsername = senderUsername;
-        this.recipientUsername = recipientUsername;
-        this.status = status;
-        this.date = date;
-    }
 }

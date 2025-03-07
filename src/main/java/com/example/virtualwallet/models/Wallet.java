@@ -25,11 +25,11 @@ public class Wallet {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @Column(nullable = false, precision = 15, scale = 2)
+    @Column(nullable = false, precision = 15, scale = 2, name = "balance")
     private BigDecimal balance;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "currency")
     private Currency currency;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,10 +51,10 @@ public class Wallet {
     @OneToMany(mappedBy = "toWallet", fetch = FetchType.LAZY)
     private Set<Exchange> exchangesToWallet;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")

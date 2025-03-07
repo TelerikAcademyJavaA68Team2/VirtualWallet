@@ -56,8 +56,12 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletPageOutput getWalletHistoryPageById(UUID walletId, int page, int size) {
-        return walletRepository.getWalletHistory(walletId, page, size);
+    public WalletPageOutput getWalletPageById(UUID walletId, int page, int size) {
+        WalletPageOutput pageOutput = walletRepository.getWalletHistory(walletId, page, size);
+        Wallet wallet = walletRepository.findById(walletId);
+        pageOutput.setBalance(wallet.getBalance());
+        pageOutput.setCurrency(wallet.getCurrency());
+        return pageOutput;
     }
 
     @Override

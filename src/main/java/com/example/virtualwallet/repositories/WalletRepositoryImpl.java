@@ -1,17 +1,26 @@
 package com.example.virtualwallet.repositories;
 
+import com.example.virtualwallet.exceptions.EmptyPageException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
+import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static java.util.Arrays.stream;
 
 @Repository
 @RequiredArgsConstructor
@@ -71,6 +80,117 @@ public class WalletRepositoryImpl implements WalletRepository {
 
     @Override
     public WalletPageOutput getWalletHistory(UUID walletId, int page, int size) {
-        return null;
+        try (Session session = sessionFactory.openSession()) {
+            WalletPageOutput pageOutput = new WalletPageOutput();
+            pageOutput.setWalletId(walletId);
+
+
+            Long totalResults = 0L;
+            Query<Long> countTransfers = session.createQuery("select count(id) From Transfer Where wallet.id = :walletId", Long.class);
+            countTransfers.setParameter("walletId", walletId);
+            totalResults += countTransfers.getSingleResult();
+
+            Query<Long> countTransactions = session.createQuery("select count(id) From Transaction Where senderWallet.id = :walletId or recipientWallet.id = :walletId", Long.class);
+            countTransactions.setParameter("walletId", walletId);
+            totalResults += countTransactions.getSingleResult();
+
+            Query<Long> countExchanges = session.createQuery("select count(id) From Exchange Where fromWallet.id = :walletId or toWallet.id = :walletId", Long.class);
+            countExchanges.setParameter("walletId", walletId);
+            totalResults += countExchanges.getSingleResult();
+
+
+            int pageStartIndex = page * size;
+
+            pageOutput.setHistoryPages((int) (totalResults / size));
+            pageOutput.setHistorySize(Math.toIntExact(totalResults));
+
+            if (totalResults == 0 || pageStartIndex > totalResults) {
+                pageOutput.setActivities(List.of());
+            } else {
+                String sql = """
+                        SELECT\s
+                            t.id AS id,
+                            'TRANSACTION' AS transactionType,
+                            t.amount as amount,
+                            t.currency AS currency,
+                            NULL AS fromCurrency,
+                            NULL AS toCurrency,
+                            NULL AS exchangeRate,
+                            su.username AS senderUsername,
+                            ru.username AS recipientUsername,
+                            NULL AS status,
+                            t.date as date
+                        FROM Transaction t
+                        JOIN Wallet sw ON t.sender_wallet_id = sw.id
+                        JOIN User su ON sw.owner_id = su.id\s
+                        JOIN Wallet rw ON t.recipient_wallet_id = rw.id
+                        JOIN User ru ON rw.owner_id = ru.id\s
+                        WHERE sw.id = :walletId OR rw.id = :walletId
+                        
+                        UNION ALL
+                        
+                        SELECT\s
+                            tf.id AS id,
+                            'ACCOUNT FUNDING' AS transactionType,
+                            tf.amount as amount,
+                            tf.currency AS currency,
+                            NULL AS fromCurrency,
+                            NULL AS toCurrency,
+                            NULL AS exchangeRate,
+                            NULL AS senderUsername,
+                            wu.username AS recipientUsername,
+                            tf.status AS status,
+                            tf.date as date
+                        FROM Transfer tf
+                        JOIN wallet w ON tf.wallet_id = w.id
+                        JOIN User wu ON w.owner_id = wu.id\s
+                        WHERE tf.wallet_id = :walletId
+                        
+                        UNION ALL
+                        
+                        SELECT\s
+                            e.id AS id,
+                            'EXCHANGE' AS transactionType,
+                            e.amount as amount,
+                            NULL AS currency,
+                            e.from_currency AS fromCurrency,
+                            e.to_currency AS toCurrency,
+                            e.exchange_rate AS exchangeRate,
+                            NULL AS senderUsername,
+                            NULL AS recipientUsername,
+                            NULL AS status,
+                            e.date as date
+                        FROM Exchange e
+                        JOIN Wallet fw ON e.from_wallet_id = fw.id
+                        JOIN Wallet tw ON e.to_wallet_id = tw.id
+                        WHERE fw.id = :walletId OR tw.id = :walletId
+                        
+                        ORDER BY date DESC""";
+
+                List<ActivityOutput> activities = session.createNativeQuery(sql)
+                        .setParameter("walletId", walletId)
+                        .setFirstResult(pageStartIndex)
+                        .setMaxResults(size)
+                        .unwrap(NativeQuery.class)
+                        .addScalar("id", UUID.class)
+                        .addScalar("transactionType", String.class)
+                        .addScalar("amount", BigDecimal.class)
+                        .addScalar("currency", String.class)
+                        .addScalar("fromCurrency", String.class)
+                        .addScalar("toCurrency", String.class)
+                        .addScalar("exchangeRate", BigDecimal.class)
+                        .addScalar("senderUsername", String.class)
+                        .addScalar("recipientUsername", String.class)
+                        .addScalar("status", String.class)
+                        .addScalar("date", LocalDateTime.class)
+                        .setResultTransformer(Transformers.aliasToBean(ActivityOutput.class))
+                        .getResultList();
+
+
+                pageOutput.setActivities(activities);
+            }
+
+            return pageOutput;
+        }
     }
 }

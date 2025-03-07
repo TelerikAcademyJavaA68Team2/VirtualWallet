@@ -1,5 +1,6 @@
 package com.example.virtualwallet.repositories;
 
+import com.example.virtualwallet.exceptions.EmptyPageException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.User;
@@ -147,7 +148,7 @@ public class UserRepositoryImpl implements UserRepository {
             int pageSize = filterOptions.getSize();
             int pageStartIndex = filterOptions.getPage() * pageSize;
             if (numberOfFoundElements == null || pageStartIndex > numberOfFoundElements) {
-                throw new EntityNotFoundException("Nothing was found on this page");
+                throw new EmptyPageException();
             }
 
 
