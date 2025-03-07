@@ -1,4 +1,4 @@
-package com.example.virtualwallet.models.dtos;
+package com.example.virtualwallet.models.dtos.pageable;
 
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import lombok.Data;

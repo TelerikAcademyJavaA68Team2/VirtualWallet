@@ -1,7 +1,7 @@
 package com.example.virtualwallet.repositories;
 
 import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.dtos.UserPageOutput;
+import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 
 public interface UserRepository {

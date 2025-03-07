@@ -3,7 +3,7 @@ package com.example.virtualwallet.repositories;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.dtos.UserPageOutput;
+import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import lombok.RequiredArgsConstructor;
