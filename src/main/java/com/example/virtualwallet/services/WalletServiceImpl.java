@@ -78,6 +78,11 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    public boolean ifUserHasNoWalletOfCurrency(UUID userId, Currency currency) {
+        return false;
+    }
+
+    @Override
     public void update(Wallet wallet) {
         walletRepository.update(wallet);
     }

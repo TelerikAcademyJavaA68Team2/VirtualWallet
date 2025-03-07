@@ -21,4 +21,7 @@ public interface WalletService {
     WalletPageOutput getWalletPageById(UUID walletId, int page, int size);
 
     void softDeleteAuthenticatedUserWalletByCurrency(String currency);
+
+    //ToDo opravqne!!!!
+    boolean ifUserHasNoWalletOfCurrency(UUID userId, Currency currency);
 }
