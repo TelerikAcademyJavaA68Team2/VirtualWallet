@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "exchange")
 public class Exchange {
 
     @Id
@@ -21,21 +22,21 @@ public class Exchange {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name= "exchange_rate")
     private BigDecimal exchangeRate;
 
-    @Column(nullable = false, precision = 15, scale = 2)
+    @Column(nullable = false, precision = 15, scale = 2, name = "amount")
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "from_currency")
     private Currency fromCurrency;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "to_currency")
     private Currency toCurrency;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "date")
     private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)

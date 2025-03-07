@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
-@Table(name = "user")
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "user")
 public class User implements UserDetails {
 
     @Id
@@ -72,7 +72,7 @@ public class User implements UserDetails {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.role = Role.USER;
-        this.status = AccountStatus.PENDING; // change to pending if email verification is active
+        this.status = AccountStatus.ACTIVE; // change to pending if email verification is active
         this.cards = new HashSet<>();
         this.wallets = new HashSet<>();
     }

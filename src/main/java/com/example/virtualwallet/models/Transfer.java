@@ -15,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "transfer")
 public class Transfer {
 
     @Id
@@ -22,14 +23,14 @@ public class Transfer {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "amount")
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "currency")
     private Currency currency;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "date")
     private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,7 +41,7 @@ public class Transfer {
     @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet wallet;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "status")
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 

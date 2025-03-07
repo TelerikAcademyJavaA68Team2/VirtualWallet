@@ -12,18 +12,20 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "email_confirmation_token")
 public class EmailConfirmationToken {
 
     @Id
+    @GeneratedValue(generator = "UUID")
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "expires_at")
     private LocalDateTime expiresAt;
 
-    @Column
+    @Column(name = "confirmed_at")
     private LocalDateTime confirmedAt;
 
     @ManyToOne
@@ -35,7 +37,6 @@ public class EmailConfirmationToken {
         this.createdAt = LocalDateTime.now();
         this.expiresAt = LocalDateTime.now().plusMinutes(15);
     }
-
 
     public EmailConfirmationToken(UUID id, User user) {
         this.id = id;
