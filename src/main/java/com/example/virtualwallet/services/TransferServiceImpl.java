@@ -58,12 +58,12 @@ public class TransferServiceImpl implements TransferService {
         Transfer transfer = ModelMapper.createTransferFromTransferInput(transferInput, card,
                 wallet, transferStatus, currency);
 
-        transferRepository.save(transfer);
 
         if (transfer.getStatus() == TransactionStatus.APPROVED) {
             wallet.setBalance(wallet.getBalance().add(transferInput.getAmount()));
-            walletService.update(wallet, user);
+            walletService.update(wallet);
         }
+        transferRepository.save(transfer);
 
         return ModelMapper.transferToTransferOutput(transfer);
     }

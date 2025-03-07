@@ -71,11 +71,8 @@ public class WalletServiceImpl implements WalletService {
         wallet.get().markAsDeleted();
     }
 
-    // todo why have update on wallet?
     @Override
-    public void update(Wallet wallet, User user) {
-        if (wallet.getOwner().equals(user)) {
-            walletRepository.update(wallet);
-        } else throw new UnauthorizedAccessException(NOT_WALLET_OWNER);
+    public void update(Wallet wallet) {
+        walletRepository.update(wallet);
     }
 }

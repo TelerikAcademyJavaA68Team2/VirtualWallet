@@ -16,6 +16,7 @@ import com.example.virtualwallet.services.contracts.TransactionService;
 import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

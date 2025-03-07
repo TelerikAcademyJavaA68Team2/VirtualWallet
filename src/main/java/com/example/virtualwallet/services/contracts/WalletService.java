@@ -15,7 +15,7 @@ public interface WalletService {
 
     Wallet getOrCreateWalletByUsernameAndCurrency(String userUsername, Currency currency);
 
-    void update(Wallet wallet, User user);
+    void update(Wallet wallet);
 
     List<WalletBasicOutput> getActiveWalletsOfAuthenticatedUser();
 
