@@ -37,7 +37,6 @@ public class TransferServiceImpl implements TransferService {
     private final RestTemplate restTemplate;
     private final UserService userService;
     private final CardService cardService;
-    private final ModelMapper modelMapper;
 
     @Transactional
     public TransferOutput processTransfer(TransferInput transferInput) {
@@ -56,7 +55,7 @@ public class TransferServiceImpl implements TransferService {
 
         TransactionStatus transferStatus = callMockWithdrawApi();
 
-        Transfer transfer = modelMapper.createTransferFromTransferInput(transferInput, card,
+        Transfer transfer = ModelMapper.createTransferFromTransferInput(transferInput, card,
                 wallet, transferStatus, currency);
 
         transferRepository.save(transfer);
@@ -66,13 +65,13 @@ public class TransferServiceImpl implements TransferService {
             walletService.update(wallet, user);
         }
 
-        return modelMapper.transferToTransferOutput(transfer);
+        return ModelMapper.transferToTransferOutput(transfer);
     }
 
     @Override
     public List<TransferOutput> findAllTransfersByUserId(User user) {
         return transferRepository.findTransferByWallet_Owner_Id((user.getId()), Sort.by(Sort.Direction.DESC, "date"))
-                .stream().map(modelMapper::transferToTransferOutput).toList();
+                .stream().map(ModelMapper::transferToTransferOutput).toList();
     }
 
     private TransactionStatus callMockWithdrawApi() {

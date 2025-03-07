@@ -28,7 +28,6 @@ public class UserServiceImpl implements UserService {
     public static final String WRONG_PASSWORD = "You provided wrong password";
 
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
 
 
     @Override
@@ -113,7 +112,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileOutput getAuthenticatedUserProfile() {
         User user = getAuthenticatedUser();
-        return modelMapper.userProfileFromUser(user);
+        return ModelMapper.userProfileFromUser(user);
     }
 
     @Override

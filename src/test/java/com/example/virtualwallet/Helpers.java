@@ -173,12 +173,13 @@ public class Helpers {
 
     public static UserOutput createMockUserOutput() {
         return new UserOutput(UUID.randomUUID(),
+                null,
                 MOCK_USER_USERNAME,
                 MOCK_USER_EMAIL,
                 MOCK_PHONE_NUMBER,
                 Role.USER,
                 AccountStatus.ACTIVE,
-                BigDecimal.valueOf(50.00)
+                LocalDateTime.now()
         );
     }
 

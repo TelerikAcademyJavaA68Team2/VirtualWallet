@@ -34,7 +34,6 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserService userService;
     private final WalletService walletService;
-    private final ModelMapper modelMapper;
 
     @Override
     public TransactionOutput createTransaction(TransactionInput transactionInput) {
@@ -79,11 +78,11 @@ public class TransactionServiceImpl implements TransactionService {
 
         recipientWallet.setBalance(recipientWalletBalance.add(amountToSend));
 
-        Transaction transaction = modelMapper.createTransactionFromTransactionInput(transactionInput,
+        Transaction transaction = ModelMapper.createTransactionFromTransactionInput(transactionInput,
                 transactionCurrency, senderWallet, recipientWallet);
 
         transactionRepository.save(transaction);
-        return modelMapper.transactionToTransactionOutput(transaction);
+        return ModelMapper.transactionToTransactionOutput(transaction);
     }
 
     @Override
@@ -91,7 +90,7 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findAllTransactionsBySenderWallet_Owner_IdOrRecipientWallet_Owner_Id
                         (userId, userId, Sort.by(Sort.Direction.DESC, "date"))
                 .stream()
-                .map(modelMapper::transactionToTransactionOutput)
+                .map(ModelMapper::transactionToTransactionOutput)
                 .toList();
     }
 

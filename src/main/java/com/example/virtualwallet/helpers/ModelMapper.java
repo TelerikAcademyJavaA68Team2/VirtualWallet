@@ -7,13 +7,11 @@ import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransactionStatus;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 import static com.example.virtualwallet.helpers.ModelHelpers.maskCreditCard;
 
-@Component
 public class ModelMapper {
 
 
@@ -35,7 +33,7 @@ public class ModelMapper {
         return card;
     }
 
-    public CardOutputForList displayForListCardOutputFromCreditCard(Card card) {
+    public static CardOutputForList displayForListCardOutputFromCreditCard(Card card) {
         CardOutputForList cardOutputForList = new CardOutputForList();
         cardOutputForList.setCardId(card.getId());
         cardOutputForList.setCardNumber(maskCreditCard(card.getCardNumber()));
@@ -43,7 +41,7 @@ public class ModelMapper {
         return cardOutputForList;
     }
 
-    public CardOutput cardOutputFromCard(Card card) {
+    public static CardOutput cardOutputFromCard(Card card) {
         CardOutput cardOutput = new CardOutput();
         cardOutput.setCardId(card.getId());
         cardOutput.setCardNumber(card.getCardNumber());
@@ -53,7 +51,7 @@ public class ModelMapper {
         return cardOutput;
     }
 
-    public UserProfileOutput userProfileFromUser(User user) {
+    public static UserProfileOutput userProfileFromUser(User user) {
         return new UserProfileOutput(user.getFirstName(),
                 user.getLastName(),
                 user.getUsername(),
@@ -76,7 +74,7 @@ public class ModelMapper {
                 user.getCreatedAt());
     }
 
-    public Card updateCardFromCardInput(CardEdit cardEdit, Card card) {
+    public static Card updateCardFromCardInput(CardEdit cardEdit, Card card) {
         if (cardEdit.getCardNumber() != null) {
             card.setCardNumber(cardEdit.getCardNumber());
         }
@@ -92,7 +90,7 @@ public class ModelMapper {
         return card;
     }
 
-    public TransferOutput transferToTransferOutput(Transfer transfer) {
+    public static TransferOutput transferToTransferOutput(Transfer transfer) {
         TransferOutput transferOutput = new TransferOutput();
         transferOutput.setTransferId(transfer.getId());
         transferOutput.setDate(transfer.getDate());
@@ -104,8 +102,8 @@ public class ModelMapper {
         return transferOutput;
     }
 
-    public Transfer createTransferFromTransferInput(TransferInput transferInput, Card card, Wallet wallet,
-                                                    TransactionStatus transferStatus, Currency currency) {
+    public static Transfer createTransferFromTransferInput(TransferInput transferInput, Card card, Wallet wallet,
+                                                           TransactionStatus transferStatus, Currency currency) {
         Transfer transfer = new Transfer();
         transfer.setCard(card);
         transfer.setWallet(wallet);
@@ -123,10 +121,10 @@ public class ModelMapper {
         return output;
     }
 
-    public Transaction createTransactionFromTransactionInput(TransactionInput transactionInput,
-                                                             Currency currency,
-                                                             Wallet senderWallet,
-                                                             Wallet recipientWallet) {
+    public static Transaction createTransactionFromTransactionInput(TransactionInput transactionInput,
+                                                                    Currency currency,
+                                                                    Wallet senderWallet,
+                                                                    Wallet recipientWallet) {
         Transaction transaction = new Transaction();
         transaction.setAmount(transactionInput.getAmount());
         transaction.setCurrency(currency);
@@ -135,7 +133,7 @@ public class ModelMapper {
         return transaction;
     }
 
-    public TransactionOutput transactionToTransactionOutput(Transaction transaction) {
+    public static TransactionOutput transactionToTransactionOutput(Transaction transaction) {
         TransactionOutput transactionOutput = new TransactionOutput();
         transactionOutput.setTransactionId(transaction.getId());
         transactionOutput.setDate(transaction.getDate());

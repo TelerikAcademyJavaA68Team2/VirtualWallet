@@ -27,13 +27,13 @@ public class CardServiceImpl implements CardService {
     public static final String REGISTERED_TO_ANOTHER_USER = "This card is already registered to another user!";
 
     private final CardRepository cardRepository;
-    private final ModelMapper modelMapper;
+    /*private final ModelMapper modelMapper;*/
     private final UserService userService;
 
     @Override
     public CardOutput getCardOutputById(UUID cardId) {
         Card card = findCardById(cardId);
-        return modelMapper.cardOutputFromCard(card);
+        return ModelMapper.cardOutputFromCard(card);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CardServiceImpl implements CardService {
 
     public List<CardOutputForList> getAllCardsOutputForListByUser(UUID userId) {
         return findAllCardsByUser(userId).stream()
-                .map(modelMapper::displayForListCardOutputFromCreditCard)
+                .map(ModelMapper::displayForListCardOutputFromCreditCard)
                 .toList();
     }
 
@@ -89,9 +89,9 @@ public class CardServiceImpl implements CardService {
         if(!card.getCardNumber().equals(cardEdit.getCardNumber())) {
             throwIfCardWithSameNumberAlreadyExistsInSystem(cardEdit.getCardNumber());
         }
-        card = modelMapper.updateCardFromCardInput(cardEdit, card);
+        card = ModelMapper.updateCardFromCardInput(cardEdit, card);
         cardRepository.save(card);
-        return modelMapper.cardOutputFromCard(card);
+        return ModelMapper.cardOutputFromCard(card);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class CardServiceImpl implements CardService {
     private CardOutput createAndSaveCard(CardInput cardDto, User user) {
         Card newCard = ModelMapper.createCardFromCardInput(cardDto, user);
         cardRepository.save(newCard);
-        return modelMapper.cardOutputFromCard(newCard);
+        return ModelMapper.cardOutputFromCard(newCard);
     }
 
     private Card findCardById(UUID cardId) {
@@ -120,7 +120,7 @@ public class CardServiceImpl implements CardService {
         card = ModelMapper.modifySoftDeletedCardFromCardInput(card, cardInput);
         cardRepository.save(card);
 
-        return modelMapper.cardOutputFromCard(card);
+        return ModelMapper.cardOutputFromCard(card);
     }
 
     private void throwIfCardWithSameNumberAlreadyExistsInSystem(String cardNumber) {
