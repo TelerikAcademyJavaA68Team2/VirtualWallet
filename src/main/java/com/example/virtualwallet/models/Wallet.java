@@ -76,4 +76,9 @@ public class Wallet {
         this.deletedAt = LocalDateTime.now();
         this.isDeleted = true;
     }
+
+    public void restoreWallet() {
+        this.deletedAt = null;
+        this.isDeleted = false;
+    }
 }

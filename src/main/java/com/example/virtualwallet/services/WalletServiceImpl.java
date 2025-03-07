@@ -37,6 +37,9 @@ public class WalletServiceImpl implements WalletService {
     public Wallet getOrCreateWalletByUsernameAndCurrency(String userUsername, Currency currency) {
         Optional<Wallet> wallet = walletRepository.findByUsernameAndCurrency(userUsername, currency.toString());
         if (wallet.isPresent()) {
+            if (wallet.get().isDeleted()) {
+                wallet.get().restoreWallet();
+            }
             return wallet.get();
         }
         Wallet newWallet = new Wallet();
