@@ -7,6 +7,7 @@ import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.WalletBasicOutput;
+import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.repositories.WalletRepository;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -21,48 +22,50 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
-
     public static final String NOT_WALLET_OWNER = "You are not the wallet's owner!";
 
+
     private final WalletRepository walletRepository;
+
     private final ModelMapper modelMapper;
     private final UserService userService;
 
     @Override
     public Wallet getWalletById(UUID id) {
-        return walletRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Wallet", id));
+        return walletRepository.findById(id);
     }
-/*
-    @Override
-*/
-    public Wallet getWalletActivityById(UUID walletId) {
-        return walletRepository.findById(walletId).orElseThrow(() -> new EntityNotFoundException("Wallet", walletId));
-    }
+
 
     @Override
     public Wallet getOrCreateWalletByUsernameAndCurrency(String userUsername, Currency currency) {
-        Optional<Wallet> wallet = walletRepository.findByUsernameAndCurrency(userUsername, currency);
+        Optional<Wallet> wallet = walletRepository.findByUsernameAndCurrency(userUsername, currency.toString());
         if (wallet.isPresent()) {
             return wallet.get();
         }
         Wallet newWallet = new Wallet();
         newWallet.setCurrency(currency);
         newWallet.setOwner(userService.loadUserByUsername(userUsername));
-        walletRepository.save(newWallet);
+        walletRepository.create(newWallet);
         return newWallet;
     }
 
     @Override
-    public List<WalletBasicOutput> getActiveWalletsByUserId(UUID user_id) {
-        List<Wallet> wallets = walletRepository.findActiveWalletsByUserId(user_id);
+    public List<WalletBasicOutput> getActiveWalletsOfAuthenticatedUser() {
+        User user = userService.getAuthenticatedUser();
+        List<Wallet> wallets = walletRepository.getActiveWalletsByUserId(user.getId());
         return wallets.stream().map(modelMapper::mapWalletToBasicWalletOutput).toList();
+    }
+
+    @Override
+    public WalletPageOutput getWalletHistoryPageById(UUID walletId, int page, int size) {
+        return walletRepository.getWalletHistory(walletId, page, size);
     }
 
     @Override
     public void softDeleteAuthenticatedUserWalletByCurrency(Currency currency) {
         User user = userService.getAuthenticatedUser();
 
-        Optional<Wallet> wallet = walletRepository.findByUsernameAndCurrency(user.getUsername(), currency);
+        Optional<Wallet> wallet = walletRepository.findByUsernameAndCurrency(user.getUsername(), currency.name());
         if (wallet.isEmpty()) {
             throw new EntityNotFoundException("Wallet", "Currency", currency.name());
         } else if (wallet.get().isDeleted()) {
@@ -71,11 +74,11 @@ public class WalletServiceImpl implements WalletService {
         wallet.get().markAsDeleted();
     }
 
+    // todo why have update on wallet?
     @Override
     public void update(Wallet wallet, User user) {
-        if(wallet.getOwner().equals(user)){
-            walletRepository.save(wallet);
+        if (wallet.getOwner().equals(user)) {
+            walletRepository.update(wallet);
         } else throw new UnauthorizedAccessException(NOT_WALLET_OWNER);
     }
-
 }

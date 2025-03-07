@@ -3,6 +3,7 @@ package com.example.virtualwallet.services.contracts;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.WalletBasicOutput;
+import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
 import com.example.virtualwallet.models.enums.Currency;
 
 import java.util.List;
@@ -16,7 +17,9 @@ public interface WalletService {
 
     void update(Wallet wallet, User user);
 
-    List<WalletBasicOutput> getActiveWalletsByUserId(UUID userId);
+    List<WalletBasicOutput> getActiveWalletsOfAuthenticatedUser();
+
+    WalletPageOutput getWalletHistoryPageById(UUID walletId, int page, int size);
 
     void softDeleteAuthenticatedUserWalletByCurrency(Currency currency);
 }
