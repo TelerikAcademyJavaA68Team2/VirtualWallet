@@ -75,7 +75,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     private TransactionStatus callMockWithdrawApi() {
-        String url = "http://localhost:8080/api/transfers/withdraw";
+        String url = "http://localhost:8080/api/profile/transfers/withdraw";
 
         try {
             ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
