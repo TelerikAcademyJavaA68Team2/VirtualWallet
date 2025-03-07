@@ -1,9 +1,9 @@
 package com.example.virtualwallet.controllers.rest;
 
-import com.example.virtualwallet.models.dtos.CardEdit;
-import com.example.virtualwallet.models.dtos.CardInput;
-import com.example.virtualwallet.models.dtos.CardOutput;
-import com.example.virtualwallet.models.dtos.CardOutputForList;
+import com.example.virtualwallet.models.dtos.card.CardEdit;
+import com.example.virtualwallet.models.dtos.card.CardInput;
+import com.example.virtualwallet.models.dtos.card.CardOutput;
+import com.example.virtualwallet.models.dtos.card.CardOutputForList;
 import com.example.virtualwallet.services.contracts.CardService;
 import com.example.virtualwallet.services.contracts.UserService;
 import io.swagger.v3.oas.annotations.Operation;

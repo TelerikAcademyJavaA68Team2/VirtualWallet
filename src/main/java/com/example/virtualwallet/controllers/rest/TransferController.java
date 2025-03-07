@@ -1,7 +1,7 @@
 package com.example.virtualwallet.controllers.rest;
 
-import com.example.virtualwallet.models.dtos.TransferInput;
-import com.example.virtualwallet.models.dtos.TransferOutput;
+import com.example.virtualwallet.models.dtos.transfer.TransferInput;
+import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.services.contracts.TransferService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

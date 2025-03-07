@@ -7,8 +7,8 @@ import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Transaction;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
-import com.example.virtualwallet.models.dtos.TransactionInput;
-import com.example.virtualwallet.models.dtos.TransactionOutput;
+import com.example.virtualwallet.models.dtos.transfer.TransactionInput;
+import com.example.virtualwallet.models.dtos.transfer.TransactionOutput;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.repositories.TransactionRepository;
@@ -16,7 +16,6 @@ import com.example.virtualwallet.services.contracts.TransactionService;
 import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

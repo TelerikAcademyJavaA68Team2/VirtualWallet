@@ -1,8 +1,7 @@
 package com.example.virtualwallet.services.contracts;
 
-import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
-import com.example.virtualwallet.models.dtos.WalletBasicOutput;
+import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
 import com.example.virtualwallet.models.enums.Currency;
 

@@ -1,7 +1,7 @@
 package com.example.virtualwallet.repositories;
 
 import com.example.virtualwallet.models.Wallet;
-import com.example.virtualwallet.models.dtos.ActivityOutput;
+import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

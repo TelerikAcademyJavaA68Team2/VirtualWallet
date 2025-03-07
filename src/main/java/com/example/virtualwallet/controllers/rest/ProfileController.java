@@ -1,7 +1,7 @@
 package com.example.virtualwallet.controllers.rest;
 
-import com.example.virtualwallet.models.dtos.TransactionOutput;
-import com.example.virtualwallet.models.dtos.TransferOutput;
+import com.example.virtualwallet.models.dtos.transfer.TransactionOutput;
+import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.services.contracts.TransactionService;

@@ -1,4 +1,4 @@
-package com.example.virtualwallet.models.dtos;
+package com.example.virtualwallet.models.dtos.wallet;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

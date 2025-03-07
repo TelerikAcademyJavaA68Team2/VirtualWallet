@@ -1,9 +1,17 @@
 package com.example.virtualwallet.helpers;
 
 import com.example.virtualwallet.models.*;
-import com.example.virtualwallet.models.dtos.*;
+import com.example.virtualwallet.models.dtos.card.CardEdit;
+import com.example.virtualwallet.models.dtos.card.CardInput;
+import com.example.virtualwallet.models.dtos.card.CardOutput;
+import com.example.virtualwallet.models.dtos.card.CardOutputForList;
+import com.example.virtualwallet.models.dtos.transfer.TransactionInput;
+import com.example.virtualwallet.models.dtos.transfer.TransactionOutput;
+import com.example.virtualwallet.models.dtos.transfer.TransferInput;
+import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
+import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransactionStatus;
 

@@ -1,6 +1,6 @@
 package com.example.virtualwallet.models.dtos.pageable;
 
-import com.example.virtualwallet.models.dtos.ActivityOutput;
+import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
 import com.example.virtualwallet.models.enums.Currency;
 
 import java.math.BigDecimal;

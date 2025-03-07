@@ -1,8 +1,8 @@
 package com.example.virtualwallet.services.contracts;
 
 import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.dtos.TransferInput;
-import com.example.virtualwallet.models.dtos.TransferOutput;
+import com.example.virtualwallet.models.dtos.transfer.TransferInput;
+import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 
 import java.util.List;
 

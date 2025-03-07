@@ -1,4 +1,4 @@
-package com.example.virtualwallet.models.dtos;
+package com.example.virtualwallet.models.dtos.transfer;
 
 import lombok.Data;
 
@@ -7,18 +7,20 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-public class TransactionOutput {
+public class TransferOutput {
 
-    private UUID transactionId;
+    private UUID transferId;
 
     private LocalDateTime date;
+
+    private String status;
 
     private BigDecimal amount;
 
     private String currency;
 
-    private String senderUsername;
+    private UUID cardId;
 
-    private String recipientUsername;
+    private UUID walletId;
 
 }
