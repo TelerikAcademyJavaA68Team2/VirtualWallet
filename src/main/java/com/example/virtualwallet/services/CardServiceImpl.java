@@ -27,7 +27,6 @@ public class CardServiceImpl implements CardService {
     public static final String REGISTERED_TO_ANOTHER_USER = "This card is already registered to another user!";
 
     private final CardRepository cardRepository;
-    /*private final ModelMapper modelMapper;*/
     private final UserService userService;
 
     @Override

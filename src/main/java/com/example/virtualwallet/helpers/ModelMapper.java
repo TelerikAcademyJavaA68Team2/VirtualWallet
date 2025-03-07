@@ -1,6 +1,5 @@
 package com.example.virtualwallet.helpers;
 
-
 import com.example.virtualwallet.models.*;
 import com.example.virtualwallet.models.dtos.*;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
 import static com.example.virtualwallet.helpers.ModelHelpers.maskCreditCard;
 
 public class ModelMapper {
-
 
     public static Card createCardFromCardInput(CardInput cardInput, User user) {
         Card card = new Card();
