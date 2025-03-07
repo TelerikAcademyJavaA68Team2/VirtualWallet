@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.*;
 
@@ -70,7 +69,6 @@ public class CardServiceImplTests {
         assertNotNull(result);
         Assertions.assertEquals(mockCard, result);
         verify(cardRepository, times(1)).findById(mockCard.getId());
-
     }
 
     @Test
@@ -89,10 +87,6 @@ public class CardServiceImplTests {
         assertNotNull(result);
         Assertions.assertEquals(mockCardOutput, result);
         verify(cardRepository, times(1)).findById(mockCardOutput.getCardId());
-/*
-        verify(modelMapper, times(1)).cardOutputFromCard(mockCard);
-*/
-
     }
 
     @Test
@@ -100,7 +94,6 @@ public class CardServiceImplTests {
         when(cardRepository.findById(any())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> cardService.getCardById(UUID.randomUUID()));
-
     }
 
     @Test
@@ -191,10 +184,6 @@ public class CardServiceImplTests {
 
         verify(cardRepository, Mockito.times(1))
                 .getAllByOwner_Id(user.getId());
-
-/*
-        verify(ModelMapper, times(1)).displayForListCardOutputFromCreditCard(mockCard);
-*/
     }
 
     @Test
@@ -263,9 +252,7 @@ public class CardServiceImplTests {
                 () -> cardService.addCard(cardInput));
 
         verify(cardRepository, never()).save(any(Card.class));
-
         assertEquals(REGISTERED_TO_ANOTHER_USER, duplicateEntityException.getMessage());
-
     }
 
     @Test
@@ -283,7 +270,6 @@ public class CardServiceImplTests {
         verify(cardRepository, never()).save(any(Card.class));
 
         assertEquals(format("Card with number %s already exists.", card.getCardNumber()), duplicateEntityException.getMessage());
-
     }
 
     @Test
@@ -358,7 +344,6 @@ public class CardServiceImplTests {
                 () -> cardService.updateCard(cardEdit, card.getId()));
 
         verify(cardRepository, never()).save(any(Card.class));
-
     }
 
 
@@ -366,7 +351,6 @@ public class CardServiceImplTests {
     public void deleteCard_Should_SoftDeleteCardById() {
         User user = createMockUserWithoutCardsAndWallets();
         Card card = createMockCard(user);
-
 
         doReturn(user).when(userService).getAuthenticatedUser();
         when(cardRepository.findById(any())).thenReturn(Optional.of(card));
