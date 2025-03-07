@@ -11,16 +11,23 @@ import com.example.virtualwallet.models.dtos.transfer.TransactionInput;
 import com.example.virtualwallet.models.dtos.transfer.TransactionOutput;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
+import com.example.virtualwallet.models.fillterOptions.TransactionSpecification;
 import com.example.virtualwallet.repositories.TransactionRepository;
 import com.example.virtualwallet.services.contracts.TransactionService;
 import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -91,6 +98,42 @@ public class TransactionServiceImpl implements TransactionService {
     public List<TransactionOutput> findAllTransactionsByUserId(UUID userId) {
         return transactionRepository.findAllTransactionsBySenderWallet_Owner_IdOrRecipientWallet_Owner_Id
                         (userId, userId, Sort.by(Sort.Direction.DESC, "date"))
+                .stream()
+                .map(ModelMapper::transactionToTransactionOutput)
+                .toList();
+    }
+
+    @Override
+    public List<TransactionOutput> findAllTransactionsByUserIdWithFilters(
+            UUID userId, TransactionFilterOptions filterOptions) {
+
+        // 1) Build the Specification
+        Specification<Transaction> spec =
+                TransactionSpecification.buildSpecification(userId, filterOptions);
+
+        // 2) Convert sortBy, sortOrder to a Sort object
+        Sort.Direction direction =
+                filterOptions.getSortOrder().equalsIgnoreCase("desc")
+                        ? Sort.Direction.DESC
+                        : Sort.Direction.ASC;
+
+        //  decide which fields are valid. E.g. "date" or "amount"
+        // to avoid letting the user supply something random that breaks your query.
+        Sort sort = Sort.by(direction, filterOptions.getSortBy());
+
+        // 3) Build the pageable
+        Pageable pageable = PageRequest.of(
+                filterOptions.getPage(),
+                filterOptions.getSize(),
+                sort
+        );
+
+        // 4) Fetch from repository
+        Page<Transaction> pageResult = transactionRepository.findAll(spec, pageable);
+
+        // 5) Map to whatever DTO/Output form you need
+        //    Using .map(...) from Spring Data is easy, but you can also .stream()
+        return pageResult
                 .stream()
                 .map(ModelMapper::transactionToTransactionOutput)
                 .toList();
