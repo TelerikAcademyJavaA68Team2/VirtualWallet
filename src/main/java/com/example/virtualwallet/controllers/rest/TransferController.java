@@ -3,6 +3,7 @@ package com.example.virtualwallet.controllers.rest;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.services.contracts.TransferService;
+import com.example.virtualwallet.services.contracts.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,15 +12,30 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Random;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/transfers")
+@RequestMapping("/api/profile/transfers")
 @Tag(name = "Transfer Management", description = "API for making user transfers")
 public class TransferController {
 
     private final TransferService transferService;
+    private final UserService userService;
+
+    @Operation(
+            summary = "Retrieve all of user's transfers",
+            description = "Fetch a list of user's transfers to fund his cards.",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200")
+            }
+    )
+    @GetMapping
+    public ResponseEntity<List<TransferOutput>> getTransfers() {
+        return ResponseEntity.ok(transferService.
+                findAllTransfersByUserId(userService.getAuthenticatedUser()));
+    }
 
     @Operation(
             summary = "Make a transfer",

@@ -1,7 +1,5 @@
 package com.example.virtualwallet.controllers.rest;
 
-import com.example.virtualwallet.models.dtos.transfer.TransactionOutput;
-import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.services.contracts.TransactionService;
@@ -15,13 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/profile")
 @RequiredArgsConstructor
-@Tag(name = "Profile Management", description = "API for managing user profile, " +
-        "listing cards, transactions and transfers")
+@Tag(name = "Profile Management", description = "API for managing user profile")
 public class ProfileController {
 
     private final UserService userService;
@@ -70,31 +65,5 @@ public class ProfileController {
         userService.updateAuthenticatedUser(input);
 
         return ResponseEntity.ok("Account updated successfully");
-    }
-
-    @Operation(
-            summary = "Retrieve all of user's transactions",
-            description = "Fetch a list of user's transactions to other users.",
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200")
-            }
-    )
-    @GetMapping("/transactions")
-    public ResponseEntity<List<TransactionOutput>> getTransactions() {
-        return ResponseEntity.ok(transactionService
-                .findAllTransactionsByUserId(userService.getAuthenticatedUser().getId()));
-    }
-
-    @Operation(
-            summary = "Retrieve all of user's transfers",
-            description = "Fetch a list of user's transfers to fund his cards.",
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200")
-            }
-    )
-    @GetMapping("/transfers")
-    public ResponseEntity<List<TransferOutput>> getTransfers() {
-        return ResponseEntity.ok(transferService.
-                findAllTransfersByUserId(userService.getAuthenticatedUser()));
     }
 }

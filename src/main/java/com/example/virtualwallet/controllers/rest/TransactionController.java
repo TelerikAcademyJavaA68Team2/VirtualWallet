@@ -2,7 +2,9 @@ package com.example.virtualwallet.controllers.rest;
 
 import com.example.virtualwallet.models.dtos.transfer.TransactionInput;
 import com.example.virtualwallet.models.dtos.transfer.TransactionOutput;
+import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.services.contracts.TransactionService;
+import com.example.virtualwallet.services.contracts.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,13 +13,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/transactions")
+@RequestMapping("/api/profile/transactions")
 @Tag(name = "Transaction Management", description = "API for managing user transactions")
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final UserService userService;
 
     @Operation(
             summary = "Make a transaction",
@@ -36,5 +42,45 @@ public class TransactionController {
     public ResponseEntity<TransactionOutput> makeTransaction(@Valid @RequestBody TransactionInput transactionInput){
         return ResponseEntity.ok(transactionService.createTransaction(transactionInput));
 
+    }
+
+    @Operation(
+            summary = "Retrieve all of user's transactions",
+            description = "Fetch a list of user's transactions to other users.",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200")
+            }
+    )
+    @GetMapping
+    public ResponseEntity<List<TransactionOutput>> getTransactions() {
+        return ResponseEntity.ok(transactionService
+                .findAllTransactionsByUserId(userService.getAuthenticatedUser().getId()));
+    }
+
+    @Operation(
+            summary = "Retrieve all of user's transactions with filter options",
+            description = "Fetch a list of user's transactions to other users with " +
+                    "filter options, sorting and pagination.",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200")
+            }
+    )
+    @GetMapping("/filter")
+    public ResponseEntity<List<TransactionOutput>> getTransactionsWithFilter(@RequestParam(required = false) String firstDate,
+                                                                             @RequestParam(required = false) String lastDate,
+                                                                             @RequestParam(required = false) String sender,
+                                                                             @RequestParam(required = false) String recipient,
+                                                                             @RequestParam(required = false) String direction,
+                                                                             @RequestParam(defaultValue = "date") String sortBy,
+                                                                             @RequestParam(defaultValue = "desc") String sortOrder,
+                                                                             @RequestParam(defaultValue = "0") int page,
+                                                                             @RequestParam(defaultValue = "10") int size) {
+        TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions
+                (firstDate, lastDate, sender, recipient, direction, sortBy, sortOrder, page, size);
+        UUID userId = userService.getAuthenticatedUser().getId();
+
+        List<TransactionOutput> result =
+                transactionService.findAllTransactionsByUserIdWithFilters(userId, transactionFilterOptions);
+        return ResponseEntity.ok(result);
     }
 }
