@@ -1,9 +1,9 @@
 package com.example.virtualwallet.repositories;
 
-import com.example.virtualwallet.exceptions.EmptyPageException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
+import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
@@ -14,13 +14,10 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static java.util.Arrays.stream;
 
 @Repository
 @RequiredArgsConstructor
@@ -64,7 +61,7 @@ public class WalletRepositoryImpl implements WalletRepository {
         try (Session session = sessionFactory.openSession()) {
             Query<Wallet> query = session.createQuery("From Wallet Where owner.username = :username and currency = :currency", Wallet.class);
             query.setParameter("username", userUsername);
-            query.setParameter("currency", currency);
+            query.setParameter("currency", Currency.valueOf(currency));
             return query.stream().findFirst();
         }
     }
