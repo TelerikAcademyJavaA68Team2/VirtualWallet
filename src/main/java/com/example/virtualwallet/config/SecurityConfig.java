@@ -34,14 +34,14 @@ public class SecurityConfig {
             "/api/test/**", "/authenticate"};
 
     private static final String[] PUBLIC_REST_URL_LIST =
-            {"/api/home/**", "/api/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**","/api/admin/users"};
+            {"/api/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**"};
 
     private static final String[] RESTRICTED_REST_URL_LIST = {"/api/admin/**"};
 
     private static final String[] PUBLIC_MVC_URL_LIST =
-            {"/mvc/home/**", "/mvc/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**"};
+            {"/mvc/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**"};
 
-    private static final String[] RESTRICTED_MVC_URL_LIST = {"/mvc/admin"};
+    private static final String[] RESTRICTED_MVC_URL_LIST = {"/mvc/admin**"};
 
     private final UserDetailsService userDetailsService;
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
@@ -99,8 +99,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(WHITE_LIST_SWAGGER_URL).permitAll()
                         .requestMatchers(PUBLIC_REST_URL_LIST).permitAll()
-                        .requestMatchers(RESTRICTED_REST_URL_LIST).permitAll()/*hasAnyAuthority("ADMIN")*/
-                        .anyRequest().permitAll()/*.authenticated()*/)
+                        .requestMatchers(RESTRICTED_REST_URL_LIST).hasAnyAuthority("ADMIN")
+                        .anyRequest().authenticated())
                 .userDetailsService(userDetailsService)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)

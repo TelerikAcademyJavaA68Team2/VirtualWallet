@@ -97,7 +97,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private boolean isPublicRestRequest(HttpServletRequest request) {
         String requestUri = request.getRequestURI();
-        return requestUri.startsWith("api/home") || requestUri.startsWith("/api/auth");
+        return requestUri.startsWith("/api/auth");
     }
 
     private boolean isRestRequest(HttpServletRequest request) {
