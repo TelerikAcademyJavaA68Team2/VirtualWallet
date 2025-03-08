@@ -29,4 +29,6 @@ public interface UserService extends UserDetailsService {
     boolean checkIfEmailIsTaken(String email);
 
     boolean checkIfPhoneNumberIsTaken(String phoneNumber);
+
+    boolean checkIfUsernameIsTaken(String username);
 }

@@ -19,4 +19,6 @@ public interface UserRepository {
     boolean checkIfEmailIsTaken(String email);
 
     boolean checkIfPhoneNumberIsTaken(String phoneNumber);
+
+    boolean checkIfUsernameIsTaken(String username);
 }

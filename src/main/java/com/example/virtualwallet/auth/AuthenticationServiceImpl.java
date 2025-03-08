@@ -65,6 +65,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!request.getPasswordConfirm().equals(request.getPassword())) {
             throw new InvalidUserInputException("Password Confirmation failed");
         }
+        if (
+                userService.checkIfEmailIsTaken(request.getEmail()) ||
+                userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())||
+
+        ) {
+
+        }
         User newUser = createUserFromRequest(request);
         // todo validate uniquenes of user
         userService.createUser(newUser);
