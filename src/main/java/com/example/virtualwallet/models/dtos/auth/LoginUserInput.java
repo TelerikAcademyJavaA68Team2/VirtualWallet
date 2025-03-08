@@ -7,9 +7,10 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @PropertySource("classpath:messages.properties")
 public class LoginUserInput {
-    @NotBlank(message = "Username is required!")
+
+    @NotBlank(message = "{error.username}")
     private String username;
 
-    @NotBlank(message = "Password is required!")
+    @NotBlank(message = "{error.password}")
     private String password;
 }

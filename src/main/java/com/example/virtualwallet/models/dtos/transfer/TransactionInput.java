@@ -4,20 +4,22 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
+import org.springframework.context.annotation.PropertySource;
 
 import java.math.BigDecimal;
 
 @Data
+@PropertySource("classpath:messages.properties")
 public class TransactionInput {
 
-    @NotBlank(message = "User credentials cannot be blank!")
+    @NotBlank(message = "{error.transactionFindUserByBlank}")
     private String usernameOrEmailOrPhoneNumber;
 
-    @NotNull(message = "Amount cannot be null!")
-    @Positive(message = "Amount must be positive number!")
+    @NotNull(message = "{error.transactionAmountBlank}")
+    @Positive(message = "{error.transactionAmountPositive}")
     private BigDecimal amount;
 
-    @NotBlank(message = "Currency cannot be blank or empty!")
+    @NotBlank(message = "{error.currencyEmpty}")
     private String currency;
 
 }

@@ -15,7 +15,6 @@ public class ActivityFilterOptions {
     private int page;
     private int size;
 
-
     public ActivityFilterOptions(
             LocalDateTime startDate,
             LocalDateTime endDate,

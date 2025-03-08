@@ -5,29 +5,31 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.springframework.context.annotation.PropertySource;
 
 @Data
+@PropertySource("classpath:messages.properties")
 public class ProfileUpdateInput {
 
-    @Size(min = 4, max = 32, message = "First name should be between 4 and 32 symbols!")
+    @Size(min = 4, max = 32, message = "{error.firstNameLength}")
     private String firstName;
 
-    @Size(min = 4, max = 32, message = "Last name should be between 4 and 32 symbols!")
+    @Size(min = 4, max = 32, message = "{error.lastNameLength}")
     private String lastName;
 
-    @Email(message = "Email address is invalid!")
-    @Size(min = 5, max = 200, message = "Email should be between 5 and 200 symbols!")
+    @Email(message = "{error.emailInvalid}")
+    @Size(min = 5, max = 200, message = "{error.emailLength}")
     private String email;
 
-    @Pattern(regexp = "\\d{10}", message = "Phone number must be exactly 10 digits.")
+    @Pattern(regexp = "\\d{10}", message = "{error.phoneDigits}")
     private String phoneNumber;
 
-    @NotBlank(message = "Your current password is required for any profile updates!")
+    @NotBlank(message = "{error.passwordRequired}")
     private String password;
 
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[+\\-*&^%$#@!])[A-Za-z\\d+\\-*&^%$#@!]{8,}$",
-            message = "Password must be at least 8 characters long and include a capital letter, a digit, and a special symbol!")
-    @Size(min = 8, max = 40, message = "Password should be between 8 and 40 symbols!")
+            message = "{error.passwordValidation}")
+    @Size(min = 8, max = 40, message = "{error.passwordLength}")
     private String newPassword;
 
     private String newPasswordConfirm;

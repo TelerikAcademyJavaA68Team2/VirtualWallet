@@ -4,10 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.springframework.context.annotation.PropertySource;
 
 import java.time.YearMonth;
 
 @Data
+@PropertySource("classpath:messages.properties")
 public class CardInput {
 
     @NotBlank(message = "{error.cardNumberEmpty}")
