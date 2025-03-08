@@ -30,8 +30,8 @@ public class WalletController {
         return new ResponseEntity<>(currency + " Wallet deleted successfully!", HttpStatus.OK);
     }
 
-    @GetMapping("/{currency}")
-    public ResponseEntity<?> getWalletHistory(@PathVariable String currency,
+    @GetMapping("/activity")
+    public ResponseEntity<?> getWalletHistory(@RequestParam String currency,
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size) {
 
