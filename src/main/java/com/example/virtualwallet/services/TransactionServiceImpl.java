@@ -107,7 +107,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         // 1) Build the Specification
         Specification<Transaction> spec =
-                TransactionSpecification.buildSpecification(userId, filterOptions);
+                TransactionSpecification.buildTransactionSpecification(userId, filterOptions);
 
         // 2) Convert sortBy, sortOrder to a Sort object
         Sort.Direction direction =
