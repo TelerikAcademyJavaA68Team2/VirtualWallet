@@ -1,20 +1,16 @@
 package com.example.virtualwallet.models.fillterOptions;
 
-import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.virtualwallet.helpers.ValidationHelpers.*;
+
 @Data
 public class TransactionFilterOptions {
-
-    private static final DateTimeFormatter CUSTOM_FORMATTER =
-            DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm");
 
     private Optional<LocalDateTime> minCreatedAt;
     private Optional<LocalDateTime> maxCreatedAt;
@@ -47,31 +43,6 @@ public class TransactionFilterOptions {
         this.page = page;
         this.size = size;
 
-    }
-
-    private Optional<LocalDateTime> parseLocalDateTime(String value) {
-        if (value == null || value.trim().isEmpty()) {
-            return Optional.empty();
-        }
-        try {
-            return Optional.of(LocalDateTime.parse(value.trim(), CUSTOM_FORMATTER));
-        } catch (DateTimeParseException ex) {
-            // return Optional.empty();
-
-
-            throw new InvalidUserInputException("Invalid date/time format: " + value +
-                    ". Expected format: dd.MM.yyyy - HH:mm", ex);
-        }
-    }
-
-    private Optional<String> sanitizeOptional(String value) {
-        return (value == null || value.trim().isEmpty()) ? Optional.empty() : Optional.of(value);
-    }
-
-    private String validateSortOrder(String sortOrder) {
-        return (sortOrder != null &&
-                !sortOrder.isEmpty() &&
-                (sortOrder.equals("asc") || sortOrder.equals("desc"))) ? sortOrder : "desc";
     }
 
     private String validateSortBy(String sortBy) {

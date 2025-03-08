@@ -9,6 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.virtualwallet.helpers.ValidationHelpers.sanitizeOptional;
+import static com.example.virtualwallet.helpers.ValidationHelpers.validateSortOrder;
+
 @Getter
 public class UserFilterOptions {
 
@@ -23,7 +26,6 @@ public class UserFilterOptions {
     private String sortOrder;
     private int page;
     private int size;
-
 
     public UserFilterOptions(String username,
                              String email,
@@ -44,10 +46,6 @@ public class UserFilterOptions {
         this.sortOrder = validateSortOrder(sortOrder);
         this.page = page;
         this.size = size;
-    }
-
-    private Optional<String> sanitizeOptional(String value) {
-        return (value == null || value.trim().isEmpty()) ? Optional.empty() : Optional.of(value);
     }
 
     private Optional<String> validateRole(String role) {
@@ -74,11 +72,5 @@ public class UserFilterOptions {
     private String validateSortBy(String sortBy) {
         List<String> validFields = Arrays.asList("username", "email", "phoneNumber", "role", "status", "date");
         return (sortBy != null && !sortBy.isEmpty() && validFields.contains(sortBy)) ? sortBy : "date";
-    }
-
-    private String validateSortOrder(String sortOrder) {
-        return (sortOrder != null &&
-                !sortOrder.isEmpty() &&
-                (sortOrder.equals("asc") || sortOrder.equals("desc"))) ? sortOrder : "desc";
     }
 }
