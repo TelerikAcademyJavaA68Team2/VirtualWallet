@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class TransactionSpecification {
 
-    public static Specification<Transaction> buildSpecification(UUID userId, TransactionFilterOptions filterOptions) {
+    public static Specification<Transaction> buildTransactionSpecification(UUID userId, TransactionFilterOptions filterOptions) {
         return (Root<Transaction> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 
             // Collect all predicates here
