@@ -7,10 +7,18 @@ import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Currency;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Optional;
+
 
 public class ValidationHelpers {
 
     public static final String UNAUTHORIZED_MESSAGE_POST = "Only the card's owner can modify cards!";
+
+    public static final DateTimeFormatter CUSTOM_FORMATTER =
+            DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm");
 
     public static boolean isValidImageFile(MultipartFile file) {
         String contentType = file.getContentType();
@@ -31,5 +39,30 @@ public class ValidationHelpers {
             throw new InvalidUserInputException("Invalid currency: " + currencyString +
                     ". Supported currencies: BGN, EUR, USD.");
         }
+    }
+
+    public static Optional<LocalDateTime> parseLocalDateTime(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(LocalDateTime.parse(value.trim(), CUSTOM_FORMATTER));
+        } catch (DateTimeParseException ex) {
+            // return Optional.empty();
+
+
+            throw new InvalidUserInputException("Invalid date/time format: " + value +
+                    ". Expected format: dd.MM.yyyy - HH:mm", ex);
+        }
+    }
+
+    public static Optional<String> sanitizeOptional(String value) {
+        return (value == null || value.trim().isEmpty()) ? Optional.empty() : Optional.of(value);
+    }
+
+    public static String validateSortOrder(String sortOrder) {
+        return (sortOrder != null &&
+                !sortOrder.isEmpty() &&
+                (sortOrder.equals("asc") || sortOrder.equals("desc"))) ? sortOrder : "desc";
     }
 }
