@@ -65,15 +65,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!request.getPasswordConfirm().equals(request.getPassword())) {
             throw new InvalidUserInputException("Password Confirmation failed");
         }
-        if (
-                userService.checkIfEmailIsTaken(request.getEmail()) ||
-                userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())||
 
-        ) {
-
+        if (userService.checkIfUsernameIsTaken(request.getUsername())) {
+            throw new DuplicateEntityException("User", "username", request.getUsername());
         }
+        if (userService.checkIfEmailIsTaken(request.getEmail())) {
+            throw new DuplicateEntityException("User", "email", request.getEmail());
+        }
+        if (userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())) {
+            throw new DuplicateEntityException("User", "phone number", request.getPhoneNumber());
+        }
+
         User newUser = createUserFromRequest(request);
-        // todo validate uniquenes of user
         userService.createUser(newUser);
         User user = userService.loadUserByUsername(request.getUsername());
         UUID tokenId = UUID.randomUUID();
