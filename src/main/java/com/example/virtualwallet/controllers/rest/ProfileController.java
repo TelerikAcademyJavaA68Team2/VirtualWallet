@@ -2,8 +2,6 @@ package com.example.virtualwallet.controllers.rest;
 
 import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
-import com.example.virtualwallet.services.contracts.TransactionService;
-import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileController {
 
     private final UserService userService;
-    private final TransactionService transactionService;
-    private final TransferService transferService;
 
     @Operation(
             summary = "Delete user account",
