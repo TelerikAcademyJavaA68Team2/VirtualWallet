@@ -45,7 +45,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionOutput createTransaction(TransactionInput transactionInput) {
         User sender = userService.getAuthenticatedUser();
-        if(sender.getStatus() != AccountStatus.ACTIVE) {
+        if (sender.getStatus() != AccountStatus.ACTIVE) {
             throw new UnauthorizedAccessException("Your account status is not active " +
                     "and you cannot make a transaction! Please, contact an Admin for further information.");
         }
@@ -60,7 +60,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         BigDecimal amountToSend = transactionInput.getAmount();
 
-        if(walletService.ifUserHasNoWalletOfCurrency(sender.getId(), transactionCurrency)){
+        if (walletService.ifUserHasNoWalletOfCurrency(sender.getId(), transactionCurrency)) {
             throw new InvalidUserInputException("You must first create a wallet with that currency " +
                     "and have enough balance to make a transaction!");
         }
@@ -89,9 +89,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         walletService.update(senderWallet);
         walletService.update(recipientWallet);
-        transactionRepository.save(transaction);
-        Optional<Transaction> transactionToSave = transactionRepository.findById(transaction.getId());
-        return ModelMapper.transactionToTransactionOutput(transactionToSave.get(), sender.getUsername(), recipientUsername );
+        Transaction transactionToSave = transactionRepository.save(transaction);
+        return ModelMapper.transactionToTransactionOutput(transactionToSave, sender.getUsername(), recipientUsername);
     }
 
     @Override
