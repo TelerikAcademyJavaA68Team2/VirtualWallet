@@ -68,18 +68,24 @@ public class User implements UserDetails {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @PrePersist
-    protected void onCreate() {
+    public User( String firstName,
+                 String lastName,
+                 String username,
+                 String password,
+                 String email,
+                 String phoneNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.photo = "defaultPhoto";
+        this.phoneNumber = phoneNumber;
         this.createdAt = LocalDateTime.now();
         this.role = Role.USER;
         this.status = AccountStatus.ACTIVE; // change to pending if email verification is active
         this.cards = new HashSet<>();
         this.wallets = new HashSet<>();
-    }
-
-    @PreRemove
-    protected void onDelete() { // mabby remove this later
-        this.markAsDeleted();
     }
 
     public void markAsDeleted() {

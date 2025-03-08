@@ -1,11 +1,11 @@
 package com.example.virtualwallet.auth;
 
 import com.example.virtualwallet.auth.emailVerification.EmailConfirmationService;
-import com.example.virtualwallet.models.EmailConfirmationToken;
 import com.example.virtualwallet.auth.emailVerification.EmailService;
 import com.example.virtualwallet.auth.jwt.JwtService;
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
+import com.example.virtualwallet.models.EmailConfirmationToken;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
@@ -62,25 +62,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String register(RegisterUserInput request) {
-        if (!request.getPasswordConfirm().equals(request.getPassword())) {
-            throw new InvalidUserInputException("Password Confirmation failed");
-        }
-
-        if (userService.checkIfUsernameIsTaken(request.getUsername())) {
-            throw new DuplicateEntityException("User", "username", request.getUsername());
-        }
-        if (userService.checkIfEmailIsTaken(request.getEmail())) {
-            throw new DuplicateEntityException("User", "email", request.getEmail());
-        }
-        if (userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())) {
-            throw new DuplicateEntityException("User", "phone number", request.getPhoneNumber());
-        }
+        validateUserRequest(request);
 
         User newUser = createUserFromRequest(request);
         userService.createUser(newUser);
         User user = userService.loadUserByUsername(request.getUsername());
         UUID tokenId = UUID.randomUUID();
         EmailConfirmationToken token = new EmailConfirmationToken(tokenId, user);
+
         emailConfirmationService.save(token);
         emailService.sendVerificationEmail(request.getFirstName(), request.getEmail(), tokenId.toString());
         return "Thanks for registering please confirm your email";
@@ -91,29 +80,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     }
 
+    private void validateUserRequest(RegisterUserInput request) {
+        if (!request.getPasswordConfirm().equals(request.getPassword())) {
+            throw new InvalidUserInputException("Password Confirmation failed");
+        }
+        if (userService.checkIfUsernameIsTaken(request.getUsername())) {
+            throw new DuplicateEntityException("User", "username", request.getUsername());
+        }
+        if (userService.checkIfEmailIsTaken(request.getEmail())) {
+            throw new DuplicateEntityException("User", "email", request.getEmail());
+        }
+        if (userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())) {
+            throw new DuplicateEntityException("User", "phone number", request.getPhoneNumber());
+        }
+    }
+
     private User createUserFromRequest(RegisterUserInput request) {
-        boolean userExists = true;
-        try {
-            userService.loadUserByUsername(request.getUsername());
-            if (!userService.checkIfEmailIsTaken(request.getEmail()) && !userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())) {
-                userExists = false;
-            }
-        } catch (Exception ignored) {
-            userExists = false;
-        }
-        if (userExists) {
-            throw new DuplicateEntityException(USER_ALREADY_EXISTS);
-        }
-
-
-        User user = new User();
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setPhoto("/images/default-profile-pic.png");
-        return user;
+        return new User(
+                request.getFirstName(),
+                request.getLastName(),
+                request.getUsername(),
+                passwordEncoder.encode(request.getPassword()),
+                request.getEmail(),
+                request.getPhoneNumber());
     }
 }
