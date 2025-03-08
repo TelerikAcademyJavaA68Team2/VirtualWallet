@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,7 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionOutput createTransaction(TransactionInput transactionInput) {
         User sender = userService.getAuthenticatedUser();
-        if(sender.getStatus() != AccountStatus.ACTIVE) {
+        if (sender.getStatus() != AccountStatus.ACTIVE) {
             throw new UnauthorizedAccessException("Your account status is not active " +
                     "and you cannot make a transaction! Please, contact an Admin for further information.");
         }
@@ -89,9 +88,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         walletService.update(senderWallet);
         walletService.update(recipientWallet);
-        transactionRepository.save(transaction);
-        Optional<Transaction> transactionToSave = transactionRepository.findById(transaction.getId());
-        return ModelMapper.transactionToTransactionOutput(transactionToSave.get(), sender.getUsername(), recipientUsername );
+        Transaction transactionToSave = transactionRepository.save(transaction);
+        return ModelMapper.transactionToTransactionOutput(transactionToSave, sender.getUsername(), recipientUsername);
     }
 
     @Override
