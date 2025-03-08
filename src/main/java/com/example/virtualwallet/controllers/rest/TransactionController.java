@@ -66,7 +66,7 @@ public class TransactionController {
             }
     )
     @GetMapping("/filter")
-    public ResponseEntity<List<TransactionOutput>> getTransactionsWithFilter(@RequestParam(required = false) String firstDate,
+    public ResponseEntity<?> getTransactionsWithFilter(@RequestParam(required = false) String firstDate,
                                                                              @RequestParam(required = false) String lastDate,
                                                                              @RequestParam(required = false) String sender,
                                                                              @RequestParam(required = false) String recipient,
@@ -75,6 +75,9 @@ public class TransactionController {
                                                                              @RequestParam(defaultValue = "desc") String sortOrder,
                                                                              @RequestParam(defaultValue = "0") int page,
                                                                              @RequestParam(defaultValue = "10") int size) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+        }
         TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions
                 (firstDate, lastDate, sender, recipient, direction, sortBy, sortOrder, page, size);
         UUID userId = userService.getAuthenticatedUser().getId();

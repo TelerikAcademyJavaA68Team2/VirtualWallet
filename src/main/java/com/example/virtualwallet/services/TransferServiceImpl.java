@@ -11,10 +11,7 @@ import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransactionStatus;
 import com.example.virtualwallet.repositories.TransferRepository;
-import com.example.virtualwallet.services.contracts.CardService;
-import com.example.virtualwallet.services.contracts.TransferService;
-import com.example.virtualwallet.services.contracts.UserService;
-import com.example.virtualwallet.services.contracts.WalletService;
+import com.example.virtualwallet.services.contracts.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +30,10 @@ public class TransferServiceImpl implements TransferService {
     public static final String NOT_CARD_OWNER = "You do not own this card.";
 
     private final TransferRepository transferRepository;
-    private final WalletService walletService;
     private final RestTemplate restTemplate;
     private final UserService userService;
     private final CardService cardService;
+    private final WalletServiceJPA walletServiceJPA;
 
     @Transactional
     public TransferOutput processTransfer(TransferInput transferInput) {
@@ -50,7 +47,7 @@ public class TransferServiceImpl implements TransferService {
             throw new UnauthorizedAccessException(NOT_CARD_OWNER);
         }
 
-        Wallet wallet = walletService.getOrCreateWalletByUsernameAndCurrency(user.getUsername(),
+        Wallet wallet = walletServiceJPA.getOrCreateWalletByUsernameAndCurrency(user.getUsername(),
                 currency);
 
         TransactionStatus transferStatus = callMockWithdrawApi();
@@ -61,11 +58,11 @@ public class TransferServiceImpl implements TransferService {
 
         if (transfer.getStatus() == TransactionStatus.APPROVED) {
             wallet.setBalance(wallet.getBalance().add(transferInput.getAmount()));
-            walletService.update(wallet);
+            walletServiceJPA.update(wallet);
         }
-        transferRepository.save(transfer);
+        Transfer transferToSave = transferRepository.save(transfer);
 
-        return ModelMapper.transferToTransferOutput(transfer);
+        return ModelMapper.transferToTransferOutput(transferToSave, card.getId(), wallet.getId());
     }
 
     @Override

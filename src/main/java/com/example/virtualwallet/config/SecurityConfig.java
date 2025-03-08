@@ -34,7 +34,7 @@ public class SecurityConfig {
             "/api/test/**", "/authenticate"};
 
     private static final String[] PUBLIC_REST_URL_LIST =
-            {"/api/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**"};
+            {"/api/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**", "/api/profile/transfers/withdraw"};
 
     private static final String[] RESTRICTED_REST_URL_LIST = {"/api/admin/**"};
 

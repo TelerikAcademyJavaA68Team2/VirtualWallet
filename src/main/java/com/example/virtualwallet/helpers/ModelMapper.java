@@ -16,6 +16,7 @@ import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransactionStatus;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelHelpers.maskCreditCard;
 
@@ -105,6 +106,18 @@ public class ModelMapper {
         transferOutput.setCurrency(String.valueOf(transfer.getCurrency()));
         transferOutput.setCardId(transfer.getCard().getId());
         transferOutput.setWalletId(transfer.getWallet().getId());
+        return transferOutput;
+    }
+
+    public static TransferOutput transferToTransferOutput(Transfer transfer, UUID cardId, UUID walletId) {
+        TransferOutput transferOutput = new TransferOutput();
+        transferOutput.setTransferId(transfer.getId());
+        transferOutput.setDate(transfer.getDate());
+        transferOutput.setStatus(String.valueOf(transfer.getStatus()));
+        transferOutput.setAmount(transfer.getAmount());
+        transferOutput.setCurrency(String.valueOf(transfer.getCurrency()));
+        transferOutput.setCardId(cardId);
+        transferOutput.setWalletId(walletId);
         return transferOutput;
     }
 
