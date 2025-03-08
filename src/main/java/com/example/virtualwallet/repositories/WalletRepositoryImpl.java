@@ -76,6 +76,16 @@ public class WalletRepositoryImpl implements WalletRepository {
     }
 
     @Override
+    public boolean checkIfUserHasWalletWithCurrency(UUID userId, Currency currency) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Wallet> query = session.createQuery("From Wallet Where owner.id = :userId and currency = :currency and isDeleted = false ", Wallet.class);
+            query.setParameter("userId", userId);
+            query.setParameter("currency", currency);
+            return !query.getResultList().isEmpty();
+        }
+    }
+
+    @Override
     public WalletPageOutput getWalletHistory(UUID walletId, int page, int size) {
         try (Session session = sessionFactory.openSession()) {
             WalletPageOutput pageOutput = new WalletPageOutput();

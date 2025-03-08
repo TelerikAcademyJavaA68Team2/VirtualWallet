@@ -1,5 +1,6 @@
 package com.example.virtualwallet.services;
 
+import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.helpers.ModelMapper;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndConvertCurrency;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +41,7 @@ public class WalletServiceImpl implements WalletService {
         if (wallet.isPresent()) {
             if (wallet.get().isDeleted()) {
                 wallet.get().restoreWallet();
+                walletRepository.update(wallet.get());
             }
             return wallet.get();
         }
@@ -78,8 +82,18 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public boolean ifUserHasNoWalletOfCurrency(UUID userId, Currency currency) {
-        return false;
+    public boolean checkIfUserHasWalletWithCurrency(UUID userId, Currency currency) {
+        return walletRepository.checkIfUserHasWalletWithCurrency(userId, currency);
+    }
+
+    @Override
+    public void createAuthenticatedUserWalletWalletByCurrency(String currency) {
+        User user = userService.getAuthenticatedUser();
+        Currency enumCurrency = validateAndConvertCurrency(currency);
+        if (walletRepository.checkIfUserHasWalletWithCurrency(user.getId(), enumCurrency)) {
+            throw new DuplicateEntityException("Wallet", "Currency", currency);
+        }
+        getOrCreateWalletByUsernameAndCurrency(user.getUsername(), enumCurrency);
     }
 
     @Override

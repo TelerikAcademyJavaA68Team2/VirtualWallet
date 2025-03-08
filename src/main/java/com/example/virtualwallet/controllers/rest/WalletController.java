@@ -21,4 +21,10 @@ public class WalletController {
                                               @RequestParam(defaultValue = "10") int size) {
         return new ResponseEntity<>(walletService.getWalletPageById(walletId, page, size), HttpStatus.OK);
     }
+
+    @PostMapping("/new")
+    public ResponseEntity<?> getWalletHistory(@RequestParam String currency) {
+        walletService.createAuthenticatedUserWalletWalletByCurrency(currency);
+        return new ResponseEntity<>(currency + " Wallet created successfully!", HttpStatus.OK);
+    }
 }

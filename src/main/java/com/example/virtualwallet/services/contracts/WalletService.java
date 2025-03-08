@@ -22,6 +22,7 @@ public interface WalletService {
 
     void softDeleteAuthenticatedUserWalletByCurrency(String currency);
 
-    //ToDo opravqne!!!!
-    boolean ifUserHasNoWalletOfCurrency(UUID userId, Currency currency);
+    boolean checkIfUserHasWalletWithCurrency(UUID userId, Currency currency);
+
+    void createAuthenticatedUserWalletWalletByCurrency(String currency);
 }
