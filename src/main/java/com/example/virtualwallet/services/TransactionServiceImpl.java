@@ -59,7 +59,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         BigDecimal amountToSend = transactionInput.getAmount();
 
-        if(walletService.checkIfUserHasActiveWalletWithCurrency(sender.getId(), transactionCurrency)){
+        if(!walletService.checkIfUserHasActiveWalletWithCurrency(sender.getId(), transactionCurrency)){
             throw new InvalidUserInputException("You must first create a wallet with that currency " +
                     "and have enough balance to make a transaction!");
         }
