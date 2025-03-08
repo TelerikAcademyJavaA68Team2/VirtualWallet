@@ -82,7 +82,7 @@ public class WalletServiceImpl implements WalletService {
             throw new EntityNotFoundException("Wallet", "Currency", currency);
         } else if (wallet.get().isDeleted()) {
             throw new InvalidUserInputException("Your wallet with currency: " + currency + " is already deleted!");
-        } else if (wallet.get().getBalance().doubleValue() > 0.01) {
+        } else if (wallet.get().getBalance().doubleValue() >= 0.01) {
             throw new InvalidUserInputException("Please exchange your remaining balance before deleting");
         }
         wallet.get().markAsDeleted();
