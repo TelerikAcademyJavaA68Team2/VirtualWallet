@@ -34,7 +34,6 @@ public class WalletController {
     public ResponseEntity<?> getWalletHistory(@RequestParam String currency,
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size) {
-
         return new ResponseEntity<>(walletService.getWalletPageById(currency, page, size), HttpStatus.OK);
     }
 
