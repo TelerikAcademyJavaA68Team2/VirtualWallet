@@ -57,11 +57,11 @@ public class WalletRepositoryImpl implements WalletRepository {
     }
 
     @Override
-    public Optional<Wallet> findByUsernameAndCurrency(String userUsername, String currency) {
+    public Optional<Wallet> findByUsernameAndCurrency(String userUsername, Currency currency) {
         try (Session session = sessionFactory.openSession()) {
             Query<Wallet> query = session.createQuery("From Wallet Where owner.username = :username and currency = :currency", Wallet.class);
             query.setParameter("username", userUsername);
-            query.setParameter("currency", Currency.valueOf(currency));
+            query.setParameter("currency", currency);
             return query.stream().findFirst();
         }
     }
@@ -76,9 +76,19 @@ public class WalletRepositoryImpl implements WalletRepository {
     }
 
     @Override
-    public boolean checkIfUserHasWalletWithCurrency(UUID userId, Currency currency) {
+    public boolean checkIfUserHasActiveWalletWithCurrency(UUID userId, Currency currency) {
         try (Session session = sessionFactory.openSession()) {
             Query<Wallet> query = session.createQuery("From Wallet Where owner.id = :userId and currency = :currency and isDeleted = false ", Wallet.class);
+            query.setParameter("userId", userId);
+            query.setParameter("currency", currency);
+            return !query.getResultList().isEmpty();
+        }
+    }
+
+    @Override
+    public boolean checkIfUserHasDeletedWalletWithCurrency(UUID userId, Currency currency) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Wallet> query = session.createQuery("From Wallet Where owner.id = :userId and currency = :currency and isDeleted = true ", Wallet.class);
             query.setParameter("userId", userId);
             query.setParameter("currency", currency);
             return !query.getResultList().isEmpty();

@@ -18,11 +18,11 @@ public interface WalletService {
 
     List<WalletBasicOutput> getActiveWalletsOfAuthenticatedUser();
 
-    WalletPageOutput getWalletPageById(UUID walletId, int page, int size);
+    WalletPageOutput getWalletPageById(String currency, int page, int size);
 
     void softDeleteAuthenticatedUserWalletByCurrency(String currency);
 
-    boolean checkIfUserHasWalletWithCurrency(UUID userId, Currency currency);
+    boolean checkIfUserHasActiveWalletWithCurrency(UUID userId, Currency currency);
 
     void createAuthenticatedUserWalletWalletByCurrency(String currency);
 }

@@ -16,11 +16,13 @@ public interface WalletRepository {
 
     void update(Wallet wallet);
 
-    Optional<Wallet> findByUsernameAndCurrency(String userUsername, String currency);
+    Optional<Wallet> findByUsernameAndCurrency(String userUsername, Currency currency);
 
     WalletPageOutput getWalletHistory(UUID walletId, int page, int size);
 
     List<Wallet> getActiveWalletsByUserId(UUID userId);
 
-    boolean checkIfUserHasWalletWithCurrency(UUID userId, Currency currency);
+    boolean checkIfUserHasActiveWalletWithCurrency(UUID userId, Currency currency);
+
+    boolean checkIfUserHasDeletedWalletWithCurrency(UUID userId, Currency currency);
 }
