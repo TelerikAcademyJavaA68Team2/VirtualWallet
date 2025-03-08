@@ -66,4 +66,4 @@ VALUES
 -- Insert dummy data into the `transfer` table
 INSERT INTO transfer (id, amount, currency, date, status, card_id, wallet_id)
 VALUES
-    ('123e4567-e89b-12d3-a456-426614174008', 200.00, 'USD', NOW(), 'APPROVED', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174004');
+    ('123e4567-e89b-12d3-a456-426614174008', 200.00, 'USD', NOW(), 'APPROVED', '123e4567-e89b-12d3-a452-426614174002', '123e4567-e89b-12d3-a456-426614174004');
