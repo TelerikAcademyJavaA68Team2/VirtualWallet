@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -60,7 +59,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         BigDecimal amountToSend = transactionInput.getAmount();
 
-        if (walletService.ifUserHasNoWalletOfCurrency(sender.getId(), transactionCurrency)) {
+        if(walletService.checkIfUserHasActiveWalletWithCurrency(sender.getId(), transactionCurrency)){
             throw new InvalidUserInputException("You must first create a wallet with that currency " +
                     "and have enough balance to make a transaction!");
         }

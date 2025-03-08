@@ -56,6 +56,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean checkIfUsernameIsTaken(String username) {
+        return userRepository.checkIfUsernameIsTaken(username);
+    }
+
+    @Override
     public boolean checkIfEmailIsTaken(String email) {
         return userRepository.checkIfEmailIsTaken(email);
     }

@@ -2,6 +2,7 @@ package com.example.virtualwallet.repositories;
 
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
+import com.example.virtualwallet.models.enums.Currency;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +16,13 @@ public interface WalletRepository {
 
     void update(Wallet wallet);
 
-    Optional<Wallet> findByUsernameAndCurrency(String userUsername, String currency);
+    Optional<Wallet> findByUsernameAndCurrency(String userUsername, Currency currency);
 
     WalletPageOutput getWalletHistory(UUID walletId, int page, int size);
 
     List<Wallet> getActiveWalletsByUserId(UUID userId);
+
+    boolean checkIfUserHasActiveWalletWithCurrency(UUID userId, Currency currency);
+
+    boolean checkIfUserHasDeletedWalletWithCurrency(UUID userId, Currency currency);
 }

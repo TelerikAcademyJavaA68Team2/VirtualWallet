@@ -6,8 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/wallets")
@@ -15,10 +13,30 @@ public class WalletController {
 
     private final WalletService walletService;
 
-    @GetMapping("{walletId}")
-    public ResponseEntity<?> getWalletHistory(@PathVariable UUID walletId,
+    @GetMapping
+    public ResponseEntity<?> getAllWallets() {
+        return new ResponseEntity<>(walletService.getActiveWalletsOfAuthenticatedUser(), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createWallet(@RequestParam String currency) {
+        walletService.createAuthenticatedUserWalletWalletByCurrency(currency);
+        return new ResponseEntity<>(currency + " Wallet created successfully!", HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteWallet(@RequestParam String currency) {
+        walletService.softDeleteAuthenticatedUserWalletByCurrency(currency);
+        return new ResponseEntity<>(currency + " Wallet deleted successfully!", HttpStatus.OK);
+    }
+
+    @GetMapping("/{currency}")
+    public ResponseEntity<?> getWalletHistory(@PathVariable String currency,
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size) {
-        return new ResponseEntity<>(walletService.getWalletPageById(walletId, page, size), HttpStatus.OK);
+
+        return new ResponseEntity<>(walletService.getWalletPageById(currency, page, size), HttpStatus.OK);
     }
+
+
 }

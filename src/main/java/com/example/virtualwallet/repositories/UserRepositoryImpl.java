@@ -192,4 +192,13 @@ public class UserRepositoryImpl implements UserRepository {
             return users.uniqueResult() != null;
         }
     }
+
+    @Override
+    public boolean checkIfUsernameIsTaken(String username) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<User> users = session.createQuery("From User Where username = :username", User.class);
+            users.setParameter("username", username);
+            return users.uniqueResult() != null;
+        }
+    }
 }
