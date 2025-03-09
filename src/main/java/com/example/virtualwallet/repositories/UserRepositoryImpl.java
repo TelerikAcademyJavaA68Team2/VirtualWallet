@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -52,6 +53,18 @@ public class UserRepositoryImpl implements UserRepository {
                     .stream()
                     .findFirst()
                     .orElseThrow(() -> new UsernameNotFoundException("Invalid username!"));
+        }
+    }
+
+    @Override
+    public User getById(UUID id) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<User> users = session.createQuery("From User Where id = :id", User.class);
+            users.setParameter("id", id);
+            return users
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException("User", id));
         }
     }
 

@@ -4,6 +4,8 @@ import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 
+import java.util.UUID;
+
 public interface UserRepository {
 
     void createUser(User user);
@@ -11,6 +13,8 @@ public interface UserRepository {
     void updateUser(User user);
 
     User getByUsername(String username);
+
+    User getById(UUID id);
 
     String findByUsernameOrEmailOrPhoneNumber(String input);
 
