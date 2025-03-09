@@ -105,20 +105,20 @@ public class ModelMapper {
         transferOutput.setStatus(String.valueOf(transfer.getStatus()));
         transferOutput.setAmount(transfer.getAmount());
         transferOutput.setCurrency(String.valueOf(transfer.getCurrency()));
-        transferOutput.setCardId(transfer.getCard().getId());
-        transferOutput.setWalletId(transfer.getWallet().getId());
+        transferOutput.setCardNumber(maskCreditCard(transfer.getCard().getCardNumber()));
+        transferOutput.setWalletCurrency(transfer.getWallet().getCurrency().toString());
         return transferOutput;
     }
 
-    public static TransferOutput transferToTransferOutput(Transfer transfer, UUID cardId, UUID walletId) {
+    public static TransferOutput transferToTransferOutput(Transfer transfer, String cardNumber, String currency) {
         TransferOutput transferOutput = new TransferOutput();
         transferOutput.setTransferId(transfer.getId());
         transferOutput.setDate(transfer.getDate());
         transferOutput.setStatus(String.valueOf(transfer.getStatus()));
         transferOutput.setAmount(transfer.getAmount());
         transferOutput.setCurrency(String.valueOf(transfer.getCurrency()));
-        transferOutput.setCardId(cardId);
-        transferOutput.setWalletId(walletId);
+        transferOutput.setCardNumber(maskCreditCard(cardNumber));
+        transferOutput.setCurrency(currency);
         return transferOutput;
     }
 
