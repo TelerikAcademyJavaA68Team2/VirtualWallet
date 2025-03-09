@@ -1,5 +1,6 @@
 package com.example.virtualwallet.controllers.rest;
 
+import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
@@ -10,11 +11,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+
+import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
+import static com.example.virtualwallet.helpers.ValidationHelpers.validPageAndSize;
 
 @RequiredArgsConstructor
 @RestController
@@ -39,7 +43,7 @@ public class TransactionController {
             }
     )
     @PostMapping("/new")
-    public ResponseEntity<TransactionOutput> makeTransaction(@Valid @RequestBody TransactionInput transactionInput){
+    public ResponseEntity<TransactionOutput> makeTransaction(@Valid @RequestBody TransactionInput transactionInput) {
         return ResponseEntity.ok(transactionService.createTransaction(transactionInput));
 
     }
@@ -76,15 +80,21 @@ public class TransactionController {
                                                        @RequestParam(defaultValue = "desc") String sortOrder,
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {
-        if (page < 0 || size <= 0) {
-            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+        if (validPageAndSize(page, size)) {
+            return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
-        TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions
-                (firstDate, lastDate, currency, sender, recipient, direction, sortBy, sortOrder, page, size);
-        UUID userId = userService.getAuthenticatedUser().getId();
+        User user = userService.getAuthenticatedUser();
+        TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions(user.getId(),
+                firstDate, lastDate, currency, sender, recipient, direction,
+                sortBy, sortOrder, page, size
+        );
 
         List<TransactionOutput> result =
-                transactionService.findAllTransactionsByUserIdWithFilters(userId, transactionFilterOptions);
+                transactionService.findAllTransactionsWithFilters(transactionFilterOptions);
+
+        if(result.isEmpty()){
+            return new ResponseEntity<>("No transactions with this filters!", HttpStatus.NO_CONTENT);
+        }
         return ResponseEntity.ok(result);
     }
 }

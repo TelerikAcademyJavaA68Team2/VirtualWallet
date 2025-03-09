@@ -102,43 +102,31 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionOutput> findAllTransactionsByUserIdWithFilters(
-            UUID userId, TransactionFilterOptions filterOptions) {
+    public Set<Transaction> findAllTransactionsByWalletId(UUID walletId) {
+        return null/* transactionRepository.findAllTransactionsByWalletId(walletId)*/;
+    }
 
-        // 1) Build the Specification
+    @Override
+    public List<TransactionOutput> findAllTransactionsWithFilters(TransactionFilterOptions filterOptions) {
+        // 1) Build specification
         Specification<Transaction> spec =
-                TransactionSpecification.buildTransactionSpecification(userId, filterOptions);
+                TransactionSpecification.buildTransactionSpecification(filterOptions);
 
-        // 2) Convert sortBy, sortOrder to a Sort object
-        Sort.Direction direction =
-                filterOptions.getSortOrder().equalsIgnoreCase("desc")
-                        ? Sort.Direction.DESC
-                        : Sort.Direction.ASC;
+        // 2) Sorting
+        Sort.Direction sortDirection = "desc".equalsIgnoreCase(filterOptions.getSortOrder())
+                ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort sort = Sort.by(sortDirection, filterOptions.getSortBy());
 
-        //  decide which fields are valid. E.g. "date" or "amount"
-        // to avoid letting the user supply something random that breaks your query.
-        Sort sort = Sort.by(direction, filterOptions.getSortBy());
+        // 3) Paging
+        Pageable pageable = PageRequest.of(filterOptions.getPage(), filterOptions.getSize(), sort);
 
-        // 3) Build the pageable
-        Pageable pageable = PageRequest.of(
-                filterOptions.getPage(),
-                filterOptions.getSize(),
-                sort
-        );
-
-        // 4) Fetch from repository
+        // 4) Execute query
         Page<Transaction> pageResult = transactionRepository.findAll(spec, pageable);
 
-        // 5) Map to whatever DTO/Output form you need
-        //    Using .map(...) from Spring Data is easy, but you can also .stream()
+        // 5) Convert to output DTO
         return pageResult
                 .stream()
                 .map(ModelMapper::transactionToTransactionOutput)
                 .toList();
-    }
-
-    @Override
-    public Set<Transaction> findAllTransactionsByWalletId(UUID walletId) {
-        return null/* transactionRepository.findAllTransactionsByWalletId(walletId)*/;
     }
 }

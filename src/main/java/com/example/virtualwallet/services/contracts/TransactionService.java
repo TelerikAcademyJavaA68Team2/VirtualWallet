@@ -15,7 +15,7 @@ public interface TransactionService {
 
     List<TransactionOutput> findAllTransactionsByUserId(UUID userId);
 
-    List<TransactionOutput> findAllTransactionsByUserIdWithFilters(UUID userId, TransactionFilterOptions filterOptions);
-
     Set<Transaction> findAllTransactionsByWalletId(UUID walletId);
+
+    List<TransactionOutput> findAllTransactionsWithFilters(TransactionFilterOptions filterOptions);
 }
