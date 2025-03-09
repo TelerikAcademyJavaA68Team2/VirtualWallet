@@ -65,4 +65,8 @@ public class ValidationHelpers {
                 !sortOrder.isEmpty() &&
                 (sortOrder.equals("asc") || sortOrder.equals("desc"))) ? sortOrder : "desc";
     }
+
+    public static boolean validPageAndSize(int page, int size) {
+        return page < 0 || size <= 0;
+    }
 }
