@@ -1,9 +1,7 @@
 package com.example.virtualwallet.controllers.rest;
 
-import com.example.virtualwallet.models.dtos.transfer.TransactionOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
-import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
 import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -65,7 +63,7 @@ public class TransferController {
             }
     )
     @GetMapping("/withdraw")
-    public ResponseEntity<Boolean> withdraw(){
+    public ResponseEntity<Boolean> withdraw() {
         return ResponseEntity.ok(new Random().nextBoolean());
     }
 
@@ -79,15 +77,15 @@ public class TransferController {
     )
     @GetMapping("/filter")
     public ResponseEntity<?> getTransfersWithFilter(@RequestParam(required = false) String firstDate,
-                                                       @RequestParam(required = false) String lastDate,
-                                                       @RequestParam(required = false) String currency,
-                                                       @RequestParam(required = false) String status,
-                                                       @RequestParam(required = false) String cardId,
-                                                       @RequestParam(required = false) String walletId,
-                                                       @RequestParam(defaultValue = "date") String sortBy,
-                                                       @RequestParam(defaultValue = "desc") String sortOrder,
-                                                       @RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "10") int size) {
+                                                    @RequestParam(required = false) String lastDate,
+                                                    @RequestParam(required = false) String currency,
+                                                    @RequestParam(required = false) String status,
+                                                    @RequestParam(required = false) String cardId,
+                                                    @RequestParam(required = false) String walletId,
+                                                    @RequestParam(defaultValue = "date") String sortBy,
+                                                    @RequestParam(defaultValue = "desc") String sortOrder,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "10") int size) {
         if (page < 0 || size <= 0) {
             return ResponseEntity.badRequest().body("Invalid page or size parameters.");
         }
