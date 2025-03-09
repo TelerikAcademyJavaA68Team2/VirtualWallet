@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndConvertCurrency;
 
@@ -66,7 +65,7 @@ public class TransferServiceImpl implements TransferService {
         }
         Transfer transferToSave = transferRepository.save(transfer);
 
-        return ModelMapper.transferToTransferOutput(transferToSave, card.getId(), wallet.getId());
+        return ModelMapper.transferToTransferOutput(transferToSave, card.getCardNumber(), wallet.getCurrency().toString());
     }
 
     @Override
@@ -76,38 +75,27 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public List<TransferOutput> findAllTransfersByUserIdWithFilters(UUID userId, TransferFilterOptions transferFilterOptions) {
+    public List<TransferOutput> findAllTransfersWithFilters(TransferFilterOptions filterOptions) {
+        // 1) Build the Specification
+        Specification<Transfer> spec = TransferSpecification.buildTransferSpecification(filterOptions);
 
-            // 1) Build the Specification
-            Specification<Transfer> spec =
-                    TransferSpecification.buildtransferSpecification(userId, transferFilterOptions);
+        // 2) Sorting
+        Sort.Direction direction =
+                filterOptions.getSortOrder().equalsIgnoreCase("desc")
+                        ? Sort.Direction.DESC
+                        : Sort.Direction.ASC;
+        Sort sort = Sort.by(direction, filterOptions.getSortBy());
 
-            // 2) Convert sortBy, sortOrder to a Sort object
-            Sort.Direction direction =
-                    transferFilterOptions.getSortOrder().equalsIgnoreCase("desc")
-                            ? Sort.Direction.DESC
-                            : Sort.Direction.ASC;
+        // 3) Paging
+        Pageable pageable = PageRequest.of(filterOptions.getPage(), filterOptions.getSize(), sort);
 
-            //  decide which fields are valid. E.g. "date" or "amount"
-            // to avoid letting the user supply something random that breaks your query.
-            Sort sort = Sort.by(direction, transferFilterOptions.getSortBy());
+        // 4) Query
+        Page<Transfer> pageResult = transferRepository.findAll(spec, pageable);
 
-            // 3) Build the pageable
-            Pageable pageable = PageRequest.of(
-                    transferFilterOptions.getPage(),
-                    transferFilterOptions.getSize(),
-                    sort
-            );
-
-            // 4) Fetch from repository
-            Page<Transfer> pageResult = transferRepository.findAll(spec, pageable);
-
-            // 5) Map to whatever DTO/Output form you need
-            //    Using .map(...) from Spring Data is easy, but you can also .stream()
-            return pageResult
-                    .stream()
-                    .map(ModelMapper::transferToTransferOutput)
-                    .toList();
+        // 5) Map to your DTO
+        return pageResult.stream()
+                .map(ModelMapper::transferToTransferOutput)
+                .toList();
     }
 
     private TransactionStatus callMockWithdrawApi() {

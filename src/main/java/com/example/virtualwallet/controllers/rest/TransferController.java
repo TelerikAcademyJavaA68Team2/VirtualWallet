@@ -1,5 +1,6 @@
 package com.example.virtualwallet.controllers.rest;
 
+import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
+
+import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
+import static com.example.virtualwallet.helpers.ValidationHelpers.validPageAndSize;
 
 @RequiredArgsConstructor
 @RestController
@@ -76,25 +79,30 @@ public class TransferController {
             }
     )
     @GetMapping("/filter")
-    public ResponseEntity<?> getTransfersWithFilter(@RequestParam(required = false) String firstDate,
-                                                    @RequestParam(required = false) String lastDate,
-                                                    @RequestParam(required = false) String currency,
-                                                    @RequestParam(required = false) String status,
-                                                    @RequestParam(required = false) String cardId,
-                                                    @RequestParam(required = false) String walletId,
-                                                    @RequestParam(defaultValue = "date") String sortBy,
-                                                    @RequestParam(defaultValue = "desc") String sortOrder,
-                                                    @RequestParam(defaultValue = "0") int page,
-                                                    @RequestParam(defaultValue = "10") int size) {
-        if (page < 0 || size <= 0) {
-            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
-        }
-        TransferFilterOptions transferFilterOptions = new TransferFilterOptions(
-                firstDate, lastDate, currency, status, cardId, walletId, sortBy, sortOrder, page, size);
-        UUID userId = userService.getAuthenticatedUser().getId();
+    public ResponseEntity<?> getTransfersWithFilter(
+            @RequestParam(required = false) String firstDate,
+            @RequestParam(required = false) String lastDate,
+            @RequestParam(required = false) String currency,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String cardNumber,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortOrder,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        List<TransferOutput> result =
-                transferService.findAllTransfersByUserIdWithFilters(userId, transferFilterOptions);
+        if (validPageAndSize(page, size)) {
+            return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
+        }
+
+        User user = userService.getAuthenticatedUser();
+
+        TransferFilterOptions baseFilter = new TransferFilterOptions(user.getId(),
+                firstDate, lastDate, currency, status, cardNumber,
+                sortBy, sortOrder, page, size
+        );
+
+        List<TransferOutput> result = transferService.findAllTransfersWithFilters(baseFilter);
+
         return ResponseEntity.ok(result);
     }
 

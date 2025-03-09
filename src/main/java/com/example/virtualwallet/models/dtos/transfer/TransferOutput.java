@@ -19,8 +19,8 @@ public class TransferOutput {
 
     private String currency;
 
-    private UUID cardId;
+    private String cardNumber;
 
-    private UUID walletId;
+    private String walletCurrency;
 
 }
