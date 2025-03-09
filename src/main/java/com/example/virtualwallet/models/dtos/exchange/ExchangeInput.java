@@ -15,7 +15,6 @@ public class ExchangeInput {
     @NotBlank(message = "To currency cant be blank!")
     private String toCurrency;
 
-    @NotBlank(message = "Amount cant be blank!")
     @Positive(message = "The amount must be positive!")
     private BigDecimal amount;
 }

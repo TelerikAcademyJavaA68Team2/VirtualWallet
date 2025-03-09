@@ -15,7 +15,6 @@ import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,13 +38,12 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     @Override
-    @Transactional
     public void createExchange(ExchangeInput input) {
         validateExchangeInput(input);
         User user = userService.getAuthenticatedUser();
 
-        Currency fromCurrency = Currency.valueOf(input.getFromCurrency());
-        Currency toCurrency = Currency.valueOf(input.getToCurrency());
+        Currency fromCurrency = Currency.valueOf(input.getFromCurrency().toUpperCase());
+        Currency toCurrency = Currency.valueOf(input.getToCurrency().toUpperCase());
 
         if (!walletService.checkIfUserHasActiveWalletWithCurrency(user.getId(), fromCurrency)) {
             throw new EntityNotFoundException("Wallet", "currency", fromCurrency.name());
