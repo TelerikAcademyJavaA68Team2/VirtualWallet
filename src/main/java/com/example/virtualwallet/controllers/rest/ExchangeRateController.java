@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/admin/exchange-rate")
+@RequestMapping("/api/admin/exchange-rate")
 @RequiredArgsConstructor
 public class ExchangeRateController {
 
