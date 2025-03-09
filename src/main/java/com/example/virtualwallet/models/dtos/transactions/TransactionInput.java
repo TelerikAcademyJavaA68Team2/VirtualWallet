@@ -1,4 +1,4 @@
-package com.example.virtualwallet.models.dtos.transfer;
+package com.example.virtualwallet.models.dtos.transactions;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
