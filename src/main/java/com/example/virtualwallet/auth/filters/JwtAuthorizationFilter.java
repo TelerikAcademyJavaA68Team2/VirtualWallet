@@ -37,7 +37,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             @Nonnull HttpServletResponse response,
             @Nonnull FilterChain filterChain) throws ServletException, IOException {
 
-        if (!isRestRequest(request) || isPublicRestRequest(request)) {
+        if (isPublicRestRequest(request)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -63,13 +63,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             try {
                 UserDetails userDetails = userService.loadUserByUsername(username);
 
-                if (!userDetails.isEnabled()) {
+                if (userDetails.isEnabled() && isRestrictedToBlockedUsersUri(request)) {
                     throw new UnauthorizedAccessException("Your account is blocked!");
                 }
-                if (!userDetails.isAccountNonLocked()) {
+                if (userDetails.isAccountNonLocked()) {
                     throw new UnauthorizedAccessException("Your account is not confirmed yet!");
                 }
-                if (!userDetails.isCredentialsNonExpired()) {
+                if (userDetails.isCredentialsNonExpired()) { // todo -> maybe add email for restoring account sending
+                    //         when trying to login with deleted account
                     throw new UnauthorizedAccessException("Your account was deleted!");
                 }
 
@@ -100,7 +101,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         return requestUri.startsWith("/api/auth");
     }
 
-    private boolean isRestRequest(HttpServletRequest request) {
-        return request.getRequestURI().startsWith("/api");
+    private boolean isRestrictedToBlockedUsersUri(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        return requestUri.startsWith("/api/profile/transfer/new") ||
+                requestUri.startsWith("/api/profile/transaction/new") ||
+                requestUri.startsWith("/api/profile/exchange/new");
     }
+
 }

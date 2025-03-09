@@ -8,6 +8,8 @@ import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
 import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
+import com.example.virtualwallet.models.enums.AccountStatus;
+import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.repositories.UserRepository;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -17,6 +19,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +62,54 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkIfUsernameIsTaken(String username) {
         return userRepository.checkIfUsernameIsTaken(username);
+    }
+
+    @Override
+    public void promoteToAdmin(UUID id) {
+        User user = userRepository.getById(id);
+        if (user.getRole().equals(Role.ADMIN)) {
+            throw new InvalidUserInputException("The user already has role Admin.");
+        }
+        user.setRole(Role.ADMIN);
+        userRepository.updateUser(user);
+    }
+
+    @Override
+    public void demoteToUser(UUID id) {
+        User user = userRepository.getById(id);
+        if (user.getRole().equals(Role.USER)) {
+            throw new InvalidUserInputException("The user already has role User.");
+        }
+        user.setRole(Role.USER);
+        userRepository.updateUser(user);
+    }
+
+    @Override
+    public void blockUser(UUID id) {
+        User user = userRepository.getById(id);
+        if (user.getStatus().equals(AccountStatus.BLOCKED)) {
+            throw new InvalidUserInputException("The user is already Blocked.");
+        } else if (user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
+            throw new InvalidUserInputException("The user is already Blocked.");
+        } else if (user.getStatus().equals(AccountStatus.ACTIVE)) {
+            user.setStatus(AccountStatus.BLOCKED);
+        } else if (user.getStatus().equals(AccountStatus.DELETED)) {
+            user.setStatus(AccountStatus.BLOCKED_AND_DELETED);
+        }
+        userRepository.updateUser(user);
+    }
+
+    @Override
+    public void unblockUser(UUID id) {
+        User user = userRepository.getById(id);
+        if (user.getStatus().equals(AccountStatus.ACTIVE) || user.getStatus().equals(AccountStatus.DELETED)) {
+            throw new InvalidUserInputException("The user is not Blocked.");
+        } else if (user.getStatus().equals(AccountStatus.BLOCKED)) {
+            user.setStatus(AccountStatus.ACTIVE);
+        } else if (user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
+            user.setStatus(AccountStatus.DELETED);
+        }
+        userRepository.updateUser(user);
     }
 
     @Override
@@ -117,6 +169,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileOutput getAuthenticatedUserProfile() {
         User user = getAuthenticatedUser();
+        return ModelMapper.userProfileFromUser(user);
+    }
+
+    @Override
+    public UserProfileOutput getUserProfileById(UUID userId) {
+        User user = userRepository.getById(userId);
         return ModelMapper.userProfileFromUser(user);
     }
 

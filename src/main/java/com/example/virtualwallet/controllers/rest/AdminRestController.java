@@ -4,11 +4,11 @@ import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.services.contracts.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -32,7 +32,6 @@ public class AdminRestController {
         if (page < 0 || size <= 0) {
             return ResponseEntity.badRequest().body("Invalid page or size parameters.");
         }
-
         UserFilterOptions userFilterOptions = new UserFilterOptions(
                 username,
                 email,
@@ -44,9 +43,35 @@ public class AdminRestController {
                 page,
                 size
         );
-
         return ResponseEntity.ok(userService.filterUsers(userFilterOptions));
-
     }
 
+    @GetMapping("users/{id}")
+    public ResponseEntity<?> getUserInfoById(@PathVariable UUID id) {
+        return new ResponseEntity<>(userService.getUserProfileById(id), HttpStatus.OK);
+    }
+
+    @PostMapping("users/{id}/make-admin")
+    public ResponseEntity<?> promoteUserToAdmin(@PathVariable UUID id) {
+        userService.promoteToAdmin(id);
+        return new ResponseEntity<>("Admin promotion was successful", HttpStatus.OK);
+    }
+
+    @PostMapping("users/{id}/revoke-admin")
+    public ResponseEntity<?> demoteAdminToUser(@PathVariable UUID id) {
+        userService.demoteToUser(id);
+        return new ResponseEntity<>("Admin demoted successfully", HttpStatus.OK);
+    }
+
+    @PostMapping("users/{id}/block")
+    public ResponseEntity<?> blockUser(@PathVariable UUID id) {
+        userService.blockUser(id);
+        return new ResponseEntity<>("Block was successful", HttpStatus.OK);
+    }
+
+    @PostMapping("users/{id}/unblock")
+    public ResponseEntity<?> unblockUser(@PathVariable UUID id) {
+        userService.unblockUser(id);
+        return new ResponseEntity<>("Unblock was successful", HttpStatus.OK);
+    }
 }
