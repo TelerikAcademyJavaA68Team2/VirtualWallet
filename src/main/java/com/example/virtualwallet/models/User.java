@@ -111,16 +111,16 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return status.equals(AccountStatus.PENDING);
+        return !status.equals(AccountStatus.PENDING);
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return status.equals(AccountStatus.DELETED) || status.equals(AccountStatus.BLOCKED_AND_DELETED);
+        return !(status.equals(AccountStatus.DELETED) || status.equals(AccountStatus.BLOCKED_AND_DELETED));
     }
 
     @Override
     public boolean isEnabled() {
-        return status.equals(AccountStatus.BLOCKED) || status.equals(AccountStatus.BLOCKED_AND_DELETED);
+        return !(status.equals(AccountStatus.BLOCKED) || status.equals(AccountStatus.BLOCKED_AND_DELETED));
     }
 }
