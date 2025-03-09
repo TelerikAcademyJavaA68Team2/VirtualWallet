@@ -28,6 +28,9 @@ public class Exchange {
     @Column(nullable = false, precision = 38, scale = 2, name = "amount")
     private BigDecimal amount;
 
+    @Column(nullable = false, precision = 38, scale = 2, name = "to_amount")
+    private BigDecimal toAmount;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "from_currency")
     private Currency fromCurrency;
@@ -35,6 +38,9 @@ public class Exchange {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "to_currency")
     private Currency toCurrency;
+
+    @Column(nullable = false, name = "recipient_username")
+    private String recipientUsername;
 
     @Column(nullable = false, name = "date")
     private LocalDateTime date;

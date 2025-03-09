@@ -7,15 +7,19 @@ import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Currency;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
+import java.util.Set;
 
 
 public class ValidationHelpers {
 
     public static final String UNAUTHORIZED_MESSAGE_POST = "Only the card's owner can modify cards!";
+
+    public static final Set<String> VALID_CURRENCIES_SET = Set.of("BGN", "USD", "EUR");
 
     public static final DateTimeFormatter CUSTOM_FORMATTER =
             DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm");
@@ -58,6 +62,18 @@ public class ValidationHelpers {
 
     public static Optional<String> sanitizeOptional(String value) {
         return (value == null || value.trim().isEmpty()) ? Optional.empty() : Optional.of(value);
+    }
+
+    public static Optional<Currency> sanitizeCurrency(String value) {
+        return (value == null || value.trim().isEmpty() || !VALID_CURRENCIES_SET.contains(value.toUpperCase()))
+                ? Optional.empty() : Optional.of(Currency.valueOf(value));
+    }
+
+    public static Optional<BigDecimal> sanitizeBigDecimal(BigDecimal value) {
+        if (value == null || value.compareTo(BigDecimal.ZERO) < 0) {
+            return Optional.empty();
+        }
+        return Optional.of(value);
     }
 
     public static String validateSortOrder(String sortOrder) {

@@ -1,10 +1,13 @@
 package com.example.virtualwallet.controllers.rest;
 
+import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
+import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
+import com.example.virtualwallet.services.contracts.ExchangeService;
 import com.example.virtualwallet.services.contracts.TransactionService;
 import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -16,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +36,8 @@ public class AdminRestController {
     private final UserService userService;
     private final TransactionService transactionService;
     private final TransferService transferService;
+    private final ExchangeService exchangeService;
+
 
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUserInfoById(@PathVariable UUID id) {
@@ -191,6 +197,46 @@ public class AdminRestController {
 //        }
 //        return ResponseEntity.ok(result);
 //    }
+
+
+    @GetMapping("/exchanges")
+    public ResponseEntity<?> getExchangesAndFilter(@RequestParam(required = false) String fromDate,
+                                                   @RequestParam(required = false) String toDate,
+                                                   @RequestParam(required = false) String fromCurrency,
+                                                   @RequestParam(required = false) String toCurrency,
+                                                   @RequestParam(required = false) BigDecimal minStartAmount,
+                                                   @RequestParam(required = false) BigDecimal maxStartAmount,
+                                                   @RequestParam(required = false) BigDecimal minEndAmount,
+                                                   @RequestParam(required = false) BigDecimal maxEndAmount,
+                                                   @RequestParam(required = false) String recipientUsername,
+                                                   @RequestParam(defaultValue = "date") String sortBy,
+                                                   @RequestParam(defaultValue = "desc") String sortOrder,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+        }
+        ExchangeFilterOptions filterOptions = new ExchangeFilterOptions(
+                fromDate,
+                toDate,
+                fromCurrency,
+                toCurrency,
+                minStartAmount,
+                maxStartAmount,
+                minEndAmount,
+                maxEndAmount,
+                recipientUsername,
+                sortBy,
+                sortOrder,
+                page,
+                size);
+
+        List<ExchangeOutput> result = exchangeService.filterExchanges(filterOptions);
+        if (result.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(result);
+    }
 
 }
 

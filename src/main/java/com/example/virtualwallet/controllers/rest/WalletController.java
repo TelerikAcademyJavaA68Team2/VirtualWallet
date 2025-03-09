@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/wallets")
+@RequestMapping("/api/profile/wallets")
 public class WalletController {
 
     private final WalletService walletService;
@@ -30,8 +30,8 @@ public class WalletController {
         return new ResponseEntity<>(currency + " Wallet deleted successfully!", HttpStatus.OK);
     }
 
-    @GetMapping("/activity")
-    public ResponseEntity<?> getWalletHistory(@RequestParam String currency,
+    @GetMapping("/{currency}/activity")
+    public ResponseEntity<?> getWalletHistory(@PathVariable String currency,
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size) {
         return new ResponseEntity<>(walletService.getWalletPageById(currency, page, size), HttpStatus.OK);

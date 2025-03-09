@@ -2,18 +2,28 @@ package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
+import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Exchange;
+import com.example.virtualwallet.models.Transaction;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.exchange.ExchangeInput;
 import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
 import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
+import com.example.virtualwallet.models.fillterOptions.TransactionSpecification;
 import com.example.virtualwallet.repositories.ExchangeRepository;
 import com.example.virtualwallet.services.contracts.ExchangeRateService;
 import com.example.virtualwallet.services.contracts.ExchangeService;
 import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
+import com.example.virtualwallet.services.specifications.ExchangeSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,8 +43,28 @@ public class ExchangeServiceImpl implements ExchangeService {
 
 
     @Override
-    public List<ExchangeOutput> filterExchanges() {
-        return List.of();
+    public List<ExchangeOutput> filterExchanges(ExchangeFilterOptions filterOptions) {
+        Specification<Exchange> spec =
+                ExchangeSpecification.buildExchangeSpecification(filterOptions);
+
+        Sort.Direction direction = filterOptions.getSortOrder().equalsIgnoreCase("desc")
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        Sort sort = Sort.by(direction, filterOptions.getSortBy());
+
+        Pageable pageable = PageRequest.of(
+                filterOptions.getPage(),
+                filterOptions.getSize(),
+                sort
+        );
+
+        Page<Exchange> pageResult = exchangeRepository.findAll(spec, pageable);
+
+        return pageResult
+                .stream()
+                .map(ModelMapper::exchangeToExchangeOutput)
+                .toList();
     }
 
     @Override
@@ -66,8 +96,10 @@ public class ExchangeServiceImpl implements ExchangeService {
         Exchange exchange = new Exchange();
         exchange.setExchangeRate(exchangeRate);
         exchange.setAmount(input.getAmount());
+        exchange.setToAmount(amountToAdd);
         exchange.setFromCurrency(fromCurrency);
         exchange.setToCurrency(toCurrency);
+        exchange.setRecipientUsername(user.getUsername());
         exchange.setFromWallet(fromWallet);
         exchange.setToWallet(toWallet);
 

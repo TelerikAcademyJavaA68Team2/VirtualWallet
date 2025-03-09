@@ -70,19 +70,21 @@ create table wallet
 
 create table exchange
 (
-    id             uuid                       not null
+    id                 uuid                       not null
         primary key,
-    amount         decimal(38, 2)             not null,
-    date           datetime(6)                not null,
-    exchange_rate  decimal(38, 10)             not null,
-    from_currency  enum ('BGN', 'EUR', 'USD') not null,
-    to_currency    enum ('BGN', 'EUR', 'USD') not null,
-    from_wallet_id uuid                       not null,
-    to_wallet_id   uuid                       not null,
+    amount             decimal(38, 2)             not null,
+    to_amount          decimal(38, 2)             not null,
+    exchange_rate      decimal(38, 10)            not null,
+    from_currency      enum ('BGN', 'EUR', 'USD') not null,
+    to_currency        enum ('BGN', 'EUR', 'USD') not null,
+    recipient_username varchar(255)               not null,
+    from_wallet_id     uuid                       not null,
+    to_wallet_id       uuid                       not null,
     constraint FK1nbx3jk9g0rr5xn270ep1vyar
         foreign key (from_wallet_id) references wallet (id),
     constraint FK9suobht6regbvvu04anyfd43b
-        foreign key (to_wallet_id) references wallet (id)
+        foreign key (to_wallet_id) references wallet (id),
+    date               datetime(6)                not null
 );
 
 create table transaction
@@ -119,10 +121,10 @@ create table transfer
 
 create table exchange_rate
 (
-    id             uuid                       not null
+    id            uuid                       not null
         primary key,
-    rate  decimal(38, 10)             not null,
-    from_currency  enum ('BGN', 'EUR', 'USD') not null,
-    to_currency    enum ('BGN', 'EUR', 'USD') not null
+    rate          decimal(38, 10)            not null,
+    from_currency enum ('BGN', 'EUR', 'USD') not null,
+    to_currency   enum ('BGN', 'EUR', 'USD') not null
 );
 
