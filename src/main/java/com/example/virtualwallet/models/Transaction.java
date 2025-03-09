@@ -24,7 +24,7 @@ public class Transaction {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @Column(nullable = false, precision = 15, scale = 2, name = "amount")
+    @Column(nullable = false, precision = 38, scale = 2, name = "amount")
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)

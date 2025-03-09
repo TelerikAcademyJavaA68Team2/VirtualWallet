@@ -22,10 +22,10 @@ public class Exchange {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @Column(nullable = false, name= "exchange_rate")
+    @Column(nullable = false, precision = 38, scale = 10, name = "exchange_rate")
     private BigDecimal exchangeRate;
 
-    @Column(nullable = false, precision = 15, scale = 2, name = "amount")
+    @Column(nullable = false, precision = 38, scale = 2, name = "amount")
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)

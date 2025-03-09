@@ -5,6 +5,7 @@ import com.example.virtualwallet.models.dtos.card.CardEdit;
 import com.example.virtualwallet.models.dtos.card.CardInput;
 import com.example.virtualwallet.models.dtos.card.CardOutput;
 import com.example.virtualwallet.models.dtos.card.CardOutputForList;
+import com.example.virtualwallet.models.dtos.exchangeRates.ExchangeRateOutput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
@@ -173,5 +174,13 @@ public class ModelMapper {
         transactionOutput.setSenderUsername(sender);
         transactionOutput.setRecipientUsername(recipient);
         return transactionOutput;
+    }
+
+    public static ExchangeRateOutput exchangeRateOutputFromExchangeRate(ExchangeRate input) {
+        ExchangeRateOutput output = new ExchangeRateOutput();
+        output.setFromCurrency(input.getFromCurrency().name());
+        output.setToCurrency(input.getToCurrency().name());
+        output.setRate(input.getRate());
+        return output;
     }
 }

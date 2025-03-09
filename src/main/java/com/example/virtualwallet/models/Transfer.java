@@ -23,7 +23,7 @@ public class Transfer {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @Column(nullable = false, name = "amount")
+    @Column(nullable = false, precision = 38, scale = 2, name = "amount")
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
