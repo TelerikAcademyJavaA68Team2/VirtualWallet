@@ -33,6 +33,7 @@ public class SecurityConfig {
             "/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
             "/api/test/**", "/authenticate"};
 
+    //ToDo to see how to make  "/api/profile/transfers/withdraw" not public and still work
     private static final String[] PUBLIC_REST_URL_LIST =
             {"/api/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**", "/api/profile/transfers/withdraw"};
 
