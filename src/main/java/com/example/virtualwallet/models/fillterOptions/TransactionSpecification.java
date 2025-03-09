@@ -1,6 +1,7 @@
 package com.example.virtualwallet.models.fillterOptions;
 
 import com.example.virtualwallet.models.Transaction;
+import com.example.virtualwallet.models.enums.Currency;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -36,7 +37,20 @@ public class TransactionSpecification {
                     predicates.add(cb.lessThanOrEqualTo(root.get("date"), maxDate))
             );
 
-            // 3) Filter by "direction" (incoming or outgoing)
+            // 3) Filter by currency
+            filterOptions.getCurrency().ifPresent(currencyStr -> {
+                // If 'currencyStr' must be one of your enums, parse it:
+                // e.g. Currency.valueOf("EUR") => Currency.EUR
+                try {
+                    Currency currencyEnum = Currency.valueOf(currencyStr.toUpperCase());
+                    predicates.add(cb.equal(root.get("currency"), currencyEnum));
+                } catch (IllegalArgumentException e) {
+                    // The user passed an invalid currency string; decide how to handle it
+                    // e.g. ignore or rethrow a custom exception
+                }
+            });
+
+            // 4) Filter by "direction" (incoming or outgoing)
             //    For example: if "incoming", the transaction's recipient == userId
             //                 if "outgoing", the transaction's sender == userId
             //                 if not provided, keep them all
@@ -56,7 +70,7 @@ public class TransactionSpecification {
                 }
             });
 
-            // 4) Filter by sender username (if present)
+            // 5) Filter by sender username (if present)
             //    This implies a JOIN on "senderWallet.owner.username"
             filterOptions.getSender().ifPresent(senderUsernameOrEmailOrPhone -> {
 
@@ -66,7 +80,7 @@ public class TransactionSpecification {
                 // possibly phone/email, expand to a multi-condition
             });
 
-            // 5) Filter by recipient username (if present)
+            // 6) Filter by recipient username (if present)
             filterOptions.getRecipient().ifPresent(recipientUsernameOrEmailOrPhone -> {
                 predicates.add(
                         cb.equal(root.get("recipientWallet").get("owner").get("username"), recipientUsernameOrEmailOrPhone)

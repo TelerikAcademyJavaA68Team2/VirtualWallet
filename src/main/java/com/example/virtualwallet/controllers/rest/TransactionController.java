@@ -1,7 +1,7 @@
 package com.example.virtualwallet.controllers.rest;
 
-import com.example.virtualwallet.models.dtos.transfer.TransactionInput;
-import com.example.virtualwallet.models.dtos.transfer.TransactionOutput;
+import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
+import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.services.contracts.TransactionService;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -39,7 +39,7 @@ public class TransactionController {
             }
     )
     @PostMapping("/new")
-    public ResponseEntity<TransactionOutput> makeTransaction(@Valid @RequestBody TransactionInput transactionInput) {
+    public ResponseEntity<TransactionOutput> makeTransaction(@Valid @RequestBody TransactionInput transactionInput){
         return ResponseEntity.ok(transactionService.createTransaction(transactionInput));
 
     }
@@ -66,21 +66,21 @@ public class TransactionController {
             }
     )
     @GetMapping("/filter")
-    public ResponseEntity<?> getTransactionsWithFilter(
-            @RequestParam(required = false) String firstDate,
-            @RequestParam(required = false) String lastDate,
-            @RequestParam(required = false) String sender,
-            @RequestParam(required = false) String recipient,
-            @RequestParam(required = false) String direction,
-            @RequestParam(defaultValue = "date") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortOrder,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<?> getTransactionsWithFilter(@RequestParam(required = false) String firstDate,
+                                                       @RequestParam(required = false) String lastDate,
+                                                       @RequestParam(required = false) String currency,
+                                                       @RequestParam(required = false) String sender,
+                                                       @RequestParam(required = false) String recipient,
+                                                       @RequestParam(required = false) String direction,
+                                                       @RequestParam(defaultValue = "date") String sortBy,
+                                                       @RequestParam(defaultValue = "desc") String sortOrder,
+                                                       @RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "10") int size) {
         if (page < 0 || size <= 0) {
             return ResponseEntity.badRequest().body("Invalid page or size parameters.");
         }
         TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions
-                (firstDate, lastDate, sender, recipient, direction, sortBy, sortOrder, page, size);
+                (firstDate, lastDate, currency, sender, recipient, direction, sortBy, sortOrder, page, size);
         UUID userId = userService.getAuthenticatedUser().getId();
 
         List<TransactionOutput> result =

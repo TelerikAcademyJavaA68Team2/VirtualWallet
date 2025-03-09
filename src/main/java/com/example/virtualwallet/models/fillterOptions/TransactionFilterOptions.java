@@ -14,6 +14,7 @@ public class TransactionFilterOptions {
 
     private Optional<LocalDateTime> minCreatedAt;
     private Optional<LocalDateTime> maxCreatedAt;
+    private Optional<String> currency;
     private Optional<String> sender;
     private Optional<String> recipient;
     private Optional<String> direction;
@@ -24,6 +25,7 @@ public class TransactionFilterOptions {
 
     public TransactionFilterOptions(String firstDate,
                             String lastDate,
+                            String currency,
                             String sender,
                             String recipient,
                             String direction,
@@ -35,6 +37,7 @@ public class TransactionFilterOptions {
     ) {
         this.minCreatedAt = parseLocalDateTime(firstDate);
         this.maxCreatedAt = parseLocalDateTime(lastDate);
+        this.currency = sanitizeOptional(currency);
         this.sender = sanitizeOptional(sender);
         this.recipient = sanitizeOptional(recipient);
         this.direction = sanitizeOptional(direction);
