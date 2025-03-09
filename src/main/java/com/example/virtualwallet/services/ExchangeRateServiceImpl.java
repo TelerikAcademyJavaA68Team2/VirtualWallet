@@ -46,7 +46,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
-    public BigDecimal getTheRateOfExchangeRate(Currency fromCurrency, Currency toCurrency) {
+    public BigDecimal getRate(Currency fromCurrency, Currency toCurrency) {
         return exchangeRateRepository.findByFromCurrencyAndToCurrency(fromCurrency, toCurrency).getRate();
     }
 

@@ -14,7 +14,7 @@ public interface ExchangeRateService {
 
     ExchangeRate getExchangeRate(String fromCurrency, String toCurrency);
 
-    BigDecimal getTheRateOfExchangeRate(Currency fromCurrency, Currency toCurrency);
+    BigDecimal getRate(Currency fromCurrency, Currency toCurrency);
 
     List<ExchangeRateOutput> getAllExchangeRates();
 }
