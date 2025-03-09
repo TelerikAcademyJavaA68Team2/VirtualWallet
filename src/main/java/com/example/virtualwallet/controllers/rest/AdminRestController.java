@@ -1,14 +1,25 @@
 package com.example.virtualwallet.controllers.rest;
 
+import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
+import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
+import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
+import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
+import com.example.virtualwallet.services.contracts.TransactionService;
+import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
+
+import static com.example.virtualwallet.helpers.ValidationHelpers.validPageAndSize;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -16,7 +27,40 @@ import java.util.UUID;
 @Tag(name = "Admin Management", description = "Endpoints for admin actions like user, post, and comment management")
 public class AdminRestController {
 
+    public static final String INVALID_PAGE_OR_SIZE_PARAMETERS = "Invalid page or size parameters.";
+
     private final UserService userService;
+    private final TransactionService transactionService;
+    private final TransferService transferService;
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getUserInfoById(@PathVariable UUID id) {
+        return new ResponseEntity<>(userService.getUserProfileById(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/users/{id}/make-admin")
+    public ResponseEntity<?> promoteUserToAdmin(@PathVariable UUID id) {
+        userService.promoteToAdmin(id);
+        return new ResponseEntity<>("Admin promotion was successful", HttpStatus.OK);
+    }
+
+    @PostMapping("/users/{id}/revoke-admin")
+    public ResponseEntity<?> demoteAdminToUser(@PathVariable UUID id) {
+        userService.demoteToUser(id);
+        return new ResponseEntity<>("Admin demoted successfully", HttpStatus.OK);
+    }
+
+    @PostMapping("/users/{id}/block")
+    public ResponseEntity<?> blockUser(@PathVariable UUID id) {
+        userService.blockUser(id);
+        return new ResponseEntity<>("Block was successful", HttpStatus.OK);
+    }
+
+    @PostMapping("/users/{id}/unblock")
+    public ResponseEntity<?> unblockUser(@PathVariable UUID id) {
+        userService.unblockUser(id);
+        return new ResponseEntity<>("Unblock was successful", HttpStatus.OK);
+    }
 
     @GetMapping("/users")
     public ResponseEntity<?> filterUsers(
@@ -29,8 +73,9 @@ public class AdminRestController {
             @RequestParam(defaultValue = "asc") String sortOrder,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        if (page < 0 || size <= 0) {
-            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+
+        if (validPageAndSize(page, size)) {
+            return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
         UserFilterOptions userFilterOptions = new UserFilterOptions(
                 username,
@@ -46,32 +91,106 @@ public class AdminRestController {
         return ResponseEntity.ok(userService.filterUsers(userFilterOptions));
     }
 
-    @GetMapping("users/{id}")
-    public ResponseEntity<?> getUserInfoById(@PathVariable UUID id) {
-        return new ResponseEntity<>(userService.getUserProfileById(id), HttpStatus.OK);
+    @Operation(
+            summary = "Retrieve all transactions with filter options",
+            description = "Fetch a list of all transactions with " +
+                    "filter options, sorting and pagination.",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200")
+            }
+    )
+    @GetMapping("/transactions")
+    public ResponseEntity<?> getAllTransactionsWithFilter(@RequestParam(required = false) String firstDate,
+                                                          @RequestParam(required = false) String lastDate,
+                                                          @RequestParam(required = false) String currency,
+                                                          @RequestParam(required = false) String sender,
+                                                          @RequestParam(required = false) String recipient,
+                                                          @RequestParam(required = false) String direction,
+                                                          @RequestParam(defaultValue = "date") String sortBy,
+                                                          @RequestParam(defaultValue = "desc") String sortOrder,
+                                                          @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size) {
+        if (validPageAndSize(page, size)) {
+            return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
+        }
+        TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions
+                (firstDate, lastDate, currency, sender, recipient, direction, sortBy, sortOrder, page, size);
+
+        List<TransactionOutput> result =
+                transactionService.findAllTransactionsWithFilters(transactionFilterOptions);
+        if (result.isEmpty()) {
+            return new ResponseEntity<>("No transactions with this filters!", HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(result);
     }
 
-    @PostMapping("users/{id}/make-admin")
-    public ResponseEntity<?> promoteUserToAdmin(@PathVariable UUID id) {
-        userService.promoteToAdmin(id);
-        return new ResponseEntity<>("Admin promotion was successful", HttpStatus.OK);
+    @Operation(
+            summary = "Retrieve all transfers with filter options",
+            description = "Fetch a list of transfers wallets with " +
+                    "filter options, sorting and pagination.",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200")
+            }
+    )
+    @GetMapping("/transfers")
+    public ResponseEntity<?> getAllTransfersWithFilters(
+            @RequestParam(required = false) String firstDate,
+            @RequestParam(required = false) String lastDate,
+            @RequestParam(required = false) String currency,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String cardNumber,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortOrder,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+        }
+
+        // Build filter options WITHOUT userId => will fetch all transfers
+        TransferFilterOptions filterOptions = new TransferFilterOptions(
+                firstDate, lastDate, currency, status, cardNumber,
+                sortBy, sortOrder, page, size
+        );
+
+        List<TransferOutput> result = transferService.findAllTransfersWithFilters(filterOptions);
+
+        if (result.isEmpty()) {
+            return new ResponseEntity<>("No transfers with these filters!", HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(result);
     }
 
-    @PostMapping("users/{id}/revoke-admin")
-    public ResponseEntity<?> demoteAdminToUser(@PathVariable UUID id) {
-        userService.demoteToUser(id);
-        return new ResponseEntity<>("Admin demoted successfully", HttpStatus.OK);
-    }
+//    @Operation(
+//            summary = "Retrieve all exchanges with filter options",
+//            description = "Fetch a list of exchanges wallets with " +
+//                    "filter options, sorting and pagination.",
+//            responses = {
+//                    @ApiResponse(description = "Success", responseCode = "200")
+//            }
+//    )
+//    @GetMapping("/exchanges")
+//    public ResponseEntity<?> getAllExchangesWithFilters(
+//                                             @RequestParam(defaultValue = "date") String sortBy,
+//                                             @RequestParam(defaultValue = "desc") String sortOrder,
+//                                             @RequestParam(defaultValue = "0") int page,
+//                                             @RequestParam(defaultValue = "10") int size) {
+//        if (page < 0 || size <= 0) {
+//            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+//        }
+//        ExchangeFilterOptions exchangeFilterOptions = new ExchangeFilterOptions(
+//                sortBy, sortOrder, page, size);
+//
+//
+//        List<ExchangeOutput> result =
+//                exchangeService.findAllExchanges(transferFilterOptions);
+//
+//        if(result.isEmpty()){
+//            return new ResponseEntity<>("No exchanges with this filters!", HttpStatus.NO_CONTENT);
+//        }
+//        return ResponseEntity.ok(result);
+//    }
 
-    @PostMapping("users/{id}/block")
-    public ResponseEntity<?> blockUser(@PathVariable UUID id) {
-        userService.blockUser(id);
-        return new ResponseEntity<>("Block was successful", HttpStatus.OK);
-    }
-
-    @PostMapping("users/{id}/unblock")
-    public ResponseEntity<?> unblockUser(@PathVariable UUID id) {
-        userService.unblockUser(id);
-        return new ResponseEntity<>("Unblock was successful", HttpStatus.OK);
-    }
 }
+
