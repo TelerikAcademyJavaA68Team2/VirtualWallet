@@ -20,7 +20,4 @@ public class TransferOutput {
     private String currency;
 
     private String cardNumber;
-
-    private String walletCurrency;
-
 }
