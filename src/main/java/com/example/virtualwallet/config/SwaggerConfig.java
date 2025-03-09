@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
                         email = "gega4321@gmail.com ; ivanovivanbusiness@gmail.com"
                 ),
                 description = "This is 'DESCRIPTION'",
-                title = "'LevMe' VirtualWallet API",
+                title = "'MoneyMe' VirtualWallet API",
                 version = "1.0"
         ),
         servers = {
