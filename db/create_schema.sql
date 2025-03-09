@@ -1,130 +1,104 @@
 CREATE SCHEMA IF NOT EXISTS virtual_wallet;
-Use virtual_wallet;
+USE virtual_wallet;
 
-create table user
-(
-    id           uuid                                             not null
-        primary key,
-    created_at   datetime(6)                                      null,
-    deleted_at   datetime(6)                                      null,
-    email        varchar(255)                                     not null,
-    first_name   varchar(255)                                     not null,
-    last_name    varchar(255)                                     not null,
-    password     varchar(255)                                     not null,
-    phone_number varchar(255)                                     not null,
-    photo        varchar(255)                                     null,
-    role         enum ('ADMIN', 'USER')                           not null,
-    status       enum ('ACTIVE', 'BLOCKED', 'DELETED', 'PENDING') not null,
-    username     varchar(255)                                     not null,
-    constraint UK4bgmpi98dylab6qdvf9xyaxu4
-        unique (phone_number),
-    constraint UKob8kqyqqgmefl0aco34akdtpe
-        unique (email),
-    constraint UKsb8bbouer5wak8vyiiy4pf2bx
-        unique (username)
+-- User Table
+CREATE TABLE user (
+    id UUID PRIMARY KEY,
+    created_at DATETIME(6),
+    deleted_at DATETIME(6),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(255) NOT NULL UNIQUE,
+    photo VARCHAR(255),
+    role ENUM('ADMIN', 'USER') NOT NULL,
+    status ENUM('ACTIVE', 'BLOCKED', 'DELETED', 'PENDING') NOT NULL,
+    username VARCHAR(255) NOT NULL UNIQUE
 );
 
-create table card
-(
-    id              uuid                 not null
-        primary key,
-    card_holder     varchar(255)         not null,
-    card_number     varchar(255)         not null,
-    created_at      datetime(6)          not null,
-    cvv             varchar(5)           not null,
-    deleted_at      datetime(6)          null,
-    expiration_date varchar(10)          not null,
-    is_deleted      tinyint(1) default 0 not null,
-    owner_id        uuid                 not null,
-    constraint UKby1nk98m2hq5onhl68bo09sc1
-        unique (card_number),
-    constraint FK8pspfj8x9rbqn67t0l8ir7im3
-        foreign key (owner_id) references user (id)
+-- Card Table
+CREATE TABLE card (
+    id UUID PRIMARY KEY,
+    card_holder VARCHAR(255) NOT NULL,
+    card_number VARCHAR(255) NOT NULL UNIQUE,
+    created_at DATETIME(6) NOT NULL,
+    cvv VARCHAR(5) NOT NULL,
+    deleted_at DATETIME(6),
+    expiration_date VARCHAR(10) NOT NULL,
+    is_deleted TINYINT(1) DEFAULT 0 NOT NULL,
+    owner_id UUID NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES user(id)
 );
 
-create table email_confirmation_token
-(
-    id           uuid        not null
-        primary key,
-    confirmed_at datetime(6) null,
-    created_at   datetime(6) not null,
-    expires_at   datetime(6) not null,
-    user_id      uuid        not null,
-    constraint FKk1kk7ut1owm1c4ymjfxr1nr8f
-        foreign key (user_id) references user (id)
+-- Email Confirmation Token
+CREATE TABLE email_confirmation_token (
+    id UUID PRIMARY KEY,
+    confirmed_at DATETIME(6),
+    created_at DATETIME(6) NOT NULL,
+    expires_at DATETIME(6) NOT NULL,
+    user_id UUID NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
-create table wallet
-(
-    id         uuid                       not null
-        primary key,
-    balance    decimal(38, 2)             not null,
-    created_at datetime(6)                not null,
-    currency   enum ('BGN', 'EUR', 'USD') not null,
-    deleted_at datetime(6)                null,
-    is_deleted tinyint(1) default 0       not null,
-    owner_id   uuid                       not null,
-    constraint FKrg4reqrefjux3h25jrga2dc0p
-        foreign key (owner_id) references user (id)
+-- Wallet Table
+CREATE TABLE wallet (
+    id UUID PRIMARY KEY,
+    balance DECIMAL(38, 2) NOT NULL,
+    created_at DATETIME(6) NOT NULL,
+    currency ENUM('BGN', 'EUR', 'USD') NOT NULL,
+    deleted_at DATETIME(6),
+    is_deleted TINYINT(1) DEFAULT 0 NOT NULL,
+    owner_id UUID NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES user(id)
 );
 
-create table exchange
-(
-    id                 uuid                       not null
-        primary key,
-    amount             decimal(38, 2)             not null,
-    to_amount          decimal(38, 2)             not null,
-    exchange_rate      decimal(38, 10)            not null,
-    from_currency      enum ('BGN', 'EUR', 'USD') not null,
-    to_currency        enum ('BGN', 'EUR', 'USD') not null,
-    recipient_username varchar(255)               not null,
-    from_wallet_id     uuid                       not null,
-    to_wallet_id       uuid                       not null,
-    constraint FK1nbx3jk9g0rr5xn270ep1vyar
-        foreign key (from_wallet_id) references wallet (id),
-    constraint FK9suobht6regbvvu04anyfd43b
-        foreign key (to_wallet_id) references wallet (id),
-    date               datetime(6)                not null
+-- Exchange Table
+CREATE TABLE exchange (
+    id UUID PRIMARY KEY,
+    amount DECIMAL(38, 2) NOT NULL,
+    to_amount DECIMAL(38, 2) NOT NULL,
+    exchange_rate DECIMAL(38, 10) NOT NULL,
+    from_currency ENUM('BGN', 'EUR', 'USD') NOT NULL,
+    to_currency ENUM('BGN', 'EUR', 'USD') NOT NULL,
+    recipient_username VARCHAR(255) NOT NULL,
+    from_wallet_id UUID NOT NULL,
+    to_wallet_id UUID NOT NULL,
+    date DATETIME(6) NOT NULL,
+    FOREIGN KEY (from_wallet_id) REFERENCES wallet(id),
+    FOREIGN KEY (to_wallet_id) REFERENCES wallet(id)
 );
 
-create table transaction
-(
-    id                  uuid                       not null
-        primary key,
-    amount              decimal(38, 2)             not null,
-    currency            enum ('BGN', 'EUR', 'USD') not null,
-    date                datetime(6)                not null,
-    recipient_wallet_id uuid                       not null,
-    sender_wallet_id    uuid                       not null,
-    constraint FK3riusbq7l7tpp0fyalvx1oxnl
-        foreign key (sender_wallet_id) references wallet (id),
-    constraint FK4vsdvbpxgej01e8xchb8w3hf5
-        foreign key (recipient_wallet_id) references wallet (id)
+-- Transaction Table
+CREATE TABLE transaction (
+    id UUID PRIMARY KEY,
+    amount DECIMAL(38, 2) NOT NULL,
+    currency ENUM('BGN', 'EUR', 'USD') NOT NULL,
+    date DATETIME(6) NOT NULL,
+    recipient_wallet_id UUID NOT NULL,
+    sender_wallet_id UUID NOT NULL,
+    FOREIGN KEY (sender_wallet_id) REFERENCES wallet(id),
+    FOREIGN KEY (recipient_wallet_id) REFERENCES wallet(id)
 );
 
-create table transfer
-(
-    id        uuid                          not null
-        primary key,
-    amount    decimal(38, 2)                not null,
-    currency  enum ('BGN', 'EUR', 'USD')    not null,
-    date      datetime(6)                   not null,
-    status    enum ('APPROVED', 'DECLINED') not null,
-    card_id   uuid                          not null,
-    wallet_id uuid                          not null,
-    constraint FKt1ux5tr1t6r8ow1khvm5w3j2w
-        foreign key (card_id) references card (id),
-    constraint FKtdhfxaei7nqto932210wmbmtk
-        foreign key (wallet_id) references wallet (id)
+-- Transfer Table
+CREATE TABLE transfer (
+    id UUID PRIMARY KEY,
+    amount DECIMAL(38, 2) NOT NULL,
+    currency ENUM('BGN', 'EUR', 'USD') NOT NULL,
+    date DATETIME(6) NOT NULL,
+    status ENUM('APPROVED', 'DECLINED') NOT NULL,
+    card_id UUID NOT NULL,
+    wallet_id UUID NOT NULL,
+    FOREIGN KEY (card_id) REFERENCES card(id),
+    FOREIGN KEY (wallet_id) REFERENCES wallet(id)
 );
 
-
-create table exchange_rate
-(
-    id            uuid                       not null
-        primary key,
-    rate          decimal(38, 10)            not null,
-    from_currency enum ('BGN', 'EUR', 'USD') not null,
-    to_currency   enum ('BGN', 'EUR', 'USD') not null
+-- Exchange Rate Table
+CREATE TABLE exchange_rate (
+    id UUID PRIMARY KEY,
+    rate DECIMAL(38, 10) NOT NULL,
+    from_currency ENUM('BGN', 'EUR', 'USD') NOT NULL,
+    to_currency ENUM('BGN', 'EUR', 'USD') NOT NULL
 );
 
