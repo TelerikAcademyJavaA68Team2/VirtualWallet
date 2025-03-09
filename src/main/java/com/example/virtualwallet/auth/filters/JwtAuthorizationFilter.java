@@ -63,13 +63,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             try {
                 UserDetails userDetails = userService.loadUserByUsername(username);
 
-                if (userDetails.isEnabled() && isRestrictedToBlockedUsersUri(request)) {
+                if (!userDetails.isEnabled() && isRestrictedToBlockedUsersUri(request)) {
                     throw new UnauthorizedAccessException("Your account is blocked!");
                 }
-                if (userDetails.isAccountNonLocked()) {
+                if (!userDetails.isAccountNonLocked()) {
                     throw new UnauthorizedAccessException("Your account is not confirmed yet!");
                 }
-                if (userDetails.isCredentialsNonExpired()) { // todo -> maybe add email for restoring account sending
+                if (!userDetails.isCredentialsNonExpired()) { // todo -> maybe add email for restoring account sending
                     //         when trying to login with deleted account
                     throw new UnauthorizedAccessException("Your account was deleted!");
                 }

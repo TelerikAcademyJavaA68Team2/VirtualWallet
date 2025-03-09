@@ -58,7 +58,7 @@ create table wallet
 (
     id         uuid                       not null
         primary key,
-    balance    decimal(15, 2)             not null,
+    balance    decimal(38, 2)             not null,
     created_at datetime(6)                not null,
     currency   enum ('BGN', 'EUR', 'USD') not null,
     deleted_at datetime(6)                null,
@@ -72,9 +72,9 @@ create table exchange
 (
     id             uuid                       not null
         primary key,
-    amount         decimal(15, 2)             not null,
+    amount         decimal(38, 2)             not null,
     date           datetime(6)                not null,
-    exchange_rate  decimal(38, 2)             not null,
+    exchange_rate  decimal(38, 10)             not null,
     from_currency  enum ('BGN', 'EUR', 'USD') not null,
     to_currency    enum ('BGN', 'EUR', 'USD') not null,
     from_wallet_id uuid                       not null,
@@ -89,7 +89,7 @@ create table transaction
 (
     id                  uuid                       not null
         primary key,
-    amount              decimal(15, 2)             not null,
+    amount              decimal(38, 2)             not null,
     currency            enum ('BGN', 'EUR', 'USD') not null,
     date                datetime(6)                not null,
     recipient_wallet_id uuid                       not null,
@@ -114,5 +114,15 @@ create table transfer
         foreign key (card_id) references card (id),
     constraint FKtdhfxaei7nqto932210wmbmtk
         foreign key (wallet_id) references wallet (id)
+);
+
+
+create table exchange_rate
+(
+    id             uuid                       not null
+        primary key,
+    rate  decimal(38, 10)             not null,
+    from_currency  enum ('BGN', 'EUR', 'USD') not null,
+    to_currency    enum ('BGN', 'EUR', 'USD') not null
 );
 
