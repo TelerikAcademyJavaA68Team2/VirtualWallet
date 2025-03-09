@@ -3,7 +3,10 @@ package com.example.virtualwallet.models;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Role;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -68,12 +71,12 @@ public class User implements UserDetails {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    public User( String firstName,
-                 String lastName,
-                 String username,
-                 String password,
-                 String email,
-                 String phoneNumber) {
+    public User(String firstName,
+                String lastName,
+                String username,
+                String password,
+                String email,
+                String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -108,17 +111,16 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !status.equals(AccountStatus.PENDING);
+        return status.equals(AccountStatus.PENDING);
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return !status.equals(AccountStatus.DELETED);
+        return status.equals(AccountStatus.DELETED) || status.equals(AccountStatus.BLOCKED_AND_DELETED);
     }
 
     @Override
     public boolean isEnabled() {
-        return !status.equals(AccountStatus.BLOCKED);
+        return status.equals(AccountStatus.BLOCKED) || status.equals(AccountStatus.BLOCKED_AND_DELETED);
     }
-
 }
