@@ -1,70 +1,51 @@
 package com.example.virtualwallet.models.fillterOptions;
 
+import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.enums.TransactionStatus;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 
 @Data
 public class TransferFilterOptions {
 
-    private Optional<UUID> userId;
-    private Optional<LocalDateTime> minCreatedAt;
-    private Optional<LocalDateTime> maxCreatedAt;
-    private Optional<String> currency;
-    private Optional<String> status;
-    private Optional<String> cardNumber;
+    private Optional<String> recipient;
+    private Optional<LocalDateTime> fromDate;
+    private Optional<LocalDateTime> toDate;
+    private Optional<BigDecimal> minAmount;
+    private Optional<BigDecimal> maxAmount;
+    private Optional<Currency> currency;
+    private Optional<TransactionStatus> status;
     private String sortBy;
     private String sortOrder;
     private int page;
     private int size;
 
-    public TransferFilterOptions(String firstDate,
-                                 String lastDate,
+    public TransferFilterOptions(String recipient,
+                                 String fromDate,
+                                 String toDate,
+                                 BigDecimal minAmount,
+                                 BigDecimal maxAmount,
                                  String currency,
                                  String status,
-                                 String cardNumber,
                                  String sortBy,
                                  String sortOrder,
                                  int page,
                                  int size) {
-        // For an admin scenario, we do not set userId
-        this.userId = Optional.empty();
+        this.recipient = sanitizeOptional(recipient);
+        this.fromDate = parseLocalDateTime(fromDate);
+        this.toDate = parseLocalDateTime(toDate);
+        this.minAmount = sanitizeBigDecimal(minAmount);
+        this.maxAmount = sanitizeBigDecimal(maxAmount);
+        this.currency = sanitizeCurrency(currency);
+        this.status = sanitizeTransactionStatus(status);
 
-        this.minCreatedAt = parseLocalDateTime(firstDate);
-        this.maxCreatedAt = parseLocalDateTime(lastDate);
-        this.currency = sanitizeOptional(currency);
-        this.status = sanitizeOptional(status);
-        this.cardNumber = sanitizeOptional(cardNumber);
-        this.sortBy = validateSortBy(sortBy);
-        this.sortOrder = validateSortOrder(sortOrder);
-        this.page = page;
-        this.size = size;
-    }
-
-    // A helper constructor that *does* set userId
-    public TransferFilterOptions(UUID userId,
-                                 String firstDate,
-                                 String lastDate,
-                                 String currency,
-                                 String status,
-                                 String cardNumber,
-                                 String sortBy,
-                                 String sortOrder,
-                                 int page,
-                                 int size) {
-        this.userId = Optional.of(userId);
-
-        this.minCreatedAt = parseLocalDateTime(firstDate);
-        this.maxCreatedAt = parseLocalDateTime(lastDate);
-        this.currency = sanitizeOptional(currency);
-        this.status = sanitizeOptional(status);
-        this.cardNumber = sanitizeOptional(cardNumber);
         this.sortBy = validateSortBy(sortBy);
         this.sortOrder = validateSortOrder(sortOrder);
         this.page = page;
@@ -72,7 +53,7 @@ public class TransferFilterOptions {
     }
 
     private String validateSortBy(String sortBy) {
-        List<String> validFields = Arrays.asList("amount", "date", "status");
+        List<String> validFields = Arrays.asList("amount", "date", "status", "currency", "recipientUsername");
         return (sortBy != null && !sortBy.isEmpty() && validFields.contains(sortBy)) ? sortBy : "date";
     }
 

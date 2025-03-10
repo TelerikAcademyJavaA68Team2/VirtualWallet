@@ -1,6 +1,6 @@
 package com.example.virtualwallet.controllers.rest;
 
-import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
@@ -11,14 +11,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
-
-import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
-import static com.example.virtualwallet.helpers.ValidationHelpers.validPageAndSize;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,17 +28,48 @@ public class TransferController {
     private final TransferService transferService;
     private final UserService userService;
 
+
     @Operation(
-            summary = "Retrieve all of user's transfers",
-            description = "Fetch a list of user's transfers to fund his cards.",
+            summary = "Retrieve all of user's transfers with filter options",
+            description = "Fetch a list of user's transfers to his wallet with " +
+                    "filter options, sorting and pagination.",
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200")
             }
     )
     @GetMapping
-    public ResponseEntity<List<TransferOutput>> getTransfers() {
-        return ResponseEntity.ok(transferService.
-                findAllTransfersByUserId(userService.getAuthenticatedUser()));
+    public ResponseEntity<?> getTransfersWithFilter(
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate,
+            @RequestParam(required = false) BigDecimal minAmount,
+            @RequestParam(required = false) BigDecimal maxAmount,
+            @RequestParam(required = false) String currency,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortOrder,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+        }
+
+        TransferFilterOptions filterOptions = new TransferFilterOptions(
+                userService.getAuthenticatedUser().getUsername(),
+                fromDate,
+                toDate,
+                minAmount,
+                maxAmount,
+                currency,
+                status,
+                sortBy, sortOrder, page, size
+        );
+
+        List<TransferOutput> result = transferService.filterTransfers(filterOptions);
+
+        if (result.isEmpty()) {
+            return new ResponseEntity<>("No transfers with these filters!", HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(result);
     }
 
     @Operation(
@@ -54,7 +84,7 @@ public class TransferController {
             }
     )
     @PostMapping("/new")
-    public ResponseEntity<TransferOutput> makeTransfer(@Valid @RequestBody TransferInput transferInput) {
+    public ResponseEntity<FullTransferInfoOutput> makeTransfer(@Valid @RequestBody TransferInput transferInput) {
         return ResponseEntity.ok(transferService.processTransfer(transferInput));
     }
 
@@ -68,42 +98,6 @@ public class TransferController {
     @GetMapping("/withdraw")
     public ResponseEntity<Boolean> withdraw() {
         return ResponseEntity.ok(new Random().nextBoolean());
-    }
-
-    @Operation(
-            summary = "Retrieve all of user's transfers with filter options",
-            description = "Fetch a list of user's transfers to his wallet with " +
-                    "filter options, sorting and pagination.",
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200")
-            }
-    )
-    @GetMapping("/filter")
-    public ResponseEntity<?> getTransfersWithFilter(
-            @RequestParam(required = false) String firstDate,
-            @RequestParam(required = false) String lastDate,
-            @RequestParam(required = false) String currency,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String cardNumber,
-            @RequestParam(defaultValue = "date") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortOrder,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        if (validPageAndSize(page, size)) {
-            return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
-        }
-
-        User user = userService.getAuthenticatedUser();
-
-        TransferFilterOptions baseFilter = new TransferFilterOptions(user.getId(),
-                firstDate, lastDate, currency, status, cardNumber,
-                sortBy, sortOrder, page, size
-        );
-
-        List<TransferOutput> result = transferService.findAllTransfersWithFilters(baseFilter);
-
-        return ResponseEntity.ok(result);
     }
 
 }

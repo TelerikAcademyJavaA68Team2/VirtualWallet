@@ -11,13 +11,13 @@ public class TransferOutput {
 
     private UUID transferId;
 
-    private LocalDateTime date;
-
-    private String status;
+    private String recipientUsername;
 
     private BigDecimal amount;
 
     private String currency;
 
-    private String cardNumber;
+    private String status;
+
+    private LocalDateTime date;
 }
