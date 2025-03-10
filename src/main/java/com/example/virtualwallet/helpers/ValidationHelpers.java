@@ -14,7 +14,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.Set;
 
-
 public class ValidationHelpers {
 
     public static final String UNAUTHORIZED_MESSAGE_POST = "Only the card's owner can modify cards!";
