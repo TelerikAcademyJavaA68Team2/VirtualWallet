@@ -40,10 +40,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionOutput createTransaction(TransactionInput transactionInput) {
         User sender = userService.getAuthenticatedUser();
-/*        if (sender.getStatus() != AccountStatus.ACTIVE) { //todo remove on production
-            throw new UnauthorizedAccessException("Your account status is not active " +
-                    "and you cannot make a transaction! Please, contact an Admin for further information.");
-        }*/
+
         String recipientUsername = userService.findByUsernameOrEmailOrPhoneNumber(transactionInput.
                 getUsernameOrEmailOrPhoneNumber());
 
@@ -91,38 +88,20 @@ public class TransactionServiceImpl implements TransactionService {
         return ModelMapper.transactionToTransactionOutput(transactionToSave);
     }
 
-/*    @Override
-    public List<TransactionOutput> findAllTransactionsByUserId(UUID userId) {
-        return transactionRepository.findAllTransactionsBySenderWallet_Owner_IdOrRecipientWallet_Owner_Id
-                        (userId, userId, Sort.by(Sort.Direction.DESC, "date"))
-                .stream()
-                .map(ModelMapper::transactionToTransactionOutput)
-                .toList();
-    }*/
-/*
-    @Override
-    public Set<Transaction> findAllTransactionsByWalletId(UUID walletId) {
-        return null*//* transactionRepository.findAllTransactionsByWalletId(walletId)*//*;
-    }*/
-
     @Override
     public List<TransactionOutput> filterTransactions(TransactionFilterOptions filterOptions) {
-        // 1) Build specification
         Specification<Transaction> spec =
                 TransactionSpecification.buildTransactionSpecification(filterOptions);
 
-        // 2) Sorting
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(filterOptions.getSortOrder())
-                ? Sort.Direction.DESC : Sort.Direction.ASC;
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
         Sort sort = Sort.by(sortDirection, filterOptions.getSortBy());
 
-        // 3) Paging
         Pageable pageable = PageRequest.of(filterOptions.getPage(), filterOptions.getSize(), sort);
 
-        // 4) Execute query
         Page<Transaction> pageResult = transactionRepository.findAll(spec, pageable);
 
-        // 5) Convert to output DTO
         return pageResult
                 .stream()
                 .map(ModelMapper::transactionToTransactionOutput)
