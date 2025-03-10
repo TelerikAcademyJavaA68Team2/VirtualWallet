@@ -2,6 +2,7 @@ package com.example.virtualwallet.controllers.rest;
 
 import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
 import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
+import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
 import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOutput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
@@ -77,7 +78,9 @@ public class AdminRestController {
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String phoneNumber,
             @RequestParam(required = false) String role,
-            @RequestParam(required = false) String accountStatus,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate,
             @RequestParam(defaultValue = "username") String sortBy,
             @RequestParam(defaultValue = "asc") String sortOrder,
             @RequestParam(defaultValue = "0") int page,
@@ -91,13 +94,20 @@ public class AdminRestController {
                 email,
                 phoneNumber,
                 role,
-                accountStatus,
+                status,
+                fromDate,
+                toDate,
                 sortBy,
                 sortOrder,
                 page,
                 size
         );
-        return ResponseEntity.ok(userService.filterUsers(userFilterOptions));
+
+        UserPageOutput result = userService.filterUsers(userFilterOptions);
+        if (result.getContent().isEmpty()) {
+            return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(result);
     }
 
     @Operation(

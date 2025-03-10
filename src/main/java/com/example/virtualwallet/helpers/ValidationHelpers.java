@@ -4,7 +4,9 @@ import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.enums.TransactionStatus;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +23,8 @@ public class ValidationHelpers {
 
     public static final Set<String> VALID_CURRENCIES_SET = Set.of("BGN", "USD", "EUR");
     public static final Set<String> VALID_TRANSACTION_STATUS_SET = Set.of("APPROVED", "DECLINED");
+    public static final Set<String> VALID_ACCOUNT_STATUS_SET = Set.of("ACTIVE", "BLOCKED", "PENDING", "DELETED", "DELETED_AND_BLOCKED");
+    public static final Set<String> VALID_ROLE_SET = Set.of("ADMIN", "USER");
 
     public static final DateTimeFormatter CUSTOM_FORMATTER =
             DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm");
@@ -71,6 +75,21 @@ public class ValidationHelpers {
     public static Optional<Currency> sanitizeCurrency(String value) {
         return (value == null || value.trim().isEmpty() || !VALID_CURRENCIES_SET.contains(value.toUpperCase()))
                 ? Optional.empty() : Optional.of(Currency.valueOf(value.toUpperCase()));
+    }
+
+
+    public static Optional<Role> sanitizeRole(String role) {
+        if (role == null || role.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        return VALID_ROLE_SET.contains(role) ? Optional.of(Role.valueOf(role.toUpperCase())) : Optional.empty();
+    }
+
+    public static Optional<AccountStatus> sanitizeAccountStatus(String status) {
+        if (status == null || status.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        return VALID_ACCOUNT_STATUS_SET.contains(status) ? Optional.of(AccountStatus.valueOf(status.toUpperCase())) : Optional.empty();
     }
 
     public static Optional<BigDecimal> sanitizeBigDecimal(BigDecimal value) {

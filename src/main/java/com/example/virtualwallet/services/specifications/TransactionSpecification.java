@@ -1,14 +1,12 @@
 package com.example.virtualwallet.services.specifications;
 
 import com.example.virtualwallet.models.Transaction;
-import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class TransactionSpecification {
 
@@ -56,11 +54,11 @@ public class TransactionSpecification {
             }
 
             filterOptions.getSender().ifPresent(senderUsername ->
-                    predicates.add(cb.like(root.get("senderUsername"), senderUsername))
+                    predicates.add(cb.like(root.get("senderUsername"), "%" + senderUsername + "%"))
             );
 
             filterOptions.getRecipient().ifPresent(recipientUsername ->
-                    predicates.add(cb.like(root.get("recipientUsername"), recipientUsername))
+                    predicates.add(cb.like(root.get("recipientUsername"), "%" + recipientUsername + "%"))
             );
 
             return cb.and(predicates.toArray(new Predicate[0]));

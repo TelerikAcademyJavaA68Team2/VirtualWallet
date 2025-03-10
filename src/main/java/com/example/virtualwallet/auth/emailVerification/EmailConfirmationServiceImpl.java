@@ -35,7 +35,7 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
         User user = token.getUser();
         user.setStatus(AccountStatus.ACTIVE);
         token.setConfirmedAt(LocalDateTime.now());
-        userRepository.updateUser(user);
+        userRepository.save(user);
         emailConfirmationRepository.save(token);
     }
 

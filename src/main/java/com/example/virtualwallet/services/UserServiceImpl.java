@@ -1,6 +1,7 @@
 package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
+import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
@@ -13,7 +14,13 @@ import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.repositories.UserRepository;
 import com.example.virtualwallet.services.contracts.UserService;
+import com.example.virtualwallet.services.specifications.UserSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +28,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+
+import static com.example.virtualwallet.helpers.ModelMapper.convertToSort;
 
 @Service
 @RequiredArgsConstructor
@@ -36,22 +45,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUser(User user) {
-        userRepository.createUser(user);
+        userRepository.save(user);
     }
 
     @Override
     public String findByUsernameOrEmailOrPhoneNumber(String usernameOrEmailOrPhoneNumber) {
-        return userRepository.findByUsernameOrEmailOrPhoneNumber(usernameOrEmailOrPhoneNumber);
+        return userRepository.findUsernameByUsernameOrEmailOrPhoneNumber(usernameOrEmailOrPhoneNumber)
+                .orElseThrow(() -> new EntityNotFoundException("User"));
     }
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.getByUsername(username);
-    }
-
-    @Override
-    public UserPageOutput filterUsers(UserFilterOptions userFilterOptions) {
-        return userRepository.filterUsers(userFilterOptions);
+        return userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username"));
     }
 
     @Override
@@ -65,28 +71,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean checkIfEmailIsTaken(String email) {
+        return userRepository.checkIfEmailIsTaken(email);
+    }
+
+    @Override
     public void promoteToAdmin(UUID id) {
-        User user = userRepository.getById(id);
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         if (user.getRole().equals(Role.ADMIN)) {
             throw new InvalidUserInputException("The user already has role Admin.");
         }
         user.setRole(Role.ADMIN);
-        userRepository.updateUser(user);
+        userRepository.save(user);
     }
 
     @Override
     public void demoteToUser(UUID id) {
-        User user = userRepository.getById(id);
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         if (user.getRole().equals(Role.USER)) {
             throw new InvalidUserInputException("The user already has role User.");
         }
         user.setRole(Role.USER);
-        userRepository.updateUser(user);
+        userRepository.save(user);
     }
 
     @Override
     public void blockUser(UUID id) {
-        User user = userRepository.getById(id);
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         if (user.getStatus().equals(AccountStatus.BLOCKED)) {
             throw new InvalidUserInputException("The user is already Blocked.");
         } else if (user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
@@ -96,12 +107,12 @@ public class UserServiceImpl implements UserService {
         } else if (user.getStatus().equals(AccountStatus.DELETED)) {
             user.setStatus(AccountStatus.BLOCKED_AND_DELETED);
         }
-        userRepository.updateUser(user);
+        userRepository.save(user);
     }
 
     @Override
     public void unblockUser(UUID id) {
-        User user = userRepository.getById(id);
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         if (user.getStatus().equals(AccountStatus.ACTIVE) || user.getStatus().equals(AccountStatus.DELETED)) {
             throw new InvalidUserInputException("The user is not Blocked.");
         } else if (user.getStatus().equals(AccountStatus.BLOCKED)) {
@@ -109,13 +120,9 @@ public class UserServiceImpl implements UserService {
         } else if (user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
             user.setStatus(AccountStatus.DELETED);
         }
-        userRepository.updateUser(user);
+        userRepository.save(user);
     }
 
-    @Override
-    public boolean checkIfEmailIsTaken(String email) {
-        return userRepository.checkIfEmailIsTaken(email);
-    }
 
     @Override
     public User getAuthenticatedUser() {
@@ -163,7 +170,7 @@ public class UserServiceImpl implements UserService {
             }
             user.setPhoneNumber(input.getPhoneNumber());
         }
-        userRepository.updateUser(user);
+        userRepository.save(user);
     }
 
     @Override
@@ -173,8 +180,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfileOutput getUserProfileById(UUID userId) {
-        User user = userRepository.getById(userId);
+    public UserProfileOutput getUserProfileById(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         return ModelMapper.userProfileFromUser(user);
     }
 
@@ -182,6 +189,25 @@ public class UserServiceImpl implements UserService {
     public void softDeleteAuthenticatedUser() {
         User user = getAuthenticatedUser();
         user.markAsDeleted();
-        userRepository.updateUser(user);
+        userRepository.save(user);
     }
+
+    @Override
+    public UserPageOutput filterUsers(UserFilterOptions filterOptions) {
+        Specification<User> spec = UserSpecification.buildUserSpecification(filterOptions);
+
+        Sort sort = convertToSort(filterOptions.getSortBy(), filterOptions.getSortOrder());
+        Pageable pageable = PageRequest.of(filterOptions.getPage(), filterOptions.getSize(), sort);
+
+        Page<User> pageResult = userRepository.findAll(spec, pageable);
+        UserPageOutput output = new UserPageOutput();
+        output.setTotalResults(pageResult.getTotalElements());
+        output.setNumberOfPages(pageResult.getTotalPages());
+        output.setContent(pageResult
+                .stream()
+                .map(ModelMapper::userOutputFromUser)
+                .toList());
+        return output;
+    }
+
 }

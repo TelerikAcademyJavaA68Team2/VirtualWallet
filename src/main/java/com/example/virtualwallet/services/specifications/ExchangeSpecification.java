@@ -19,7 +19,7 @@ public class ExchangeSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             filterOptions.getRecipientUsername().ifPresent(recipientUsername ->
-                    predicates.add(cb.like(root.get("recipientUsername"), recipientUsername))
+                    predicates.add(cb.like(root.get("recipientUsername"), "%" + recipientUsername + "%"))
             );
 
             filterOptions.getFromDate().ifPresent(fromDate ->
@@ -53,7 +53,6 @@ public class ExchangeSpecification {
             filterOptions.getMaxEndAmount().ifPresent(toAmount ->
                     predicates.add(cb.lessThanOrEqualTo(root.get("toAmount"), toAmount))
             );
-
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };

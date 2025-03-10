@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.example.virtualwallet.helpers.ModelMapper.convertToSort;
 import static com.example.virtualwallet.helpers.ModelMapper.exchangeToFullExchangeOutput;
 
 @Service
@@ -56,11 +57,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         Specification<Exchange> spec =
                 ExchangeSpecification.buildExchangeSpecification(filterOptions);
 
-        Sort.Direction direction = filterOptions.getSortOrder().equalsIgnoreCase("desc")
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
-
-        Sort sort = Sort.by(direction, filterOptions.getSortBy());
+        Sort sort = convertToSort(filterOptions.getSortBy(), filterOptions.getSortOrder());
 
         Pageable pageable = PageRequest.of(
                 filterOptions.getPage(),

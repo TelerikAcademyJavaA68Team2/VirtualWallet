@@ -33,6 +33,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.UUID;
 
+import static com.example.virtualwallet.helpers.ModelMapper.convertToSort;
 import static com.example.virtualwallet.helpers.ModelMapper.transferToFullTransferInfoOutput;
 import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndConvertCurrency;
 
@@ -94,10 +95,7 @@ public class TransferServiceImpl implements TransferService {
     public List<TransferOutput> filterTransfers(TransferFilterOptions filterOptions) {
         Specification<Transfer> spec = TransferSpecification.buildTransferSpecification(filterOptions);
 
-        Sort.Direction direction = filterOptions.getSortOrder().equalsIgnoreCase("desc")
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
-        Sort sort = Sort.by(direction, filterOptions.getSortBy());
+        Sort sort = convertToSort(filterOptions.getSortBy(), filterOptions.getSortOrder());
         Pageable pageable = PageRequest.of(filterOptions.getPage(), filterOptions.getSize(), sort);
 
         Page<Transfer> pageResult = transferRepository.findAll(spec, pageable);

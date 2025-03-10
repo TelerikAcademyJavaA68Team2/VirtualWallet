@@ -29,8 +29,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-import static com.example.virtualwallet.helpers.ModelMapper.transactionToFullTransactionInfoOutput;
-import static com.example.virtualwallet.helpers.ModelMapper.transactionToTransactionOutput;
+import static com.example.virtualwallet.helpers.ModelMapper.*;
 import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndConvertCurrency;
 import static java.lang.String.format;
 
@@ -108,11 +107,7 @@ public class TransactionServiceImpl implements TransactionService {
         Specification<Transaction> spec =
                 TransactionSpecification.buildTransactionSpecification(filterOptions);
 
-        Sort.Direction sortDirection = "desc".equalsIgnoreCase(filterOptions.getSortOrder())
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
-        Sort sort = Sort.by(sortDirection, filterOptions.getSortBy());
-
+        Sort sort = convertToSort(filterOptions.getSortBy(), filterOptions.getSortOrder());
         Pageable pageable = PageRequest.of(filterOptions.getPage(), filterOptions.getSize(), sort);
 
         Page<Transaction> pageResult = transactionRepository.findAll(spec, pageable);

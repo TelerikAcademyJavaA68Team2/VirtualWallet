@@ -14,7 +14,7 @@ public class TransferSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             filterOptions.getRecipient().ifPresent(recipient ->
-                    predicates.add(cb.like(root.get("recipientUsername"), recipient))
+                    predicates.add(cb.like(root.get("recipientUsername"), "%" + recipient + "%"))
             );
 
             filterOptions.getFromDate().ifPresent(fromDate ->

@@ -15,6 +15,7 @@ import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 
@@ -195,5 +196,12 @@ public class ModelMapper {
         output.setDate(input.getDate());
         output.setExchangeRate(input.getExchangeRate());
         return output;
+    }
+
+    public static Sort convertToSort(String sortBy, String sortOrder) {
+        Sort.Direction sortDirection = "desc".equalsIgnoreCase(sortOrder)
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+        return Sort.by(sortDirection, sortBy);
     }
 }

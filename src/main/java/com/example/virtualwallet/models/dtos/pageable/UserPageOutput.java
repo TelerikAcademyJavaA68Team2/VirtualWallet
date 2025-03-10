@@ -10,7 +10,7 @@ public class UserPageOutput {
 
     int numberOfPages;
 
-    int totalResults;
+    long totalResults;
 
     List<UserOutput> content;
 }
