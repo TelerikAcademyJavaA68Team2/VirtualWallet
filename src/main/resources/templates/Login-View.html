@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/Page-Layout :: head('Login')}">Login</head>
+<header th:insert="~{fragments/Page-Layout :: navigation}">
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</header>
+<header class="py-2 bg-light border-bottom mb-4">
+  <div class="container">
+    <div class="text-center my-3">
+      <h1 class="fw-bolder" th:text="#{navigation.login}">Page info</h1>
+    </div>
+  </div>
+</header>
+
+<body>
+<div class="container " style="margin-top: 100px;">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <!-- Login Form -->
+          <div th:if="${error}" class="alert alert-danger text-center">
+            <span th:text="${error}"></span>
+          </div>
+          <form action="#" th:action="@{/mvc/auth/login}" th:object="${loginDto}" method="post">
+            <!-- Username Field -->
+            <div class="form-group row mb-3">
+              <label class="col-sm-3 col-form-label" th:text="#{user.label.username}">Username</label>
+              <div class="col-sm-9">
+                <input class="form-control" type="text" th:field="*{username}" placeholder="Username"/>
+                <small class="text-danger" th:if="${errorMessage}" th:text="${errorMessage}">
+                  Username error placeholder!</small>
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group row mb-3">
+              <label class="col-sm-3 col-form-label" th:text="#{user.label.password}">Password</label>
+              <div class="col-sm-9">
+                <input class="form-control" type="password" th:field="*{password}" placeholder="Password"/>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-flex justify-content-center">
+              <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Register Link -->
+<div class="text-center mt-4">
+  <p>
+    Not a user yet?
+    <a href="/mvc/auth/register" class="link">Register</a>
+  </p>
+</div>
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+</body>
+</html>

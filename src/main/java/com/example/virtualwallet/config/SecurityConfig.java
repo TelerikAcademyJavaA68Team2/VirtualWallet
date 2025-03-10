@@ -40,7 +40,8 @@ public class SecurityConfig {
     private static final String[] RESTRICTED_REST_URL_LIST = {"/api/admin/**"};
 
     private static final String[] PUBLIC_MVC_URL_LIST =
-            {"/mvc/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**"};
+            {"/mvc/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**", "/mvc/home", "/mvc/about", "/mvc/terms",
+                    "/mvc/privacy", "/mvc/faq", "/mvc/error"};
 
     private static final String[] RESTRICTED_MVC_URL_LIST = {"/mvc/admin**"};
 
