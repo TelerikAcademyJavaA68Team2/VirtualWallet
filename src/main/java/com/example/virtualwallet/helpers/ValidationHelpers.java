@@ -5,6 +5,7 @@ import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.enums.TransactionStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ public class ValidationHelpers {
     public static final String UNAUTHORIZED_MESSAGE_POST = "Only the card's owner can modify cards!";
 
     public static final Set<String> VALID_CURRENCIES_SET = Set.of("BGN", "USD", "EUR");
+    public static final Set<String> VALID_TRANSACTION_STATUS_SET = Set.of("APPROVED", "DECLINED");
 
     public static final DateTimeFormatter CUSTOM_FORMATTER =
             DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm");
@@ -59,6 +61,11 @@ public class ValidationHelpers {
 
     public static Optional<String> sanitizeOptional(String value) {
         return (value == null || value.trim().isEmpty()) ? Optional.empty() : Optional.of(value);
+    }
+
+    public static Optional<TransactionStatus> sanitizeTransactionStatus(String value) {
+        return (value == null || value.trim().isEmpty() || !VALID_TRANSACTION_STATUS_SET.contains(value.toUpperCase()))
+                ? Optional.empty() : Optional.of(TransactionStatus.valueOf(value.toUpperCase()));
     }
 
     public static Optional<Currency> sanitizeCurrency(String value) {

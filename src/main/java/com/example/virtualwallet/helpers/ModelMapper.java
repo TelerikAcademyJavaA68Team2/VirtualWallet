@@ -6,16 +6,15 @@ import com.example.virtualwallet.models.dtos.card.CardInput;
 import com.example.virtualwallet.models.dtos.card.CardOutput;
 import com.example.virtualwallet.models.dtos.card.CardOutputForList;
 import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
+import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
 import com.example.virtualwallet.models.dtos.exchangeRates.ExchangeRateOutput;
-import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
+import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOutput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
-import com.example.virtualwallet.models.dtos.transfer.TransferInput;
+import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
-import com.example.virtualwallet.models.enums.Currency;
-import com.example.virtualwallet.models.enums.TransactionStatus;
 
 import java.time.LocalDateTime;
 
@@ -105,11 +104,24 @@ public class ModelMapper {
         transferOutput.setStatus(String.valueOf(transfer.getStatus()));
         transferOutput.setAmount(transfer.getAmount());
         transferOutput.setCurrency(String.valueOf(transfer.getCurrency()));
-        transferOutput.setCardNumber(maskCreditCard(transfer.getCard().getCardNumber()));
+        transferOutput.setRecipientUsername(transfer.getRecipientUsername());
         return transferOutput;
     }
 
-    public static TransferOutput transferToTransferOutput(Transfer transfer, String cardNumber, String currency) {
+    public static FullTransferInfoOutput transferToFullTransferInfoOutput(Transfer transfer) {
+        FullTransferInfoOutput transferOutput = new FullTransferInfoOutput();
+        transferOutput.setTransferId(transfer.getId());
+        transferOutput.setDate(transfer.getDate());
+        transferOutput.setStatus(String.valueOf(transfer.getStatus()));
+        transferOutput.setAmount(transfer.getAmount());
+        transferOutput.setCurrency(String.valueOf(transfer.getCurrency()));
+        transferOutput.setRecipientUsername(transfer.getRecipientUsername());
+        transferOutput.setCardNumbers(maskCreditCard(transfer.getCard().getCardNumber()));
+
+        return transferOutput;
+    }
+
+/*    public static TransferOutput transferToTransferOutput(Transfer transfer, String cardNumber, String currency) {
         TransferOutput transferOutput = new TransferOutput();
         transferOutput.setTransferId(transfer.getId());
         transferOutput.setDate(transfer.getDate());
@@ -118,18 +130,8 @@ public class ModelMapper {
         transferOutput.setCurrency(currency);
         transferOutput.setCardNumber(maskCreditCard(cardNumber));
         return transferOutput;
-    }
+    }*/
 
-    public static Transfer createTransferFromTransferInput(TransferInput transferInput, Card card, Wallet wallet,
-                                                           TransactionStatus transferStatus, Currency currency) {
-        Transfer transfer = new Transfer();
-        transfer.setCard(card);
-        transfer.setWallet(wallet);
-        transfer.setAmount(transferInput.getAmount());
-        transfer.setCurrency(currency);
-        transfer.setStatus(transferStatus);
-        return transfer;
-    }
 
     public static WalletBasicOutput mapWalletToBasicWalletOutput(Wallet input) {
         WalletBasicOutput output = new WalletBasicOutput();
@@ -150,6 +152,18 @@ public class ModelMapper {
         return transactionOutput;
     }
 
+    public static FullTransactionInfoOutput transactionToFullTransactionInfoOutput(Transaction transaction) {
+        FullTransactionInfoOutput transactionOutput = new FullTransactionInfoOutput();
+        transactionOutput.setTransactionId(transaction.getId());
+        transactionOutput.setDate(transaction.getDate());
+        transactionOutput.setCurrency(String.valueOf(transaction.getCurrency()));
+        transactionOutput.setAmount(transaction.getAmount());
+        transactionOutput.setSenderUsername(transaction.getSenderUsername());
+        transactionOutput.setRecipientUsername(transaction.getRecipientUsername());
+        transactionOutput.setDescription(transactionOutput.getDescription());
+        return transactionOutput;
+    }
+
     public static ExchangeRateOutput exchangeRateOutputFromExchangeRate(ExchangeRate input) {
         ExchangeRateOutput output = new ExchangeRateOutput();
         output.setFromCurrency(input.getFromCurrency().name());
@@ -167,6 +181,19 @@ public class ModelMapper {
         output.setToCurrency(input.getToCurrency().name());
         output.setRecipientUsername(input.getRecipientUsername());
         output.setDate(input.getDate());
+        return output;
+    }
+
+    public static FullExchangeInfoOutput exchangeToFullExchangeOutput(Exchange input) {
+        FullExchangeInfoOutput output = new FullExchangeInfoOutput();
+        output.setId(input.getId());
+        output.setAmount(input.getAmount());
+        output.setToAmount(input.getToAmount());
+        output.setFromCurrency(input.getFromCurrency().name());
+        output.setToCurrency(input.getToCurrency().name());
+        output.setRecipientUsername(input.getRecipientUsername());
+        output.setDate(input.getDate());
+        output.setExchangeRate(input.getExchangeRate());
         return output;
     }
 }
