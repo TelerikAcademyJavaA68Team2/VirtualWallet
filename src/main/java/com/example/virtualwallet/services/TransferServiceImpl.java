@@ -1,16 +1,24 @@
 package com.example.virtualwallet.services;
 
+import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
-import com.example.virtualwallet.models.*;
+import com.example.virtualwallet.models.Card;
+import com.example.virtualwallet.models.Transfer;
+import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.Wallet;
+import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransactionStatus;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
-import com.example.virtualwallet.services.specifications.TransferSpecification;
 import com.example.virtualwallet.repositories.TransferRepository;
-import com.example.virtualwallet.services.contracts.*;
+import com.example.virtualwallet.services.contracts.CardService;
+import com.example.virtualwallet.services.contracts.TransferService;
+import com.example.virtualwallet.services.contracts.UserService;
+import com.example.virtualwallet.services.contracts.WalletServiceJPA;
+import com.example.virtualwallet.services.specifications.TransferSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.UUID;
 
+import static com.example.virtualwallet.helpers.ModelMapper.transferToFullTransferInfoOutput;
 import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndConvertCurrency;
 
 @RequiredArgsConstructor
@@ -39,7 +49,7 @@ public class TransferServiceImpl implements TransferService {
     private final WalletServiceJPA walletServiceJPA;
 
     @Transactional
-    public TransferOutput processTransfer(TransferInput transferInput) {
+    public FullTransferInfoOutput processTransfer(TransferInput transferInput) {
         User user = userService.getAuthenticatedUser();
 
         Card card = cardService.getCardById(transferInput.getCardId());
@@ -55,9 +65,13 @@ public class TransferServiceImpl implements TransferService {
 
         TransactionStatus transferStatus = callMockWithdrawApi();
 
-        Transfer transfer = ModelMapper.createTransferFromTransferInput(transferInput, card,
-                wallet, transferStatus, currency);
-
+        Transfer transfer = new Transfer();
+        transfer.setCard(card);
+        transfer.setWallet(wallet);
+        transfer.setAmount(transferInput.getAmount());
+        transfer.setCurrency(currency);
+        transfer.setStatus(transferStatus);
+        transfer.setRecipientUsername(user.getUsername());
 
         if (transfer.getStatus() == TransactionStatus.APPROVED) {
             wallet.setBalance(wallet.getBalance().add(transferInput.getAmount()));
@@ -65,34 +79,28 @@ public class TransferServiceImpl implements TransferService {
         }
         Transfer transferToSave = transferRepository.save(transfer);
 
-        return ModelMapper.transferToTransferOutput(transferToSave, card.getCardNumber(), wallet.getCurrency().toString());
+        return transferToFullTransferInfoOutput(transferToSave);
     }
 
     @Override
-    public List<TransferOutput> findAllTransfersByUserId(User user) {
-        return transferRepository.findTransferByWallet_Owner_Id((user.getId()), Sort.by(Sort.Direction.DESC, "date"))
-                .stream().map(ModelMapper::transferToTransferOutput).toList();
+    public FullTransferInfoOutput getTransferById(UUID id) {
+        Transfer transfer = transferRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transfer", id));
+
+        return transferToFullTransferInfoOutput(transfer);
     }
 
     @Override
-    public List<TransferOutput> findAllTransfersWithFilters(TransferFilterOptions filterOptions) {
-        // 1) Build the Specification
+    public List<TransferOutput> filterTransfers(TransferFilterOptions filterOptions) {
         Specification<Transfer> spec = TransferSpecification.buildTransferSpecification(filterOptions);
 
-        // 2) Sorting
-        Sort.Direction direction =
-                filterOptions.getSortOrder().equalsIgnoreCase("desc")
-                        ? Sort.Direction.DESC
-                        : Sort.Direction.ASC;
+        Sort.Direction direction = filterOptions.getSortOrder().equalsIgnoreCase("desc")
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
         Sort sort = Sort.by(direction, filterOptions.getSortBy());
-
-        // 3) Paging
         Pageable pageable = PageRequest.of(filterOptions.getPage(), filterOptions.getSize(), sort);
 
-        // 4) Query
         Page<Transfer> pageResult = transferRepository.findAll(spec, pageable);
-
-        // 5) Map to your DTO
         return pageResult.stream()
                 .map(ModelMapper::transferToTransferOutput)
                 .toList();
@@ -109,4 +117,3 @@ public class TransferServiceImpl implements TransferService {
         }
     }
 }
-
