@@ -8,6 +8,7 @@ import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.exchange.ExchangeInput;
 import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
+import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.repositories.ExchangeRepository;
@@ -27,6 +28,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+
+import static com.example.virtualwallet.helpers.ModelMapper.exchangeToFullExchangeOutput;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +43,13 @@ public class ExchangeServiceImpl implements ExchangeService {
     private final WalletService walletService;
     private final UserService userService;
 
+
+    @Override
+    public FullExchangeInfoOutput getExchangeById(UUID id) {
+        Exchange exchange = exchangeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Exchange", id));
+        return exchangeToFullExchangeOutput(exchange);
+    }
 
     @Override
     public List<ExchangeOutput> filterExchanges(ExchangeFilterOptions filterOptions) {
