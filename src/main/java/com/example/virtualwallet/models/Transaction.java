@@ -37,6 +37,9 @@ public class Transaction {
     @Column(nullable = false, name = "recipient_username")
     private String recipientUsername;
 
+    @Column(nullable = false, name = "description")
+    private String description;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet senderWallet;
