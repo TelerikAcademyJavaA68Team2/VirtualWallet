@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.validPageAndSize;
@@ -106,12 +107,13 @@ public class AdminRestController {
             }
     )
     @GetMapping("/transactions")
-    public ResponseEntity<?> getAllTransactionsWithFilter(@RequestParam(required = false) String firstDate,
-                                                          @RequestParam(required = false) String lastDate,
+    public ResponseEntity<?> getAllTransactionsWithFilter(@RequestParam(required = false) String fromDate,
+                                                          @RequestParam(required = false) String toDate,
+                                                          @RequestParam(required = false) BigDecimal minAmount,
+                                                          @RequestParam(required = false) BigDecimal maxAmount,
                                                           @RequestParam(required = false) String currency,
                                                           @RequestParam(required = false) String sender,
                                                           @RequestParam(required = false) String recipient,
-                                                          @RequestParam(required = false) String direction,
                                                           @RequestParam(defaultValue = "date") String sortBy,
                                                           @RequestParam(defaultValue = "desc") String sortOrder,
                                                           @RequestParam(defaultValue = "0") int page,
@@ -119,11 +121,23 @@ public class AdminRestController {
         if (validPageAndSize(page, size)) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
-        TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions
-                (firstDate, lastDate, currency, sender, recipient, direction, sortBy, sortOrder, page, size);
+        TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions(
+                null,
+                fromDate,
+                toDate,
+                minAmount,
+                maxAmount,
+                currency,
+                sender,
+                recipient,
+                null,
+                sortBy,
+                sortOrder,
+                page,
+                size
+        );
 
-        List<TransactionOutput> result =
-                transactionService.findAllTransactionsWithFilters(transactionFilterOptions);
+        List<TransactionOutput> result = transactionService.filterTransactions(transactionFilterOptions);
         if (result.isEmpty()) {
             return new ResponseEntity<>("No transactions with this filters!", HttpStatus.NO_CONTENT);
         }

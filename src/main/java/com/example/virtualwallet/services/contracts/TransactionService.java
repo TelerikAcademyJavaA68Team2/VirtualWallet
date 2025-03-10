@@ -13,9 +13,11 @@ public interface TransactionService {
 
     TransactionOutput createTransaction(TransactionInput transaction);
 
+/*
     List<TransactionOutput> findAllTransactionsByUserId(UUID userId);
+*/
+/*
+    Set<Transaction> findAllTransactionsByWalletId(UUID walletId);*/
 
-    Set<Transaction> findAllTransactionsByWalletId(UUID walletId);
-
-    List<TransactionOutput> findAllTransactionsWithFilters(TransactionFilterOptions filterOptions);
+    List<TransactionOutput> filterTransactions(TransactionFilterOptions filterOptions);
 }

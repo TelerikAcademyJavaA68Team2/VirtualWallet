@@ -127,12 +127,12 @@ public class WalletRepositoryImpl implements WalletRepository {
                 String sql = """
                         SELECT\s
                             t.id AS id,
-                            'TRANSACTION' AS transactionType,
+                            'TRANSACTION' AS activity,
                             t.amount as amount,
+                            NULL as toAmount,
                             t.currency AS currency,
                             NULL AS fromCurrency,
                             NULL AS toCurrency,
-                            NULL AS exchangeRate,
                             su.username AS senderUsername,
                             ru.username AS recipientUsername,
                             NULL AS status,
@@ -148,12 +148,12 @@ public class WalletRepositoryImpl implements WalletRepository {
                         
                         SELECT\s
                             tf.id AS id,
-                            'ACCOUNT FUNDING' AS transactionType,
+                            'ACCOUNT FUNDING' AS activity,
                             tf.amount as amount,
+                            NULL as toAmount,
                             tf.currency AS currency,
                             NULL AS fromCurrency,
                             NULL AS toCurrency,
-                            NULL AS exchangeRate,
                             NULL AS senderUsername,
                             wu.username AS recipientUsername,
                             tf.status AS status,
@@ -167,12 +167,12 @@ public class WalletRepositoryImpl implements WalletRepository {
                         
                         SELECT\s
                             e.id AS id,
-                            'EXCHANGE' AS transactionType,
+                            'EXCHANGE' AS activity,
                             e.amount as amount,
+                            e.to_amount as toAmount,
                             NULL AS currency,
                             e.from_currency AS fromCurrency,
                             e.to_currency AS toCurrency,
-                            e.exchange_rate AS exchangeRate,
                             NULL AS senderUsername,
                             NULL AS recipientUsername,
                             NULL AS status,
@@ -190,12 +190,12 @@ public class WalletRepositoryImpl implements WalletRepository {
                         .setMaxResults(size)
                         .unwrap(NativeQuery.class)
                         .addScalar("id", UUID.class)
-                        .addScalar("transactionType", String.class)
+                        .addScalar("activity", String.class)
                         .addScalar("amount", BigDecimal.class)
+                        .addScalar("toAmount", BigDecimal.class)
                         .addScalar("currency", String.class)
                         .addScalar("fromCurrency", String.class)
                         .addScalar("toCurrency", String.class)
-                        .addScalar("exchangeRate", BigDecimal.class)
                         .addScalar("senderUsername", String.class)
                         .addScalar("recipientUsername", String.class)
                         .addScalar("status", String.class)

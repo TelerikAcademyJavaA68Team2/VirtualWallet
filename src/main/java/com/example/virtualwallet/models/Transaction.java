@@ -31,8 +31,11 @@ public class Transaction {
     @Column(nullable = false, name = "currency")
     private Currency currency;
 
-    @Column(nullable = false, name = "date")
-    private LocalDateTime date;
+    @Column(nullable = false, name = "sender_username")
+    private String senderUsername;
+
+    @Column(nullable = false, name = "recipient_username")
+    private String recipientUsername;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_wallet_id", referencedColumnName = "id", nullable = false)
@@ -41,6 +44,9 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet recipientWallet;
+
+    @Column(nullable = false, name = "date")
+    private LocalDateTime date;
 
     @PrePersist
     protected void onCreate() {

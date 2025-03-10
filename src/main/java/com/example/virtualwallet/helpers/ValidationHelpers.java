@@ -53,8 +53,6 @@ public class ValidationHelpers {
             return Optional.of(LocalDateTime.parse(value.trim(), CUSTOM_FORMATTER));
         } catch (DateTimeParseException ex) {
             // return Optional.empty();
-
-
             throw new InvalidUserInputException("Invalid date/time format: " + value +
                     ". Expected format: dd.MM.yyyy - HH:mm", ex);
         }
@@ -66,7 +64,7 @@ public class ValidationHelpers {
 
     public static Optional<Currency> sanitizeCurrency(String value) {
         return (value == null || value.trim().isEmpty() || !VALID_CURRENCIES_SET.contains(value.toUpperCase()))
-                ? Optional.empty() : Optional.of(Currency.valueOf(value));
+                ? Optional.empty() : Optional.of(Currency.valueOf(value.toUpperCase()));
     }
 
     public static Optional<BigDecimal> sanitizeBigDecimal(BigDecimal value) {

@@ -139,38 +139,14 @@ public class ModelMapper {
         return output;
     }
 
-    public static Transaction createTransactionFromTransactionInput(TransactionInput transactionInput,
-                                                                    Currency currency,
-                                                                    Wallet senderWallet,
-                                                                    Wallet recipientWallet) {
-        Transaction transaction = new Transaction();
-        transaction.setAmount(transactionInput.getAmount());
-        transaction.setCurrency(currency);
-        transaction.setSenderWallet(senderWallet);
-        transaction.setRecipientWallet(recipientWallet);
-        return transaction;
-    }
-
     public static TransactionOutput transactionToTransactionOutput(Transaction transaction) {
         TransactionOutput transactionOutput = new TransactionOutput();
         transactionOutput.setTransactionId(transaction.getId());
         transactionOutput.setDate(transaction.getDate());
         transactionOutput.setCurrency(String.valueOf(transaction.getCurrency()));
         transactionOutput.setAmount(transaction.getAmount());
-        transactionOutput.setSenderUsername(transaction.getSenderWallet().getOwner().getUsername());
-        transactionOutput.setRecipientUsername(transaction.getRecipientWallet().getOwner().getUsername());
-        return transactionOutput;
-    }
-
-    public static TransactionOutput transactionToTransactionOutput(Transaction transaction,
-                                                                   String sender, String recipient) {
-        TransactionOutput transactionOutput = new TransactionOutput();
-        transactionOutput.setTransactionId(transaction.getId());
-        transactionOutput.setDate(transaction.getDate());
-        transactionOutput.setCurrency(String.valueOf(transaction.getCurrency()));
-        transactionOutput.setAmount(transaction.getAmount());
-        transactionOutput.setSenderUsername(sender);
-        transactionOutput.setRecipientUsername(recipient);
+        transactionOutput.setSenderUsername(transaction.getSenderUsername());
+        transactionOutput.setRecipientUsername(transaction.getRecipientUsername());
         return transactionOutput;
     }
 

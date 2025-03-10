@@ -12,12 +12,12 @@ import java.util.UUID;
 public class ActivityOutput {
 
     private UUID id;
-    private String transactionType;
+    private String activity;
     private BigDecimal amount;
+    private BigDecimal toAmount;
     private String currency;
     private String fromCurrency;
     private String toCurrency;
-    private BigDecimal exchangeRate;
     private String senderUsername;
     private String recipientUsername;
     private String status;

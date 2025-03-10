@@ -13,13 +13,13 @@ public class ExchangeOutput {
 
     private String recipientUsername;
 
-    private String fromCurrency;
-
-    private String toCurrency;
-
     private BigDecimal amount;
 
     private BigDecimal toAmount;
+
+    private String fromCurrency;
+
+    private String toCurrency;
 
     private LocalDateTime date;
 }

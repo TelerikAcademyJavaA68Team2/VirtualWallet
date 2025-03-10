@@ -1,8 +1,9 @@
-package com.example.virtualwallet.models.fillterOptions;
+package com.example.virtualwallet.services.specifications;
 
 import com.example.virtualwallet.models.Transfer;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransactionStatus;
+import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 

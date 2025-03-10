@@ -8,7 +8,7 @@ import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransactionStatus;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
-import com.example.virtualwallet.models.fillterOptions.TransferSpecification;
+import com.example.virtualwallet.services.specifications.TransferSpecification;
 import com.example.virtualwallet.repositories.TransferRepository;
 import com.example.virtualwallet.services.contracts.*;
 import lombok.RequiredArgsConstructor;

@@ -99,18 +99,24 @@ VALUES ('123e4567-e89b-12d3-a456-426614174019',
 INSERT INTO transaction (id,
                          amount,
                          currency,
+                         sender_username,
+                         recipient_username,
                          sender_wallet_id,
                          recipient_wallet_id,
                          date)
 VALUES ('123e4567-e89b-12d3-a456-426614174021',
         50.00,
         'USD',
+        'georgi',
+        'vankata',
         '123e4567-e89b-12d3-a456-426614174007',
         '123e4567-e89b-12d3-a456-426614174010',
         NOW()),
        ('123e4567-e89b-12d3-a456-426614174022',
         200.00,
         'EUR',
+        'georgi',
+        'vankata',
         '123e4567-e89b-12d3-a456-426614174012',
         '123e4567-e89b-12d3-a456-426614174008',
         NOW());
@@ -236,9 +242,9 @@ VALUES ('123e4567-e89b-12d3-a456-426614174006', 100.00, 184.35, 'USD', 'BGN', 'g
         '123e4567-e89b-12d3-a456-426614174004', '123e4567-e89b-12d3-a456-426614174005');
 
 -- Insert dummy data into the `transaction` table
-INSERT INTO transaction (id, amount, currency, date, recipient_wallet_id, sender_wallet_id)
+INSERT INTO transaction (id, amount, currency, date, recipient_wallet_id, sender_wallet_id,sender_username,recipient_username)
 VALUES ('123e4567-e89b-12d3-a456-426614174007', 50.00, 'USD', NOW(), '123e4567-e89b-12d3-a456-426614174005',
-        '123e4567-e89b-12d3-a456-426614174004');
+        '123e4567-e89b-12d3-a456-426614174004','georgi','vankata');
 
 -- Insert dummy data into the `transfer` table
 INSERT INTO transfer (id, amount, currency, date, status, card_id, wallet_id)
@@ -331,12 +337,12 @@ VALUES ('ex1ex1ex1-ex1e-x1ex-1ex1-ex1ex1ex1ex1', 100.00, 108.00, 1.08, 'USD', 'E
         'w3w3w3w3-w3w3-w3w3-w3w3-w3w3w3w3w3w3', 'w4w4w4w4-w4w4-w4w4-w4w4-w4w4w4w4w4w4', '2023-10-05 10:00:00.000000');
 
 -- Transactions (between users)
-INSERT INTO transaction (id, amount, currency, date, recipient_wallet_id, sender_wallet_id)
+INSERT INTO transaction (id, amount, currency, date, recipient_wallet_id, sender_wallet_id,sender_username,recipient_username)
 VALUES ('tx1tx1tx1-tx1t-x1tx-1tx1-tx1tx1tx1tx1', 50.00, 'USD', '2023-10-05 11:00:00.000000',
-        'w2w2w2w2-w2w2-w2w2-w2w2-w2w2w2w2w2w2', 'w1w1w1w1-w1w1-w1w1-w1w1-w1w1w1w1w1w1'),
+        'w2w2w2w2-w2w2-w2w2-w2w2-w2w2w2w2w2w2', 'w1w1w1w1-w1w1-w1w1-w1w1-w1w1w1w1w1w1','georgi','vankata'),
 
        ('tx2tx2tx2-tx2t-x2tx-2tx2-tx2tx2tx2tx2', 200.00, 'EUR', '2023-10-05 12:00:00.000000',
-        'w4w4w4w4-w4w4-w4w4-w4w4-w4w4w4w4w4w4', 'w3w3w3w3-w3w3-w3w3-w3w3-w3w3w3w3w3w3');
+        'w4w4w4w4-w4w4-w4w4-w4w4-w4w4w4w4w4w4', 'w3w3w3w3-w3w3-w3w3-w3w3-w3w3w3w3w3w3','georgi','vankata');
 
 -- Transfers (card to wallet)
 INSERT INTO transfer (id, amount, currency, date, status, card_id, wallet_id)

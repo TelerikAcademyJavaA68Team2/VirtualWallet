@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
@@ -48,7 +49,7 @@ public class TransactionController {
 
     }
 
-    @Operation(
+/*    @Operation(
             summary = "Retrieve all of user's transactions",
             description = "Fetch a list of user's transactions to other users.",
             responses = {
@@ -59,7 +60,7 @@ public class TransactionController {
     public ResponseEntity<List<TransactionOutput>> getTransactions() {
         return ResponseEntity.ok(transactionService
                 .findAllTransactionsByUserId(userService.getAuthenticatedUser().getId()));
-    }
+    }*/
 
     @Operation(
             summary = "Retrieve all of user's transactions with filter options",
@@ -69,9 +70,11 @@ public class TransactionController {
                     @ApiResponse(description = "Success", responseCode = "200")
             }
     )
-    @GetMapping("/filter")
-    public ResponseEntity<?> getTransactionsWithFilter(@RequestParam(required = false) String firstDate,
-                                                       @RequestParam(required = false) String lastDate,
+    @GetMapping
+    public ResponseEntity<?> getTransactionsWithFilter(@RequestParam(required = false) String fromDate,
+                                                       @RequestParam(required = false) String toDate,
+                                                       @RequestParam(required = false) BigDecimal minAmount,
+                                                       @RequestParam(required = false) BigDecimal maxAmount,
                                                        @RequestParam(required = false) String currency,
                                                        @RequestParam(required = false) String sender,
                                                        @RequestParam(required = false) String recipient,
@@ -83,16 +86,28 @@ public class TransactionController {
         if (validPageAndSize(page, size)) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
+
         User user = userService.getAuthenticatedUser();
-        TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions(user.getId(),
-                firstDate, lastDate, currency, sender, recipient, direction,
-                sortBy, sortOrder, page, size
+        TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions(
+                user.getUsername(),
+                fromDate,
+                toDate,
+                minAmount,
+                maxAmount,
+                currency,
+                sender,
+                recipient,
+                direction,
+                sortBy,
+                sortOrder,
+                page,
+                size
         );
 
         List<TransactionOutput> result =
-                transactionService.findAllTransactionsWithFilters(transactionFilterOptions);
+                transactionService.filterTransactions(transactionFilterOptions);
 
-        if(result.isEmpty()){
+        if (result.isEmpty()) {
             return new ResponseEntity<>("No transactions with this filters!", HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);
