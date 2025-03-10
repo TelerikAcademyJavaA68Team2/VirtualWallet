@@ -11,47 +11,74 @@
     </div>
   </div>
 </header>
-
 <body>
-<div class="container " style="margin-top: 100px;">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-body">
-          <!-- Login Form -->
-          <div th:if="${error}" class="alert alert-danger text-center">
-            <span th:text="${error}"></span>
+<!-- Hero Start -->
+<section class="bg-home">
+  <div class="home-center">
+    <div class="home-desc-center">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-7 col-md-6">
+            <div class="mr-lg-5">
+              <img src="/images/user/login.svg" th:src="@{/images/user/login.svg}" class="img-fluid d-block mx-auto" alt="Login Stock Image">
+            </div>
           </div>
-          <form action="#" th:action="@{/mvc/auth/login}" th:object="${loginDto}" method="post">
-            <!-- Username Field -->
-            <div class="form-group row mb-3">
-              <label class="col-sm-3 col-form-label" th:text="#{user.label.username}">Username</label>
-              <div class="col-sm-9">
-                <input class="form-control" type="text" th:field="*{username}" placeholder="Username"/>
-                <small class="text-danger" th:if="${errorMessage}" th:text="${errorMessage}">
-                  Username error placeholder!</small>
+          <div class="col-lg-5 col-md-6 mt-4 mt-sm-0 pt-2 pt-sm-0 move-up">
+            <div class="login-page bg-white shadow rounded p-4">
+              <div class="text-center">
+                <h4 class="mb-4">Login</h4>
               </div>
-            </div>
+              <!-- Login Form -->
+              <form class="login-form" th:action="@{/mvc/auth/login}" th:object="${loginDto}" method="post">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div th:if="${errorMessage}" class="alert alert-danger alert-pills">
+                      <span class="alert-content" th:text="${errorMessage}"></span>
+                    </div>
+                    <!-- Username Field -->
+                    <div class="form-group position-relative">
+                      <label th:text="#{user.header.username}"></label><span
+                            class="text-danger"> *</span>
+                      <i class="mdi mdi-account ml-3 icons"></i>
+                      <input type="text" class="form-control pl-5" placeholder="Username"
+                             name="username" required="">
+                    </div>
+                  </div>
 
-            <!-- Password Field -->
-            <div class="form-group row mb-3">
-              <label class="col-sm-3 col-form-label" th:text="#{user.label.password}">Password</label>
-              <div class="col-sm-9">
-                <input class="form-control" type="password" th:field="*{password}" placeholder="Password"/>
-              </div>
-            </div>
+                  <!-- Password Field -->
+                  <div class="col-lg-12">
+                    <div class="form-group position-relative">
+                      <label th:text="#{user.header.password}"></label><span
+                            class="text-danger"> *</span>
+                      <i class="mdi mdi-key ml-3 icons"></i>
+                      <input type="password" name="password" class="form-control pl-5"
+                             placeholder="Password" required="">
+                    </div>
+                  </div>
 
-            <!-- Submit Button -->
-            <div class="d-flex justify-content-center">
-              <button type="submit" class="btn btn-primary">Login</button>
-            </div>
-          </form>
-        </div>
-      </div>
+                  <div class="col-lg-12">
+                    <p class="float-right forgot-pass"><span th:text="#{login.forgottenPassword}"
+                                                             class="text-dark font-weight-bold"></span></p>
+                  </div>
+                  <div class="col-lg-12 mb-0">
+                    <button class="btn btn-primary w-100">Sign in</button>
+                  </div>
+                  <div class="col-12 text-center">
+                    <p class="mb-0 mt-3"><small class="text-dark mr-2"
+                                                th:text="#{login.noAccount}"></small> <a
+                            href="/mvc/auth/register" th:href="@{/mvc/auth/register}" class="text-dark font-weight-bold"
+                            th:text="#{login.signUp}">Sign Up</a></p>
+                  </div>
+                </div>
+              </form>
+            </div><!---->
+          </div> <!--end col-->
+        </div><!--end row-->
+      </div> <!--end container-->
     </div>
   </div>
-</div>
-
+</section><!--end section-->
+<!-- Hero End -->
 
 <!-- Register Link -->
 <div class="text-center mt-4">

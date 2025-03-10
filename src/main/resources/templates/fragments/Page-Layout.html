@@ -3,7 +3,7 @@
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="'MoneyMe | ' + ${title}">MoneyMe - Title</title>
+    <title th:text="${title} + ' | MoneyMe'">Title - MoneyMe</title>
     <link href="/static/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet"/>
     <link rel="icon" th:href="@{/images/favicon.ico}" type="image/png">
     <!-- Bootstrap icons-->
@@ -72,6 +72,10 @@
         </div>
     </div>
 </nav>
+<div th:fragment="download-buttons">
+    <a class="me-lg-3 mb-4 mb-lg-0" href="https://play.google.com/store/search?q=MoneyMe&c=apps&hl=en"><img class="app-badge" src="/assets/img/google-play-badge.svg" alt="Google Play Download Redirect" /></a>
+    <a href="https://www.apple.com/us/search/MoneyMe?src=globalnav"><img class="app-badge" src="/assets/img/app-store-badge.svg" alt="App Store Download Redirect" /></a>
+</div>
 <footer th:fragment="footer" class="bg-black text-center py-5">
     <div class="container px-5">
         <div class="text-white-50 small">

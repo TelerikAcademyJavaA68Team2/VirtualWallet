@@ -21,6 +21,7 @@ public class AuthenticationMvcController {
 
     private final AuthenticationService authenticationService;
 
+    //ToDo pending user cant log in?
     @GetMapping("/login")
     public String getLoginPage(Model model, HttpSession session,
                                @RequestParam(value = "error", required = false) Boolean error,
