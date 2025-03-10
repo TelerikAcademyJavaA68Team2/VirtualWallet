@@ -30,6 +30,13 @@ public class Transfer {
     @Column(nullable = false, name = "currency")
     private Currency currency;
 
+    @Column(nullable = false, name = "status")
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
+
+    @Column(nullable = false, name = "recipient_username")
+    private String recipientUsername;
+
     @Column(nullable = false, name = "date")
     private LocalDateTime date;
 
@@ -41,9 +48,6 @@ public class Transfer {
     @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet wallet;
 
-    @Column(nullable = false, name = "status")
-    @Enumerated(EnumType.STRING)
-    private TransactionStatus status;
 
     @PrePersist
     protected void onCreate() {
