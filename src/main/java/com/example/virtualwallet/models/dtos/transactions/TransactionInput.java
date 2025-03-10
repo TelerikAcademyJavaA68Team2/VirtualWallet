@@ -22,4 +22,5 @@ public class TransactionInput {
     @NotBlank(message = "{error.currencyEmpty}")
     private String currency;
 
+    private String description;
 }
