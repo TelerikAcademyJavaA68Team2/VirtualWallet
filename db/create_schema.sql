@@ -82,6 +82,7 @@ CREATE TABLE transaction
     currency            ENUM ('BGN', 'EUR', 'USD') NOT NULL,
     sender_username     VARCHAR(255)               NOT NULL,
     recipient_username  VARCHAR(255)               NOT NULL,
+    description         VARCHAR(255)               NOT NULL,
     date                DATETIME(6)                NOT NULL,
     recipient_wallet_id UUID                       NOT NULL,
     sender_wallet_id    UUID                       NOT NULL,
@@ -92,13 +93,14 @@ CREATE TABLE transaction
 -- Transfer Table
 CREATE TABLE transfer
 (
-    id        UUID PRIMARY KEY,
-    amount    DECIMAL(38, 2)                NOT NULL,
-    currency  ENUM ('BGN', 'EUR', 'USD')    NOT NULL,
-    date      DATETIME(6)                   NOT NULL,
-    status    ENUM ('APPROVED', 'DECLINED') NOT NULL,
-    card_id   UUID                          NOT NULL,
-    wallet_id UUID                          NOT NULL,
+    id                 UUID PRIMARY KEY,
+    amount             DECIMAL(38, 2)                NOT NULL,
+    currency           ENUM ('BGN', 'EUR', 'USD')    NOT NULL,
+    status             ENUM ('APPROVED', 'DECLINED') NOT NULL,
+    recipient_username VARCHAR(255)                  NOT NULL,
+    date               DATETIME(6)                   NOT NULL,
+    card_id            UUID                          NOT NULL,
+    wallet_id          UUID                          NOT NULL,
     FOREIGN KEY (card_id) REFERENCES card (id),
     FOREIGN KEY (wallet_id) REFERENCES wallet (id)
 );
