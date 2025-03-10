@@ -67,7 +67,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     @Override
     public void createExchange(ExchangeInput input) {
-        validateExchangeInput(input);
+        validateCurrencies(input);
         User user = userService.getAuthenticatedUser();
 
         Currency fromCurrency = Currency.valueOf(input.getFromCurrency().toUpperCase());
@@ -106,9 +106,10 @@ public class ExchangeServiceImpl implements ExchangeService {
         exchangeRepository.save(exchange);
     }
 
-    private void validateExchangeInput(ExchangeInput input) {
-        if (!validExchanges.contains(input.getFromCurrency().toUpperCase()) ||
-                !validExchanges.contains(input.getToCurrency().toUpperCase())) {
+    private void validateCurrencies(ExchangeInput input) {
+        String fromCurrency = input.getFromCurrency().toUpperCase();
+        String toCurrency = input.getFromCurrency().toUpperCase();
+        if (!validExchanges.contains(fromCurrency) || !validExchanges.contains(toCurrency) || fromCurrency.equals(toCurrency)) {
             throw new InvalidUserInputException("Invalid currency provided");
         }
     }
