@@ -1,11 +1,13 @@
 package com.example.virtualwallet.services;
 
+import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.InsufficientFundsException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Transaction;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
+import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOutput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.enums.Currency;
@@ -25,7 +27,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
+import static com.example.virtualwallet.helpers.ModelMapper.transactionToFullTransactionInfoOutput;
+import static com.example.virtualwallet.helpers.ModelMapper.transactionToTransactionOutput;
 import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndConvertCurrency;
 import static java.lang.String.format;
 
@@ -36,6 +41,13 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserService userService;
     private final WalletService walletService;
+
+    @Override
+    public FullTransactionInfoOutput getTransactionById(UUID id) {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction", id));
+        return transactionToFullTransactionInfoOutput(transaction);
+    }
 
     @Override
     public TransactionOutput createTransaction(TransactionInput transactionInput) {
@@ -81,11 +93,14 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setRecipientWallet(recipientWallet);
         transaction.setSenderUsername(sender.getUsername());
         transaction.setRecipientUsername(recipientUsername);
+        String description = (transactionInput.getDescription() == null || transactionInput.getDescription().isEmpty())
+                ? "transaction" : transactionInput.getDescription();
+        transaction.setDescription(description);
 
         Transaction transactionToSave = transactionRepository.save(transaction);
         walletService.update(senderWallet);
         walletService.update(recipientWallet);
-        return ModelMapper.transactionToTransactionOutput(transactionToSave);
+        return transactionToTransactionOutput(transactionToSave);
     }
 
     @Override
