@@ -7,12 +7,16 @@ import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
+import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.enums.Currency;
-import com.example.virtualwallet.repositories.WalletRepository;
+import com.example.virtualwallet.repositories.JPAWalletRepository;
 import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,12 +30,13 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndCon
 public class WalletServiceImpl implements WalletService {
     public static final String NOT_WALLET_OWNER = "You are not the wallet's owner!";
 
-    private final WalletRepository walletRepository;
+    private final JPAWalletRepository walletRepository;
     private final UserService userService;
 
     @Override
     public Wallet getWalletById(UUID id) {
-        return walletRepository.findById(id);
+        return walletRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Wallet", id));
     }
 
 
@@ -41,21 +46,21 @@ public class WalletServiceImpl implements WalletService {
         if (wallet.isPresent()) {
             if (wallet.get().isDeleted()) {
                 wallet.get().restoreWallet();
-                walletRepository.update(wallet.get());
+                walletRepository.save(wallet.get());
             }
             return wallet.get();
         }
         Wallet newWallet = new Wallet();
         newWallet.setCurrency(currency);
         newWallet.setOwner(userService.loadUserByUsername(userUsername));
-        walletRepository.create(newWallet);
-        return newWallet;
+        walletRepository.save(newWallet);
+        return newWallet; // todo check if this will return the id of the new wallet
     }
 
     @Override
     public List<WalletBasicOutput> getActiveWalletsOfAuthenticatedUser() {
         User user = userService.getAuthenticatedUser();
-        List<Wallet> wallets = walletRepository.getActiveWalletsByUserId(user.getId());
+        List<Wallet> wallets = walletRepository.findActiveWalletsByUserId(user.getId());
         return wallets.stream().map(ModelMapper::mapWalletToBasicWalletOutput).toList();
     }
 
@@ -67,7 +72,15 @@ public class WalletServiceImpl implements WalletService {
             throw new EntityNotFoundException("Wallet", "currency", currency);
         }
         Wallet wallet = getOrCreateWalletByUsernameAndCurrency(user.getUsername(), enumCurrency);
-        WalletPageOutput pageOutput = walletRepository.getWalletHistory(wallet.getId(), page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Object[]> queryResult = walletRepository.findWalletHistory(wallet.getId(), pageable);
+
+        List<ActivityOutput> history = queryResult.stream().map(ModelMapper::mapObjectToActivity).toList();
+
+        WalletPageOutput pageOutput = new WalletPageOutput();
+        pageOutput.setHistoryPages(queryResult.getTotalPages());
+        pageOutput.setHistorySize(queryResult.getTotalElements());
+        pageOutput.setActivities(history);
         pageOutput.setBalance(wallet.getBalance());
         pageOutput.setCurrency(wallet.getCurrency());
         return pageOutput;
@@ -86,7 +99,7 @@ public class WalletServiceImpl implements WalletService {
             throw new InvalidUserInputException("Please exchange your remaining balance before deleting");
         }
         wallet.get().markAsDeleted();
-        walletRepository.update(wallet.get());
+        walletRepository.save(wallet.get());
     }
 
     @Override
@@ -106,6 +119,6 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void update(Wallet wallet) {
-        walletRepository.update(wallet);
+        walletRepository.save(wallet);
     }
 }

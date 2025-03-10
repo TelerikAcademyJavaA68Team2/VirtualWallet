@@ -1,3 +1,4 @@
+/*
 package com.example.virtualwallet.repositories;
 
 import com.example.virtualwallet.models.Wallet;
@@ -25,4 +26,4 @@ public interface WalletRepository {
     boolean checkIfUserHasActiveWalletWithCurrency(UUID userId, Currency currency);
 
     boolean checkIfUserHasDeletedWalletWithCurrency(UUID userId, Currency currency);
-}
+}*/

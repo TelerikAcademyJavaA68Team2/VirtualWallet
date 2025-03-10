@@ -14,10 +14,14 @@ import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
+import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import org.springframework.data.domain.Sort;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelHelpers.maskCreditCard;
 
@@ -203,5 +207,22 @@ public class ModelMapper {
                 ? Sort.Direction.DESC
                 : Sort.Direction.ASC;
         return Sort.by(sortDirection, sortBy);
+    }
+
+    public static ActivityOutput mapObjectToActivity(Object[] row) {
+        return new ActivityOutput(
+                (UUID) row[0],
+                (String) row[1],
+                (BigDecimal) row[2],
+                (BigDecimal) row[3],
+                (String) row[4],
+                (String) row[5],
+                (String) row[6],
+                (String) row[7],
+                (String) row[8],
+                (String) row[9],
+                row[10] != null ? ((Timestamp) row[10]).toLocalDateTime() : null
+
+        );
     }
 }

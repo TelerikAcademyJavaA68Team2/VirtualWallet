@@ -1,3 +1,4 @@
+/*
 package com.example.virtualwallet.repositories;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
@@ -133,15 +134,13 @@ public class WalletRepositoryImpl implements WalletRepository {
                             t.currency AS currency,
                             NULL AS fromCurrency,
                             NULL AS toCurrency,
-                            su.username AS senderUsername,
-                            ru.username AS recipientUsername,
+                            t.sender_username AS senderUsername,
+                            t.recipient_username AS recipientUsername,
                             NULL AS status,
                             t.date as date
                         FROM Transaction t
                         JOIN Wallet sw ON t.sender_wallet_id = sw.id
-                        JOIN User su ON sw.owner_id = su.id\s
                         JOIN Wallet rw ON t.recipient_wallet_id = rw.id
-                        JOIN User ru ON rw.owner_id = ru.id\s
                         WHERE sw.id = :walletId OR rw.id = :walletId
                         
                         UNION ALL
@@ -155,12 +154,11 @@ public class WalletRepositoryImpl implements WalletRepository {
                             NULL AS fromCurrency,
                             NULL AS toCurrency,
                             NULL AS senderUsername,
-                            wu.username AS recipientUsername,
+                            tf.recipient_username AS recipientUsername,
                             tf.status AS status,
                             tf.date as date
                         FROM Transfer tf
                         JOIN wallet w ON tf.wallet_id = w.id
-                        JOIN User wu ON w.owner_id = wu.id\s
                         WHERE tf.wallet_id = :walletId
                         
                         UNION ALL
@@ -210,4 +208,4 @@ public class WalletRepositoryImpl implements WalletRepository {
             return pageOutput;
         }
     }
-}
+}*/

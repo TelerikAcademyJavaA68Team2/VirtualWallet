@@ -24,5 +24,5 @@ public class WalletPageOutput {
 
     private int historyPages;
 
-    private int historySize;
+    private long historySize;
 }

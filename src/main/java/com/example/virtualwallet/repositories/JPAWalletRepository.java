@@ -27,316 +27,298 @@ public interface JPAWalletRepository extends JpaRepository<Wallet, UUID> {
     List<Wallet> findActiveWalletsByUserId(@Param("userId") UUID userId);
 
 
-    @Query(value = "SELECT * FROM (" + // raboti
-            "SELECT t.id AS id, 'TRANSACTION' AS transactionType, t.amount AS amount, t.currency AS currency, " +
-            "NULL AS fromCurency, NULL AS toCurency, NULL AS exchangeRate, " +
-            "(SELECT u.username FROM virtual_wallet.user u WHERE u.id = sw.owner_id) AS senderUsername, " +
-            "(SELECT u.username FROM virtual_wallet.user u WHERE u.id = rw.owner_id) AS recipientUsername, " +
-            "NULL AS status, t.date AS date " +
-            "FROM virtual_wallet.transaction t " +
-            "JOIN virtual_wallet.wallet sw ON t.sender_wallet_id = sw.id " +
-            "JOIN virtual_wallet.wallet rw ON t.recipient_wallet_id = rw.id " +
-            "WHERE sw.id = :walletId OR rw.id = :walletId " +
-
-            "UNION " +
-
-            "SELECT tr.id, 'WITHDRAW', tr.amount, tr.currency, NULL, NULL, NULL, " +
-            "NULL, (SELECT u.username FROM virtual_wallet.user u WHERE u.id = w.owner_id), tr.status, tr.date " +
-            "FROM virtual_wallet.transfer tr " +
-            "JOIN virtual_wallet.wallet w ON tr.wallet_id = w.id " +
-            "WHERE tr.wallet_id = :walletId " +
-
-            "UNION " +
-
-            "SELECT e.id, 'EXCHANGE', e.amount, NULL, e.from_currency, e.to_currency, e.exchange_rate, " +
-            "(SELECT u.username FROM virtual_wallet.user u WHERE u.id = fw.owner_id), NULL, NULL, e.date " +
-            "FROM virtual_wallet.exchange e " +
-            "JOIN virtual_wallet.wallet fw ON e.from_wallet_id = fw.id " +
-            "JOIN virtual_wallet.wallet tw ON e.to_wallet_id = tw.id " +
-            "WHERE fw.id = :walletId OR tw.id = :walletId " +
-            ") AS activity " +
-            "ORDER BY activity.date DESC", nativeQuery = true)
-    List<ActivityOutput> findActivitiesByWalletId(@Param("walletId") UUID walletId);
-
-
-
+    @Query(value =
+            """
+                    SELECT\s
+                        t.id AS id,
+                        'TRANSACTION' AS activity,
+                        t.amount as amount,
+                        NULL as toAmount,
+                        t.currency AS currency,
+                        NULL AS fromCurrency,
+                        NULL AS toCurrency,
+                        t.sender_username AS senderUsername,
+                        t.recipient_username AS recipientUsername,
+                        NULL AS status,
+                        t.date as date
+                    FROM Transaction t
+                    JOIN Wallet sw ON t.sender_wallet_id = sw.id
+                    JOIN Wallet rw ON t.recipient_wallet_id = rw.id
+                    WHERE sw.id = :walletId OR rw.id = :walletId
+                    
+                    UNION ALL
+                    
+                    SELECT\s
+                        tf.id AS id,
+                        'ACCOUNT FUNDING' AS activity,
+                        tf.amount as amount,
+                        NULL as toAmount,
+                        tf.currency AS currency,
+                        NULL AS fromCurrency,
+                        NULL AS toCurrency,
+                        NULL AS senderUsername,
+                        tf.recipient_username AS recipientUsername,
+                        tf.status AS status,
+                        tf.date as date
+                    FROM Transfer tf
+                    JOIN wallet w ON tf.wallet_id = w.id
+                    WHERE tf.wallet_id = :walletId
+                    
+                    UNION ALL
+                    
+                    SELECT\s
+                        e.id AS id,
+                        'EXCHANGE' AS activity,
+                        e.amount as amount,
+                        e.to_amount as toAmount,
+                        NULL AS currency,
+                        e.from_currency AS fromCurrency,
+                        e.to_currency AS toCurrency,
+                        NULL AS senderUsername,
+                        NULL AS recipientUsername,
+                        NULL AS status,
+                        e.date as date
+                    FROM Exchange e
+                    JOIN Wallet fw ON e.from_wallet_id = fw.id
+                    JOIN Wallet tw ON e.to_wallet_id = tw.id
+                    WHERE fw.id = :walletId OR tw.id = :walletId
+                    
+                    ORDER BY date DESC""",
+            countQuery = """
+                    SELECT COUNT(*) FROM (
+                       SELECT t.id
+                    FROM Transaction t
+                    JOIN Wallet sw ON t.sender_wallet_id = sw.id
+                    JOIN Wallet rw ON t.recipient_wallet_id = rw.id
+                    WHERE sw.id = :walletId OR rw.id = :walletId
+                    
+                    UNION ALL
+                    
+                    SELECT\s
+                        tf.id
+                    FROM Transfer tf
+                    JOIN wallet w ON tf.wallet_id = w.id
+                    WHERE tf.wallet_id = :walletId
+                    
+                    UNION ALL
+                    
+                    SELECT e.id
+                    FROM Exchange e
+                    JOIN Wallet fw ON e.from_wallet_id = fw.id
+                    JOIN Wallet tw ON e.to_wallet_id = tw.id
+                    WHERE fw.id = :walletId OR tw.id = :walletId
+                    ) AS total
+                    """,
+            nativeQuery = true
+    )
+    Page<Object[]> findWalletHistory(@Param("walletId") UUID walletId, Pageable pageable);
 
     @Query(value =
             "SELECT " +
-                    "  id, " +
-                    "  transactionType, " +
-                    "  amount, " +
-                    "  currency, " + // Ensure this is a string (e.g., 'USD')
-                    "  fromCurrency, " +
-                    "  toCurrency, " +
-                    "  exchangeRate, " +
-                    "  senderUsername, " +
-                    "  recipientUsername, " +
-                    "  status, " +
-                    "  date " +
-                    "FROM (" +
-                    "  SELECT " +
-                    "    t.id, " +
-                    "    'TRANSACTION' AS transactionType, " +
-                    "    t.amount, " +
-                    "    t.currency, " +
-                    "    NULL AS fromCurrency, " +
-                    "    NULL AS toCurrency, " +
-                    "    NULL AS exchangeRate, " +
-                    "    (SELECT u.username FROM virtual_wallet.user u WHERE u.id = sw.owner_id) AS senderUsername, " +
-                    "    (SELECT u.username FROM virtual_wallet.user u WHERE u.id = rw.owner_id) AS recipientUsername, " +
-                    "    NULL AS status, " +
-                    "    t.date " +
-                    "  FROM virtual_wallet.transaction t " +
-                    "  JOIN virtual_wallet.wallet sw ON t.sender_wallet_id = sw.id " +
-                    "  JOIN virtual_wallet.wallet rw ON t.recipient_wallet_id = rw.id " +
-                    "  WHERE sw.id = :walletId OR rw.id = :walletId " +
-                    "  UNION " +
-                    "  SELECT " +
-                    "    tr.id, " +
-                    "    'WITHDRAW', " +
-                    "    tr.amount, " +
-                    "    tr.currency, " +
-                    "    NULL, " +
-                    "    NULL, " +
-                    "    NULL, " +
-                    "    NULL, " +
-                    "    (SELECT u.username FROM virtual_wallet.user u WHERE u.id = w.owner_id), " +
-                    "    tr.status, " +
-                    "    tr.date " +
-                    "  FROM virtual_wallet.transfer tr " +
-                    "  JOIN virtual_wallet.wallet w ON tr.wallet_id = w.id " +
-                    "  WHERE tr.wallet_id = :walletId " +
-                    "  UNION " +
-                    "  SELECT " +
-                    "    e.id, " +
-                    "    'EXCHANGE', " +
-                    "    e.amount, " +
-                    "    NULL, " +
-                    "    e.from_currency, " +
-                    "    e.to_currency, " +
-                    "    e.exchange_rate, " +
-                    "    (SELECT u.username FROM virtual_wallet.user u WHERE u.id = fw.owner_id), " +
-                    "    NULL, " +
-                    "    NULL, " +
-                    "    e.date " +
-                    "  FROM virtual_wallet.exchange e " +
-                    "  JOIN virtual_wallet.wallet fw ON e.from_wallet_id = fw.id " +
-                    "  JOIN virtual_wallet.wallet tw ON e.to_wallet_id = tw.id " +
-                    "  WHERE fw.id = :walletId OR tw.id = :walletId " +
-                    ") AS activity " +
-                    "ORDER BY date DESC",
-            nativeQuery = true
-    )
-    List<ActivityOutput> testPagination(@Param("walletId") UUID walletId, Pageable pageable);
-
-
-    @Query(value = "SELECT* FROM (" + // testvane
-            "SELECT t.id AS id, 'TRANSACTION' AS transactionType, t.amount AS amount, t.currency AS currency, " +
-            "NULL AS fromCurrency, NULL AS toCurrency, NULL AS exchangeRate, " +
-            "(SELECT u.username FROM virtual_wallet.user u WHERE u.id = sw.owner_id) AS senderUsername, " +
-            "(SELECT u.username FROM virtual_wallet.user u WHERE u.id = rw.owner_id) AS recipientUsername, " +
-            "NULL AS status, t.date AS date " +
-            "FROM virtual_wallet.transaction t " +
-            "JOIN virtual_wallet.wallet sw ON t.sender_wallet_id = sw.id " +
-            "JOIN virtual_wallet.wallet rw ON t.recipient_wallet_id = rw.id " +
-            "WHERE sw.id = :walletId OR rw.id = :walletId " +
-
-            "UNION " +
-
-            "SELECT tr.id, 'WITHDRAW', tr.amount, tr.currency, NULL, NULL, NULL, " +
-            "NULL, (SELECT u.username FROM virtual_wallet.user u WHERE u.id = w.owner_id), tr.status, tr.date " +
-            "FROM virtual_wallet.transfer tr " +
-            "JOIN virtual_wallet.wallet w ON tr.wallet_id = w.id " +
-            "WHERE tr.wallet_id = :walletId " +
-
-            "UNION " +
-
-            "SELECT e.id, 'EXCHANGE', e.amount, NULL, e.from_currency, e.to_currency, e.exchange_rate, " +
-            "(SELECT u.username FROM virtual_wallet.user u WHERE u.id = fw.owner_id), NULL, NULL, e.date " +
-            "FROM virtual_wallet.exchange e " +
-            "JOIN virtual_wallet.wallet fw ON e.from_wallet_id = fw.id " +
-            "JOIN virtual_wallet.wallet tw ON e.to_wallet_id = tw.id " +
-            "WHERE fw.id = :walletId OR tw.id = :walletId " +
-            ") AS activity " +
-            "ORDER BY activity.date DESC", nativeQuery = true)
-    List<ActivityOutput> testPagination2(@Param("walletId") UUID walletId,Pageable pageable);
-
-
-
-
-
-
-    @Query(value = "SELECT * FROM (" +
-            "SELECT t.id AS id, 'TRANSACTION' AS type, t.amount AS amount, t.currency AS currency, " +
-            "NULL AS from_currency, NULL AS to_currency, NULL AS exchange_rate, " +
-            "(SELECT u.username FROM virtual_wallet.user u WHERE u.id = sw.owner_id) AS sender_username, " +
-            "(SELECT u.username FROM virtual_wallet.user u WHERE u.id = rw.owner_id) AS recipient_username, " +
-            "NULL AS status, t.date AS date " +
-            "FROM virtual_wallet.transaction t " +
-            "JOIN virtual_wallet.wallet sw ON t.sender_wallet_id = sw.id " +
-            "JOIN virtual_wallet.wallet rw ON t.recipient_wallet_id = rw.id " +
-            "WHERE sw.id = :walletId OR rw.id = :walletId " +
-
-            "UNION " +
-
-            "SELECT tr.id, 'WITHDRAW', tr.amount, tr.currency, NULL, NULL, NULL, " +
-            "NULL, (SELECT u.username FROM virtual_wallet.user u WHERE u.id = w.owner_id), tr.status, tr.date " +
-            "FROM virtual_wallet.transfer tr " +
-            "JOIN virtual_wallet.wallet w ON tr.wallet_id = w.id " +
-            "WHERE tr.wallet_id = :walletId " +
-
-            "UNION " +
-
-            "   SELECT e.id, 'EXCHANGE', e.amount, NULL, e.from_currency, e.to_currency, e.exchange_rate, " +
-            "   (SELECT u.username FROM virtual_wallet.user u WHERE u.id = fw.owner_id), NULL, NULL, e.date " +
-            "   FROM virtual_wallet.exchange e " +
-            "   JOIN virtual_wallet.wallet fw ON e.from_wallet_id = fw.id " +
-            "   JOIN virtual_wallet.wallet tw ON e.to_wallet_id = tw.id " +
-            "   WHERE fw.id = :walletId OR tw.id = :walletId " +
-            ") AS activity " +
-            "ORDER BY date DESC " +
-            "LIMIT ?#{#pageable.offset}, ?#{#pageable.pageSize}",
-
-            countQuery = "SELECT COUNT(*) FROM (" +
-                    "SELECT t.id FROM virtual_wallet.transaction t " +
+                    " t.id," +
+                    " 'TRANSACTION'," +
+                    " t.amount, " +
+                    " NULL," +
+                    " t.currency, " +
+                    " NULL, " +
+                    " NULL, " +
+                    " t.sender_username, " +
+                    " t.recipient_username, " +
+                    " NULL," +
+                    " t.date " +
+                    "FROM virtual_wallet.transaction t " +
                     "JOIN virtual_wallet.wallet sw ON t.sender_wallet_id = sw.id " +
                     "JOIN virtual_wallet.wallet rw ON t.recipient_wallet_id = rw.id " +
-                    "WHERE sw.id = ?1 OR rw.id = ?1 " +
+                    "WHERE sw.id = :walletId OR rw.id = :walletId " +
 
-                    "   UNION " +
+                    "UNION ALL" +
 
-                    "   SELECT tr.id FROM virtual_wallet.transfer tr " +
-                    "   JOIN virtual_wallet.wallet w ON tr.wallet_id = w.id " +
-                    "   WHERE tr.wallet_id = ?1 " +
+                    " SELECT " +
+                    " tr.id," +
+                    " 'WITHDRAW'," +
+                    " tr.amount," +
+                    " NULL, " +
+                    " tr.currency, " +
+                    " NULL," +
+                    " NULL, " +
+                    " NULL," +
+                    " tr.recipient_username," +
+                    " tr.status," +
+                    " tr.date " +
+                    "FROM virtual_wallet.transfer tr " +
+                    "JOIN virtual_wallet.wallet w ON tr.wallet_id = w.id " +
+                    "WHERE tr.wallet_id = :walletId " +
 
-                    "   UNION " +
+                    "UNION ALL" +
 
-                    "SELECT e.id FROM virtual_wallet.exchange e " +
+                    " SELECT e.id, " +
+                    " 'EXCHANGE'," +
+                    " e.amount," +
+                    " e.to_amount," +
+                    " NULL, " +
+                    " e.from_currency, " +
+                    " e.to_currency," +
+                    " NULL, " +
+                    " e.recipient_username," +
+                    " NULL," +
+                    " e.date " +
+                    "FROM virtual_wallet.exchange e " +
                     "JOIN virtual_wallet.wallet fw ON e.from_wallet_id = fw.id " +
                     "JOIN virtual_wallet.wallet tw ON e.to_wallet_id = tw.id " +
-                    "WHERE fw.id = ?1 OR tw.id = ?1" +
-                    ") AS activity",
+                    "WHERE fw.id = :walletId OR tw.id = :walletId " +
+
+                    "ORDER BY date DESC",
+            nativeQuery = true)
+    List<ActivityOutput> findWalletHistory2(@Param("walletId") UUID walletId);
+/*
+    @Query(value = """
+            
+            SELECT NEW com.example.virtualwallet.models.dtos.wallet.ActivityOutput(
+                t.id,
+                'TRANSACTION',
+                t.amount,
+                NULL,
+                t.currency,
+                NULL,
+                NULL,
+                t.sender_username,
+                t.recipient_username,
+                NULL,
+                t.date)
+            FROM Transaction t
+            JOIN Wallet sw ON t.sender_wallet_id = sw.id
+            JOIN Wallet rw ON t.recipient_wallet_id = rw.id
+            WHERE sw.id = :walletId OR rw.id = :walletId
+            
+            UNION ALL
+            
+            SELECT NEW com.example.virtualwallet.models.dtos.wallet.ActivityOutput(
+                tf.id,
+                'FUNDING',
+                tf.amount,
+                NULL,
+                tf.currency,
+                NULL,
+                NULL,
+                NULL,
+                tf.recipient_username,
+                tf.status,
+                tf.date)
+            FROM Transfer tf
+            JOIN Wallet w ON tf.wallet_id = w.id
+            WHERE tf.wallet_id = :walletId
+            
+            UNION ALL
+            
+            SELECT NEW com.example.virtualwallet.models.dtos.wallet.ActivityOutput(
+                e.id,
+                'EXCHANGE',
+                e.amount,
+                e.to_amount,
+                NULL,
+                e.from_currency,
+                e.to_currency,
+                NULL,
+                e.recipient_username,
+                NULL,
+                e.date)
+            FROM Exchange e
+            JOIN Wallet fw ON e.from_wallet_id = fw.id
+            JOIN Wallet tw ON e.to_wallet_id = tw.id
+            WHERE fw.id = :walletId OR tw.id = :walletId
+            ORDER BY date DESC
+            """,
+            countQuery = """
+                    SELECT COUNT(*) FROM (
+                        SELECT t.id FROM Transaction t WHERE t.sender_wallet_id = :walletId OR t.recipient_wallet_id = :walletId
+                        UNION ALL
+                        SELECT tf.id FROM Transfer tf WHERE tf.wallet_id = :walletId
+                        UNION ALL
+                        SELECT e.id FROM Exchange e WHERE e.from_wallet_id = :walletId OR e.to_wallet_id = :walletId
+                    ) AS total""",
             nativeQuery = true
     )
-    Page<ActivityOutput> getWalletActivities(
+    Page<ActivityOutput> findWalletHistory(
+            @Param("walletId") UUID walletId,
+            Pageable pageable
+    );*/
+
+    @Query("SELECT CASE WHEN COUNT(w) > 0 THEN true ELSE false END FROM Wallet w " +
+            "WHERE w.owner.id = :userId " +
+            "AND w.currency = :currency " +
+            "AND w.isDeleted = false")
+    boolean checkIfUserHasActiveWalletWithCurrency(@Param("userId") UUID userId, @Param("currency") Currency currency);
+
+
+    @Query(value = """
+            
+            SELECT
+                t.id AS id,
+                'TRANSACTION' AS activity,
+                t.amount AS amount,
+                NULL AS toAmount,
+                t.currency AS currency,
+                NULL AS fromCurrency,
+                NULL AS toCurrency,
+                t.sender_username AS senderUsername,
+                t.recipient_username AS recipientUsername,
+                NULL AS status,
+                t.date AS date
+            FROM Transaction t
+            JOIN Wallet sw ON t.sender_wallet_id = sw.id
+            JOIN Wallet rw ON t.recipient_wallet_id = rw.id
+            WHERE sw.id = :walletId OR rw.id = :walletId
+            
+            UNION ALL
+            
+            SELECT
+                tf.id AS id,
+                'FUNDING' AS activity,
+                tf.amount AS amount,
+                NULL AS toAmount,
+                tf.currency AS currency,
+                NULL AS fromCurrency,
+                NULL AS toCurrency,
+                NULL AS senderUsername,
+                tf.recipient_username AS recipientUsername,
+                tf.status AS status,
+                tf.date AS date
+            FROM Transfer tf
+            JOIN Wallet w ON tf.wallet_id = w.id
+            WHERE tf.wallet_id = :walletId
+            
+            UNION ALL
+            
+            SELECT
+                e.id AS id,
+                'EXCHANGE' AS activity,
+                e.amount AS amount,
+                e.to_amount AS toAmount,
+                NULL AS currency,
+                e.from_currency AS fromCurrency,
+                e.to_currency AS toCurrency,
+                NULL AS senderUsername,
+                e.recipient_username AS recipientUsername,
+                NULL AS status,
+                e.date AS date
+            FROM Exchange e
+            JOIN Wallet fw ON e.from_wallet_id = fw.id
+            JOIN Wallet tw ON e.to_wallet_id = tw.id
+            WHERE fw.id = :walletId OR tw.id = :walletId
+            ORDER BY date DESC
+            """,
+            countQuery = """
+                    SELECT COUNT(*) FROM (
+                        SELECT t.id FROM Transaction t WHERE t.sender_wallet_id = :walletId OR t.recipient_wallet_id = :walletId
+                        UNION ALL
+                        SELECT tf.id FROM Transfer tf WHERE tf.wallet_id = :walletId
+                        UNION ALL
+                        SELECT e.id FROM Exchange e WHERE e.from_wallet_id = :walletId OR e.to_wallet_id = :walletId
+                    ) AS total""",
+            nativeQuery = true
+    )
+    Page<ActivityOutput> findWalletHistory2(
             @Param("walletId") UUID walletId,
             Pageable pageable
     );
-
-/*
-    @Query(value =
-            "SELECT * FROM (" +
-                    "   SELECT " +
-                    "       t.id AS id, " +
-                    "       'TRANSACTION' AS type, " +
-                    "       t.amount AS amount, " +
-                    "       t.currency AS currency, " +
-                    "       NULL AS from_currency, " +
-                    "       NULL AS to_currency, " +
-                    "       NULL AS exchange_rate, " +
-                    "       (SELECT u.username FROM virtual_wallet.user u WHERE u.id = sw.owner_id) AS sender_username, " +
-                    "       (SELECT u.username FROM virtual_wallet.user u WHERE u.id = rw.owner_id) AS recipient_username, " +
-                    "       NULL AS status, " +
-                    "       t.date AS date " +
-                    "   FROM virtual_wallet.transaction t " +
-                    "   JOIN virtual_wallet.wallet sw ON t.sender_wallet_id = sw.id " +
-                    "   JOIN virtual_wallet.wallet rw ON t.recipient_wallet_id = rw.id " +
-                    "   WHERE sw.id = :walletId OR rw.id = :walletId " +
-
-                    "   UNION " +
-
-                    "   SELECT " +
-                    "       tr.id, " +
-                    "       'WITHDRAW', " +
-                    "       tr.amount, " +
-                    "       tr.currency, " +
-                    "       NULL, " +
-                    "       NULL, " +
-                    "       NULL, " +
-                    "       NULL, " +
-                    "       (SELECT u.username FROM virtual_wallet.user u WHERE u.id = w.owner_id), " +
-                    "       tr.status, " +
-                    "       tr.date " +
-                    "   FROM virtual_wallet.transfer tr " +
-                    "   JOIN virtual_wallet.wallet w ON tr.wallet_id = w.id " +
-                    "   WHERE tr.wallet_id = :walletId " +
-
-                    "   UNION " +
-
-                    "   SELECT " +
-                    "       e.id, " +
-                    "       'EXCHANGE', " +
-                    "       e.amount, " +
-                    "       NULL, " +
-                    "       e.from_currency, " +
-                    "       e.to_currency, " +
-                    "       e.exchange_rate, " +
-                    "       (SELECT u.username FROM virtual_wallet.user u WHERE u.id = fw.owner_id), " +
-                    "       NULL, " +
-                    "       NULL, " +
-                    "       e.date " +
-                    "   FROM virtual_wallet.exchange e " +
-                    "   JOIN virtual_wallet.wallet fw ON e.from_wallet_id = fw.id " +
-                    "   JOIN virtual_wallet.wallet tw ON e.to_wallet_id = tw.id " +
-                    "   WHERE fw.id = :walletId OR tw.id = :walletId " +
-                    ") AS activity " +
-
-                    "WHERE " +
-                    "   (:startDate IS NULL OR activity.date BETWEEN :startDate AND :endDate) " +
-                    "   AND (:transactionType IS NULL OR activity.type = :transactionType) " +
-
-                    "ORDER BY " +
-                    "   CASE " +
-                    "       WHEN ?#{#pageable.sort.getOrders().get(0).getProperty()} = 'date' THEN activity.date " +
-                    "       WHEN ?#{#pageable.sort.getOrders().get(0).getProperty()} = 'type' THEN activity.type " +
-                    "   END " +
-                    "   ?#{#pageable.sort.getOrders().get(0).getDirection()} " +
-
-                    "LIMIT ?#{#pageable.pageSize} " +
-                    "OFFSET ?#{#pageable.offset}",
-            countQuery =
-                    "SELECT COUNT(*) FROM (" +
-                            "   SELECT " +
-                            "       t.id, " +
-                            "       'TRANSACTION' AS type, " +
-                            "       t.date AS date " +
-                            "   FROM virtual_wallet.transaction t " +
-                            "   JOIN virtual_wallet.wallet sw ON t.sender_wallet_id = sw.id " +
-                            "   JOIN virtual_wallet.wallet rw ON t.recipient_wallet_id = rw.id " +
-                            "   WHERE sw.id = :walletId OR rw.id = :walletId " +
-
-                            "   UNION " +
-
-                            "   SELECT " +
-                            "       tr.id, " +
-                            "       'WITHDRAW' AS type, " +
-                            "       tr.date AS date " +
-                            "   FROM virtual_wallet.transfer tr " +
-                            "   JOIN virtual_wallet.wallet w ON tr.wallet_id = w.id " +
-                            "   WHERE tr.wallet_id = :walletId " +
-
-                            "   UNION " +
-
-                            "   SELECT " +
-                            "       e.id, " +
-                            "       'EXCHANGE' AS type, " +
-                            "       e.date AS date " +
-                            "   FROM virtual_wallet.exchange e " +
-                            "   JOIN virtual_wallet.wallet fw ON e.from_wallet_id = fw.id " +
-                            "   JOIN virtual_wallet.wallet tw ON e.to_wallet_id = tw.id " +
-                            "   WHERE fw.id = :walletId OR tw.id = :walletId " +
-                            ") AS activity " +
-
-                            "WHERE " +
-                            "   (:startDate IS NULL OR activity.date BETWEEN :startDate AND :endDate) " +
-                            "   AND (:transactionType IS NULL OR activity.type = :transactionType)",
-            nativeQuery = true)
-    Page<ActivityOutput> findActivitiesByWalletId(
-            @Param("walletId") UUID walletId,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
-            @Param("transactionType") String transactionType,
-            Pageable pageable);*/
-
 }
