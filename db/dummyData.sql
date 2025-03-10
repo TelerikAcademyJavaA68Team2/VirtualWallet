@@ -3,65 +3,63 @@ USE virtual_wallet;
 -- Users -------------------------------------------------------------------
 INSERT INTO user (id, created_at, email, first_name, last_name, password, phone_number, role, status, username)
 VALUES
--- Standard Users
-('123e4567-e89b-12d3-a456-426614174000', NOW(), 'john.doe@example.com', 'John', 'Doe',
- '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+1234567890', 'USER', 'ACTIVE', 'john_doe'),
+    ('123e4567-e89b-12d3-a456-426614174000', NOW(), 'john.doe@example.com', 'John', 'Doe',
+     '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+1234567890', 'USER', 'ACTIVE', 'john_doe'),
 
-('123e4567-e89b-12d3-a456-426614174001', NOW(), 'jane.smith@example.com', 'Jane', 'Smith',
- '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+2345678901', 'USER', 'BLOCKED', 'jane_smith'),
+    ('123e4567-e89b-12d3-a456-426614174001', NOW(), 'jane.smith@example.com', 'Jane', 'Smith',
+     '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+2345678901', 'USER', 'BLOCKED', 'jane_smith'),
 
-('123e4567-e89b-12d3-a456-426614174002', NOW(), 'alice@example.com', 'Alice', 'Jones',
- '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+3456789012', 'USER', 'ACTIVE', 'alice_j'),
+    ('123e4567-e89b-12d3-a456-426614174002', NOW(), 'alice@example.com', 'Alice', 'Jones',
+     '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+3456789012', 'USER', 'ACTIVE', 'alice_j'),
 
-('123e4567-e89b-12d3-a456-426614174003', NOW(), 'bob@example.com', 'Bob', 'Brown',
- '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+4567890123', 'USER', 'ACTIVE', 'bob_b'),
+    ('123e4567-e89b-12d3-a456-426614174003', NOW(), 'bob@example.com', 'Bob', 'Brown',
+     '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+4567890123', 'USER', 'ACTIVE', 'bob_b'),
 
--- Admin Users
-('123e4567-e89b-12d3-a456-426614174004', NOW(), 'admin.georgi@example.com', 'Georgi', 'Admin',
- '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+5678901234', 'ADMIN', 'ACTIVE', 'georgi'),
+    ('123e4567-e89b-12d3-a456-426614174004', NOW(), 'admin.georgi@example.com', 'Georgi', 'Admin',
+     '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+5678901234', 'ADMIN', 'ACTIVE', 'georgi'),
 
-('123e4567-e89b-12d3-a456-426614174005', NOW(), 'admin.ivan@example.com', 'Ivan', 'Admin',
- '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+6789012345', 'ADMIN', 'ACTIVE', 'vankata'),
+    ('123e4567-e89b-12d3-a456-426614174005', NOW(), 'admin.ivan@example.com', 'Ivan', 'Admin',
+     '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+6789012345', 'ADMIN', 'ACTIVE', 'vankata'),
 
--- Pending User
-('123e4567-e89b-12d3-a456-426614174006', NOW(), 'pending@example.com', 'New', 'User',
- '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+7890123456', 'USER', 'PENDING', 'new_user');
+    ('123e4567-e89b-12d3-a456-426614174006', NOW(), 'pending@example.com', 'New', 'User',
+     '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m', '+7890123456', 'USER', 'PENDING', 'new_user');
 
 -- Cards -------------------------------------------------------------------
 INSERT INTO card (id, card_holder, card_number, created_at, cvv, expiration_date, owner_id)
-VALUES ('123e4567-e89b-12d3-a452-426614174000', 'John Doe', '4111111111111111', NOW(), '123', '12/25',
-        '123e4567-e89b-12d3-a456-426614174000'), -- John's card
+VALUES
+    ('123e4567-e89b-12d3-a452-426614184000', 'John Doe', '4111111111111111', NOW(), '123', '12/25',
+     '123e4567-e89b-12d3-a456-426614174000'), -- John's card
 
-       ('123e4567-e89b-12d3-a452-426614174001', 'Jane Smith', '5555555555554444', NOW(), '456', '11/26',
-        '123e4567-e89b-12d3-a456-426614174001'), -- Jane's card
+    ('123e4567-e89b-12d3-a452-426614874001', 'Jane Smith', '5555555555554444', NOW(), '456', '11/26',
+     '123e4567-e89b-12d3-a456-426614174001'), -- Jane's card
 
-       ('123e4567-e89b-12d3-a452-426614174002', 'Georgi Admin', '4222222222222222', NOW(), '789', '10/27',
-        '123e4567-e89b-12d3-a456-426614174004');
--- Georgi's card
+    ('123e4567-e89b-12d3-a452-426614874002', 'Georgi Admin', '4222222222222222', NOW(), '789', '10/27',
+     '123e4567-e89b-12d3-a456-426614174004'); -- Georgi's card
 
 -- Wallets -----------------------------------------------------------------
 INSERT INTO wallet (id, balance, currency, created_at, owner_id)
 VALUES
 -- John's wallets
-('123e4567-e89b-12d3-a456-426614174007', 1000.00, 'USD', NOW(), '123e4567-e89b-12d3-a456-426614174000'),
-('123e4567-e89b-12d3-a456-426614174008', 500.00, 'EUR', NOW(), '123e4567-e89b-12d3-a456-426614174000'),
+('123e4567-e89b-12d3-a456-826674174001', 1000.00, 'USD', NOW(), '123e4567-e89b-12d3-a456-426614174000'),
+('123e4567-e89b-12d3-a456-826674174002', 500.00, 'EUR', NOW(), '123e4567-e89b-12d3-a456-426614174000'),
 
 -- Jane's wallets
-('123e4567-e89b-12d3-a456-426614174009', 700.00, 'BGN', NOW(), '123e4567-e89b-12d3-a456-426614174001'),
-('123e4567-e89b-12d3-a456-426614174010', 800.00, 'USD', NOW(), '123e4567-e89b-12d3-a456-426614174001'),
+('123e4567-e89b-12d3-a456-424684174001', 700.00, 'BGN', NOW(), '123e4567-e89b-12d3-a456-426614174001'),
+('123e4567-e89b-12d3-a456-434618174002', 800.00, 'USD', NOW(), '123e4567-e89b-12d3-a456-426614174001'),
 
 -- Admin wallets
-('123e4567-e89b-12d3-a456-426614174011', 5000.00, 'BGN', NOW(), '123e4567-e89b-12d3-a456-426614174004'),
-('123e4567-e89b-12d3-a456-426614174012', 2000.00, 'USD', NOW(), '123e4567-e89b-12d3-a456-426614174004');
+('123e4567-e89b-12d3-a456-726618174001', 5000.00, 'BGN', NOW(), '123e4567-e89b-12d3-a456-426614174004'),
+('123e4567-e89b-12d3-a456-826611174002', 2000.00, 'USD', NOW(), '123e4567-e89b-12d3-a456-426614174004');
 
 -- Exchange Rates ----------------------------------------------------------
 INSERT INTO exchange_rate (id, from_currency, to_currency, rate)
-VALUES ('123e4567-e89b-12d3-a456-426614174013', 'EUR', 'USD', 1.0812),
-       ('123e4567-e89b-12d3-a456-426614174014', 'USD', 'EUR', 0.9235),
-       ('123e4567-e89b-12d3-a456-426614174015', 'BGN', 'EUR', 0.5113),
-       ('123e4567-e89b-12d3-a456-426614174016', 'EUR', 'BGN', 1.9558),
-       ('123e4567-e89b-12d3-a456-426614174017', 'USD', 'BGN', 1.8012),
-       ('123e4567-e89b-12d3-a456-426614174018', 'BGN', 'USD', 0.5543);
+VALUES
+    ('123e4567-e89b-12d3-a456-426614174011', 'EUR', 'USD', 1.0812),
+    ('123e4567-e89b-12d3-a456-426614174012', 'USD', 'EUR', 0.9235),
+    ('123e4567-e89b-12d3-a456-426614174013', 'BGN', 'EUR', 0.5113),
+    ('123e4567-e89b-12d3-a456-426614174014', 'EUR', 'BGN', 1.9558),
+    ('123e4567-e89b-12d3-a456-426614174015', 'USD', 'BGN', 1.8012),
+    ('123e4567-e89b-12d3-a456-426614174016', 'BGN', 'USD', 0.5543);
 
 -- Exchanges ---------------------------------------------------------------
 INSERT INTO exchange (id,
@@ -74,26 +72,30 @@ INSERT INTO exchange (id,
                       to_wallet_id,
                       recipient_username,
                       date)
-VALUES ('123e4567-e89b-12d3-a456-426614174019',
-        100.00,
-        100.00 * 1.0812,
-        'USD',
-        'EUR',
-        1.0812,
-        '123e4567-e89b-12d3-a456-426614174007',
-        '123e4567-e89b-12d3-a456-426614174008',
-        'john_doe',
-        NOW()),
-       ('123e4567-e89b-12d3-a456-426614174020',
-        500.00,
-        500.00 * 0.5113,
-        'BGN',
-        'EUR',
-        0.5113,
-        '123e4567-e89b-12d3-a456-426614174011',
-        '123e4567-e89b-12d3-a456-426614174012',
-        'georgi',
-        NOW());
+VALUES
+-- 1) John exchanging from his USD wallet into his EUR wallet
+('123e4567-e89b-12d3-a456-426614174019',
+ 100.00,
+ 100.00 * 1.0812,
+ 'USD',
+ 'EUR',
+ 1.0812,
+ '123e4567-e89b-12d3-a456-826674174001',  -- John's USD wallet
+ '123e4567-e89b-12d3-a456-826674174002',  -- John's EUR wallet
+ 'john_doe',
+ NOW()),
+
+-- 2) Georgi exchanging from his BGN wallet into John's EUR wallet (sample scenario)
+('123e4567-e89b-12d3-a456-426614174020',
+ 500.00,
+ 500.00 * 0.5113,
+ 'BGN',
+ 'EUR',
+ 0.5113,
+ '123e4567-e89b-12d3-a456-726618174001',  -- Georgi's BGN wallet
+ '123e4567-e89b-12d3-a456-826674174002',  -- John's EUR wallet
+ 'john_doe',
+ NOW());
 
 -- Transactions ------------------------------------------------------------
 INSERT INTO transaction (id,
@@ -104,6 +106,22 @@ INSERT INTO transaction (id,
                          sender_wallet_id,
                          recipient_wallet_id,
                          date)
+VALUES
+-- 1) 50 USD from John's USD wallet to Jane's USD wallet
+('123e4567-e89b-12d3-a456-426614174021',
+ 50.00,
+ 'USD',
+ '123e4567-e89b-12d3-a456-826674174001',  -- John's USD
+ '123e4567-e89b-12d3-a456-434618174002',  -- Jane's USD
+ NOW()),
+
+-- 2) 200 EUR from John's EUR wallet to his own USD wallet
+('123e4567-e89b-12d3-a456-426614174022',
+ 200.00,
+ 'EUR',
+ '123e4567-e89b-12d3-a456-826674174002',  -- John's EUR
+ '123e4567-e89b-12d3-a456-826674174001',  -- John's USD
+ NOW());
 VALUES ('123e4567-e89b-12d3-a456-426614174021',
         50.00,
         'USD',
@@ -121,7 +139,7 @@ VALUES ('123e4567-e89b-12d3-a456-426614174021',
         '123e4567-e89b-12d3-a456-426614174008',
         NOW());
 
--- Transfers ---------------------------------------------------------------
+-- Transfers
 INSERT INTO transfer (id,
                       amount,
                       currency,
@@ -129,20 +147,24 @@ INSERT INTO transfer (id,
                       wallet_id,
                       status,
                       date)
-VALUES ('123e4567-e89b-12d3-a456-426614174023',
-        150.00,
-        'USD',
-        '123e4567-e89b-12d3-a452-426614174000',
-        '123e4567-e89b-12d3-a456-426614174007',
-        'APPROVED',
-        NOW()),
-       ('123e4567-e89b-12d3-a456-426614174024',
-        200.00,
-        'EUR',
-        '123e4567-e89b-12d3-a452-426614174001',
-        '123e4567-e89b-12d3-a456-426614174009',
-        'DECLINED',
-        NOW());
+VALUES
+-- 1) 150 USD from John's card into John's USD wallet
+('123e4567-e89b-12d3-a456-426614174023',
+ 150.00,
+ 'USD',
+ '123e4567-e89b-12d3-a452-426614184000',  -- John's card
+ '123e4567-e89b-12d3-a456-826674174001',  -- John's USD wallet
+ 'APPROVED',
+ NOW()),
+
+-- 2) 200 BGN from Jane's card into Jane's BGN wallet (e.g. Declined for demo)
+('123e4567-e89b-12d3-a456-426614174024',
+ 200.00,
+ 'BGN',
+ '123e4567-e89b-12d3-a452-426614874001',  -- Jane's card
+ '123e4567-e89b-12d3-a456-424684174001',  -- Jane's BGN wallet
+ 'DECLINED',
+ NOW());
 
 -- Email Confirmation Tokens -----------------------------------------------
 INSERT INTO email_confirmation_token (id,
@@ -165,7 +187,7 @@ VALUES ('123e4567-e89b-12d3-a456-426614174025',
 INSERT INTO user (id, created_at, deleted_at, email, first_name, last_name, password, phone_number, photo, role, status,
                   username)
 VALUES ('11111111-1111-1111-1111-111111111111', '2023-10-01 10:00:00.000000', NULL, 'user1@example.com', 'John', 'Doe',
-        'hashed_password_1', '+12345678901', NULL, 'USER', 'ACTIVE', 'john_doe'),
+        'hashed_password_1', '+12345678901', NULL, 'USER', 'ACTIVE', 'john_doe2'),
        ('22222222-2222-2222-2222-222222222222', '2023-10-02 11:00:00.000000', NULL, 'user2@example.com', 'Jane',
         'Smith', 'hashed_password_2', '+23456789012', NULL, 'USER', 'ACTIVE', 'jane_smith'),
        ('33333333-3333-3333-3333-333333333333', '2023-10-03 12:00:00.000000', NULL, 'user3@example.com', 'Alice',
