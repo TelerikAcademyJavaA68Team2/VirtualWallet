@@ -1,7 +1,10 @@
 package com.example.virtualwallet.controllers.rest;
 
 import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
+import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
+import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOutput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
+import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
@@ -21,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.validPageAndSize;
@@ -107,17 +109,18 @@ public class AdminRestController {
             }
     )
     @GetMapping("/transactions")
-    public ResponseEntity<?> getAllTransactionsWithFilter(@RequestParam(required = false) String fromDate,
-                                                          @RequestParam(required = false) String toDate,
-                                                          @RequestParam(required = false) BigDecimal minAmount,
-                                                          @RequestParam(required = false) BigDecimal maxAmount,
-                                                          @RequestParam(required = false) String currency,
-                                                          @RequestParam(required = false) String sender,
-                                                          @RequestParam(required = false) String recipient,
-                                                          @RequestParam(defaultValue = "date") String sortBy,
-                                                          @RequestParam(defaultValue = "desc") String sortOrder,
-                                                          @RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<?> getAllTransactionsWithFilter(
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate,
+            @RequestParam(required = false) BigDecimal minAmount,
+            @RequestParam(required = false) BigDecimal maxAmount,
+            @RequestParam(required = false) String currency,
+            @RequestParam(required = false) String sender,
+            @RequestParam(required = false) String recipient,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortOrder,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         if (validPageAndSize(page, size)) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
@@ -154,63 +157,39 @@ public class AdminRestController {
     )
     @GetMapping("/transfers")
     public ResponseEntity<?> getAllTransfersWithFilters(
-            @RequestParam(required = false) String firstDate,
-            @RequestParam(required = false) String lastDate,
+            @RequestParam(required = false) String recipient,
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate,
+            @RequestParam(required = false) BigDecimal minAmount,
+            @RequestParam(required = false) BigDecimal maxAmount,
             @RequestParam(required = false) String currency,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) String cardNumber,
             @RequestParam(defaultValue = "date") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-
         if (page < 0 || size <= 0) {
             return ResponseEntity.badRequest().body("Invalid page or size parameters.");
         }
 
-        // Build filter options WITHOUT userId => will fetch all transfers
         TransferFilterOptions filterOptions = new TransferFilterOptions(
-                firstDate, lastDate, currency, status, cardNumber,
+                recipient,
+                fromDate,
+                toDate,
+                minAmount,
+                maxAmount,
+                currency,
+                status,
                 sortBy, sortOrder, page, size
         );
 
-        List<TransferOutput> result = transferService.findAllTransfersWithFilters(filterOptions);
+        List<TransferOutput> result = transferService.filterTransfers(filterOptions);
 
         if (result.isEmpty()) {
             return new ResponseEntity<>("No transfers with these filters!", HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);
     }
-
-//    @Operation(
-//            summary = "Retrieve all exchanges with filter options",
-//            description = "Fetch a list of exchanges wallets with " +
-//                    "filter options, sorting and pagination.",
-//            responses = {
-//                    @ApiResponse(description = "Success", responseCode = "200")
-//            }
-//    )
-//    @GetMapping("/exchanges")
-//    public ResponseEntity<?> getAllExchangesWithFilters(
-//                                             @RequestParam(defaultValue = "date") String sortBy,
-//                                             @RequestParam(defaultValue = "desc") String sortOrder,
-//                                             @RequestParam(defaultValue = "0") int page,
-//                                             @RequestParam(defaultValue = "10") int size) {
-//        if (page < 0 || size <= 0) {
-//            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
-//        }
-//        ExchangeFilterOptions exchangeFilterOptions = new ExchangeFilterOptions(
-//                sortBy, sortOrder, page, size);
-//
-//
-//        List<ExchangeOutput> result =
-//                exchangeService.findAllExchanges(transferFilterOptions);
-//
-//        if(result.isEmpty()){
-//            return new ResponseEntity<>("No exchanges with this filters!", HttpStatus.NO_CONTENT);
-//        }
-//        return ResponseEntity.ok(result);
-//    }
 
 
     @GetMapping("/exchanges")
@@ -252,5 +231,20 @@ public class AdminRestController {
         return ResponseEntity.ok(result);
     }
 
-}
 
+    @GetMapping("/transfers/{id}")
+    public FullTransferInfoOutput getFullTransferById(@PathVariable UUID id) {
+        return transferService.getTransferById(id);
+    }
+
+    @GetMapping("/transactions/{id}")
+    public FullTransactionInfoOutput getTransferById(@PathVariable UUID id) {
+        return transactionService.getTransactionById(id);
+    }
+
+    @GetMapping("/exchanges/{id}")
+    public FullExchangeInfoOutput getExchangeById(@PathVariable UUID id) {
+        return exchangeService.getExchangeById(id);
+    }
+
+}
