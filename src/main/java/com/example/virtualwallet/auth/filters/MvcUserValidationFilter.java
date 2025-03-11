@@ -2,6 +2,8 @@ package com.example.virtualwallet.auth.filters;
 
 
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.enums.AccountStatus;
+import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.services.contracts.UserService;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
@@ -46,7 +48,12 @@ public class MvcUserValidationFilter extends OncePerRequestFilter {
                 User user = userService.loadUserByUsername(userDetails.getUsername());
                 accountStatusChecker.check(user);
 
-                if (request.getRequestURI().startsWith("/mvc/admin") && !user.getRole().name().equals("ADMIN")) {
+                if (request.getRequestURI().startsWith("/mvc/admin")) {
+                    if (!user.getRole().equals(Role.ADMIN) || !user.getStatus().equals(AccountStatus.ACTIVE)) {
+                        response.sendRedirect("/mvc/home");
+                        return;
+                    }
+                } else if (isUrlForActiveUsersOnly(request) && !user.getStatus().equals(AccountStatus.ACTIVE)) {
                     response.sendRedirect("/mvc/home");
                     return;
                 }
@@ -69,5 +76,12 @@ public class MvcUserValidationFilter extends OncePerRequestFilter {
                 requestUri.startsWith("/images/") ||
                 requestUri.startsWith("/static") ||
                 requestUri.equals("/error");
+    }
+
+    private boolean isUrlForActiveUsersOnly(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        return requestUri.startsWith("/mvc/profile/transactions/new") ||
+                requestUri.startsWith("/mvc/profile/transfers/new") ||
+                requestUri.startsWith("/mvc/profile/exchanges/new");
     }
 }

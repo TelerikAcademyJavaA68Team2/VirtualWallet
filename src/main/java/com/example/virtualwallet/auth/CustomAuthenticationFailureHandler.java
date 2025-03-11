@@ -16,7 +16,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
 
         if (exception instanceof DisabledException) {
-            response.sendRedirect("/mvc/auth/login?blocked=true");
+            response.sendRedirect("/mvc/auth/login?deleted=true");
         } else {
             response.sendRedirect("/mvc/auth/login?error=true");
         }

@@ -2,6 +2,8 @@ package com.example.virtualwallet.auth.filters;
 
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.auth.jwt.JwtService;
+import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.services.contracts.UserService;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
@@ -9,8 +11,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -22,6 +27,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
+    private final AccountStatusUserDetailsChecker accountStatusChecker = new AccountStatusUserDetailsChecker();
     private final JwtService jwtService;
     private final UserService userService;
 
@@ -61,22 +67,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                UserDetails userDetails = userService.loadUserByUsername(username);
-
-                if (!userDetails.isEnabled() && isRestrictedToBlockedUsersUri(request)) {
-                    throw new UnauthorizedAccessException("Your account is blocked!");
-                }
-                if (!userDetails.isAccountNonLocked()) {
-                    throw new UnauthorizedAccessException("Your account is not confirmed yet!");
-                }
-                if (!userDetails.isCredentialsNonExpired()) { // todo -> maybe add email for restoring account sending
-                    //         when trying to login with deleted account
-                    throw new UnauthorizedAccessException("Your account was deleted!");
+                User user = userService.loadUserByUsername(username);
+                accountStatusChecker.check(user);
+                if (isUrlForActiveUsersOnly(request) && !user.getStatus().equals(AccountStatus.ACTIVE)){
+                    throw new UnauthorizedAccessException("This url is for active account only");
                 }
 
-                if (jwtService.isValid(token, userDetails)) {
+                if (jwtService.isValid(token, user)) {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
+                            user, null, user.getAuthorities());
 
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -91,6 +90,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Unauthorized: Your token is not valid!");
                 return;
+            }catch (DisabledException e){
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Unauthorized: Your account is deleted!");
             }
         }
         filterChain.doFilter(request, response);
@@ -101,11 +103,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         return requestUri.startsWith("/api/auth");
     }
 
-    private boolean isRestrictedToBlockedUsersUri(HttpServletRequest request) {
+    private boolean isUrlForActiveUsersOnly(HttpServletRequest request) {
         String requestUri = request.getRequestURI();
-        return requestUri.startsWith("/api/profile/transfer/new") ||
-                requestUri.startsWith("/api/profile/transaction/new") ||
-                requestUri.startsWith("/api/profile/exchange/new");
+        return requestUri.startsWith("/api/profile/transfers/new") ||
+                requestUri.startsWith("/api/profile/transactions/new") ||
+                requestUri.startsWith("/api/profile/exchanges/new");
     }
 
 }

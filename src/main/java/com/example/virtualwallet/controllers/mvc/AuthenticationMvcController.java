@@ -25,11 +25,12 @@ public class AuthenticationMvcController {
     @GetMapping("/login")
     public String getLoginPage(Model model, HttpSession session,
                                @RequestParam(value = "error", required = false) Boolean error,
-                               @RequestParam(value = "blocked", required = false) Boolean blocked) {
+                               @RequestParam(value = "deleted", required = false) Boolean deleted) {
         if (Boolean.TRUE.equals(error)) {
             model.addAttribute("errorMessage", "Invalid username or password");
-        } else if (Boolean.TRUE.equals(blocked)) {
-            model.addAttribute("errorMessage", "Your account is blocked");
+        } else if (Boolean.TRUE.equals(deleted)) {
+            model.addAttribute("errorMessage", "Your account is deleted");
+            // todo add restore account option or send to restore account page directly
         }
 
         Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
@@ -50,6 +51,14 @@ public class AuthenticationMvcController {
 
         model.addAttribute("registerRequest", new RegisterUserInput());
         return "Register-View";
+    }
+
+    @GetMapping("/logout")
+    public String handleLogout(HttpSession session) {
+        session.invalidate();
+        SecurityContextHolder.clearContext();
+
+        return "redirect:/mvc/home";
     }
 
     @PostMapping(("/register"))
@@ -92,11 +101,4 @@ public class AuthenticationMvcController {
         }
     }
 
-    @GetMapping("/logout")
-    public String handleLogout(HttpSession session) {
-        session.invalidate();
-        SecurityContextHolder.clearContext();
-
-        return "redirect:/mvc/home";
-    }
 }
