@@ -32,7 +32,7 @@ public class PublicMvcController {
 
     @GetMapping("/mvc/terms")
     public String showTermsAndConditionsPage() {
-        return "Terms-And-Conditions-View";
+        return "Terms-of-Service-View";
     }
 
     @GetMapping("/mvc/faq")
