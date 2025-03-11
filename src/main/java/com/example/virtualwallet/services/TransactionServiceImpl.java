@@ -11,6 +11,7 @@ import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOut
 import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.repositories.TransactionRepository;
 import com.example.virtualwallet.services.contracts.TransactionService;
@@ -43,8 +44,16 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public FullTransactionInfoOutput getTransactionById(UUID id) {
-        Transaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Transaction", id));
+        User user = userService.getAuthenticatedUser();
+
+        Transaction transaction;
+        if (user.getRole().equals(Role.ADMIN)) {
+            transaction = transactionRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Transaction", id));
+        } else {
+            transaction = transactionRepository.findByIdAndUsername(id, user.getUsername())
+                    .orElseThrow(() -> new EntityNotFoundException("Transaction", id));
+        }
         return transactionToFullTransactionInfoOutput(transaction);
     }
 

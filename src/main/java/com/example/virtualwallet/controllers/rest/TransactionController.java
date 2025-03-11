@@ -1,6 +1,7 @@
 package com.example.virtualwallet.controllers.rest;
 
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOutput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
 import static com.example.virtualwallet.helpers.ValidationHelpers.validPageAndSize;
@@ -29,38 +31,6 @@ public class TransactionController {
 
     private final TransactionService transactionService;
     private final UserService userService;
-
-    @Operation(
-            summary = "Make a transaction",
-            description = "Make a transaction from user to user, by providing username, email or phone number, . " +
-                    "Automatically creates a wallet if the user doesn't have any of that currency. " +
-                    "Throws and exception if the sender has insufficient funds in his wallet",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Successfully made a transaction"),
-                    @ApiResponse(responseCode = "400", description = "Invalid input Data"),
-                    @ApiResponse(responseCode = "400", description = "Insufficient Funds in your wallet"),
-                    @ApiResponse(responseCode = "401", description = "User not authenticated"),
-                    @ApiResponse(responseCode = "404", description = "User not found"),
-            }
-    )
-    @PostMapping("/new")
-    public ResponseEntity<TransactionOutput> makeTransaction(@Valid @RequestBody TransactionInput transactionInput) {
-        return ResponseEntity.ok(transactionService.createTransaction(transactionInput));
-
-    }
-
-/*    @Operation(
-            summary = "Retrieve all of user's transactions",
-            description = "Fetch a list of user's transactions to other users.",
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200")
-            }
-    )
-    @GetMapping
-    public ResponseEntity<List<TransactionOutput>> getTransactions() {
-        return ResponseEntity.ok(transactionService
-                .findAllTransactionsByUserId(userService.getAuthenticatedUser().getId()));
-    }*/
 
     @Operation(
             summary = "Retrieve all of user's transactions with filter options",
@@ -111,5 +81,30 @@ public class TransactionController {
             return new ResponseEntity<>("No transactions with this filters!", HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}")
+    public FullTransactionInfoOutput getFullTransactionInfoById(@PathVariable UUID id) {
+        return transactionService.getTransactionById(id);
+    }
+
+
+    @Operation(
+            summary = "Make a transaction",
+            description = "Make a transaction from user to user, by providing username, email or phone number, . " +
+                    "Automatically creates a wallet if the user doesn't have any of that currency. " +
+                    "Throws and exception if the sender has insufficient funds in his wallet",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully made a transaction"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input Data"),
+                    @ApiResponse(responseCode = "400", description = "Insufficient Funds in your wallet"),
+                    @ApiResponse(responseCode = "401", description = "User not authenticated"),
+                    @ApiResponse(responseCode = "404", description = "User not found"),
+            }
+    )
+    @PostMapping("/new")
+    public ResponseEntity<TransactionOutput> makeTransaction(@Valid @RequestBody TransactionInput transactionInput) {
+        return ResponseEntity.ok(transactionService.createTransaction(transactionInput));
+
     }
 }
