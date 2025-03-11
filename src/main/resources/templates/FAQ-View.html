@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments/Page-Layout :: head(FAQ)}"></head>
+<body id="page-top">
+
+<!-- Navigation -->
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<!-- Title + Date -->
+<div class="row justify-content-center mt-5">
+    <div class="col-10 text-center">
+        <div class="section-title mb-4">
+            <h1 class="title mb-3" style="margin-top: 50px;"  th:text="#{faq.title}">FAQ</h1>
+        </div>
+    </div><!--end col-->
+</div><!--end row-->
+
+<!-- Two-Column TOS Content -->
+<div class="container mt-3 mb-5">
+    <div class="row justify-content-center">
+        <!-- Increase .col-xx as needed, e.g., col-10 or col-8 -->
+        <div class="col-lg-10" style="column-count: 2; column-gap: 2rem;">
+            <!-- th:utext allows HTML tags (like <br>) to be rendered instead of escaped -->
+            <div class="text-start" th:utext="#{faq.description}"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>
