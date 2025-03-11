@@ -7,100 +7,278 @@
     <link href="/static/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet"/>
     <link rel="icon" th:href="@{/images/favicon.ico}" type="image/png">
     <!-- Bootstrap icons-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
     <!-- Google fonts-->
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,600;1,600&amp;display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.gstatic.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,600;1,600&amp;display=swap"
+          rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300;1,500;1,600;1,700&amp;display=swap"
-          rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;1,400&amp;display=swap" rel="stylesheet" />
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;1,400&amp;display=swap"
+          rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 <!-- Navigation-->
+<!-- navigation.html -->
+
 <nav th:fragment="navigation" class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm" id="mainNav">
     <div class="container px-5">
-        <a class="navbar-brand fw-bold" href="../index.html" th:href="@{/mvc/home}" th:text="#{wallet.name}">MoneyMe</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            Menu
-            <i class="bi-list"></i>
+        <!-- Brand / Logo -->
+        <a class="navbar-brand fw-bold" th:href="@{/mvc/home}" th:text="#{wallet.name}">
+            MoneyMe
+        </a>
+
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            Menu <i class="bi-list"></i>
         </button>
+
+        <!-- Collapsible Nav -->
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link me-lg-3" href="../Users-View.html"
-                                        sec:authorize="isAuthenticated() and hasAnyAuthority('ADMIN')"
-                                        th:href="@{/mvc/admin}" th:text="#{navigation.admin}">Admin Panel</a>
+
+                <!-- Admin (Dropdown) - Visible only for Admin -->
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated() and hasAnyAuthority('ADMIN')">
+                    <a class="nav-link dropdown-toggle me-lg-3"
+                       href="#" id="adminDropdown"
+                       role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false"
+                       th:text="#{navigation.admin}">
+                        Admin
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                        <li>
+                            <a class="dropdown-item"
+                               th:href="@{/mvc/admin/users}"
+                               th:text="#{navigation.viewUsers}">
+                                View All Users
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               th:href="@{/mvc/admin/transactions}"
+                               th:text="#{navigation.viewTransactions}">
+                                View All Transactions
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link me-lg-3" href="../User-View.html" sec:authorize="isAuthenticated()"
-                       th:href="@{/mvc/profile}">
-                        <span th:if="${#authentication != null}" th:text="${#authentication.principal.username}">Username</span>
+
+                <!-- Profile (Shows logged-in user's username) -->
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link me-lg-3" th:href="@{/mvc/profile}">
+                        <span th:text="${#authentication.principal.username}">Profile</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link me-lg-3" href="../Register-View.html"
-                                        sec:authorize="!isAuthenticated()"
-                                        th:text="#{navigation.sign-up}"
-                                        th:href="@{/mvc/auth/register}">Sign up
+
+                <!-- Cards (Dropdown) -->
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle me-lg-3" href="#" id="cardsDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                       th:text="#{navigation.cards}">
+                        Cards
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="cardsDropdown">
+                        <li>
+                            <a class="dropdown-item"
+                               th:href="@{/mvc/cards/list}"
+                               th:text="#{navigation.viewCards}">
+                                View Cards
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               th:href="@{/mvc/cards/add}"
+                               th:text="#{navigation.addCard}">
+                                Add Card
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Wallets (Dropdown) -->
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle me-lg-3" href="#" id="walletsDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                       th:text="#{navigation.wallets}">
+                        Wallets
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="walletsDropdown">
+                        <li>
+                            <a class="dropdown-item"
+                               th:href="@{/mvc/wallets/list}"
+                               th:text="#{navigation.viewWallets}">
+                                View Wallets
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               th:href="@{/mvc/wallets/add}"
+                               th:text="#{navigation.addWallet}">
+                                Add Wallet
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               th:href="@{/mvc/transaction/create-funding}"
+                               th:text="#{navigation.fundWallet}">
+                                Fund Wallet
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Transaction History (Direct Link) -->
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link me-lg-3"
+                       th:href="@{/mvc/transaction/history}"
+                       th:text="#{navigation.myTransactions}">
+                        Transaction History
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link me-lg-3" href="../Home-View.html" sec:authorize="isAuthenticated()"
-                                        th:text="#{navigation.logout}" th:href="@{/mvc/auth/logout}">Logout
+
+                <!-- Sign Up (Visible only if NOT authenticated) -->
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link me-lg-3"
+                       th:href="@{/mvc/auth/register}"
+                       th:text="#{navigation.sign-up}">
+                        Sign Up
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link me-lg-3" href="../Login-View.html"
-                                        sec:authorize="!isAuthenticated()"
-                                        th:text="#{navigation.login}" th:href="@{/mvc/auth/login}">Login
+
+                <!-- Logout (Visible only if authenticated) -->
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link me-lg-3"
+                       th:href="@{/mvc/auth/logout}"
+                       th:text="#{navigation.logout}">
+                        Logout
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link me-lg-3" href="/mvc/home#features" th:href="@{/mvc/home#features}">Features</a>
+
+                <!-- Login (Visible only if NOT authenticated) -->
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link me-lg-3"
+                       th:href="@{/mvc/auth/login}"
+                       th:text="#{navigation.login}">
+                        Login
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link me-lg-3" href="/mvc/home#download" th:href="@{/mvc/home#download}">Download</a>
+
+                <!-- Features & Download (Always Visible) -->
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link me-lg-3"
+                       th:href="@{/mvc/home#features}">
+                        Features
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link me-lg-3"
+                       th:href="@{/mvc/home#download}">
+                        Download
+                    </a>
                 </li>
             </ul>
-            <button class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-                        <span class="d-flex align-items-center">
-                            <i class="bi-chat-text-fill me-2"></i>
-                            <span class="small">Send Feedback</span>
-                        </span>
+
+            <!-- Feedback Button -->
+            <button class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0"
+                    data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                <span class="d-flex align-items-center">
+                    <i class="bi-chat-text-fill me-2"></i>
+                    <span class="small">Send Feedback</span>
+                </span>
             </button>
         </div>
     </div>
 </nav>
+
 <div th:fragment="download-buttons">
-    <a class="me-lg-3 mb-4 mb-lg-0" href="https://play.google.com/store/search?q=MoneyMe&c=apps&hl=en" target="_blank"><img class="app-badge" src="/assets/img/google-play-badge.svg" alt="Google Play Download Redirect" /></a>
-    <a href="https://www.apple.com/us/search/MoneyMe?src=globalnav" target="_blank"><img class="app-badge" src="/assets/img/app-store-badge.svg" alt="App Store Download Redirect" /></a>
+    <a class="me-lg-3 mb-4 mb-lg-0" href="https://play.google.com/store/search?q=MoneyMe&c=apps&hl=en"
+       target="_blank"><img class="app-badge" src="/assets/img/google-play-badge.svg"
+                            alt="Google Play Download Redirect"/></a>
+    <a href="https://www.apple.com/us/search/MoneyMe?src=globalnav" target="_blank"><img class="app-badge"
+                                                                                         src="/assets/img/app-store-badge.svg"
+                                                                                         alt="App Store Download Redirect"/></a>
 </div>
-<footer th:fragment="footer" class="bg-black text-center py-5">
+<footer th:fragment="footer" class="bg-black py-5">
     <div class="container px-5">
-        <div class="text-white-50 small">
-            <div class="mb-2"><p class="m-0 text-white">
-                &copy; <span th:text="#{wallet.name}"></span> <span
-                    th:text="${#dates.year(#dates.createNow()) + '.'}"></span> <span th:text="#{wallet.rights}"></span>
-            </p> </div>
-            <a href="/mvc/privacy" th:href="@{/mvc/privacy}" th:text="#{wallet.privacy}">Privacy</a>
-            <span class="mx-1">&middot;</span>
-            <a href="/mvc/terms" th:href="@{/mvc/terms}" th:text="#{wallet.terms}">Terms</a>
-            <span class="mx-1">&middot;</span>
-            <a href="/mvc/faq" th:href="@{/mvc/faq}" th:text="#{wallet.faq}">FAQ</a>
+        <div class="row align-items-center text-white-50 fs-5">
+
+            <!-- Left Section - MoneyMe with Social Icons -->
+            <div class="col-md-4 text-md-start text-center mb-3 mb-md-0">
+                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                    <a class="logo-footer text-white fw-bold me-3" href="#" th:text="#{wallet.name}">MoneyMe</a>
+                    <!-- Spacing added -->
+                </div>
+                <p class="mt-2" th:text="#{footer.description}"></p>
+                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                    <a style="margin-right: 1rem" th:text="#{footer.update}">Stay Updated:</a> <!-- Spacing added -->
+                    <ul class="list-unstyled d-flex mb-0">
+                        <li class="list-inline-item me-2">
+                            <a href="https://www.facebook.com/TelerikAcademy/" target="_blank"
+                               class="rounded text-white">
+                                <i class="fab fa-facebook-f"></i> <!-- FontAwesome Icon -->
+                            </a>
+                        </li>
+                        <li class="list-inline-item me-2">
+                            <a href="https://www.instagram.com/telerikacademy/" target="_blank"
+                               class="rounded text-white">
+                                <i class="fab fa-instagram"></i> <!-- FontAwesome Icon -->
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="https://x.com/TelerikAcademy" target="_blank" class="rounded text-white">
+                                <i class="fab fa-x"></i> <!-- FontAwesome Icon -->
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Center Section - All Rights Reserved -->
+            <div class="col-md-4 text-md-center text-center mb-3 mb-md-0">
+                <p class="m-0">
+                    &copy; <span th:text="#{wallet.name}"></span> <span
+                        th:text="${#dates.year(#dates.createNow()) + '.'}"></span> <span
+                        th:text="#{wallet.rights}"></span>
+                </p>
+                <a href="/mvc/privacy" th:href="@{/mvc/privacy}" class="text-white"
+                   th:text="#{wallet.privacy}">Privacy</a>
+                <span class="mx-1">&middot;</span>
+                <a href="/mvc/terms" th:href="@{/mvc/terms}" class="text-white" th:text="#{wallet.terms}">Terms</a>
+                <span class="mx-1">&middot;</span>
+                <a href="/mvc/faq" th:href="@{/mvc/faq}" class="text-white" th:text="#{wallet.faq}">FAQ</a>
+            </div>
+
+            <!-- Right Section - Credit -->
+            <div class="col-md-4 text-md-end text-center">
+                <span th:text="#{footer.credit}"></span>
+                <a href="https://github.com/ivanoffcode" target="_blank" class="text-white fw-bold">Ivan Ivanov</a> &
+                <a href="https://github.com/georgi-benchev" target="_blank" class="text-white fw-bold">Georgi
+                    Benchev</a>
+                <br>
+                <span th:text="#{footer.powered}"></span>
+                <span th:text="#{footer.by}"></span>
+                <a href="https://en.wikipedia.org/wiki/Spring_Boot" target="_blank" class="text-success">Spring Boot</a>.
+            </div>
+
         </div>
     </div>
 </footer>
+
 <div th:fragment="coreJS">
-<!-- Bootstrap core JS-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Core theme JS-->
-<script src="/js/scripts.js"></script>
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-<!-- * *                               SB Forms JS                               * *-->
-<!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-<script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-    </div>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="/js/scripts.js"></script>
+    <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+    <!-- * *                               SB Forms JS                               * *-->
+    <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+    <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+</div>
 </body>
 </html>
