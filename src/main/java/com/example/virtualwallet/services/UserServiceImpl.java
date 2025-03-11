@@ -39,6 +39,9 @@ public class UserServiceImpl implements UserService {
     public static final String PASSWORD_DONT_MATCH = "Your password confirmation doesn't match your new password";
     public static final String PASSWORD_CONFIRM = "You need to confirm your new password";
     public static final String WRONG_PASSWORD = "You provided wrong password";
+    public static final String USER_ALREADY_ADMIN = "The user already has role Admin.";
+    public static final String USER_ALREADY_USER = "The user already has role User.";
+    public static final String USER_ALREADY_BLOCKED = "The user is already Blocked.";
 
     private final UserRepository userRepository;
 
@@ -79,7 +82,7 @@ public class UserServiceImpl implements UserService {
     public void promoteToAdmin(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         if (user.getRole().equals(Role.ADMIN)) {
-            throw new InvalidUserInputException("The user already has role Admin.");
+            throw new InvalidUserInputException(USER_ALREADY_ADMIN);
         }
         user.setRole(Role.ADMIN);
         userRepository.save(user);
@@ -89,7 +92,7 @@ public class UserServiceImpl implements UserService {
     public void demoteToUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         if (user.getRole().equals(Role.USER)) {
-            throw new InvalidUserInputException("The user already has role User.");
+            throw new InvalidUserInputException(USER_ALREADY_USER);
         }
         user.setRole(Role.USER);
         userRepository.save(user);
@@ -99,9 +102,9 @@ public class UserServiceImpl implements UserService {
     public void blockUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         if (user.getStatus().equals(AccountStatus.BLOCKED)) {
-            throw new InvalidUserInputException("The user is already Blocked.");
+            throw new InvalidUserInputException(USER_ALREADY_BLOCKED);
         } else if (user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
-            throw new InvalidUserInputException("The user is already Blocked.");
+            throw new InvalidUserInputException(USER_ALREADY_BLOCKED);
         } else if (user.getStatus().equals(AccountStatus.ACTIVE)) {
             user.setStatus(AccountStatus.BLOCKED);
         } else if (user.getStatus().equals(AccountStatus.DELETED)) {
