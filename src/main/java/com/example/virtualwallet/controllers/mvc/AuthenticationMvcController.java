@@ -21,6 +21,7 @@ public class AuthenticationMvcController {
 
     private final AuthenticationService authenticationService;
 
+    //ToDo pending user cant log in?
     @GetMapping("/login")
     public String getLoginPage(Model model, HttpSession session,
                                @RequestParam(value = "error", required = false) Boolean error,
@@ -60,15 +61,29 @@ public class AuthenticationMvcController {
             authenticationService.registerForMvc(registerRequest);
             return "redirect:/mvc/auth/login";
         } catch (DuplicateEntityException e) {
-            String field = "email";
-            String errorCode = "email.mismatch";
-            String defaultMsg = "Email already taken";
 
-            if (e.getMessage().startsWith("User with username")) {
+            String field = "";
+            String errorCode = "";
+            String defaultMsg = "";
+
+            if (e.getMessage().startsWith("Email")) {
+                field = "email";
+                errorCode = "email.mismatch";
+                defaultMsg = "Email is already taken!";
+            }
+
+            if (e.getMessage().startsWith("Username")) {
                 field = "username";
                 errorCode = "username.mismatch";
-                defaultMsg = "Username already taken";
+                defaultMsg = "Username is already taken!";
             }
+
+            if (e.getMessage().startsWith("Phone")) {
+                field = "phoneNumber";
+                errorCode = "phoneNumber.mismatch";
+                defaultMsg = "Phone number is already associated with an account!";
+            }
+
             errors.rejectValue(field, errorCode, defaultMsg);
             return "Register-View";
         } catch (InvalidUserInputException e) {

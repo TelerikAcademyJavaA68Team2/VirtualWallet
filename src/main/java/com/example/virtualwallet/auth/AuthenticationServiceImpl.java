@@ -77,7 +77,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void registerForMvc(RegisterUserInput request) {
+        if (!request.getPassword().equals(request.getPasswordConfirm())) {
+            throw new InvalidUserInputException("Invalid password confirmation");
+        }
 
+        if (userService.checkIfEmailIsTaken(request.getEmail())) {
+            throw new DuplicateEntityException("Email is already taken!");
+        }
+        if (userService.checkIfUsernameIsTaken(request.getUsername())) {
+            throw new DuplicateEntityException("Username is already taken!");
+        }
+        if (userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())){
+            throw new DuplicateEntityException("Phone number is already associated with an account!");
+        }
+        User user = createUserFromRequest(request);
+        userService.createUser(user);
     }
 
     private void validateUserRequest(RegisterUserInput request) {

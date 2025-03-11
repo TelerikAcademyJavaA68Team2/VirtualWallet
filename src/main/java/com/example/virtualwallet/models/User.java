@@ -82,7 +82,7 @@ public class User implements UserDetails {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.photo = "defaultPhoto";
+        this.photo = "/static/images/default-profile-pic.png";
         this.phoneNumber = phoneNumber;
         this.createdAt = LocalDateTime.now();
         this.role = Role.USER;

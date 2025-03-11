@@ -16,7 +16,6 @@ import java.util.UUID;
 @Table(name = "exchange_rate")
 public class ExchangeRate {
 
-
     @Id
     @GeneratedValue(generator ="UUID" )
     private UUID id;
