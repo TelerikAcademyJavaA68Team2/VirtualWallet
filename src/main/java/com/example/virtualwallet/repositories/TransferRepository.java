@@ -1,16 +1,18 @@
 package com.example.virtualwallet.repositories;
 
 import com.example.virtualwallet.models.Transfer;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface TransferRepository extends JpaRepository<Transfer, UUID> , JpaSpecificationExecutor<Transfer> {
+public interface TransferRepository extends JpaRepository<Transfer, UUID>, JpaSpecificationExecutor<Transfer> {
 
-    List <Transfer> findTransferByWallet_Owner_Id(UUID walletOwnerId, Sort sort);
+    @Query("SELECT t FROM Transfer t WHERE t.id = :id AND t.recipientUsername = :username")
+    Optional<Transfer> findByIdAndUsername(@Param("id") UUID id, @Param("username") String username);
 }

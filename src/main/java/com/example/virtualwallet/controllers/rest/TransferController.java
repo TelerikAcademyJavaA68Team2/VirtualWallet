@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -70,6 +71,11 @@ public class TransferController {
             return new ResponseEntity<>("No transfers with these filters!", HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}")
+    public FullTransferInfoOutput getFullTransferById(@PathVariable UUID id) {
+        return transferService.getTransferById(id);
     }
 
     @Operation(

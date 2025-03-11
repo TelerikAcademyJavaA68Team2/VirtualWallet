@@ -3,14 +3,12 @@ package com.example.virtualwallet.services;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
-import com.example.virtualwallet.models.Card;
-import com.example.virtualwallet.models.Transfer;
-import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.Wallet;
+import com.example.virtualwallet.models.*;
 import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.enums.TransactionStatus;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
 import com.example.virtualwallet.repositories.TransferRepository;
@@ -85,9 +83,16 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     public FullTransferInfoOutput getTransferById(UUID id) {
-        Transfer transfer = transferRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Transfer", id));
+        User user = userService.getAuthenticatedUser();
 
+        Transfer transfer;
+        if (user.getRole().equals(Role.ADMIN)) {
+            transfer = transferRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Transfer", id));
+        } else {
+            transfer = transferRepository.findByIdAndUsername(id, user.getUsername())
+                    .orElseThrow(() -> new EntityNotFoundException("Transfer", id));
+        }
         return transferToFullTransferInfoOutput(transfer);
     }
 
