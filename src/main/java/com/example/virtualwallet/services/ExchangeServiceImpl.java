@@ -10,6 +10,7 @@ import com.example.virtualwallet.models.dtos.exchange.ExchangeInput;
 import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
 import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
 import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.repositories.ExchangeRepository;
 import com.example.virtualwallet.services.contracts.ExchangeRateService;
@@ -27,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelMapper.convertToSort;
@@ -46,8 +46,17 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     @Override
     public FullExchangeInfoOutput getExchangeById(UUID id) {
-        Exchange exchange = exchangeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Exchange", id));
+        User user = userService.getAuthenticatedUser();
+
+        Exchange exchange;
+        if (user.getRole().equals(Role.ADMIN)) {
+            exchange = exchangeRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Exchange", id));
+        } else {
+            exchange = exchangeRepository.findByIdAndRecipientUsername(id, user.getUsername())
+                    .orElseThrow(() -> new EntityNotFoundException("Exchange", id));
+        }
+
         return exchangeToFullExchangeOutput(exchange);
     }
 

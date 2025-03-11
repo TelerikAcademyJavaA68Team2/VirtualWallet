@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface ExchangeService {
 
-    List<ExchangeOutput> filterExchanges(ExchangeFilterOptions filterOptions); //todo
+    List<ExchangeOutput> filterExchanges(ExchangeFilterOptions filterOptions);
 
     void createExchange(ExchangeInput input);
 

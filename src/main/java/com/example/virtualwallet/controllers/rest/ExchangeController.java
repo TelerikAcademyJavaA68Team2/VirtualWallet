@@ -2,6 +2,7 @@ package com.example.virtualwallet.controllers.rest;
 
 import com.example.virtualwallet.models.dtos.exchange.ExchangeInput;
 import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
+import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.services.contracts.ExchangeService;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,13 +23,6 @@ public class ExchangeController {
 
     private final ExchangeService exchangeService;
     private final UserService userService;
-
-    @PostMapping("/new")
-    public ResponseEntity<?> makeTransaction(@Valid @RequestBody ExchangeInput exchangeInput) {
-        exchangeService.createExchange(exchangeInput);
-        return new ResponseEntity<>("The exchange was successful", HttpStatus.CREATED);
-
-    }
 
     @GetMapping
     public ResponseEntity<?> getExchangesAndFilter(@RequestParam(required = false) String fromDate,
@@ -66,5 +61,17 @@ public class ExchangeController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}")
+    public FullExchangeInfoOutput getFullExchangeInfoById(@PathVariable UUID id) {
+        return exchangeService.getExchangeById(id);
+    }
+
+    @PostMapping("/new")
+    public ResponseEntity<?> makeTransaction(@Valid @RequestBody ExchangeInput exchangeInput) {
+        exchangeService.createExchange(exchangeInput);
+        return new ResponseEntity<>("The exchange was successful", HttpStatus.CREATED);
+
     }
 }
