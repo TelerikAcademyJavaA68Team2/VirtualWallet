@@ -57,10 +57,10 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link me-lg-3" href="#features">Features</a>
+                    <a class="nav-link me-lg-3" href="/mvc/home#features" th:href="@{/mvc/home#features}">Features</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link me-lg-3" href="#download">Download</a>
+                    <a class="nav-link me-lg-3" href="/mvc/home#download" th:href="@{/mvc/home#download}">Download</a>
                 </li>
             </ul>
             <button class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
@@ -73,8 +73,8 @@
     </div>
 </nav>
 <div th:fragment="download-buttons">
-    <a class="me-lg-3 mb-4 mb-lg-0" href="https://play.google.com/store/search?q=MoneyMe&c=apps&hl=en"><img class="app-badge" src="/assets/img/google-play-badge.svg" alt="Google Play Download Redirect" /></a>
-    <a href="https://www.apple.com/us/search/MoneyMe?src=globalnav"><img class="app-badge" src="/assets/img/app-store-badge.svg" alt="App Store Download Redirect" /></a>
+    <a class="me-lg-3 mb-4 mb-lg-0" href="https://play.google.com/store/search?q=MoneyMe&c=apps&hl=en" target="_blank"><img class="app-badge" src="/assets/img/google-play-badge.svg" alt="Google Play Download Redirect" /></a>
+    <a href="https://www.apple.com/us/search/MoneyMe?src=globalnav" target="_blank"><img class="app-badge" src="/assets/img/app-store-badge.svg" alt="App Store Download Redirect" /></a>
 </div>
 <footer th:fragment="footer" class="bg-black text-center py-5">
     <div class="container px-5">
