@@ -21,7 +21,7 @@ public class ValidationHelpers {
 
     public static final String UNAUTHORIZED_MESSAGE_POST = "Only the card's owner can modify cards!";
 
-    public static final Set<String> VALID_CURRENCIES_SET = Set.of("BGN", "USD", "EUR");
+    public static final Set<String> VALID_CURRENCIES_SET = Set.of("BGN", "USD", "EUR", "GBP", "JPY", "CNH", "AUD", "CAD", "CHF");
     public static final Set<String> VALID_TRANSACTION_STATUS_SET = Set.of("APPROVED", "DECLINED");
     public static final Set<String> VALID_ACCOUNT_STATUS_SET = Set.of("ACTIVE", "BLOCKED", "PENDING", "DELETED", "DELETED_AND_BLOCKED");
     public static final Set<String> VALID_ROLE_SET = Set.of("ADMIN", "USER");
@@ -45,8 +45,7 @@ public class ValidationHelpers {
         try {
             return Currency.valueOf(currencyString.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidUserInputException("Invalid currency: " + currencyString +
-                    ". Supported currencies: BGN, EUR, USD.");
+            throw new InvalidUserInputException("Currency: " + currencyString + " is not supported!");
         }
     }
 

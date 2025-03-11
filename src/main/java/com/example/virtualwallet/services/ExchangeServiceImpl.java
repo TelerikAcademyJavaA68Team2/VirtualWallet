@@ -32,12 +32,11 @@ import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelMapper.convertToSort;
 import static com.example.virtualwallet.helpers.ModelMapper.exchangeToFullExchangeOutput;
+import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 
 @Service
 @RequiredArgsConstructor
 public class ExchangeServiceImpl implements ExchangeService {
-
-    private final Set<String> validExchanges = Set.of("EUR", "USD", "BGN");
 
     private final ExchangeRepository exchangeRepository;
     private final ExchangeRateService exchangeRateService;
@@ -76,11 +75,10 @@ public class ExchangeServiceImpl implements ExchangeService {
     @Override
     public void createExchange(ExchangeInput input) {
         validateCurrencies(input);
+        Currency fromCurrency = validateAndConvertCurrency(input.getFromCurrency());
+        Currency toCurrency = validateAndConvertCurrency(input.getToCurrency());
+
         User user = userService.getAuthenticatedUser();
-
-        Currency fromCurrency = Currency.valueOf(input.getFromCurrency().toUpperCase());
-        Currency toCurrency = Currency.valueOf(input.getToCurrency().toUpperCase());
-
         if (!walletService.checkIfUserHasActiveWalletWithCurrency(user.getId(), fromCurrency)) {
             throw new EntityNotFoundException("Wallet", "currency", fromCurrency.name());
         }
@@ -115,9 +113,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     private void validateCurrencies(ExchangeInput input) {
-        String fromCurrency = input.getFromCurrency().toUpperCase();
-        String toCurrency = input.getFromCurrency().toUpperCase();
-        if (!validExchanges.contains(fromCurrency) || !validExchanges.contains(toCurrency) || fromCurrency.equals(toCurrency)) {
+        if (input.getFromCurrency().equalsIgnoreCase(input.getToCurrency())) {
             throw new InvalidUserInputException("Invalid currency provided");
         }
     }

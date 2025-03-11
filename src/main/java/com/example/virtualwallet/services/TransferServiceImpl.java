@@ -17,7 +17,7 @@ import com.example.virtualwallet.repositories.TransferRepository;
 import com.example.virtualwallet.services.contracts.CardService;
 import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
-import com.example.virtualwallet.services.contracts.WalletServiceJPA;
+import com.example.virtualwallet.services.contracts.WalletService;
 import com.example.virtualwallet.services.specifications.TransferSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -47,7 +47,7 @@ public class TransferServiceImpl implements TransferService {
     private final RestTemplate restTemplate;
     private final UserService userService;
     private final CardService cardService;
-    private final WalletServiceJPA walletServiceJPA;
+    private final WalletService walletService;
 
     @Transactional
     public FullTransferInfoOutput processTransfer(TransferInput transferInput) {
@@ -61,7 +61,7 @@ public class TransferServiceImpl implements TransferService {
             throw new UnauthorizedAccessException(NOT_CARD_OWNER);
         }
 
-        Wallet wallet = walletServiceJPA.getOrCreateWalletByUsernameAndCurrency(user.getUsername(),
+        Wallet wallet = walletService.getOrCreateWalletByUsernameAndCurrency(user.getUsername(),
                 currency);
 
         TransactionStatus transferStatus = callMockWithdrawApi();
@@ -76,7 +76,7 @@ public class TransferServiceImpl implements TransferService {
 
         if (transfer.getStatus() == TransactionStatus.APPROVED) {
             wallet.setBalance(wallet.getBalance().add(transferInput.getAmount()));
-            walletServiceJPA.update(wallet);
+            walletService.update(wallet);
         }
         Transfer transferToSave = transferRepository.save(transfer);
 

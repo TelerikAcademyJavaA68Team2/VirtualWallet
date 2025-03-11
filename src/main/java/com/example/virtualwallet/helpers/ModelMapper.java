@@ -126,18 +126,6 @@ public class ModelMapper {
         return transferOutput;
     }
 
-/*    public static TransferOutput transferToTransferOutput(Transfer transfer, String cardNumber, String currency) {
-        TransferOutput transferOutput = new TransferOutput();
-        transferOutput.setTransferId(transfer.getId());
-        transferOutput.setDate(transfer.getDate());
-        transferOutput.setStatus(String.valueOf(transfer.getStatus()));
-        transferOutput.setAmount(transfer.getAmount());
-        transferOutput.setCurrency(currency);
-        transferOutput.setCardNumber(maskCreditCard(cardNumber));
-        return transferOutput;
-    }*/
-
-
     public static WalletBasicOutput mapWalletToBasicWalletOutput(Wallet input) {
         WalletBasicOutput output = new WalletBasicOutput();
         output.setWalletId(input.getId());

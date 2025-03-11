@@ -14,11 +14,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
+import static com.example.virtualwallet.helpers.ValidationHelpers.VALID_CURRENCIES_SET;
+
 
 @Service
 @RequiredArgsConstructor
 public class ExchangeRateServiceImpl implements ExchangeRateService {
-    private final Set<String> validCurrencies = Set.of("BGN", "USD", "EUR");
     private final ExchangeRateRepository exchangeRateRepository;
 
 
@@ -36,7 +37,10 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     public ExchangeRate getExchangeRate(String fromCurrency, String toCurrency) {
         Currency enumFromCurrency;
         Currency enumToCurrency;
-        if (validCurrencies.contains(fromCurrency.toUpperCase()) && validCurrencies.contains(toCurrency.toUpperCase())) {
+        if (VALID_CURRENCIES_SET.contains(fromCurrency.toUpperCase()) && VALID_CURRENCIES_SET.contains(toCurrency.toUpperCase())) {
+           if (fromCurrency.equalsIgnoreCase(toCurrency)){
+               throw new InvalidUserInputException("Invalid exchange request");
+           }
             enumFromCurrency = Currency.valueOf(fromCurrency.toUpperCase());
             enumToCurrency = Currency.valueOf(toCurrency.toUpperCase());
         } else {

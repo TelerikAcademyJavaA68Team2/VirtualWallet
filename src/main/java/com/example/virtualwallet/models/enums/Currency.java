@@ -4,5 +4,11 @@ public enum Currency {
 
     USD,
     BGN,
-    EUR
+    EUR,
+    GBP,
+    JPY,
+    CNH,
+    AUD,
+    CAD,
+    CHF
 }

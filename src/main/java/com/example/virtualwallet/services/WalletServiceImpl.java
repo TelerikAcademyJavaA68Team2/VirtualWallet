@@ -28,7 +28,6 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndCon
 @Service
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
-    public static final String NOT_WALLET_OWNER = "You are not the wallet's owner!";
 
     private final JPAWalletRepository walletRepository;
     private final UserService userService;
@@ -109,8 +108,8 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void createAuthenticatedUserWalletWalletByCurrency(String currency) {
-        User user = userService.getAuthenticatedUser();
         Currency enumCurrency = validateAndConvertCurrency(currency);
+        User user = userService.getAuthenticatedUser();
         if (walletRepository.checkIfUserHasActiveWalletWithCurrency(user.getId(), enumCurrency)) {
             throw new DuplicateEntityException("Wallet", "Currency", currency);
         }
