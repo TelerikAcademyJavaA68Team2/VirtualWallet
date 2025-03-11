@@ -38,11 +38,12 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 @RequiredArgsConstructor
 public class ExchangeServiceImpl implements ExchangeService {
 
+    public static final String INVALID_CURRENCY = "Invalid currency provided";
+
     private final ExchangeRepository exchangeRepository;
     private final ExchangeRateService exchangeRateService;
     private final WalletService walletService;
     private final UserService userService;
-
 
     @Override
     public FullExchangeInfoOutput getExchangeById(UUID id) {
@@ -123,7 +124,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     private void validateCurrencies(ExchangeInput input) {
         if (input.getFromCurrency().equalsIgnoreCase(input.getToCurrency())) {
-            throw new InvalidUserInputException("Invalid currency provided");
+            throw new InvalidUserInputException(INVALID_CURRENCY);
         }
     }
 }

@@ -29,6 +29,8 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndCon
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
 
+    public static final String EXCHANGE_REMAINING_CURRENCY = "Please exchange your remaining balance before deleting";
+
     private final JPAWalletRepository walletRepository;
     private final UserService userService;
 
@@ -95,7 +97,7 @@ public class WalletServiceImpl implements WalletService {
         } else if (wallet.get().isDeleted()) {
             throw new InvalidUserInputException("Your wallet with currency: " + currency + " is already deleted!");
         } else if (wallet.get().getBalance().doubleValue() >= 0.01) {
-            throw new InvalidUserInputException("Please exchange your remaining balance before deleting");
+            throw new InvalidUserInputException(EXCHANGE_REMAINING_CURRENCY);
         }
         wallet.get().markAsDeleted();
         walletRepository.save(wallet.get());

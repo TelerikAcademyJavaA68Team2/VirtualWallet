@@ -15,19 +15,22 @@ import java.util.List;
 import java.util.Set;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.VALID_CURRENCIES_SET;
+import static com.example.virtualwallet.services.ExchangeServiceImpl.INVALID_CURRENCY;
 
 
 @Service
 @RequiredArgsConstructor
 public class ExchangeRateServiceImpl implements ExchangeRateService {
-    private final ExchangeRateRepository exchangeRateRepository;
+    public static final String INVALID_EXCHANGE_REQUEST = "Invalid exchange request";
+    public static final String RATE_MUST_BE_POSITIVE = "Exchange rate must be positive!";
 
+    private final ExchangeRateRepository exchangeRateRepository;
 
     @Override
     public void updateExchangeRate(String fromCurrency, String toCurrency, BigDecimal rate) {
         ExchangeRate exchangeRate = getExchangeRate(fromCurrency, toCurrency);
         if (rate.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new InvalidUserInputException("Exchange rate must be positive!");
+            throw new InvalidUserInputException(RATE_MUST_BE_POSITIVE);
         }
         exchangeRate.setRate(rate);
         exchangeRateRepository.save(exchangeRate);
@@ -39,12 +42,12 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         Currency enumToCurrency;
         if (VALID_CURRENCIES_SET.contains(fromCurrency.toUpperCase()) && VALID_CURRENCIES_SET.contains(toCurrency.toUpperCase())) {
            if (fromCurrency.equalsIgnoreCase(toCurrency)){
-               throw new InvalidUserInputException("Invalid exchange request");
+               throw new InvalidUserInputException(INVALID_EXCHANGE_REQUEST);
            }
             enumFromCurrency = Currency.valueOf(fromCurrency.toUpperCase());
             enumToCurrency = Currency.valueOf(toCurrency.toUpperCase());
         } else {
-            throw new InvalidUserInputException("Invalid currency provided");
+            throw new InvalidUserInputException(INVALID_CURRENCY);
         }
         return exchangeRateRepository.findByFromCurrencyAndToCurrency(enumFromCurrency, enumToCurrency);
     }

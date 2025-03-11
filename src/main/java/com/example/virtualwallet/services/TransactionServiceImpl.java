@@ -38,6 +38,11 @@ import static java.lang.String.format;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
+    public static final String CANNOT_SEND_MONEY_TO_YOURSELF = "Cannot send money to yourself!";
+    public static final String NO_WALLET_WITH_CURRENCY = "You must first create a wallet with that currency " +
+            "and have enough balance to make a transaction!";
+    public static final String NOT_ENOUGH_FUNDS = "You don't have enough funds in your wallet to send to %s";
+
     private final TransactionRepository transactionRepository;
     private final UserService userService;
     private final WalletService walletService;
@@ -65,15 +70,14 @@ public class TransactionServiceImpl implements TransactionService {
                 getUsernameOrEmailOrPhoneNumber());
 
         if (sender.getUsername().equals(recipientUsername)) {
-            throw new InvalidUserInputException("Cannot send money to yourself!");
+            throw new InvalidUserInputException(CANNOT_SEND_MONEY_TO_YOURSELF);
         }
 
         Currency transactionCurrency = validateAndConvertCurrency(transactionInput.getCurrency());
         BigDecimal amountToSend = transactionInput.getAmount();
 
         if (!walletService.checkIfUserHasActiveWalletWithCurrency(sender.getId(), transactionCurrency)) {
-            throw new InvalidUserInputException("You must first create a wallet with that currency " +
-                    "and have enough balance to make a transaction!");
+            throw new InvalidUserInputException(NO_WALLET_WITH_CURRENCY);
         }
 
         Wallet senderWallet = walletService.getOrCreateWalletByUsernameAndCurrency(sender.getUsername(),
@@ -81,7 +85,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         BigDecimal senderWalletBalance = senderWallet.getBalance();
         if (senderWalletBalance.compareTo(amountToSend) < 0) {
-            throw new InsufficientFundsException(format("You don't have enough funds in your wallet to send to %s",
+            throw new InsufficientFundsException(format(NOT_ENOUGH_FUNDS,
                     recipientUsername));
         }
 
