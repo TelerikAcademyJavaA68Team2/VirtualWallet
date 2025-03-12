@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/Page-Layout :: head(Profile)}">Profile</head>
+<body>
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<!-- Profile Start -->
+<section class="section mt-60">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 center pb-3">
+                <div class="public-profile position-relative py-2 bg-white overflow-hidden rounded shadow"
+                     style="z-index: 1;">
+                    <div class="row align-items-center ">
+
+                        <div class="col-md-2 m-lg-2 text-md-left text-center">
+                            <img th:src="${user.photo}"
+                                 th:alt="Photo"
+                                 class="avatar avatar-medium rounded-pill shadow mx-auto"/>
+                        </div><!--end col-->
+
+                        <div class="col-md-5 mt-4 text-md-left">
+                            <h3 class="title mb-1">
+                                <span th:text="${user.firstName}"></span>
+                                <span th:text="${user.lastName}"></span>
+                            </h3>
+
+                            <h6 class="text-muted  d-flex">
+                                <span class="bi-person-fill"></span>
+                                <span class="ms-2" style="color: #373b3e" th:text="${user.username}"></span>
+                            </h6>
+
+                            <h6 class="text-muted mt-2">
+                                <span class="bi bi-envelope-fill me-2"></span>
+                                <span th:text="${user.email}"></span>
+                            </h6>
+                            <h6 class="text-muted mt-2">
+                                <span class="bi bi-telephone-fill me-2"></span>
+                                <span th:text="${user.phoneNumber}"></span>
+                            </h6>
+
+                        </div>
+
+
+                    </div><!--end row-->
+                </div><!--end col-->
+
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-4 ">
+                <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow"
+                     style="z-index: 1;">
+                    <div>
+                            <h3 th:text="#{user.profile.personalDetails}"></h3>
+
+
+                            <div class="overflow-hidden d-block">
+                                <h6 class="text-primary mb-0" th:text="#{user.header.firstName}"></h6>
+                                <h6 class="text-muted  d-flex">
+                                    <span class="bi-arrow-right"></span>
+                                    <span class="ms-2" th:text="${user.firstName}"></span>
+                                </h6>
+                            </div>
+                            <div class="overflow-hidden d-block">
+                                <h6 class="text-primary mb-0" th:text="#{user.header.lastName}"></h6>
+                                <h6 class="text-muted  d-flex">
+                                    <span class="bi-arrow-right"></span>
+                                    <span class="ms-2" th:text="${user.lastName}"></span>
+                                </h6>
+                            </div>
+
+                            <div class="overflow-hidden d-block">
+                                <h6 class="text-primary mb-0" th:text="#{user.header.username}"></h6>
+                                <h6 class="text-muted  d-flex">
+                                    <span class="bi-person-fill"></span>
+                                    <span class="ms-2" th:text="${user.username}"></span>
+                                </h6>
+                            </div>
+
+                            <div class="overflow-hidden d-block">
+                                <h6 class="text-primary mb-0" th:text="#{user.header.email}"></h6>
+                                <h6 class="text-muted  d-flex">
+                                    <span class="bi-envelope-fill"></span>
+                                    <span class="ms-2" th:text="${user.email}"></span>
+                                </h6>
+                            </div>
+
+                            <div class="overflow-hidden d-block">
+                                <h6 class="text-primary mb-0" th:text="#{user.header.phone}"></h6>
+                                <h6 class="text-muted  d-flex">
+                                    <span class="bi-telephone-fill"></span>
+                                    <span class="ms-2" th:text="${user.phoneNumber}"></span>
+                                </h6>
+                            </div>
+
+                    </div>
+
+
+                </div><!--end row-->
+            </div>
+            <div class="col-lg-4">
+                <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow"
+                     style="z-index: 1;">
+                            <h3 th:text="#{user.profile.accountDetails}"></h3>
+
+                            <div class="overflow-hidden d-block">
+                                <h6 class="text-primary mb-0" th:text="#{user.registeredAt}"></h6>
+                                <h6 class="text-muted  d-flex">
+                                    <span class="bi-bookmark-heart-fill"></span>
+                                    <span class="ms-2" th:text="${user.registeredAt}"></span>
+                                </h6>
+                            </div>
+                            <div class="overflow-hidden d-block">
+                                <h6 class="text-primary mb-0" th:text="#{user.accountStatus}"></h6>
+                                <h6 class="text-muted  d-flex">
+                                    <span class="bi-arrow-right"></span>
+                                    <span class="ms-2" th:text="${user.getAccountStatus()}"></span>
+                                </h6>
+                            </div>
+
+                            <div class="overflow-hidden d-block" th:if="${user.role} == 'Admin'">
+                                <h6 class="text-primary mb-0" th:text="#{user.accoutType}"></h6>
+                                <h6 class="text-muted  d-flex">
+                                    <span class="bi-person-fill"></span>
+                                    <span class="ms-2" th:text="${user.role}"></span>
+                                </h6>
+                            </div>
+
+
+
+
+
+                </div><!--end row-->
+                <div class="row px-5 pt-3">
+                        <a href="/mvc/profile/update" th:text="'Edit'" class=" btn  btn-outline-dark rounded-pill mb-1 px-3"></a>
+                        <a href="/mvc/profile/update" th:text="'Delete'" class=" btn  btn-outline-danger rounded-pill mb-1 px-3"></a>
+
+                </div>
+
+            </div>
+
+
+
+        </div><!--end col-->
+
+    </div><!--end row-->
+
+</section>
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>

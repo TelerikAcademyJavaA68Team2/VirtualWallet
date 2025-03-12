@@ -7037,7 +7037,7 @@ textarea.form-control-lg {
 }
 
 .shadow {
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 0.15rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
 .shadow-sm {
@@ -11276,7 +11276,7 @@ footer a:hover, footer a:active, footer a:focus {
 .section {
   padding: 40px 0;
   position: relative;
-  background-color: #fff;
+  background-color: whitesmoke;
 }
 
 /* Margin Top Utility Class */
