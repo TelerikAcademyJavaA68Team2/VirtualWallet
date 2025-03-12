@@ -10,7 +10,7 @@ import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
 import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.enums.Currency;
-import com.example.virtualwallet.repositories.JPAWalletRepository;
+import com.example.virtualwallet.repositories.WalletRepository;
 import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class WalletServiceImpl implements WalletService {
 
     public static final String EXCHANGE_REMAINING_CURRENCY = "Please exchange your remaining balance before deleting";
 
-    private final JPAWalletRepository walletRepository;
+    private final WalletRepository walletRepository;
     private final UserService userService;
 
     @Override

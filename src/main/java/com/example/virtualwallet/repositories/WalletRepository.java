@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface JPAWalletRepository extends JpaRepository<Wallet, UUID> {
+public interface WalletRepository extends JpaRepository<Wallet, UUID> {
 
     @Query("SELECT w FROM Wallet w " +
             "JOIN FETCH w.owner u " +
