@@ -69,9 +69,10 @@ public class ModelMapper {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPhoneNumber(),
-                user.getRole(),
-                user.getStatus(),
-                user.getCreatedAt());
+                user.getPhoto(),
+                user.getRole().toString(),
+                user.getStatus().toString(),
+                user.getCreatedAt().toString().substring(0,10));
     }
 
     public static UserOutput userOutputFromUser(User user) {
