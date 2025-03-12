@@ -4,6 +4,7 @@ import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Card;
+import com.example.virtualwallet.models.Transfer;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.card.CardEdit;
 import com.example.virtualwallet.models.dtos.card.CardInput;
@@ -32,6 +33,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public CardOutput getCardOutputById(UUID cardId) {
         Card card = findCardById(cardId);
+        List<Transfer> transferHistory = cardRepository.getHistoryById(cardId);
         return ModelMapper.cardOutputFromCard(card);
     }
 
@@ -109,7 +111,7 @@ public class CardServiceImpl implements CardService {
     }
 
     private Card findCardById(UUID cardId) {
-        return cardRepository.findById(cardId)
+        return cardRepository.findActiveCardById(cardId)
                 .orElseThrow(() -> new EntityNotFoundException("Card", cardId));
     }
 
