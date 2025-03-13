@@ -32,7 +32,7 @@
                                         </div>
                                         <div th:if="${#fields.hasErrors('firstName')}"
                                              class="alert alert-danger alert-pills">
-                                            <span class="alert-content" th:errors="*{firstName}"></span>
+                                            <span class="alert-content"  th:text="${#fields.errors('firstName')[0]}"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -44,7 +44,7 @@
                                         </div>
                                         <div th:if="${#fields.hasErrors('lastName')}"
                                              class="alert alert-danger alert-pills">
-                                            <span class="alert-content" th:errors="*{lastName}"></span>
+                                            <span class="alert-content"  th:text="${#fields.errors('lastName')[0]}"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -56,7 +56,7 @@
                                         </div>
                                         <div th:if="${#fields.hasErrors('username')}"
                                              class="alert alert-danger alert-pills">
-                                            <span class="alert-content" th:errors="*{username}"></span>
+                                            <span class="alert-content"  th:text="${#fields.errors('username')[0]}"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -69,7 +69,7 @@
                                         </div>
                                         <div th:if="${#fields.hasErrors('email')}"
                                              class="alert alert-danger alert-pills">
-                                            <span class="alert-content" th:errors="*{email}"></span>
+                                            <span class="alert-content"  th:text="${#fields.errors('email')[0]}"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-8">
@@ -82,7 +82,7 @@
                                         </div>
                                         <div th:if="${#fields.hasErrors('phoneNumber')}"
                                              class="alert alert-danger alert-pills">
-                                            <span class="alert-content" th:errors="*{phoneNumber}"></span>
+                                            <span class="alert-content"  th:text="${#fields.errors('phoneNumber')[0]}"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -95,7 +95,7 @@
                                         </div>
                                         <div th:if="${#fields.hasErrors('password')}"
                                              class="alert alert-danger alert-pills">
-                                            <span class="alert-content" th:errors="*{password}"></span>
+                                            <span class="alert-content" th:text="${#fields.errors('password')[0]}"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -110,7 +110,7 @@
                                         </div>
                                         <div th:if="${#fields.hasErrors('passwordConfirm')}"
                                              class="alert alert-danger alert-pills">
-                                            <span class="alert-content" th:errors="*{passwordConfirm}"></span>
+                                            <span class="alert-content"  th:text="${#fields.errors('passwordConfirm')[0]}"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
