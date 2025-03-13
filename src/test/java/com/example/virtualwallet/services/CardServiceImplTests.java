@@ -285,7 +285,7 @@ public class CardServiceImplTests {
 
         doReturn(user).when(userService).getAuthenticatedUser();
         when(cardRepository.findById(any())).thenReturn(Optional.of(card));
-        modelMapper.when(() -> ModelMapper.updateCardFromCardInput(cardEdit, card)).thenReturn(cardUpdated);
+        modelMapper.when(() -> ModelMapper.updateCardFromCardEdit(cardEdit, card)).thenReturn(cardUpdated);
         when(cardRepository.save(cardUpdated)).thenReturn(cardUpdated);
         modelMapper.when(() -> ModelMapper.cardOutputFromCard(cardUpdated)).thenReturn(cardOutput);
 

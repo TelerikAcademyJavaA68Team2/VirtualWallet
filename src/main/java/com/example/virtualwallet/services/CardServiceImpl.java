@@ -6,10 +6,7 @@ import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.Transfer;
 import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.dtos.card.CardEdit;
-import com.example.virtualwallet.models.dtos.card.CardInput;
-import com.example.virtualwallet.models.dtos.card.CardOutput;
-import com.example.virtualwallet.models.dtos.card.CardOutputForList;
+import com.example.virtualwallet.models.dtos.card.*;
 import com.example.virtualwallet.repositories.CardRepository;
 import com.example.virtualwallet.services.contracts.CardService;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -58,6 +55,12 @@ public class CardServiceImpl implements CardService {
                 .toList();
     }
 
+    public List<CardOutputForListMVC> getAllCardsOutputForListMVCByUser(UUID userId) {
+        return findAllCardsByUser(userId).stream()
+                .map(ModelMapper::displayForListCardOutputMVCFromCreditCard)
+                .toList();
+    }
+
     @Override
     public CardOutput addCard(CardInput cardDto) {
         User user = userService.getAuthenticatedUser();
@@ -90,7 +93,7 @@ public class CardServiceImpl implements CardService {
         if(!card.getCardNumber().equals(cardEdit.getCardNumber())) {
             throwIfCardWithSameNumberAlreadyExistsInSystem(cardEdit.getCardNumber());
         }
-        card = ModelMapper.updateCardFromCardInput(cardEdit, card);
+        card = ModelMapper.updateCardFromCardEdit(cardEdit, card);
         cardRepository.save(card);
         return ModelMapper.cardOutputFromCard(card);
     }
