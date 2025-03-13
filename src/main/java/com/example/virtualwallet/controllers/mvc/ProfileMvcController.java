@@ -1,14 +1,12 @@
 package com.example.virtualwallet.controllers.mvc;
 
 import com.example.virtualwallet.auth.AuthenticationService;
-import com.example.virtualwallet.exceptions.CaptchaMismatchException;
-import com.example.virtualwallet.exceptions.DuplicateEntityException;
-import com.example.virtualwallet.exceptions.InvalidUserInputException;
-import com.example.virtualwallet.exceptions.PasswordMismatchException;
+import com.example.virtualwallet.exceptions.*;
 import com.example.virtualwallet.models.dtos.auth.DeleteAccountInput;
 import com.example.virtualwallet.models.dtos.user.PasswordUpdateInput;
 import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
+import com.example.virtualwallet.services.contracts.EmailConfirmationService;
 import com.example.virtualwallet.services.contracts.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -17,10 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import static com.example.virtualwallet.helpers.ModelMapper.userOutputToUserUpdateInput;
 
@@ -31,16 +26,27 @@ public class ProfileMvcController {
 
     private final UserService userService;
     private final AuthenticationService authenticationService;
+    private final EmailConfirmationService emailConfirmationService;
 
 
     @GetMapping
-    public String getProfile(Model model) {
-        UserProfileOutput profile = userService.getAuthenticatedUserProfile();
-        model.addAttribute("user", profile);
+    public String getProfile(@RequestParam(value = "emailError", required = false, defaultValue = "false") boolean emailError
+            , @RequestParam(value = "emailTokenExpired", required = false, defaultValue = "false") boolean emailTokenExpired
+            , Model model) {
 
+
+        UserProfileOutput profile = userService.getAuthenticatedUserProfile();
+        if (profile.getAccountStatus().equals("Pending")) {
+            model.addAttribute("emailError", emailError);
+            model.addAttribute("emailTokenExpired", emailTokenExpired);
+        } else {
+            model.addAttribute("emailError", false);
+            model.addAttribute("emailTokenExpired", false);
+        }
+
+        model.addAttribute("user", profile);
         return "Profile-View";
     }
-
 
     @GetMapping("/update")
     public String showEditProfileForm(Model model) {
@@ -94,7 +100,6 @@ public class ProfileMvcController {
         }
     }
 
-
     @GetMapping("/delete")
     public String getDeleteAccountPage(Model model) {
         model.addAttribute("deleteRequest", new DeleteAccountInput());
@@ -118,6 +123,19 @@ public class ProfileMvcController {
             errors.rejectValue("captcha", "captcha.mismatch", "Wrong Captcha");
             return "Delete-Account-View";
         }
+    }
+
+    @GetMapping("/confirm-email")
+    public String resendEmail() {
+        try {
+            emailConfirmationService.createAndSendEmailConfirmationToUser
+                    (userService.getAuthenticatedUser(), false);
+        } catch (InvalidUserInputException ignored) {
+        } catch (DuplicateEntityException e) {
+            return "redirect:/mvc/profile?emailError=true";
+        }
+
+        return "redirect:/mvc/profile";
     }
 
     @ModelAttribute("user")

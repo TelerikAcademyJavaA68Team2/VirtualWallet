@@ -11331,6 +11331,45 @@ footer a:hover, footer a:active, footer a:focus {
   text-underline: black !important;
 }
 
+.custom-error {
+  font-size: 0.875rem; /* Smaller font */
+  padding: 2px 6px; /* Add some padding */
+  border-radius: 4px; /* Rounded corners */
+  background-color: #f8d7da; /* Light red background */
+}
+
+
+/* Hover Info */
+.hover-info {
+  position: relative; /* Required for positioning the tooltip */
+  cursor: pointer;
+  display: inline-block; /* Ensure proper alignment */
+}
+
+.hover-info::after {
+  content: attr(data-hover-text); /* Dynamically retrieve hover text */
+  position: absolute;
+  bottom: 100%; /* Position above the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333; /* Dark background for contrast */
+  color: #fff; /* White text for readability */
+  padding: 6px 12px; /* Comfortable padding */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 0.875rem; /* Smaller font size */
+  white-space: nowrap; /* Prevent text wrapping */
+  opacity: 0; /* Initially hidden */
+  visibility: hidden; /* Initially hidden */
+  transition: opacity 0.2s ease, visibility 0.2s ease; /* Smooth transition */
+  z-index: 9999; /* Ensure it appears above other elements */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.hover-info:hover::after {
+  opacity: 1; /* Show on hover */
+  visibility: visible; /* Show on hover */
+}
+
 /* General Card Styling */
 .card {
   border-radius: 15px;
