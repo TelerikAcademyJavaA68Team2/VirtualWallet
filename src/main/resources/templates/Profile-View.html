@@ -53,47 +53,47 @@
                 <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow"
                      style="z-index: 1;">
                     <div>
-                            <h3 th:text="#{user.profile.personalDetails}"></h3>
+                        <h3 th:text="#{user.profile.personalDetails}"></h3>
 
 
-                            <div class="overflow-hidden d-block">
-                                <h6 class="text-primary mb-0" th:text="#{user.header.firstName}"></h6>
-                                <h6 class="text-muted  d-flex">
-                                    <span class="bi-arrow-right"></span>
-                                    <span class="ms-2" th:text="${user.firstName}"></span>
-                                </h6>
-                            </div>
-                            <div class="overflow-hidden d-block">
-                                <h6 class="text-primary mb-0" th:text="#{user.header.lastName}"></h6>
-                                <h6 class="text-muted  d-flex">
-                                    <span class="bi-arrow-right"></span>
-                                    <span class="ms-2" th:text="${user.lastName}"></span>
-                                </h6>
-                            </div>
+                        <div class="overflow-hidden d-block">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.firstName}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="bi-arrow-right"></span>
+                                <span class="ms-2" th:text="${user.firstName}"></span>
+                            </h6>
+                        </div>
+                        <div class="overflow-hidden d-block">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.lastName}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="bi-arrow-right"></span>
+                                <span class="ms-2" th:text="${user.lastName}"></span>
+                            </h6>
+                        </div>
 
-                            <div class="overflow-hidden d-block">
-                                <h6 class="text-primary mb-0" th:text="#{user.header.username}"></h6>
-                                <h6 class="text-muted  d-flex">
-                                    <span class="bi-person-fill"></span>
-                                    <span class="ms-2" th:text="${user.username}"></span>
-                                </h6>
-                            </div>
+                        <div class="overflow-hidden d-block">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.username}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="bi-person-fill"></span>
+                                <span class="ms-2" th:text="${user.username}"></span>
+                            </h6>
+                        </div>
 
-                            <div class="overflow-hidden d-block">
-                                <h6 class="text-primary mb-0" th:text="#{user.header.email}"></h6>
-                                <h6 class="text-muted  d-flex">
-                                    <span class="bi-envelope-fill"></span>
-                                    <span class="ms-2" th:text="${user.email}"></span>
-                                </h6>
-                            </div>
+                        <div class="overflow-hidden d-block">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.email}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="bi-envelope-fill"></span>
+                                <span class="ms-2" th:text="${user.email}"></span>
+                            </h6>
+                        </div>
 
-                            <div class="overflow-hidden d-block">
-                                <h6 class="text-primary mb-0" th:text="#{user.header.phone}"></h6>
-                                <h6 class="text-muted  d-flex">
-                                    <span class="bi-telephone-fill"></span>
-                                    <span class="ms-2" th:text="${user.phoneNumber}"></span>
-                                </h6>
-                            </div>
+                        <div class="overflow-hidden d-block">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.phone}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="bi-telephone-fill"></span>
+                                <span class="ms-2" th:text="${user.phoneNumber}"></span>
+                            </h6>
+                        </div>
 
                     </div>
 
@@ -103,44 +103,42 @@
             <div class="col-lg-4">
                 <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow"
                      style="z-index: 1;">
-                            <h3 th:text="#{user.profile.accountDetails}"></h3>
+                    <h3 th:text="#{user.profile.accountDetails}"></h3>
 
-                            <div class="overflow-hidden d-block">
-                                <h6 class="text-primary mb-0" th:text="#{user.registeredAt}"></h6>
-                                <h6 class="text-muted  d-flex">
-                                    <span class="bi-bookmark-heart-fill"></span>
-                                    <span class="ms-2" th:text="${user.registeredAt}"></span>
-                                </h6>
-                            </div>
-                            <div class="overflow-hidden d-block">
-                                <h6 class="text-primary mb-0" th:text="#{user.accountStatus}"></h6>
-                                <h6 class="text-muted  d-flex">
-                                    <span class="bi-arrow-right"></span>
-                                    <span class="ms-2" th:text="${user.getAccountStatus()}"></span>
-                                </h6>
-                            </div>
+                    <div class="overflow-hidden d-block">
+                        <h6 class="text-primary mb-0" th:text="#{user.registeredAt}"></h6>
+                        <h6 class="text-muted  d-flex">
+                            <span class="bi-bookmark-heart-fill"></span>
+                            <span class="ms-2" th:text="${user.registeredAt}"></span>
+                        </h6>
+                    </div>
+                    <div class="overflow-hidden d-block">
+                        <h6 class="text-primary mb-0" th:text="#{user.accountStatus}"></h6>
+                        <h6 class="text-muted  d-flex">
+                            <span class="bi-arrow-right"></span>
+                            <span class="ms-2" th:text="${user.getAccountStatus()}"></span>
+                        </h6>
+                    </div>
 
-                            <div class="overflow-hidden d-block" th:if="${user.role} == 'Admin'">
-                                <h6 class="text-primary mb-0" th:text="#{user.accoutType}"></h6>
-                                <h6 class="text-muted  d-flex">
-                                    <span class="bi-person-fill"></span>
-                                    <span class="ms-2" th:text="${user.role}"></span>
-                                </h6>
-                            </div>
-
-
-
+                    <div class="overflow-hidden d-block" th:if="${user.role} == 'Admin'">
+                        <h6 class="text-primary mb-0" th:text="#{user.accoutType}"></h6>
+                        <h6 class="text-muted  d-flex">
+                            <span class="bi-person-fill"></span>
+                            <span class="ms-2" th:text="${user.role}"></span>
+                        </h6>
+                    </div>
 
 
                 </div><!--end row-->
                 <div class="row px-5 pt-3">
-                        <a href="/mvc/profile/update" th:text="'Edit'" class=" btn  btn-outline-dark rounded-pill mb-1 px-3"></a>
-                        <a href="/mvc/profile/update" th:text="'Delete'" class=" btn  btn-outline-danger rounded-pill mb-1 px-3"></a>
+                    <a href="/mvc/profile/update" th:text="'Edit'"
+                       class=" btn  btn-outline-dark rounded-pill mb-1 px-3"></a>
+                    <a href="/mvc/profile/update" th:text="'Delete'"
+                       class=" btn  btn-outline-danger rounded-pill mb-1 px-3"></a>
 
                 </div>
 
             </div>
-
 
 
         </div><!--end col-->
