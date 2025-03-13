@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class DeleteAccountRequest {
+public class DeleteAccountInput {
 
     @NotBlank(message = "Wrong Password")
     private String password;
