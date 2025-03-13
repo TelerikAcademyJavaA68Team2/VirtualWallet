@@ -86,7 +86,7 @@ public class User implements UserDetails {
         this.phoneNumber = phoneNumber;
         this.createdAt = LocalDateTime.now();
         this.role = Role.USER;
-        this.status = AccountStatus.ACTIVE; // change to pending if email verification is active
+        this.status = AccountStatus.PENDING;
         this.cards = new HashSet<>();
         this.wallets = new HashSet<>();
     }
