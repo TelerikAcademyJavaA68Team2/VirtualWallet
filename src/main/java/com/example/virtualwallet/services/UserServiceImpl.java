@@ -7,6 +7,7 @@ import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
+import com.example.virtualwallet.models.dtos.user.PasswordUpdateInput;
 import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.enums.AccountStatus;
@@ -141,7 +142,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateAuthenticatedUser(ProfileUpdateInput input) {
+    public void changePasswordOfAuthenticatedUser(PasswordUpdateInput input) {
+
         User user = getAuthenticatedUser();
         if (!new BCryptPasswordEncoder().matches(input.getPassword(), user.getPassword())) {
             throw new InvalidUserInputException(WRONG_PASSWORD);
@@ -153,7 +155,15 @@ public class UserServiceImpl implements UserService {
                 throw new InvalidUserInputException(PASSWORD_DONT_MATCH);
             }
             user.setPassword(new BCryptPasswordEncoder().encode(input.getNewPassword()));
+            userRepository.save(user);
+        } else {
+            throw new EntityNotFoundException("No changes were made");
         }
+    }
+
+    @Override
+    public void updateAuthenticatedUser(ProfileUpdateInput input) {
+        User user = getAuthenticatedUser();
 
         if (input.getFirstName() != null) {
             user.setFirstName(input.getFirstName());
@@ -161,18 +171,23 @@ public class UserServiceImpl implements UserService {
         if (input.getLastName() != null) {
             user.setLastName(input.getLastName());
         }
-        if (input.getEmail() != null) {
+        if (input.getEmail() != null && !user.getEmail().equals(input.getEmail())) {
             if (checkIfEmailIsTaken(input.getEmail())) {
                 throw new DuplicateEntityException("User", "Email", input.getEmail());
             }
             user.setEmail(input.getEmail());
         }
-        if (input.getPhoneNumber() != null) {
+        if (input.getPhoneNumber() != null && !user.getPhoneNumber().equals(input.getPhoneNumber())) {
             if (checkIfPhoneNumberIsTaken(input.getPhoneNumber())) {
                 throw new DuplicateEntityException("User", "PhoneNumber", input.getPhoneNumber());
             }
             user.setPhoneNumber(input.getPhoneNumber());
         }
+        userRepository.save(user);
+    }
+
+    @Override
+    public void save(User user) {
         userRepository.save(user);
     }
 

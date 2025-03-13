@@ -50,7 +50,7 @@
 
         <div class="row justify-content-center">
             <div class="col-lg-4 d-flex">
-                <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow h-100 w-100"
+                <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow  h-100 w-100"
                      style="z-index: 1;">
                     <div>
 
@@ -58,44 +58,63 @@
                         <div class="d-flex align-items-center justify-content-between pb-2">
                             <h3 class=" m-0" th:text="#{user.profile.personalDetails}"></h3>
                             <a class="align-items-center text-md-end d-flex p-1 btn btn-outline-dark rounded-pill  "
-
-                               th:href=" @{/mvc/profile/update}">
-                                <span class="bi-pencil-fill  px-1" th:text="'edit'"></span>
+                               th:href=" @{/mvc/profile}">
+                                <span class="px-1" th:text="'cansel'"></span>
                             </a>
                         </div>
 
+                        <form th:action="@{/mvc/profile/update}" th:object="${updateRequest}" method="post">
 
-                        <div class="overflow-hidden d-block mt-2">
-                            <h6 class="text-primary mb-0" th:text="#{user.header.firstName}"></h6>
-                            <h6 class="text-muted  d-flex">
-                                <span class="py-custom bi-arrow-right"></span>
-                                <span class="ms-1 py-custom" th:text="${user.firstName}"></span>
-                            </h6>
-                        </div>
-                        <div class="overflow-hidden d-block mt-2">
-                            <h6 class="text-primary mb-0" th:text="#{user.header.lastName}"></h6>
-                            <h6 class="text-muted  d-flex">
-                                <span class="py-custom bi-arrow-right"></span>
-                                <span class="ms-1 py-custom" th:text="${user.lastName}"></span>
-                            </h6>
-                        </div>
+                            <div class="overflow-hidden d-block mt-2">
+                                <h6 class="text-primary mb-0" th:text="#{user.header.firstName}"></h6>
+                                <h6 class="text-muted">
+                                    <input type="text" name="username" class="form-control"
+                                           th:field="*{firstName}" th:placeholder="#{user.header.firstName}"/>
+                                    <small class="text-danger  d-block mt-1" th:if="${#fields.hasErrors('firstName')}"
+                                           th:text="${#fields.errors('firstName')[0]}">First Name error!</small>
+                                </h6>
+                            </div>
 
 
-                        <div class="overflow-hidden d-block mt-2">
-                            <h6 class="text-primary mb-0" th:text="#{user.header.email}"></h6>
-                            <h6 class="text-muted  d-flex">
-                                <span class="py-custom bi-envelope-fill"></span>
-                                <span class="ms-1 py-custom" th:text="${user.email}"></span>
-                            </h6>
-                        </div>
+                            <div class="overflow-hidden d-block mt-1">
+                                <h6 class="text-primary mb-0" th:text="#{user.header.lastName}"></h6>
+                                <h6 class="text-muted">
+                                    <input type="text" name="username" class="form-control"
+                                           th:field="*{lastName}" th:placeholder="#{user.header.lastName}"/>
+                                    <small class=" text-danger d-block mt-1" th:if="${#fields.hasErrors('lastName')}"
+                                           th:text="${#fields.errors('lastName')[0]}">Last Name error!</small>
+                                </h6>
+                            </div>
 
-                        <div class="overflow-hidden d-block mt-2">
-                            <h6 class="text-primary mb-0" th:text="#{user.header.phone}"></h6>
-                            <h6 class="text-muted  d-flex">
-                                <span class="py-custom bi-telephone-fill"></span>
-                                <span class="ms-1 py-custom" th:text="${user.phoneNumber}"></span>
-                            </h6>
-                        </div>
+
+                            <div class="overflow-hidden d-block mt-1">
+                                <h6 class="text-primary mb-0" th:text="#{user.header.email}"></h6>
+                                <h6 class="text-muted">
+                                    <input type="text" name="username" class="form-control"
+                                           th:field="*{email}" th:placeholder="#{user.header.email}"/>
+                                    <small class="text-danger d-block mt-1" th:if="${#fields.hasErrors('email')}"
+                                           th:text="${#fields.errors('email')[0]}">Email error!</small>
+                                </h6>
+                            </div>
+
+                            <div class="overflow-hidden d-block mt-1">
+                                <h6 class="text-primary mb-0" th:text="#{user.header.phone}"></h6>
+                                <h6 class="text-muted">
+                                    <input type="text" name="username" class="form-control"
+                                           th:field="*{phoneNumber}" th:placeholder="#{user.header.phoneNumber}"/>
+                                    <small class="text-danger d-block mt-1" th:if="${#fields.hasErrors('phoneNumber')}"
+                                           th:text="${#fields.errors('phoneNumber')[0]}">Phone Number error!</small>
+                                </h6>
+                            </div>
+
+                            <div class="text-md-center mt-0">
+                                <button type="submit" class="btn btn-primary rounded-pill px-4">
+                                    Save Changes
+                                </button>
+                            </div>
+
+                        </form>
+
 
                     </div>
 
@@ -103,9 +122,8 @@
                 </div><!--end row-->
             </div>
             <div class="col-lg-4 d-flex">
-                <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow h-100 w-100"
+                <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow  h-100 w-100"
                      style="z-index: 1;">
-
                     <div class="d-flex align-items-center justify-content-between pb-2">
                         <h3 class=" m-0" th:text="#{user.profile.accountDetails}"></h3>
                         <!-- Dropdown Button -->
@@ -113,7 +131,7 @@
                             <button class="btn btn-outline-dark rounded-pill dropdown-toggle" type="button"
                                     id="profileActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="bi-gear-fill"></span>
-                          </button>
+                            </button>
                             <!-- Dropdown Menu -->
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileActionsDropdown">
                                 <li>
@@ -163,8 +181,6 @@
 
 
                 </div><!--end row-->
-
-
             </div>
 
 

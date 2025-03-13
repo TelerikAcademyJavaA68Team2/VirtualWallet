@@ -12,6 +12,7 @@ import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOut
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
+import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
@@ -72,7 +73,7 @@ public class ModelMapper {
                 user.getPhoto(),
                 user.getRole().toString(),
                 user.getStatus().toString(),
-                user.getCreatedAt().toString().substring(0,10));
+                user.getCreatedAt().toString().substring(0, 10));
     }
 
     public static UserOutput userOutputFromUser(User user) {
@@ -214,4 +215,16 @@ public class ModelMapper {
 
         );
     }
+
+    public static ProfileUpdateInput userOutputToUserUpdateInput(UserProfileOutput user) {
+        ProfileUpdateInput dto = new ProfileUpdateInput();
+
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmail());
+        dto.setPhoneNumber(user.getPhoneNumber());
+        return dto;
+    }
+
+
 }
