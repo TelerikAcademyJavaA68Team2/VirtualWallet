@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/Page-Layout :: head(Profile)}">Profile</head>
+<body>
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<!-- Profile Start -->
+<section class="section mt-60">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 center pb-3">
+                <div class="public-profile position-relative py-2 bg-white overflow-hidden rounded shadow"
+                     style="z-index: 1;">
+                    <div class="row align-items-center ">
+
+                        <div class="col-md-2 text-md-left text-center">
+                            <img th:src="${user.photo}"
+                                 th:alt="Photo"
+                                 class="avatar avatar-medium rounded-pill shadow mx-auto ms-lg-3"/>
+                        </div><!--end col-->
+
+                        <div class="col-md-8 m-4 text-md-left">
+                            <h3 class="title mb-1">
+                                <span th:text="${user.firstName}"></span>
+                                <span th:text="${user.lastName}"></span>
+                            </h3>
+
+                            <h6 class="text-muted  d-flex">
+                                <span class="bi-person-fill"></span>
+                                <span class="ms-2" style="color: #373b3e" th:text="${user.username}"></span>
+                            </h6>
+
+                            <h6 class="text-muted mt-2">
+                                <span class="bi bi-envelope-fill me-2"></span>
+                                <span th:text="${user.email}"></span>
+                            </h6>
+                            <h6 class="text-muted mt-2">
+                                <span class="bi bi-telephone-fill me-2"></span>
+                                <span th:text="${user.phoneNumber}"></span>
+                            </h6>
+
+                        </div>
+
+
+                    </div><!--end row-->
+                </div><!--end col-->
+
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-4  d-flex ">
+                <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow  h-100 w-100"
+                     style="z-index: 1;">
+                    <div>
+
+
+                        <div class="d-flex align-items-center justify-content-between pb-2">
+                            <h3 class=" m-0" th:text="#{user.profile.personalDetails}"></h3>
+                            <a class="align-items-center text-md-end d-flex p-1 btn btn-outline-dark rounded-pill  "
+                               th:href=" @{/mvc/profile/update}">
+                                <span class="bi-pencil-fill  px-1" th:text="'edit'"></span>
+                            </a>
+
+                        </div>
+
+
+
+
+                        <div class="overflow-hidden d-block mt-2">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.firstName}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="py-custom bi-arrow-right"></span>
+                                <span class="ms-1 py-custom" th:text="${user.firstName}"></span>
+                            </h6>
+                        </div>
+                        <div class="overflow-hidden d-block mt-2">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.lastName}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="py-custom bi-arrow-right"></span>
+                                <span class="ms-1 py-custom" th:text="${user.lastName}"></span>
+                            </h6>
+                        </div>
+
+
+                        <div class="overflow-hidden d-block mt-2">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.email}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="py-custom bi-envelope-fill"></span>
+                                <span class="ms-1 py-custom" th:text="${user.email}"></span>
+                            </h6>
+                        </div>
+
+                        <div class="overflow-hidden d-block mt-2">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.phone}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="py-custom bi-telephone-fill"></span>
+                                <span class="ms-1 py-custom" th:text="${user.phoneNumber}"></span>
+                            </h6>
+                        </div>
+
+
+                    </div>
+
+
+                </div><!--end row-->
+            </div>
+
+
+            <div class="col-lg-4  d-flex">
+                <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow h-100 w-100"
+                     style="z-index: 1;">
+
+
+                    <div class="d-flex align-items-center justify-content-between  pb-2">
+                        <h3 class=" m-0" th:text="#{user.profile.delete}"></h3>
+                        <a class="align-items-center text-md-end d-flex p-1 btn btn-outline-success rounded-pill  "
+                           th:href=" @{/mvc/profile}">
+                            <span class="px-1" th:text="'cansel'"></span>
+                        </a>
+                    </div>
+
+
+
+                    <form th:action="@{/mvc/profile/delete}" th:object="${deleteRequest}" method="post">
+
+                        <div class="overflow-hidden d-block mt-2">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.password}"></h6>
+                            <h6 class="text-muted">
+                                <input type="password" name="password" class="form-control"
+                                       th:field="*{password}"/>
+                                <small class="text-danger d-block mt-1" th:if="${#fields.hasErrors('password')}"
+                                       th:text="${#fields.errors('password')[0]}">Password error!</small>
+                            </h6>
+                        </div>
+                        <div class="overflow-hidden d-block mt-1">
+                            <h6 class="text-primary mb-0" th:text="#{user.profile.captcha}"></h6>
+                            <h6 class="text-muted">
+                                <input type="text" name="captcha" class="form-control" placeholder="Delete my account"
+                                       th:field="*{captcha}"/>
+                                <small class="text-danger d-block mt-1" th:if="${#fields.hasErrors('captcha')}"
+                                       th:text="${#fields.errors('captcha')[0]}">Captcha error!</small>
+                            </h6>
+                        </div>
+
+                        <div class="text-md-center mt-0">
+                            <button type="submit" class="btn btn-outline-danger rounded-pill px-4">
+                                Delete Account
+                            </button>
+                        </div>
+
+                    </form>
+
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</section>
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>

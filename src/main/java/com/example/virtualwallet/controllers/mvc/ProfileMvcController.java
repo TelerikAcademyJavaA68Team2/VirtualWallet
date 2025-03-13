@@ -1,11 +1,127 @@
 package com.example.virtualwallet.controllers.mvc;
 
+import com.example.virtualwallet.auth.AuthenticationService;
+import com.example.virtualwallet.exceptions.CaptchaMismatchException;
+import com.example.virtualwallet.exceptions.DuplicateEntityException;
+import com.example.virtualwallet.exceptions.InvalidUserInputException;
+import com.example.virtualwallet.exceptions.PasswordMismatchException;
+import com.example.virtualwallet.models.dtos.auth.DeleteAccountInput;
+import com.example.virtualwallet.models.dtos.user.PasswordUpdateInput;
+import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
+import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
+import com.example.virtualwallet.services.contracts.UserService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static com.example.virtualwallet.helpers.ModelMapper.userOutputToUserUpdateInput;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/mvc/profile")
 public class ProfileMvcController {
+
+    private final UserService userService;
+    private final AuthenticationService authenticationService;
+
+
+    @GetMapping
+    public String getProfile(Model model) {
+        UserProfileOutput profile = userService.getAuthenticatedUserProfile();
+        model.addAttribute("user", profile);
+
+        return "Profile-View";
+    }
+
+
+    @GetMapping("/update")
+    public String showEditProfileForm(Model model) {
+
+        UserProfileOutput user = userService.getAuthenticatedUserProfile();
+        ProfileUpdateInput request = userOutputToUserUpdateInput(user);
+
+        model.addAttribute("updateRequest", request);
+        return "Update-Profile-View";
+    }
+
+    @PostMapping("/update")
+    public String updateProfile(@Valid @ModelAttribute("updateRequest") ProfileUpdateInput updateProfileRequest, BindingResult errors, Model model) {
+        if (errors.hasErrors()) {
+            return "Update-Profile-View";
+        }
+        try {
+            userService.updateAuthenticatedUser(updateProfileRequest);
+        } catch (DuplicateEntityException e) {
+            if (e.getMessage().contains("Email")) {
+                errors.rejectValue("email", "email already in use", e.getMessage());
+            } else {
+                errors.rejectValue("phoneNumber", "phone number already in use", e.getMessage());
+            }
+            return "Update-Profile-View";
+        }
+        return "redirect:/mvc/profile";
+    }
+
+    @GetMapping("/change-password")
+    public String showChangePasswordForm(Model model) {
+        PasswordUpdateInput request = new PasswordUpdateInput();
+        model.addAttribute("passwordUpdateInput", request);
+        return "Change-Password-View";
+    }
+
+    @PostMapping("/change-password")
+    public String executeChangePasswordForm(@Valid @ModelAttribute("passwordUpdateInput") PasswordUpdateInput request, BindingResult errors, Model model) {
+        if (errors.hasErrors()) {
+            return "Change-Password-View";
+        }
+        try {
+            authenticationService.updateUserPassword(request);
+            return "redirect:/mvc/profile";
+        } catch (InvalidUserInputException e) {
+            errors.rejectValue("password", "invalid password", e.getMessage());
+            return "Change-Password-View";
+        } catch (PasswordMismatchException e) {
+            errors.rejectValue("newPassword", "invalid password confirmation", e.getMessage());
+            return "Change-Password-View";
+        }
+    }
+
+
+    @GetMapping("/delete")
+    public String getDeleteAccountPage(Model model) {
+        model.addAttribute("deleteRequest", new DeleteAccountInput());
+        return "Delete-Account-View";
+    }
+
+    @PostMapping("/delete")
+    public String executeDeleteAccountRequest(@Valid @ModelAttribute("deleteRequest") DeleteAccountInput request, BindingResult errors, HttpSession session) {
+        if (errors.hasErrors()) {
+            return "Delete-Account-View";
+        }
+        try {
+            authenticationService.softDeleteAuthenticatedUser(request);
+            SecurityContextHolder.clearContext();
+            session.invalidate();
+            return "redirect:/mvc/auth/logout";
+        } catch (PasswordMismatchException e) {
+            errors.rejectValue("password", "password.mismatch", "Wrong Password");
+            return "Delete-Account-View";
+        } catch (CaptchaMismatchException e) {
+            errors.rejectValue("captcha", "captcha.mismatch", "Wrong Captcha");
+            return "Delete-Account-View";
+        }
+    }
+
+    @ModelAttribute("user")
+    public UserProfileOutput getCurrentUser() {
+        return userService.getAuthenticatedUserProfile();
+    }
 }

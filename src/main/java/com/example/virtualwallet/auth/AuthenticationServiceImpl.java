@@ -3,11 +3,13 @@ package com.example.virtualwallet.auth;
 import com.example.virtualwallet.auth.emailVerification.EmailConfirmationService;
 import com.example.virtualwallet.auth.emailVerification.EmailService;
 import com.example.virtualwallet.auth.jwt.JwtService;
+import com.example.virtualwallet.exceptions.CaptchaMismatchException;
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.exceptions.PasswordMismatchException;
 import com.example.virtualwallet.models.EmailConfirmationToken;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.auth.DeleteAccountInput;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
 import com.example.virtualwallet.models.dtos.user.PasswordUpdateInput;
@@ -30,6 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     public static final String WRONG_CREDENTIALS = "Wrong username or password!";
     public static final String USER_ALREADY_EXISTS = "User already exists!";
+    public static final String DELETE_ACCOUNT_CAPTCHA = "Delete my account";
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -133,5 +136,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userService.save(user);
+    }
+
+    @Override
+    public void softDeleteAuthenticatedUser(DeleteAccountInput request) {
+        if (!request.getCaptcha().equalsIgnoreCase(DELETE_ACCOUNT_CAPTCHA)) {
+            throw new CaptchaMismatchException("Wrong captcha");
+        }
+        if (!passwordEncoder.matches(request.getPassword(), userService.getAuthenticatedUser().getPassword())) {
+            throw new PasswordMismatchException("Wrong password");
+        }
+        userService.softDeleteAuthenticatedUser();
     }
 }
