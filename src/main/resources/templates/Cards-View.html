@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments/Page-Layout :: head(Cards)}"></head>
+<body id="page-top">
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<main>
+    <!-- Title -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-10 text-center">
+            <div class="section-title mb-4">
+                <h1 class="title mb-3" style="margin-top: 50px;" th:text="#{card.list}">Cards</h1>
+            </div>
+        </div><!--end col-->
+    </div><!--end row-->
+
+    <section class="section">
+        <div class="container">
+            <div th:if="${cards.isEmpty()}">
+                <h2 th:text="#{card.emptyList}" th:align="center"></h2>
+            </div>
+            <div th:unless="${cards.isEmpty()}" class="row">
+                <div class="col-md-12">
+                    <div th:if="${error} != null"
+                         class="alert alert-danger alert-pills">
+                    <span class="badge badge-danger rounded"
+                          th:text="#{card.error}"> </span>
+                        <span class="alert-content" th:text="${error}"></span>
+                    </div>
+                </div>
+
+                <div th:each="card : ${cards}" class="col-md-4 mb-4">
+                    <div class="flip-card" onclick="flipCard(this)">
+                        <div class="flip-card-inner">
+                            <!-- FRONT SIDE -->
+                            <div class="flip-card-front"
+                                 th:classappend="${#strings.startsWith(card.cardNumber, '4')} ? 'visa-card' :
+                             (${#strings.startsWith(card.cardNumber, '5')} ? 'mastercard-card' : 'grey-card')">
+                                <img th:if="${#strings.startsWith(card.cardNumber, '4')}" src="/images/visa-logo.jpg" alt="Visa">
+                                <img th:if="${#strings.startsWith(card.cardNumber, '5')}" src="/images/mastercard-logo.png" alt="MasterCard">
+                                <h6 class="card-subtitle mt-4">•••• •••• ••••
+                                    <span th:text="${#strings.substring(card.cardNumber, #strings.length(card.cardNumber) - 4)}"></span>
+                                </h6>
+                                <p><strong th:text="#{card.expirationDate}"></strong>
+                                    <span th:text="${#temporals.format(card.expirationDate, 'MM/yy')}"></span>
+                                </p>
+                            </div>
+
+                            <!-- BACK SIDE -->
+                            <div class="flip-card-back">
+                                <!-- Button Row (Top-Right) -->
+                                <div class="button-container">
+                                    <form th:action="@{'/mvc/profile/cards/' + ${card.cardId} + '/edit'}" method="get">
+                                        <input class="btn btn-primary btn-sm" th:type="submit" th:value="#{card.edit}">
+                                    </form>
+                                    <a class="btn btn-danger btn-sm" data-toggle="modal" th:attr="data-target='#delete-card-' + ${card.cardId}">
+                                        <span th:text="#{card.delete}"></span>
+                                    </a>
+                                </div>
+
+                                <!-- Card Details in Realistic Layout -->
+                                <div class="card-details">
+                                    <p><strong th:text="#{card.cardNumber}"></strong> <span th:text="${card.cardNumber}"></span></p>
+                                    <p class="cardholder-name"><strong th:text="#{card.cardholderName}"></strong> <span th:text="${card.cardHolder}"></span></p>
+
+                                    <div class="expiration-cvv">
+                                        <p><strong th:text="#{card.expirationDate}"></strong> <span th:text="${#temporals.format(card.expirationDate, 'MM/yy')}"></span></p>
+                                        <p><strong>CVV:</strong> <span class="cvv" th:text="${card.cvv}"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DELETE CONFIRMATION MODAL -->
+                    <div class="modal fade" th:id="'delete-card-' + ${card.cardId}" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content rounded shadow border-0">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" th:text="#{card.delete.confirmation.title}"></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="bg-white p-3 rounded box-shadow">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <strong th:text="#{card.delete.confirmation.warning}"></strong>
+                                            <span class="text-black" th:text="#{card.delete.confirmation.textOne}"></span>
+                                        </div>
+                                        <p class="text-muted mb-0" th:text="#{card.delete.confirmation.textTwo}"></p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            th:text="#{card.delete.confirmation.close}"></button>
+                                    <form th:action="@{'/mvc/profile/cards/' + ${card.cardId} + '/delete'}" method="post">
+                                        <input class="btn btn-danger" th:type="submit" th:value="#{card.delete}">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- End of Row -->
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.modal').on('show.bs.modal', function () {
+            console.log('Modal is opening!');
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".flip-card").forEach((card) => {
+            card.addEventListener("click", function (event) {
+                // Prevent flipping when clicking buttons
+                if (event.target.closest(".btn")) {
+                    return;
+                }
+
+                // Allow flipping back when clicking empty space on the back
+                if (card.classList.contains("flipped") && event.target.closest(".flip-card-back")) {
+                    // Only flip if clicked on empty space, not on text
+                    let clickedElement = event.target;
+                    if (clickedElement.tagName !== "P" && clickedElement.tagName !== "SPAN" && clickedElement.tagName !== "STRONG") {
+                        card.classList.toggle("flipped");
+                    }
+                    return;
+                }
+
+                // Otherwise, toggle flip
+                card.classList.toggle("flipped");
+            });
+        });
+    });
+
+
+
+
+</script>
+
+</body>
+</html>

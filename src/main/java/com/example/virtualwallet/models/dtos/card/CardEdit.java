@@ -6,10 +6,13 @@ import lombok.Data;
 import org.springframework.context.annotation.PropertySource;
 
 import java.time.YearMonth;
+import java.util.UUID;
 
 @Data
 @PropertySource("classpath:messages.properties")
 public class CardEdit {
+
+    private UUID cardId;
 
     @Pattern(regexp = "^\\d{16}$", message = "{error.cardNumberDigits}")
     private String cardNumber;
