@@ -18,20 +18,22 @@ public class EmailServiceImpl implements EmailService {
     public void sendVerificationEmail(String firstName, String toEmail, String tokenId) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-            helper.setText(buildEmail(firstName, "localhost:8080/api/auth/register/confirm?token=" + tokenId), true);
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+
+            String link = """
+                    http://localhost:8080/api/auth/register/confirm?token=%s""".formatted(tokenId);
+            String finalHtmlMessage = buildEmail(firstName, link);
+            helper.setText(finalHtmlMessage, true);
             helper.setTo(toEmail);
             helper.setSubject("Confirm your email");
-            helper.setFrom("60ca95.5670.e0c219cb3c2c72c5997f59462cba1c4a@g.maileroo.net", "Virtual Wallet");
-/*
+            helper.setFrom("virtual.wallet.a68@gmail.com", "Virtual Wallet");
             mailSender.send(mimeMessage);
-*/
         } catch (Exception e) {
             throw new RuntimeException("Send email confirmation failed");
         }
     }
 
-    private String buildEmail(String firstName, String link) {
+  private String buildEmail(String firstName, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +

@@ -19,7 +19,7 @@ VALUES ('001e4567-e89b-12d3-a456-426614174000', 'Georgi', 'Benchev', 'georgi', '
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
         '0000000002', '/images/default-profile-pic.png', 'ADMIN', 'ACTIVE', NOW()),
 
-       ('005e4567-e89b-12d3-a456-426614174000', 'Ivan', 'Georgiev', 'ivan', 'ivan@gmail.com',
+       ('005e4567-e89b-12d3-a456-426614174000', 'Ivan', 'Georgiev', 'ivan', 'ivan29654@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
         '0000000003', '/images/default-profile-pic.png', 'ADMIN', 'ACTIVE', NOW()),
 
