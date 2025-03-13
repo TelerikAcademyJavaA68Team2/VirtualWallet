@@ -1,10 +1,7 @@
 package com.example.virtualwallet.helpers;
 
 import com.example.virtualwallet.models.*;
-import com.example.virtualwallet.models.dtos.card.CardEdit;
-import com.example.virtualwallet.models.dtos.card.CardInput;
-import com.example.virtualwallet.models.dtos.card.CardOutput;
-import com.example.virtualwallet.models.dtos.card.CardOutputForList;
+import com.example.virtualwallet.models.dtos.card.*;
 import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
 import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
 import com.example.virtualwallet.models.dtos.exchangeRates.ExchangeRateOutput;
@@ -54,6 +51,16 @@ public class ModelMapper {
         return cardOutputForList;
     }
 
+    public static CardOutputForListMVC displayForListCardOutputMVCFromCreditCard(Card card) {
+        CardOutputForListMVC cardOutputForList = new CardOutputForListMVC();
+        cardOutputForList.setCardId(card.getId());
+        cardOutputForList.setCardNumber(card.getCardNumber());
+        cardOutputForList.setExpirationDate(card.getExpirationDate());
+        cardOutputForList.setCardHolder(card.getCardHolder());
+        cardOutputForList.setCvv(card.getCvv());
+        return cardOutputForList;
+    }
+
     public static CardOutput cardOutputFromCard(Card card) {
         CardOutput cardOutput = new CardOutput();
         cardOutput.setCardId(card.getId());
@@ -88,7 +95,7 @@ public class ModelMapper {
                 user.getCreatedAt());
     }
 
-    public static Card updateCardFromCardInput(CardEdit cardEdit, Card card) {
+    public static Card updateCardFromCardEdit(CardEdit cardEdit, Card card) {
         if (cardEdit.getCardNumber() != null) {
             card.setCardNumber(cardEdit.getCardNumber());
         }

@@ -104,6 +104,23 @@ body {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+footer {
+  margin-top: auto;
+}
+
+
 hr {
   margin: 1rem 0;
   color: inherit;
@@ -11313,3 +11330,161 @@ footer a:hover, footer a:active, footer a:focus {
   font-weight: 700 !important;
   text-underline: black !important;
 }
+
+/* General Card Styling */
+.card {
+  border-radius: 15px;
+  padding: 15px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Card Number Masking */
+.card-subtitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Centering Visa & MasterCard Logo */
+.card img {
+  align-self: flex-start;
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  width: 60px;
+}
+
+/* Hover Effect: Enlarges and adds shadow */
+.flip-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+/* Flip Container */
+.flip-card {
+  width: 100%;
+  height: 220px;
+  perspective: 1000px; /* Depth effect */
+  cursor: pointer;
+  transition: transform 0.5s ease-out, box-shadow 0.5s ease-out;
+}
+
+
+
+/* Inner container to hold both front and back */
+.flip-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+/* Flip on Click */
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Front and Back Styles */
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* FRONT SIDE: Dynamic Colors */
+.visa-card {
+  background: linear-gradient(45deg, #1a1f71, #2a57d1); /* Visa */
+  color: white;
+}
+
+.mastercard-card {
+  background: linear-gradient(45deg, #ff9800, #d50000); /* MasterCard */
+  color: white;
+}
+
+.grey-card {
+  background: linear-gradient(45deg, #555, #777); /* Generic */
+  color: white;
+}
+
+/* Front Side (Card Display) */
+.flip-card-front {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Styling for the back side to mimic a real card layout */
+.flip-card-back {
+  background: #333;
+  color: white;
+  transform: rotateY(180deg);
+  text-align: left;
+  font-size: 16px;
+  position: relative;
+  padding: 15px;
+  user-select: text;  /* Allows selecting text */
+  cursor: text;       /* Avoids pointer cursor */
+}
+
+/* Ensure logos are small and positioned correctly */
+.flip-card-front img {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  width: 50px; /* Set a reasonable size */
+  height: auto;
+}
+
+/* Align Edit & Delete buttons to the top-right */
+.flip-card-back .button-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Ensure buttons are uniform */
+.flip-card-back .btn {
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+/* Cardholder styling */
+.cardholder-name {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 5px;
+}
+
+/* Styling the expiration date to align like a real card */
+.expiration-cvv {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  width: 80%;
+}
+
+/* Styling for CVV section */
+.cvv {
+  background: white;
+  color: black;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+
+
