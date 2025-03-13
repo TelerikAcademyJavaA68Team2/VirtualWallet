@@ -5,10 +5,12 @@ import com.example.virtualwallet.auth.emailVerification.EmailService;
 import com.example.virtualwallet.auth.jwt.JwtService;
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
+import com.example.virtualwallet.exceptions.PasswordMismatchException;
 import com.example.virtualwallet.models.EmailConfirmationToken;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
+import com.example.virtualwallet.models.dtos.user.PasswordUpdateInput;
 import com.example.virtualwallet.services.contracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -87,7 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (userService.checkIfUsernameIsTaken(request.getUsername())) {
             throw new DuplicateEntityException("Username is already taken!");
         }
-        if (userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())){
+        if (userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())) {
             throw new DuplicateEntityException("Phone number is already associated with an account!");
         }
         User user = createUserFromRequest(request);
@@ -117,5 +119,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 passwordEncoder.encode(request.getPassword()),
                 request.getEmail(),
                 request.getPhoneNumber());
+    }
+
+    @Override
+    public void updateUserPassword(PasswordUpdateInput request) {
+
+        if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
+            throw new PasswordMismatchException("Password confirmation failed");
+        }
+        User user = userService.getAuthenticatedUser();
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidUserInputException("Wrong password");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userService.save(user);
     }
 }
