@@ -1,13 +1,12 @@
 package com.example.virtualwallet.auth;
 
-import com.example.virtualwallet.auth.emailVerification.EmailConfirmationService;
-import com.example.virtualwallet.auth.emailVerification.EmailService;
+import com.example.virtualwallet.services.contracts.EmailConfirmationService;
+import com.example.virtualwallet.services.contracts.EmailService;
 import com.example.virtualwallet.auth.jwt.JwtService;
 import com.example.virtualwallet.exceptions.CaptchaMismatchException;
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.exceptions.PasswordMismatchException;
-import com.example.virtualwallet.models.EmailConfirmationToken;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.auth.DeleteAccountInput;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
@@ -23,8 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -61,42 +58,49 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void authenticateForMvc(LoginUserInput request) {
-
-    }
-
-    @Override
     public String register(RegisterUserInput request) {
         validateUserRequest(request);
-
         User newUser = createUserFromRequest(request);
         userService.createUser(newUser);
-        User user = userService.loadUserByUsername(request.getUsername());
-        UUID tokenId = UUID.randomUUID();
-        EmailConfirmationToken token = new EmailConfirmationToken(tokenId, user);
 
-        emailConfirmationService.save(token);
-        emailService.sendVerificationEmail(request.getFirstName(), request.getEmail(), tokenId.toString());
+        User user = userService.loadUserByUsername(request.getUsername());
+        emailConfirmationService.createAndSendEmailConfirmationToUser(user, true);
         return "Thanks for registering please confirm your email";
     }
 
     @Override
     public void registerForMvc(RegisterUserInput request) {
-        if (!request.getPassword().equals(request.getPasswordConfirm())) {
-            throw new InvalidUserInputException("Invalid password confirmation");
+        validateUserRequest(request);
+        User newUser = createUserFromRequest(request);
+        userService.createUser(newUser);
+
+        User user = userService.loadUserByUsername(request.getUsername());
+        emailConfirmationService.createAndSendEmailConfirmationToUser(user, false);
+    }
+
+    @Override
+    public void updateUserPassword(PasswordUpdateInput request) {
+        if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
+            throw new PasswordMismatchException("Password confirmation failed");
+        }
+        User user = userService.getAuthenticatedUser();
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidUserInputException("Wrong password");
         }
 
-        if (userService.checkIfEmailIsTaken(request.getEmail())) {
-            throw new DuplicateEntityException("Email is already taken!");
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userService.save(user);
+    }
+
+    @Override
+    public void softDeleteAuthenticatedUser(DeleteAccountInput request) {
+        if (!request.getCaptcha().equalsIgnoreCase(DELETE_ACCOUNT_CAPTCHA)) {
+            throw new CaptchaMismatchException("Wrong captcha");
         }
-        if (userService.checkIfUsernameIsTaken(request.getUsername())) {
-            throw new DuplicateEntityException("Username is already taken!");
+        if (!passwordEncoder.matches(request.getPassword(), userService.getAuthenticatedUser().getPassword())) {
+            throw new PasswordMismatchException("Wrong password");
         }
-        if (userService.checkIfPhoneNumberIsTaken(request.getPhoneNumber())) {
-            throw new DuplicateEntityException("Phone number is already associated with an account!");
-        }
-        User user = createUserFromRequest(request);
-        userService.createUser(user);
+        userService.softDeleteAuthenticatedUser();
     }
 
     private void validateUserRequest(RegisterUserInput request) {
@@ -124,28 +128,4 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 request.getPhoneNumber());
     }
 
-    @Override
-    public void updateUserPassword(PasswordUpdateInput request) {
-
-        if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
-            throw new PasswordMismatchException("Password confirmation failed");
-        }
-        User user = userService.getAuthenticatedUser();
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidUserInputException("Wrong password");
-        }
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        userService.save(user);
-    }
-
-    @Override
-    public void softDeleteAuthenticatedUser(DeleteAccountInput request) {
-        if (!request.getCaptcha().equalsIgnoreCase(DELETE_ACCOUNT_CAPTCHA)) {
-            throw new CaptchaMismatchException("Wrong captcha");
-        }
-        if (!passwordEncoder.matches(request.getPassword(), userService.getAuthenticatedUser().getPassword())) {
-            throw new PasswordMismatchException("Wrong password");
-        }
-        userService.softDeleteAuthenticatedUser();
-    }
 }

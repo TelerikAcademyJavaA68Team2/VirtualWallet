@@ -1,6 +1,7 @@
 package com.example.virtualwallet.controllers.mvc;
 
 import com.example.virtualwallet.auth.AuthenticationService;
+import com.example.virtualwallet.services.contracts.EmailConfirmationService;
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
@@ -20,8 +21,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationMvcController {
 
     private final AuthenticationService authenticationService;
+    private final EmailConfirmationService emailConfirmationService;
 
-    //ToDo pending user cant log in?
+
     @GetMapping("/login")
     public String getLoginPage(Model model, HttpSession session,
                                @RequestParam(value = "error", required = false) Boolean error,
@@ -99,6 +101,19 @@ public class AuthenticationMvcController {
             errors.rejectValue("passwordConfirm", "password.mismatch", e.getMessage());
             return "Register-View";
         }
+    }
+
+    @GetMapping("/email-confirm/resend")
+    public String resendEmail() {
+        /*try {
+            emailConfirmationService.confirmEmailToken(token);
+            return "redirect:/mvc/profile";
+        } catch (EmailConfirmationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (EmailConfirmedException e) {
+            return "redirect:/mvc/profile";
+        }*/
+        return null;
     }
 
 }
