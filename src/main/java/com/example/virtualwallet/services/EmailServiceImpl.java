@@ -1,5 +1,6 @@
-package com.example.virtualwallet.auth.emailVerification;
+package com.example.virtualwallet.services;
 
+import com.example.virtualwallet.services.contracts.EmailService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,13 +16,14 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    public void sendVerificationEmail(String firstName, String toEmail, String tokenId) {
+    public void sendVerificationEmail(String firstName, String toEmail, String tokenId, boolean isRestRequest) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
+            String urlStart = isRestRequest ? "api" : "mvc";
             String link = """
-                    http://localhost:8080/api/auth/register/confirm?token=%s""".formatted(tokenId);
+                    http://localhost:8080/%s/email/confirm?token=%s""".formatted(urlStart, tokenId);
             String finalHtmlMessage = buildEmail(firstName, link);
             helper.setText(finalHtmlMessage, true);
             helper.setTo(toEmail);
@@ -33,7 +35,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-  private String buildEmail(String firstName, String link) {
+    private String buildEmail(String firstName, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
