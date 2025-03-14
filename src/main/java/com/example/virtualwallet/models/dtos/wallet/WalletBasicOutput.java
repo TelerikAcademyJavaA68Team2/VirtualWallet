@@ -1,6 +1,5 @@
 package com.example.virtualwallet.models.dtos.wallet;
 
-import com.example.virtualwallet.models.enums.Currency;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,5 +12,5 @@ public class WalletBasicOutput {
 
     private BigDecimal balance;
 
-    private Currency currency;
+    private String currency;
 }
