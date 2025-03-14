@@ -79,6 +79,11 @@ public class WalletServiceImpl implements WalletService {
         output.setEstimatedBalance(estimatedBalance);
         output.setWallets(wallets);
         output.setHistory(history);
+
+        output.setPageSize(size);
+        output.setTotalPages(queryResult.getTotalPages());
+        output.setTotalElements(queryResult.getTotalElements());
+        output.setCurrentPage(page);
         return output;
     }
 
@@ -96,8 +101,11 @@ public class WalletServiceImpl implements WalletService {
         List<ActivityOutput> history = queryResult.stream().map(ModelMapper::mapObjectToActivity).toList();
 
         WalletPageOutput pageOutput = new WalletPageOutput();
-        pageOutput.setHistoryPages(queryResult.getTotalPages());
-        pageOutput.setHistorySize(queryResult.getTotalElements());
+        pageOutput.setPageSize(size);
+        pageOutput.setCurrentPage(page);
+        pageOutput.setTotalPages(queryResult.getTotalPages());
+        pageOutput.setTotalElements(queryResult.getTotalElements());
+
         pageOutput.setActivities(history);
         pageOutput.setBalance(wallet.getBalance());
         pageOutput.setCurrency(wallet.getCurrency());
