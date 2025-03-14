@@ -1,6 +1,5 @@
 package com.example.virtualwallet.models.dtos.card;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
