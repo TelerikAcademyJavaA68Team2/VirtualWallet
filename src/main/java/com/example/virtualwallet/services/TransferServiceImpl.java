@@ -1,7 +1,6 @@
 package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
-import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.*;
 import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
