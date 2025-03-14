@@ -33,13 +33,14 @@ import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelMapper.convertToSort;
 import static com.example.virtualwallet.helpers.ModelMapper.transferToFullTransferInfoOutput;
-import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndConvertCurrency;
+import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 
 @RequiredArgsConstructor
 @Service
 public class TransferServiceImpl implements TransferService {
 
-    public static final String NOT_CARD_OWNER = "You do not own this card.";
+    public static final String NOT_CARD_OWNER = "Only card owners can make transfers!";
+    public static final String EXPIRED_CARD = "Your card has expired! Please, go to your profile and update your card.";
 
     private final TransferRepository transferRepository;
     private final RestTemplate restTemplate;
@@ -52,12 +53,11 @@ public class TransferServiceImpl implements TransferService {
         User user = userService.getAuthenticatedUser();
 
         Card card = cardService.getCardById(transferInput.getCardId());
+        validateCardIsNotExpired(card.getExpirationDate(), EXPIRED_CARD);
 
         Currency currency = validateAndConvertCurrency(transferInput.getCurrency());
 
-        if (!card.getOwner().equals(user)) {
-            throw new UnauthorizedAccessException(NOT_CARD_OWNER);
-        }
+        validateUserIsCardOwner(card, user, NOT_CARD_OWNER);
 
         Wallet wallet = walletService.getOrCreateWalletByUsernameAndCurrency(user.getUsername(),
                 currency);

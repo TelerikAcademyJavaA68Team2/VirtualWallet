@@ -28,7 +28,7 @@ public class GlobalExceptionHandlerMVC {
         return "error";
     }
 
-    // Handle 405 errors (Wrong method used)
+    // Handle 405 errors (Wrong method used - method is not supported)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public String handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex, Model model) {
         model.addAttribute("error", "This action is not allowed!");
