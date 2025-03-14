@@ -125,7 +125,7 @@ public class ProfileMvcController {
         }
     }
 
-    @GetMapping("/confirm-email")
+    @GetMapping("/resend-email")
     public String resendEmail() {
         try {
             emailConfirmationService.createAndSendEmailConfirmationToUser

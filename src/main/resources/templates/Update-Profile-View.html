@@ -59,7 +59,7 @@
                             <h3 class=" m-0" th:text="#{user.profile.personalDetails}"></h3>
                             <a class="align-items-center text-md-end d-flex p-1 btn btn-outline-dark rounded-pill  "
                                th:href=" @{/mvc/profile}">
-                                <span class="px-1" th:text="'cansel'"></span>
+                                <span class="px-1" th:text="'cancel'"></span>
                             </a>
                         </div>
 
@@ -163,12 +163,42 @@
                             <span class="ms-1 py-custom" th:text="${user.registeredAt}"></span>
                         </h6>
                     </div>
-                    <div class="overflow-hidden d-block mt-2">
-                        <h6 class="text-primary mb-0" th:text="#{user.accountStatus}"></h6>
-                        <h6 class="text-muted  d-flex">
-                            <span class="py-custom bi-arrow-right"></span>
-                            <span class="ms-1 py-custom" th:text="${user.getAccountStatus()}"></span>
-                        </h6>
+
+                    <!-- status page-->
+                    <div class="h6 d-block mt-2">
+                        <div class="text-primary mb-0">
+                            <span th:text="#{user.accountStatus}"></span>
+                            <span th:if="${user.accountStatus} == 'Active'"
+                                  class="bi-check-circle-fill text-success ms-0 hover-info"
+                                  data-hover-text="Account is verified"></span>
+                            <span th:if="${user.accountStatus} == 'Deleted'"
+                                  class="bi-x-circle-fill text-danger ms-0 hover-info"
+                                  data-hover-text="Account is deleted"></span>
+                            <span th:if="${user.accountStatus} == 'Blocked | Deleted'"
+                                  class="bi-x-circle-fill text-dark ms-0 hover-info"
+                                  data-hover-text="Account is blocked & deleted"></span>
+                            <span th:if="${user.accountStatus} == 'Blocked'"
+                                  class="bi-exclamation-circle-fill text-warning ms-0 hover-info"
+                                  data-hover-text="Account is blocked"></span>
+
+                        </div>
+                        <div class="h6 text-muted d-flex align-items-center justify-content-between">
+                            <div class="align-self-start mt-2">
+                                <span class="py-custom bi-arrow-right"></span>
+                                <span class="ms-1 py-custom" th:text="${user.getAccountStatus()}"></span>
+                            </div>
+
+                            <!-- Resend Email Button -->
+                            <div class="d-flex flex-column align-items-end">
+                                <a th:if="${user.accountStatus} == 'Pending'"
+                                   href="/mvc/profile/resend-email"
+                                   class="btn btn-sm rounded-pill btn-warning d-flex"
+                                   style="gap: 5px;">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <span th:text="#{user.resendEmail}"></span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="overflow-hidden d-block mt-2" th:if="${user.role} == 'Admin'">
