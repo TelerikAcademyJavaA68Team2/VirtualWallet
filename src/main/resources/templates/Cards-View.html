@@ -7,9 +7,10 @@
 <main>
     <!-- Title -->
     <div class="row justify-content-center mt-5">
-        <div class="col-10 text-center">
-            <div class="section-title mb-4">
-                <h1 class="title mb-3" style="margin-top: 50px;" th:text="#{card.list}">Cards</h1>
+        <div class="col-10">
+            <div class="section-title mb-4 d-flex justify-content-center align-items-center position-relative">
+                <a href="/mvc/profile/cards/new" th:href="@{/mvc/profile/cards/new}" class="btn btn-primary position-absolute start-0" style="margin-top: 50px;">+ Add a New Card</a>
+                <h1 class="title mb-3 text-center w-100" style="margin-top: 50px;" th:text="#{card.list}">Cards</h1>
             </div>
         </div><!--end col-->
     </div><!--end row-->

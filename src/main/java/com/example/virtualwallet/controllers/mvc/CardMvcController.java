@@ -45,38 +45,41 @@ public class CardMvcController {
     }
 
     @GetMapping("/new")
-    public String showAddCardPage(Model model){
-
-        model.addAttribute("action", "add");
-        model.addAttribute("card", new CardInput());
+    public String showAddCardPage(Model model) {
+        model.addAttribute("action", "create");
+        model.addAttribute("cardDto", new CardInput());
         return "Card-Create-View";
     }
 
     @PostMapping("/new")
-    public String addCard(@Valid @ModelAttribute("card") CardInput cardInput,
+    public String addCard(@Valid @ModelAttribute("cardDto") CardInput cardInput,
                           BindingResult errors, Model model) {
-
-        model.addAttribute("action", "create");
-
-        if(errors.hasErrors()){
+        if (errors.hasErrors()) {
+            model.addAttribute("action", "create");
             return "Card-Create-View";
         }
-
-        cardService.addCard(cardInput);
-
+        try {
+            cardService.addCard(cardInput);
+        } catch (DuplicateEntityException e) {
+            model.addAttribute("cardDto", cardInput);
+            model.addAttribute("action", "create");
+            errors.rejectValue("cardNumber", "cardNumber-duplicate", e.getMessage());
+            return "Card-Create-View";
+        } catch (InvalidUserInputException e) {
+            model.addAttribute("cardDto", cardInput);
+            model.addAttribute("action", "create");
+            errors.rejectValue("expirationDate", "expirationDate-expired", e.getMessage());
+            return "Card-Create-View";
+        }
         return "redirect:/mvc/profile/cards";
     }
 
     @GetMapping("/{id}/edit")
-    public String getEditCardDetailsPage(Model model,
-                                         @PathVariable(value = "id") UUID cardId) {
-        Card card = cardService.getCardById(cardId);
+    public String getEditCardDetailsPage(Model model, @PathVariable UUID id) {
+        Card card = cardService.getCardById(id);
         CardEdit cardEdit = ModelMapper.cardEditFromCard(card);
-        if (!card.getOwner().equals(userService.getAuthenticatedUser())) {
-            return "redirect:/mvc/home";
-        }
-        model.addAttribute("cardId", card.getId());
-        model.addAttribute("card", card);
+        model.addAttribute("action", "edit");
+        model.addAttribute("cardId", id);
         model.addAttribute("cardDto", cardEdit);
         return "Card-Edit-View";
     }
@@ -85,31 +88,36 @@ public class CardMvcController {
     public String editCardDetails(Model model,
                                   @PathVariable("id") UUID cardId,
                                   @Valid @ModelAttribute("cardDto") CardEdit existingCardDto,
-                                  BindingResult result) {
-        if (result.hasErrors()) {
+                                  BindingResult errors) {
+        if (errors.hasErrors()) {
             Card card = cardService.getCardById(cardId);
             model.addAttribute("cardId", card.getId());
             model.addAttribute("card", card);
             model.addAttribute("cardDto", existingCardDto);
+            model.addAttribute("action", "edit");
 
             return "Card-Edit-View";
         }
 
         try {
             cardService.updateCard(existingCardDto, cardId);
-        } catch (EntityNotFoundException | DuplicateEntityException e) {
+        } catch (DuplicateEntityException e) {
             Card card = cardService.getCardById(cardId);
             model.addAttribute("cardId", card.getId());
             model.addAttribute("card", card);
             model.addAttribute("cardDto", existingCardDto);
-            result.rejectValue("cardNumber", "cardNumber-duplicate", e.getMessage());
+            model.addAttribute("action", "edit");
+            errors.rejectValue("cardNumber", "cardNumber-duplicate", e.getMessage());
+
             return "Card-Edit-View";
         } catch (InvalidUserInputException e) {
             Card card = cardService.getCardById(cardId);
             model.addAttribute("cardId", card.getId());
             model.addAttribute("card", card);
             model.addAttribute("cardDto", existingCardDto);
-            result.rejectValue("expirationDate", "expirationDate-expired", e.getMessage());
+            model.addAttribute("action", "edit");
+            errors.rejectValue("expirationDate", "expirationDate-expired", e.getMessage());
+
             return "Card-Edit-View";
         }
 

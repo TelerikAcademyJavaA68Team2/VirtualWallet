@@ -42,6 +42,6 @@ public class PublicMvcController {
 
     @GetMapping("/mvc/error")
     public String showErrorPage() {
-        return "Not-Found-View";
+        return "error";
     }
 }

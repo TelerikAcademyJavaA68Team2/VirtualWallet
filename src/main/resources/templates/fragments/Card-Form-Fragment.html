@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Card Form Fragment</title>
+</head>
+<body>
+
+<!-- Form Header -->
+<header th:fragment="card-header" class="py-2 bg-light border-bottom mb-4">
+    <div class="container">
+        <div class="text-center my-3">
+            <h1 class="fw-bolder" th:if="${action == 'edit'}" th:text="#{card.edit.details.title}">Edit Card</h1>
+            <h1 class="fw-bolder" th:unless="${action == 'edit'}" th:text="#{card.create.details.title}">Create Card</h1>
+        </div>
+    </div>
+</header>
+
+<!-- Card Form -->
+<form th:fragment="card-form"
+      th:action="@{__${requestURI}__}"
+      th:object="${cardDto}"
+      method="post">
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <!-- Card Number -->
+            <div class="form-group">
+                <label for="card-number" th:text="#{card.cardNumber}">Card Number</label>
+                <input type="text" class="form-control" id="card-number" th:field="*{cardNumber}"
+                       placeholder="Enter 16-digit Card Number">
+                <small class="text-danger" th:if="${#fields.hasErrors('cardNumber')}" th:text="${#fields.errors('cardNumber')[0]}"></small>
+            </div>
+
+            <!-- Cardholder Name -->
+            <div class="form-group">
+                <label for="cardholder-name" th:text="#{card.cardholderName}">Cardholder Name</label>
+                <input type="text" class="form-control" id="cardholder-name" th:field="*{cardHolder}"
+                       placeholder="Enter Cardholder Name">
+                <small class="text-danger" th:if="${#fields.hasErrors('cardHolder')}" th:text="${#fields.errors('cardHolder')[0]}"></small>
+            </div>
+
+            <!-- Expiration Date -->
+            <div class="form-group">
+                <label for="expiration-date" th:text="#{card.expirationDate}">Expiration Date (MM/YY)</label>
+                <input type="text" class="form-control" id="expiration-date" th:field="*{expirationDate}"
+                       placeholder="MM/YY">
+                <small class="text-danger" th:if="${#fields.hasErrors('expirationDate')}" th:text="${#fields.errors('expirationDate')[0]}"></small>
+            </div>
+
+            <!-- CVV -->
+            <div class="form-group">
+                <label for="cvv" th:text="#{card.cvv}">CVV</label>
+                <input type="text" class="form-control" id="cvv" th:field="*{cvv}"
+                       placeholder="3-digit CVV">
+                <small class="text-danger" th:if="${#fields.hasErrors('cvv')}" th:text="${#fields.errors('cvv')[0]}"></small>
+            </div>
+
+            <!-- Form Buttons -->
+            <div class="mt-3">
+                <th:block th:with="buttonLabel=${action == 'edit' ? 'card.edit.button' : 'card.create.button'}">
+                    <input type="submit" id="submit" name="send" class="submitBnt btn btn-primary"
+                           th:value="#{${buttonLabel}}">
+                </th:block>
+                <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+</body>
+</html>
