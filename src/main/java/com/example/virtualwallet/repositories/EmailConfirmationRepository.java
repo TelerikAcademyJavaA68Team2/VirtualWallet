@@ -14,7 +14,7 @@ public interface EmailConfirmationRepository extends JpaRepository<EmailConfirma
 
     @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END " +
             "FROM EmailConfirmationToken e " +
-            "WHERE e.user.id = :userId AND e.createdAt > :timeThreshold")
-    boolean checkIfTokenWasAlreadySent(@Param("userId") UUID userId, @Param("timeThreshold") LocalDateTime timeThreshold);
+            "WHERE e.user.email = :email AND e.createdAt > :timeThreshold")
+    boolean checkIfTokenWasAlreadySent(@Param("email") String email, @Param("timeThreshold") LocalDateTime timeThreshold);
 
 }
