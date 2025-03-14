@@ -4,6 +4,7 @@ import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.ExchangeRate;
 import com.example.virtualwallet.models.dtos.exchangeRates.ExchangeRateOutput;
+import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.repositories.ExchangeRateRepository;
 import com.example.virtualwallet.services.contracts.ExchangeRateService;
@@ -11,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
-import java.util.Set;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.VALID_CURRENCIES_SET;
 import static com.example.virtualwallet.services.ExchangeServiceImpl.INVALID_CURRENCY;
@@ -35,6 +36,22 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         exchangeRate.setRate(rate);
         exchangeRateRepository.save(exchangeRate);
     }
+
+    @Override
+    public BigDecimal findCurrentBalanceByCurrency(String mainCurrency, List<WalletBasicOutput> wallets) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (WalletBasicOutput wallet : wallets) {
+            if (mainCurrency.equalsIgnoreCase(wallet.getCurrency())) {
+                sum = sum.add(wallet.getBalance());
+            }else {
+                sum = sum.add(wallet.getBalance()
+                        .multiply(getExchangeRate(wallet.getCurrency(), mainCurrency).getRate()));
+            }
+        }
+        return sum.setScale(2, RoundingMode.HALF_UP);
+    }
+
+
 
     @Override
     public ExchangeRate getExchangeRate(String fromCurrency, String toCurrency) {
