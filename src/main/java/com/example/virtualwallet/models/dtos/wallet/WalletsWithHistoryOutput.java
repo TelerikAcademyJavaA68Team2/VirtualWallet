@@ -13,4 +13,10 @@ public class WalletsWithHistoryOutput {
     private List<WalletBasicOutput> wallets;
 
     private List<ActivityOutput> history;
+
+    // Pagination metadata
+    private long totalElements;
+    private int currentPage;
+    private int totalPages;
+    private int pageSize;
 }
