@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/Page-Layout :: head('Error')}">Not Found</head>
+<header th:insert="~{fragments/Page-Layout :: navigation}"></header>
+<body id="page-top">
+<div class="body-content">
+    <div class="py-5 bg-light border-bottom mb-4">
+        <div class="container">
+            <div class="text-center my-5">
+                <h1 class="fw-bolder" th:text="${status}">Status</h1>
+                <h1 class="fw-bolder" th:text="${error}">Oops! The page you're looking for doesn't exist.</h1>
+                <br>
+                <a class="btn btn-primary" href="/mvc/home">Go Back Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>
