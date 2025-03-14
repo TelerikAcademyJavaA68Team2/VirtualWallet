@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
@@ -20,6 +21,7 @@ import java.util.Set;
 public class ValidationHelpers {
 
     public static final String UNAUTHORIZED_MESSAGE_POST = "Only the card's owner can modify cards!";
+    public static final String CARD_MUST_NOT_BE_EXPIRED = "Card must not be expired!";
 
     public static final Set<String> VALID_CURRENCIES_SET = Set.of("BGN", "USD", "EUR", "GBP", "JPY", "CNH", "AUD", "CAD", "CHF");
     public static final Set<String> VALID_TRANSACTION_STATUS_SET = Set.of("APPROVED", "DECLINED");
@@ -38,6 +40,12 @@ public class ValidationHelpers {
     public static void validateUserIsCardOwner(Card card, User user) {
         if (!card.getOwner().equals(user)) {
             throw new UnauthorizedAccessException(UNAUTHORIZED_MESSAGE_POST);
+        }
+    }
+
+    public static void validateCardIsNotExpired(YearMonth expirationDate) {
+        if (expirationDate.isBefore(YearMonth.now())) {
+            throw new InvalidUserInputException(CARD_MUST_NOT_BE_EXPIRED);
         }
     }
 
