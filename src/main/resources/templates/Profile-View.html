@@ -146,7 +146,7 @@
                         </h6>
                     </div>
 
-
+<!-- status page-->
                     <div class="h6 d-block mt-2">
                         <div class="text-primary mb-0">
                             <span th:text="#{user.accountStatus}"></span>
@@ -173,7 +173,7 @@
                             <!-- Resend Email Button -->
                             <div class="d-flex flex-column align-items-end">
                                 <a th:if="${user.accountStatus} == 'Pending'"
-                                   href="/mvc/profile/confirm-email"
+                                   href="/mvc/profile/resend-email"
                                    class="btn btn-sm rounded-pill btn-warning d-flex"
                                    style="gap: 5px;">
                                     <i class="bi bi-exclamation-triangle"></i> <!-- Warning Icon -->

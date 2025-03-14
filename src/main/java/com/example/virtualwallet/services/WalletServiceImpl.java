@@ -9,8 +9,10 @@ import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
 import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
+import com.example.virtualwallet.models.dtos.wallet.WalletsWithHistoryOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.repositories.WalletRepository;
+import com.example.virtualwallet.services.contracts.ExchangeRateService;
 import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,6 +35,7 @@ public class WalletServiceImpl implements WalletService {
     public static final String EXCHANGE_REMAINING_CURRENCY = "Please exchange your remaining balance before deleting";
 
     private final WalletRepository walletRepository;
+    private final ExchangeRateService exchangeRateService;
     private final UserService userService;
 
     @Override
@@ -59,10 +63,28 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public List<WalletBasicOutput> getActiveWalletsOfAuthenticatedUser() {
+    public WalletsWithHistoryOutput getActiveWalletsOfAuthenticatedUser(String mainCurrency, int page, int size) {
         User user = userService.getAuthenticatedUser();
-        List<Wallet> wallets = walletRepository.findActiveWalletsByUserId(user.getId());
-        return wallets.stream().map(ModelMapper::mapWalletToBasicWalletOutput).toList();
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<Wallet> listWallets = walletRepository.findActiveWalletsByUserId(user.getId());
+        Page<Object[]> queryResult = walletRepository.findUserWalletHistory(user.getUsername(), pageable);
+
+        List<ActivityOutput> history = queryResult.stream().map(ModelMapper::mapObjectToActivity).toList();
+        List<WalletBasicOutput> wallets = listWallets.stream().map(ModelMapper::mapWalletToBasicWalletOutput).toList();
+
+        BigDecimal estimatedBalance = exchangeRateService.findCurrentBalanceByCurrency(mainCurrency, wallets);
+
+        WalletsWithHistoryOutput output = new WalletsWithHistoryOutput();
+        output.setEstimatedBalance(estimatedBalance);
+        output.setWallets(wallets);
+        output.setHistory(history);
+
+        output.setPageSize(size);
+        output.setTotalPages(queryResult.getTotalPages());
+        output.setTotalElements(queryResult.getTotalElements());
+        output.setCurrentPage(page);
+        return output;
     }
 
     @Override
@@ -79,8 +101,11 @@ public class WalletServiceImpl implements WalletService {
         List<ActivityOutput> history = queryResult.stream().map(ModelMapper::mapObjectToActivity).toList();
 
         WalletPageOutput pageOutput = new WalletPageOutput();
-        pageOutput.setHistoryPages(queryResult.getTotalPages());
-        pageOutput.setHistorySize(queryResult.getTotalElements());
+        pageOutput.setPageSize(size);
+        pageOutput.setCurrentPage(page);
+        pageOutput.setTotalPages(queryResult.getTotalPages());
+        pageOutput.setTotalElements(queryResult.getTotalElements());
+
         pageOutput.setActivities(history);
         pageOutput.setBalance(wallet.getBalance());
         pageOutput.setCurrency(wallet.getCurrency());

@@ -29,7 +29,7 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
             throw new InvalidUserInputException("Email is already confirmed");
         }
 
-        if (emailConfirmationRepository.checkIfTokenWasAlreadySent(request.getId(), LocalDateTime.now().minusMinutes(15))) {
+        if (emailConfirmationRepository.checkIfTokenWasAlreadySent(request.getEmail(), LocalDateTime.now().minusMinutes(15))) {
             throw new DuplicateEntityException("Email confirmation was already sent");
         }
 

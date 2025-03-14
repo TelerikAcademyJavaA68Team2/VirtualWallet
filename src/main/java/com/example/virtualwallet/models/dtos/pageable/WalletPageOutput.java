@@ -3,7 +3,6 @@ package com.example.virtualwallet.models.dtos.pageable;
 import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -22,7 +21,9 @@ public class WalletPageOutput {
 
     private List<ActivityOutput> activities;
 
-    private int historyPages;
-
-    private long historySize;
+    // Pagination metadata
+    private long totalElements;
+    private int currentPage;
+    private int totalPages;
+    private int pageSize;
 }

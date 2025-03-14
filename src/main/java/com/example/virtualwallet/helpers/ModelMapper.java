@@ -136,14 +136,6 @@ public class ModelMapper {
         return transferOutput;
     }
 
-    public static WalletBasicOutput mapWalletToBasicWalletOutput(Wallet input) {
-        WalletBasicOutput output = new WalletBasicOutput();
-        output.setWalletId(input.getId());
-        output.setBalance(input.getBalance());
-        output.setCurrency(input.getCurrency());
-        return output;
-    }
-
     public static TransactionOutput transactionToTransactionOutput(Transaction transaction) {
         TransactionOutput transactionOutput = new TransactionOutput();
         transactionOutput.setTransactionId(transaction.getId());
@@ -222,6 +214,14 @@ public class ModelMapper {
                 row[10] != null ? ((Timestamp) row[10]).toLocalDateTime() : null
 
         );
+    }
+
+    public static WalletBasicOutput mapWalletToBasicWalletOutput(Wallet input) {
+        WalletBasicOutput output = new WalletBasicOutput();
+        output.setWalletId(input.getId());
+        output.setBalance(input.getBalance());
+        output.setCurrency(input.getCurrency().name());
+        return output;
     }
 
     public static ProfileUpdateInput userOutputToUserUpdateInput(UserProfileOutput user) {
