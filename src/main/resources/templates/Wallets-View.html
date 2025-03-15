@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments/Page-Layout :: head(Wallets)}"></head>
+<body id="page-top">
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+
+<section class="section mt-60">
+    <div class="container-fluid mt-5 p-0">
+        <div class="row gx-2 justify-content-center">
+            <div class="col-lg-6">
+                <table class="table table-striped table-hover w-100 m-0 custom-border">
+                    <thead>
+                    <!-- Header Row (Initially Visible) -->
+                    <tr id="wallet-header" class="clickable-row align-middle" style="cursor: pointer;">
+                        <td colspan="2" class="p-3 w-100"> <!-- Ensure full width -->
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <div class="text-start w-100">
+                                    <!-- Add the icon here -->
+                                    <img src="/images/favicon.ico" alt="Wallet Icon"
+                                         style="width: 45px; height: 45px; margin-right: 12px;"/>
+                                    <span>All Wallets</span>
+                                </div>
+                                <div class="text-end w-100">
+                                    <span th:text="${wallets.estimatedBalance}">0.00</span>
+                                    <span th:text="${mainCurrency}">BGN</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </thead>
+
+                    <tbody id="wallet-list" style="display: none;">
+                    <!-- Wallet Rows -->
+                    <tr th:each="wallet : ${wallets.wallets}" class="clickable-row align-middle"
+                        th:attr="data-href='/mvc/profile/wallets/' + ${wallet.walletId}">
+                        <td class="p-3 d-flex justify-content-between align-items-center w-100">
+                            <div class="d-flex align-items-center">
+                                <img th:src="@{/images/flags/flag__${wallet.currency}__.png}"
+                                     alt="Flag"
+                                     style="width: 50px; height: 50px; margin-right: 12px;"/>
+                                <span th:text="#{'currency.' + ${wallet.currency}}">US Dollar</span>
+                            </div>
+                            <div class="text-end">
+                                <span th:text="${wallet.balance}">50000.00</span>
+                                <span th:text="${wallet.currency}">USD</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Add New Wallet Row -->
+
+                    <tr id="add-wallet-row" class="clickable-row align-middle">
+                        <td colspan="2" class="p-3 d-flex justify-content-center align-items-center w-100">
+                            <a href="/mvc/profile/wallets/new" class="d-flex align-items-center"
+                               style="text-decoration: none; color: inherit;">
+                                <span class="bi-plus" style="cursor: pointer; font-size: 24px;"></span>
+                                <span style="margin-left: 8px;">Add New Wallet</span>
+                            </a>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+
+                <!--NEW HISTORY Table  -->
+                <!--NEW HISTORY Table  -->
+                <!--NEW HISTORY Table  -->
+                <div class="py-4"></div>
+
+                <!--NEW HISTORY Table  -->
+                <!--NEW HISTORY Table  -->
+
+                <table style="border: 1px solid darkgray;" class="table table-striped table-hover w-100 m-0 custom-border">
+                    <!-- Table Header -->
+                    <thead>
+                    <tr id="history-header" class="align-middle" style="user-focus-pointer: pointer;">
+                        <td colspan="3" class="p-3 w-100">
+                            <div class="d-flex justify-content-center align-items-center w-100">
+                                <div class="text-center w-100 fw-bold">
+                                    <span>History</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </thead>
+
+                    <tbody id="history-list">
+                    <tr th:each="activity : ${wallets.history}"
+                        class="clickable-row align-middle"
+                        th:attr="data-href='/mvc/profile/' + ${activity.activity} + 's/' + ${activity.id}"
+                        th:classappend="${activity.activity == 'transaction' && activity.senderUsername == currentUserUsername} ? 'custom-pink' : ''">
+
+
+                        <!-- Left Column: Activity Type -->
+                        <td class="p-3 justify-content-center align-items-start">
+                            <span th:text="${activity.activity}">Activity</span>
+                        </td>
+
+                        <!-- Middle Column: Conditional Logic -->
+                        <td class="p-3  d-flex flex-column justify-content-center align-items-start" style="text-align: left;">
+                            <!-- Transaction -->
+                            <div th:if="${activity.activity == 'transaction'}">
+                                <div th:if="${activity.senderUsername == currentUserUsername}">
+                                    <i class="bi bi-arrow-right" style="font-size: 16px;"></i>
+                                    <span th:text="'to ' + ${activity.recipientUsername}"></span>
+                                </div>
+                                <div th:unless="${activity.senderUsername == currentUserUsername}">
+                                    <i class="bi bi-arrow-left" style="font-size: 16px;"></i>
+                                    <span th:text="'from ' + ${activity.senderUsername}"></span>
+                                </div>
+                            </div>
+
+                            <!-- Exchange -->
+                            <div th:if="${activity.activity == 'exchange'}">
+                                <span th:text="${activity.fromCurrency}"></span>
+                                <i class="bi bi-arrow-right ms-2" style="font-size: 16px;"></i>
+                                <span th:text="${activity.toCurrency}"></span>
+                            </div>
+
+                            <!-- Transfer (No additional content needed) -->
+                            <span th:if="${activity.activity == 'transfer'}"></span>
+
+
+                            <!-- Date -->
+                            <small class="text-muted mt-1"
+                                   th:text="${#temporals.format(activity.date, 'yyyy-MM-dd HH:mm')}">
+                                2023-10-01 12:34</small>
+                        </td>
+
+                        <!-- Right Column: Amount, Currency, and Date -->
+                        <td class="p-3 text-end justify-content-center align-items-end">
+                            <!-- Amount and Currency -->
+                            <div>
+                                <!-- Conditional Logic for Amount Sign -->
+                                <span th:if="${activity.activity == 'transaction' && activity.senderUsername != currentUserUsername}">+</span>
+                                <span th:if="${activity.activity == 'transaction' && activity.senderUsername == currentUserUsername}">-</span>
+                                <span th:if="${activity.activity != 'transaction'}">+</span>
+
+                                <!-- Amount -->
+                                <span th:if="${activity.activity != 'exchange'}"
+                                      th:text="${activity.amount}">100.00</span>
+                                <span th:if="${activity.activity == 'exchange'}"
+                                      th:text="${activity.toAmount}">90.00</span>
+
+                                <!-- Currency -->
+                                <span th:if="${activity.activity == 'exchange'}"
+                                      th:text="#{'currency.symbol.' + ${activity.toCurrency}}">USD</span>
+                                <span th:unless="${activity.activity == 'exchange'}"
+                                      th:text="#{'currency.symbol.' + ${activity.currency}}">USD</span>
+                            </div>
+                            <div  style="font-size: 1em;" class="text-muted">
+                                <small th:if="${activity.activity == 'exchange'}">-</small>
+                                <small th:if="${activity.activity == 'exchange'}"
+                                      th:text="${activity.amount}">100.00</small>
+                                <!-- Currency -->
+                                <span th:if="${activity.activity == 'exchange'}"
+                                      style="font-size: 0.9em;"    th:text="#{'currency.symbol.' + ${activity.fromCurrency}}">$</span>
+
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const walletHeader = document.getElementById("wallet-header");
+        const walletList = document.getElementById("wallet-list");
+
+        // Toggle wallet list visibility
+        walletHeader.addEventListener("click", function () {
+            if (walletList.style.display === "none" || walletList.style.display === "") {
+                walletList.style.display = "table-row-group"; // Show the wallet list
+            } else {
+                walletList.style.display = "none"; // Hide the wallet list
+            }
+        });
+
+        const rows = document.querySelectorAll(".clickable-row");
+        rows.forEach(row => {
+            row.addEventListener("click", function () {
+                const href = row.getAttribute("data-href");
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+        });
+    });
+</script>
+
+
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>
