@@ -11527,3 +11527,48 @@ footer a:hover, footer a:active, footer a:focus {
 
 
 
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.clickable-row:hover {
+  background-color: #f1f1f1;
+}
+
+#wallet-header td,
+#add-wallet-row td {
+  width: 100%; /* Ensure the header spans the full width */
+  display: flex; /* Use flexbox for alignment */
+  justify-content: space-between; /* Align content horizontally */
+  align-items: center; /* Align content vertically */
+}
+
+
+/* Custom Table Border */
+.custom-border {
+  border: 1px solid black; /* Add a 1px black border around the table */
+  border-radius: 10px; /* Rounded corners */
+  overflow: hidden; /* Ensure borders are clipped properly */
+  border-collapse: separate; /* Avoid collapsing borders */
+  border-spacing: 0; /* Remove spacing between cells */
+}
+
+/* Remove individual borders and background colors */
+.custom-border tr,
+.custom-border td,
+.custom-border th {
+  border: none; /* Remove individual borders */
+  background-color: transparent; /* Ensure no background color interferes */
+}
+/* Arrow Styling */
+.bi-arrow-right,
+.bi-arrow-left {
+  margin-right: 8px; /* Space between arrow and text */
+}
+
+
+.custom-pink {
+  background-color: #f8d7da !important; /* Light pink color */
+}
