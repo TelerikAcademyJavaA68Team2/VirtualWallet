@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments/Page-Layout :: head(Add-Card)}"></head>
+<body id="page-top">
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<section class="section bg-light">
+    <div class="container mt-10">
+        <div class="row justify-content-center">
+            <div class="col-12 text-center">
+                <div class="section-title mb-4 pb-2">
+                    <h4 class="title mb-4" th:text="#{card.create.details.title}"></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-6 col-12 mt-4 pt-2">
+                <div class="rounded bg-white border shadow">
+                    <div th:insert="~{fragments/Card-Form-Fragment :: card-header}"></div>
+                    <div th:insert="~{fragments/Card-Form-Fragment :: card-form}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>

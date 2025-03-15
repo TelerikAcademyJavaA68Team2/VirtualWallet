@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelHelpers.maskCreditCard;
@@ -233,5 +234,13 @@ public class ModelMapper {
         return dto;
     }
 
-
+    public static CardEdit cardEditFromCard(Card card) {
+        CardEdit cardEdit = new CardEdit();
+        cardEdit.setCardHolder(card.getCardHolder());
+        cardEdit.setCardNumber(card.getCardNumber());
+        cardEdit.setCvv(card.getCvv());
+        cardEdit.setExpirationDate(card.getExpirationDate().format(DateTimeFormatter.ofPattern("MM/yy")));
+        cardEdit.setCardId(card.getId());
+        return cardEdit;
+    }
 }

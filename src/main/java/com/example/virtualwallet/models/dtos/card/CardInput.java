@@ -22,7 +22,7 @@ public class CardInput {
     private String cardHolder;
 
     @NotBlank(message = "{error.expirationDateEmpty}")
-    @Pattern(regexp = "^(0[1-9]|1[0-2])/([2-9][5-9]|[3-9][0-9])$", message = "{error.expirationDateFormat}")
+    @Pattern(regexp = "^(0[1-9]|1[0-2])/\\d{2}$", message = "{error.expirationDateFormat}")
     private String expirationDate;
 
     @NotBlank(message = "{error.cvvEmpty}")

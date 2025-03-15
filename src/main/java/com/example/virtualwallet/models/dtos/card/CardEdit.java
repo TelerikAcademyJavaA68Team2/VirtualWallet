@@ -21,7 +21,7 @@ public class CardEdit {
     @Pattern(regexp = "^[A-Za-z]+( [A-Za-z]+)+$", message = "{error.cardHolderFormat}")
     private String cardHolder;
 
-    @Pattern(regexp = "^(0[1-9]|1[0-2])/(\\d{2})$", message = "{error.expirationDateFormat}")
+    @Pattern(regexp = "^(0[1-9]|1[0-2])/\\d{2}$", message = "{error.expirationDateFormat}")
     private String expirationDate;
 
     @Pattern(regexp = "^\\d{3}$", message = "{error.cvvDigits}")

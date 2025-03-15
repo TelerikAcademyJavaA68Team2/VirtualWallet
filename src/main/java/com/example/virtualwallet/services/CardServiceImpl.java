@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+import static com.example.virtualwallet.helpers.ValidationHelpers.validateCardIsNotExpired;
 import static com.example.virtualwallet.helpers.ValidationHelpers.validateUserIsCardOwner;
 
 @Service
@@ -74,7 +75,7 @@ public class CardServiceImpl implements CardService {
                 throwIfCardWithSameNumberAlreadyExistsInSystem(cardDto.getCardNumber());
             }
         }
-
+        validateCardIsNotExpired(cardDto.getExpirationDateAsYearMonth());
         return createAndSaveCard(cardDto, user);
 
     }
@@ -93,6 +94,7 @@ public class CardServiceImpl implements CardService {
         if(!card.getCardNumber().equals(cardEdit.getCardNumber())) {
             throwIfCardWithSameNumberAlreadyExistsInSystem(cardEdit.getCardNumber());
         }
+        validateCardIsNotExpired(cardEdit.getExpirationDateAsYearMonth());
         card = ModelMapper.updateCardFromCardEdit(cardEdit, card);
         cardRepository.save(card);
         return ModelMapper.cardOutputFromCard(card);
@@ -121,6 +123,7 @@ public class CardServiceImpl implements CardService {
     private CardOutput restoreSoftDeletedCard(Card card, User user, CardInput cardInput) {
         validateUserIsCardOwner(card, user);
         card.markAsRestored();
+        validateCardIsNotExpired(cardInput.getExpirationDateAsYearMonth());
         card = ModelMapper.modifySoftDeletedCardFromCardInput(card, cardInput);
         cardRepository.save(card);
 

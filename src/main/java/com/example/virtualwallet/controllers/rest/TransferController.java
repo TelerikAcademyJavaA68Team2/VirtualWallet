@@ -85,6 +85,7 @@ public class TransferController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successfully made a withdrawal"),
                     @ApiResponse(responseCode = "400", description = "Invalid input Data"),
+                    @ApiResponse(responseCode = "400", description = "Card has expired"),
                     @ApiResponse(responseCode = "401", description = "User not authenticated"),
                     @ApiResponse(responseCode = "404", description = "Entity not found")
             }
