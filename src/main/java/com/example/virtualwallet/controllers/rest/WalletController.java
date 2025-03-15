@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
-import static com.example.virtualwallet.helpers.ValidationHelpers.validPageAndSize;
+import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class WalletController {
     public ResponseEntity<?> getAllWallets(@RequestParam(defaultValue = "BGN") String mainCurrency,
                                            @RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "10") int size) {
-        if (validPageAndSize(page, size)) {
+        if (requestIsWithInvalidPageOrSize(page, size)) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
         return new ResponseEntity<>(walletService.getActiveWalletsOfAuthenticatedUser(mainCurrency, page, size), HttpStatus.OK);
@@ -42,7 +42,7 @@ public class WalletController {
     public ResponseEntity<?> getWalletHistory(@PathVariable String currency,
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size) {
-        if (validPageAndSize(page, size)) {
+        if (requestIsWithInvalidPageOrSize(page, size)) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
         return new ResponseEntity<>(walletService.getWalletPageById(currency, page, size), HttpStatus.OK);
