@@ -110,7 +110,7 @@
                     <ul class="dropdown-menu" aria-labelledby="walletsDropdown">
                         <li>
                             <a class="dropdown-item"
-                               th:href="@{/mvc/wallets/list}"
+                               th:href="@{/mvc/profile/wallets}"
                                th:text="#{navigation.viewWallets}">
                                 View Wallets
                             </a>
@@ -135,7 +135,7 @@
                 <!-- Transaction History (Direct Link) -->
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                     <a class="nav-link me-lg-3"
-                       th:href="@{/mvc/transaction/history}"
+                       th:href="@{/mvc/profile/transactions}"
                        th:text="#{navigation.myTransactions}">
                         Transaction History
                     </a>
