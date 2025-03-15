@@ -96,7 +96,6 @@ public class ValidationHelpers {
                 ? Optional.empty() : Optional.of(Currency.valueOf(value.toUpperCase()));
     }
 
-
     public static Optional<Role> sanitizeRole(String role) {
         if (role == null || role.trim().isEmpty()) {
             return Optional.empty();
