@@ -30,7 +30,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
             """
                     SELECT\s
                         t.id AS id,
-                        'TRANSACTION' AS activity,
+                        'transaction' AS activity,
                         t.amount as amount,
                         NULL as toAmount,
                         t.currency AS currency,
@@ -49,7 +49,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                     
                     SELECT\s
                         tf.id AS id,
-                        'ACCOUNT FUNDING' AS activity,
+                        'transfer' AS activity,
                         tf.amount as amount,
                         NULL as toAmount,
                         tf.currency AS currency,
@@ -67,7 +67,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                     
                     SELECT\s
                         e.id AS id,
-                        'EXCHANGE' AS activity,
+                        'exchange' AS activity,
                         e.amount as amount,
                         e.to_amount as toAmount,
                         NULL AS currency,
@@ -116,7 +116,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
             """
                     SELECT\s
                         t.id AS id,
-                        'TRANSACTION' AS activity,
+                        'transaction' AS activity,
                         t.amount as amount,
                         NULL as toAmount,
                         t.currency AS currency,
@@ -133,7 +133,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                     
                     SELECT\s
                         tf.id AS id,
-                        'ACCOUNT FUNDING' AS activity,
+                        'transfer' AS activity,
                         tf.amount as amount,
                         NULL as toAmount,
                         tf.currency AS currency,
@@ -150,7 +150,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                     
                     SELECT\s
                         e.id AS id,
-                        'EXCHANGE' AS activity,
+                        'exchange' AS activity,
                         e.amount as amount,
                         e.to_amount as toAmount,
                         NULL AS currency,
