@@ -124,7 +124,7 @@ public class ValidationHelpers {
                 (sortOrder.equals("asc") || sortOrder.equals("desc"))) ? sortOrder : "desc";
     }
 
-    public static boolean validPageAndSize(int page, int size) {
+    public static boolean requestIsWithInvalidPageOrSize(int page, int size) {
         return page < 0 || size <= 0;
     }
 }
