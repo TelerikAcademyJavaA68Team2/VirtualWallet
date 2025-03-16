@@ -80,6 +80,8 @@ public class WalletServiceImpl implements WalletService {
         output.setWallets(wallets);
         output.setHistory(history);
 
+        output.setHasNextPage(queryResult.hasNext());
+        output.setHasPreviousPage(queryResult.hasPrevious());
         output.setPageSize(size);
         output.setTotalPages(queryResult.getTotalPages());
         output.setTotalElements(queryResult.getTotalElements());

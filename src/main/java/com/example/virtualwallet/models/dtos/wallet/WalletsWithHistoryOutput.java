@@ -19,4 +19,6 @@ public class WalletsWithHistoryOutput {
     private int currentPage;
     private int totalPages;
     private int pageSize;
+    private boolean hasNextPage;
+    private boolean hasPreviousPage;
 }
