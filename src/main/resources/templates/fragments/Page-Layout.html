@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${title} + ' | MoneyMe'">Title - MoneyMe</title>
     <link href="/static/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link href="/static/css/materialdesignicons.css" th:href="@{/css/materialdesignicons.css}" rel="stylesheet"/>
     <link rel="icon" th:href="@{/images/favicon.ico}" type="image/png">
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
@@ -271,6 +272,17 @@
 <div th:fragment="coreJS">
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Bundle (JS + Popper.js) -->
+    <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+            dropdownElements.forEach(function(element) {
+                new bootstrap.Dropdown(element);
+            });
+        });
+    </script>
+
     <!-- Core theme JS-->
     <script src="/js/scripts.js"></script>
     <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->

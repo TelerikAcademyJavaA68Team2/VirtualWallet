@@ -11571,3 +11571,70 @@ footer a:hover, footer a:active, footer a:focus {
 .custom-pink {
   background-color: #f8d7da !important; /* Light pink color */
 }
+
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group .icons {
+  right: 0;
+  left: auto;
+}
+
+.ml-3, .mx-3 {
+  margin-right: 16px !important;
+  margin-left: auto !important;
+}
+
+.pl-5, .px-5 {
+  padding-right: 48px !important;
+  padding-left: auto !important;
+}
+
+.custom-control {
+  padding-right: 1.5rem;
+  padding-left: 0;
+  &.custom-switch {
+    padding-right: 2.25rem !important;
+  }
+}
+
+.custom-control-input{
+  position:absolute;
+  left:0;
+  z-index:-1;
+  width:1rem;
+  height:1.25rem;
+  opacity:0
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  .table-center {
+    th {
+      vertical-align: middle !important;
+      cursor: pointer;
+    }
+    tbody {
+      tr {
+        &:hover {
+          color: #3c4858;
+          background-color: #f8f9fa;
+        }
+      }
+    }
+    &.invoice-tb {
+      th, td {
+        text-align: end;
+      }
+    }
+  }
+}
+
+.navbar {
+  z-index: 1050; /* Ensure it's above other elements */
+}
