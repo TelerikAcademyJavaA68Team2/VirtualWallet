@@ -11579,12 +11579,10 @@ footer a:hover, footer a:active, footer a:focus {
   user-select: none; /* Prevent text selection */
 }
 
-/* Hidden Checkbox */
 #currency-toggle {
   display: none; /* Hide the checkbox */
 }
 
-/* Currency Popup Visibility */
 #currency-popup {
   display: none; /* Initially hidden */
   position: absolute;
@@ -11597,17 +11595,14 @@ footer a:hover, footer a:active, footer a:focus {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
 }
 
-/* Show the popup when the checkbox is checked */
 #currency-toggle:checked ~ #currency-popup {
   display: block; /* Show the dropdown */
 }
 
-/* Hover effect for dropdown items */
 #currency-popup .dropdown-item:hover {
   background-color: #f8f9fa; /* Light grey background on hover */
 }
 
-/* Custom Dropdown Styles */
 .custom-dropdown {
   min-width: 75px !important; /* Ensure the dropdown menu is at least 300px wide */
   width: auto;
@@ -11651,6 +11646,7 @@ footer a:hover, footer a:active, footer a:focus {
   justify-content: center;
   align-items: center;
   margin-top: 1rem;
+  padding-right: 10px;
 }
 
 /* Page Size Dropdown */
@@ -11685,20 +11681,8 @@ footer a:hover, footer a:active, footer a:focus {
 /* Pagination Buttons */
 .pagination-modern {
   margin-left: 1rem;
-  gap: 5px;
+  gap: 2px;
 }
-
-/*
-.pagination-modern .page-link {
-  display: inline-flex; !* Use flexbox for alignment *!
-  align-items: center; !* Center content vertically *!
-  justify-content: center; !* Center content horizontally *!
-  height: 36px; !* Fixed height for consistency *!
-  padding: 0.5rem 0.75rem; !* Adjust padding as needed *!
-  line-height: 1; !* Ensure text and icons align properly *!
-  vertical-align: middle; !* Align buttons properly *!
-}*/
-
 
 .pagination-modern .page-item .page-link {
   display: inline-flex !important;  /* Use flexbox for alignment */

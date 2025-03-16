@@ -224,28 +224,31 @@
 
                 </table>
 
+
                 <div class="pagination-container">
                     <!-- Pagination Buttons -->
                     <nav aria-label="Page navigation">
                         <ul class="pagination pagination-modern">
                             <!-- First Page Button -->
-                            <li class="page-item" th:classappend="${wallets.currentPage == 0} ? 'disabled' : ''">
-                                <a class="page-link" href="#"
-                                   th:href="@{/mvc/profile/wallets(page=0, size=${wallets.pageSize})}">
+                            <li class="page-item" th:if="${wallets.currentPage > 6}">
+                                <a class="page-link" href="#" th:href="@{/mvc/profile/wallets(page=0, size=${wallets.pageSize})}">
                                     <i class="bi bi-chevron-double-left"></i>
                                 </a>
                             </li>
 
                             <!-- Previous Page Button -->
-                            <li class="page-item" th:classappend="${wallets.currentPage == 0} ? 'disabled' : ''">
-                                <a class="page-link" href="#"
-                                   th:href="@{/mvc/profile/wallets(page=${wallets.currentPage - 1}, size=${wallets.pageSize})}">
+                            <li class="page-item" th:unless="${wallets.currentPage == 0}">
+                                <a class="page-link" href="#" th:href="@{/mvc/profile/wallets(page=${wallets.currentPage - 1}, size=${wallets.pageSize})}">
                                     <i class="bi bi-chevron-left"></i>
                                 </a>
                             </li>
 
                             <!-- Page Number Buttons -->
-                            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, wallets.totalPages - 1)}"
+                            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(
+                wallets.currentPage > 6 ? (wallets.currentPage - 6) : 0,
+                wallets.currentPage + 6 < wallets.totalPages - 1 ? (wallets.currentPage + 6) : (wallets.totalPages - 1)
+            )}"
+                                th:if="${wallets.totalPages > 0}"
                                 th:classappend="${pageNumber == wallets.currentPage} ? 'active' : ''">
                                 <a class="page-link" href="#"
                                    th:href="@{/mvc/profile/wallets(page=${pageNumber}, size=${wallets.pageSize})}"
@@ -253,26 +256,21 @@
                             </li>
 
                             <!-- Next Page Button -->
-                            <li class="page-item"
-                                th:classappend="${wallets.currentPage >= wallets.totalPages - 1} ? 'disabled' : ''">
-                                <a class="page-link" href="#"
-                                   th:href="@{/mvc/profile/wallets(page=${wallets.currentPage + 1}, size=${wallets.pageSize})}">
+                            <li class="page-item" th:unless="${wallets.currentPage >= wallets.totalPages - 1}">
+                                <a class="page-link" href="#" th:href="@{/mvc/profile/wallets(page=${wallets.currentPage + 1}, size=${wallets.pageSize})}">
                                     <i class="bi bi-chevron-right"></i>
                                 </a>
                             </li>
 
                             <!-- Last Page Button -->
-                            <li class="page-item"
-                                th:classappend="${wallets.currentPage >= wallets.totalPages - 1} ? 'disabled' : ''">
-                                <a class="page-link" href="#"
-                                   th:href="@{/mvc/profile/wallets(page=${wallets.totalPages - 1}, size=${wallets.pageSize})}">
+                            <li class="page-item" th:if="${wallets.currentPage < wallets.totalPages - 7}">
+                                <a class="page-link" href="#" th:href="@{/mvc/profile/wallets(page=${wallets.totalPages - 1}, size=${wallets.pageSize})}">
                                     <i class="bi bi-chevron-double-right"></i>
                                 </a>
                             </li>
                         </ul>
                     </nav>
                 </div>
-
 
             </div>
         </div>
