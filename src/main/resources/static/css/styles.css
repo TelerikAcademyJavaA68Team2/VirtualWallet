@@ -11790,3 +11790,47 @@ footer a:hover, footer a:active, footer a:focus {
 .navbar {
     z-index: 1050; /* Ensure it's above other elements */
 }
+
+
+
+
+.currency-exchange-container {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  overflow: hidden; /* Ensure flags don't overflow the container */
+}
+
+.currency-flag {
+  position: absolute;
+  width: 44px; /* Size of the flags */
+  height: 44px; /* Size of the flags */
+  border-radius: 50%; /* Make the flags circular */
+}
+
+.from-currency-flag {
+  top: 0; /* Align to the top */
+  left: 0; /* Align to the left */
+  z-index: 1; /* Bring it to the front */
+}
+
+.to-currency-flag {
+  bottom: 0; /* Align to the bottom */
+  right: 0; /* Align to the right */
+  z-index: 2; /* Place it behind the "toCurrency" flag */
+}
+
+
+
+/* Set the width of the first column (Activity) to 20% */
+.activity-column {
+  width: 10%; /* Fixed width for the Activity column */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Handle overflow if content is too long */
+  text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+}
+
+/* Allow the middle and right columns to share the remaining space */
+td:not(.activity-column) {
+  width: auto; /* Automatically adjust to fill remaining space */
+}

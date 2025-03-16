@@ -40,7 +40,7 @@
                                         </ul>
                                     </div>
                                     <div th:unless="${walletCurrencies.size() > 0}" class="ms-2">
-                                          <span class="btn btn-outline-dark rounded-pill" style="pointer-events: none;">
+                                          <span class="btn rounded-pill" style="pointer-events: none;">
                                               <span th:text="${mainCurrency}">BGN</span>
                                           </span>
                                     </div>
@@ -83,7 +83,21 @@
                 </table>
 
                 <!--NEW HISTORY Table  -->
-                <div class="py-4"></div>
+                <div class="py-4">
+
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <div th:if="${wallets.hasNextPage}" class="text-muted  align-middle">Showing <span
+                            th:text="${wallets.currentPage * wallets.pageSize + 1 }"></span> to <span
+                            th:text="${wallets.pageSize * (wallets.currentPage+1)}"></span>
+                        of <span th:text="${wallets.totalElements}"></span> history events
+                    </div>
+                    <div th:if="${wallets.totalPages - 1 == wallets.currentPage}" class="text-muted  align-middle">Showing <span
+                            th:text="${wallets.currentPage * wallets.pageSize + 1 }"></span> to <span
+                            th:text="${wallets.totalElements}"></span>
+                        of <span th:text="${wallets.totalElements}"></span> history events
+                    </div>
+                </div>
                 <!--NEW HISTORY Table  -->
 
                 <table style="border: 1px solid darkgray;"
@@ -91,7 +105,7 @@
                     <!-- Table Header -->
                     <thead>
                     <tr id="history-header" class="align-middle">
-                        <td colspan="3" class="p-3 w-100">
+                        <td colspan="3" class="p-3 w-100 ">
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <div class="btn-group me-3">
                                     <button type="button" class="btn btn-outline-dark rounded-pill dropdown-toggle"
@@ -133,8 +147,23 @@
 
 
                         <!-- Left Column: Activity Type -->
-                        <td class="p-3 justify-content-center align-items-start">
-                            <span th:text="${activity.activity}">Activity</span>
+                        <td class="px-3 justify-content-center align-items-start activity-column">
+                            <!-- Exchange -->
+                            <div th:if="${activity.activity == 'exchange'}" class="currency-exchange-container">
+                                <!-- To Currency Flag -->
+                                <img th:src="@{/images/flags/flag__${activity.toCurrency}__.png}"
+                                     alt="To Currency Flag"
+                                     class="currency-flag to-currency-flag"
+                                />
+                                <!-- From Currency Flag -->
+                                <img th:src="@{/images/flags/flag__${activity.fromCurrency}__.png}"
+                                     alt="From Currency Flag"
+                                     class="currency-flag from-currency-flag"
+                                />
+                            </div>
+                            <div th:unless="${activity.activity == 'exchange'}" th:text="${activity.activity}">
+                                Activity
+                            </div>
                         </td>
 
                         <!-- Middle Column: Conditional Logic -->
@@ -159,9 +188,19 @@
                                 <span th:text="${activity.toCurrency}"></span>
                             </div>
 
-                            <!-- Transfer (No additional content needed) -->
-                            <span th:if="${activity.activity == 'transfer'}"></span>
 
+                            <div th:if="${activity.activity == 'transfer'}">
+                                <div th:if="${activity.status == 'APPROVED'}">
+                                    <i class="bi bi-check-circle-fill" style="font-size: 16px; color: green"></i>
+                                    <span style="color: green" th:text="'APPROVED'"></span>
+                                </div>
+                                <div th:if="${activity.status == 'DECLINED'}">
+                                    <i class="bi bi-x-circle-fill" style="font-size: 16px; color: red"></i>
+                                    <span style="color: red" th:text="'DECLINED'"></span>
+                                </div>
+
+
+                            </div>
 
                             <!-- Date -->
                             <small class="text-muted mt-1"
@@ -209,11 +248,11 @@
                         <td colspan="3" class="text-center p-5">
                             <!-- Show Different Images Based on Page Number -->
                             <img th:if="${wallets.totalPages == 0}"
-                                 src="/images/noActivityYet.png"
+                                 src="/images/noHistoryYet.png"
                                  alt="No Activity Yet"
                                  style="max-width: 200px;"/>
                             <img th:unless="${wallets.totalPages == 0}"
-                                 src="/images/pageIsEmpty.png"
+                                 src="/images/emptyPage.png"
                                  alt="Page Is Empty"
                                  style="max-width: 200px;"/>
                             <p th:if="${wallets.totalElements == 0}" class="mt-3">No activity yet.</p>
@@ -230,15 +269,17 @@
                     <nav aria-label="Page navigation">
                         <ul class="pagination pagination-modern">
                             <!-- First Page Button -->
-                            <li class="page-item" th:if="${wallets.currentPage > 6}">
-                                <a class="page-link" href="#" th:href="@{/mvc/profile/wallets(page=0, size=${wallets.pageSize})}">
+                            <li class="page-item" th:if="${wallets.currentPage > 6 && wallets.totalPages > 6}">
+                                <a class="page-link" href="#"
+                                   th:href="@{/mvc/profile/wallets(page=0, size=${wallets.pageSize})}">
                                     <i class="bi bi-chevron-double-left"></i>
                                 </a>
                             </li>
 
                             <!-- Previous Page Button -->
-                            <li class="page-item" th:unless="${wallets.currentPage == 0}">
-                                <a class="page-link" href="#" th:href="@{/mvc/profile/wallets(page=${wallets.currentPage - 1}, size=${wallets.pageSize})}">
+                            <li class="page-item" th:if="${wallets.hasPreviousPage && wallets.currentPage <= wallets.totalPages}">
+                                <a class="page-link" href="#"
+                                   th:href="@{/mvc/profile/wallets(page=${wallets.currentPage - 1}, size=${wallets.pageSize})}">
                                     <i class="bi bi-chevron-left"></i>
                                 </a>
                             </li>
@@ -257,14 +298,16 @@
 
                             <!-- Next Page Button -->
                             <li class="page-item" th:unless="${wallets.currentPage >= wallets.totalPages - 1}">
-                                <a class="page-link" href="#" th:href="@{/mvc/profile/wallets(page=${wallets.currentPage + 1}, size=${wallets.pageSize})}">
+                                <a class="page-link" href="#"
+                                   th:href="@{/mvc/profile/wallets(page=${wallets.currentPage + 1}, size=${wallets.pageSize})}">
                                     <i class="bi bi-chevron-right"></i>
                                 </a>
                             </li>
 
                             <!-- Last Page Button -->
                             <li class="page-item" th:if="${wallets.currentPage < wallets.totalPages - 7}">
-                                <a class="page-link" href="#" th:href="@{/mvc/profile/wallets(page=${wallets.totalPages - 1}, size=${wallets.pageSize})}">
+                                <a class="page-link" href="#"
+                                   th:href="@{/mvc/profile/wallets(page=${wallets.totalPages - 1}, size=${wallets.pageSize})}">
                                     <i class="bi bi-chevron-double-right"></i>
                                 </a>
                             </li>
