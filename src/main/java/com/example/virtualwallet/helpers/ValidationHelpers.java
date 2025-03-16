@@ -28,6 +28,9 @@ public class ValidationHelpers {
     public static final Set<String> VALID_ACCOUNT_STATUS_SET = Set.of("ACTIVE", "BLOCKED", "PENDING", "DELETED", "DELETED_AND_BLOCKED");
     public static final Set<String> VALID_ROLE_SET = Set.of("ADMIN", "USER");
 
+    private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd - HH:mm");
+    private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm");
+
     public static final DateTimeFormatter CUSTOM_FORMATTER =
             DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm");
 
@@ -79,6 +82,19 @@ public class ValidationHelpers {
             // return Optional.empty();
             throw new InvalidUserInputException("Invalid date/time format: " + value +
                     ". Expected format: dd.MM.yyyy - HH:mm", ex);
+        }
+    }
+
+    public static String convertToCustomFormat(String inputDate) {
+        if (inputDate == null || inputDate.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            LocalDateTime dateTime = LocalDateTime.parse(inputDate.trim(), INPUT_FORMATTER);
+            return dateTime.format(OUTPUT_FORMATTER);
+        } catch (DateTimeParseException ex) {
+            throw new IllegalArgumentException("Invalid date format: " + inputDate +
+                    ". Expected format: yyyy-MM-dd - HH:mm", ex);
         }
     }
 

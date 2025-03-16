@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/Page-Layout :: head('Transactions')}">
+</head>
+<body>
+<header th:insert="~{fragments/Page-Layout :: navigation}"></header>
+<div class="row justify-content-center mt-5">
+    <div class="col-10">
+        <div class="section-title mb-4 d-flex justify-content-center align-items-center position-relative">
+            <h1 class="title mb-3 text-center w-100" style="margin-top: 50px;" th:text="#{transactions.history.title}">
+                Transaction History</h1>
+        </div>
+    </div><!--end col-->
+</div><!--end row-->
+<section class="section">
+    <div class="container">
+        <div class="p-4">
+            <form id="query-form" th:action="@{/mvc/profile/transactions}" method="get">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="from-date">From Date:</label>
+                        <input type="date" id="from-date" name="fromDate" class="form-control datepicker"
+                               th:value="${fromDate}" placeholder="Select starting date...">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="to-date">To Date:</label>
+                        <input type="date" id="to-date" name="toDate" class="form-control datepicker"
+                               th:value="${toDate}" placeholder="Select ending date...">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="min-amount">Min Amount:</label>
+                        <input type="number" step="0.01" id="min-amount" name="minAmount" class="form-control" min="0"
+                               th:value="${minAmount}" placeholder="Enter amount...">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="max-amount">Max Amount:</label>
+                        <input type="number" step="0.01" id="max-amount" name="maxAmount" class="form-control" min="0"
+                               th:value="${maxAmount}" placeholder="Enter amount...">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="sender">Sender:</label>
+                        <input type="text" id="sender" name="sender" class="form-control" th:value="${sender}"
+                               placeholder="Enter username...">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="recipient">Recipient:</label>
+                        <input type="text" id="recipient" name="recipient" class="form-control" th:value="${recipient}"
+                               placeholder="Enter recipient...">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="currency">Currency:</label>
+                        <input type="text" id="currency" name="currency" class="form-control" th:value="${currency}"
+                               placeholder="Enter currency : 'BGN', 'EUR', etc...">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Sort By:</label>
+                        <select name="sortBy" class="form-control">
+                            <option value="date" th:selected="${sortBy == 'date'}">Date</option>
+                            <option value="amount" th:selected="${sortBy == 'amount'}">Amount</option>
+                            <option value="currency" th:selected="${sortBy == 'currency'}">Currency</option>
+                            <option value="senderUsername" th:selected="${sortBy == 'senderUsername'}">Sender</option>
+                            <option value="recipientUsername" th:selected="${sortBy == 'recipientUsername'}">Recipient
+                            </option>
+                        </select>
+                        <select name="sortOrder" class="form-control mt-2">
+                            <option value="asc" th:selected="${sortOrder == 'asc'}">Ascending</option>
+                            <option value="desc" th:selected="${sortOrder == 'desc'}">Descending</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 text-center mt-3">
+                        <input type="submit" class="btn btn-primary" value="Search">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div th:if="${transactions.isEmpty()}">
+            <h2 th:text="#{transactions.empty}" th:align="center"></h2>
+        </div>
+        <div class="p-4" th:if="!${transactions.isEmpty()}">
+            <div class="d-flex justify-content-between">
+                <p class="text-muted">Showing <span th:text="${startIndex + 1}"></span> to <span
+                        th:text="${endIndex}"></span>
+                    of <span th:text="${totalTransactions}"></span> transactions</p>
+            </div>
+            <div class="table-responsive bg-white shadow rounded mt-3">
+                <table class="table mb-0 table-center">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Sender</th>
+                        <th>Recipient</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="transaction : ${transactions}">
+                        <td th:text="${transaction.date != null ? #temporals.format(transaction.date, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
+
+                        <!-- Amount with Currency Symbol -->
+                        <td>
+                            <span th:text="${transaction.amount}"></span>
+                            <span th:switch="${transaction.currency.toString()}">
+                <span th:case="'USD'">$</span>  <!-- US Dollar -->
+                <span th:case="'BGN'">лв.</span>  <!-- Bulgarian Lev -->
+                <span th:case="'EUR'">€</span>  <!-- Euro -->
+                <span th:case="'GBP'">£</span>  <!-- British Pound -->
+                <span th:case="'JPY'">¥</span>  <!-- Japanese Yen -->
+                <span th:case="'CNH'">¥</span>  <!-- Chinese Yuan -->
+                <span th:case="'AUD'">A$</span> <!-- Australian Dollar -->
+                <span th:case="'CAD'">C$</span> <!-- Canadian Dollar -->
+                <span th:case="'CHF'">CHF</span> <!-- Swiss Franc -->
+                <span th:case="*">¤</span> <!-- Default case for unknown currencies -->
+            </span>
+                        </td>
+                        <td th:text="${transaction.senderUsername}"></td>
+                        <td th:text="${transaction.recipientUsername}"></td>
+                        <td th:text="${transaction.description}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-container text-center mt-4">
+                <ul class="pagination">
+                    <!-- Previous Page Button -->
+                    <li th:if="${pageNumber > 0}">
+                        <a th:href="@{/mvc/profile/transactions(
+                            page=${pageNumber - 1},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            minAmount=${minAmount},
+                            maxAmount=${maxAmount},
+                            currency=${currency},
+                            sender=${sender},
+                            recipient=${recipient},
+                            sortBy=${sortBy},
+                            sortOrder=${sortOrder}
+                        )}" class="page-link">&laquo;</a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    <li th:each="i : ${#numbers.sequence(0, lastPage)}">
+                        <a th:href="@{/mvc/profile/transactions(
+                            page=${i},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            minAmount=${minAmount},
+                            maxAmount=${maxAmount},
+                            currency=${currency},
+                            sender=${sender},
+                            recipient=${recipient},
+                            sortBy=${sortBy},
+                            sortOrder=${sortOrder}
+                        )}"
+                           class="page-link"
+                           th:classappend="${i == pageNumber} ? 'active' : ''">[[${i + 1}]]</a>
+                    </li>
+
+                    <!-- Next Page Button -->
+                    <li th:if="${pageNumber < lastPage}">
+                        <a th:href="@{/mvc/profile/transactions(
+                            page=${pageNumber + 1},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            minAmount=${minAmount},
+                            maxAmount=${maxAmount},
+                            currency=${currency},
+                            sender=${sender},
+                            recipient=${recipient},
+                            sortBy=${sortBy},
+                            sortOrder=${sortOrder}
+                        )}" class="page-link">&raquo;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<script th:insert="~{fragments/Page-Layout :: coreJS}"></script>
+</body>
+</html>

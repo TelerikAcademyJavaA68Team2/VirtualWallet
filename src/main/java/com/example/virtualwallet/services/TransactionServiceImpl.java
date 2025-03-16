@@ -130,4 +130,17 @@ public class TransactionServiceImpl implements TransactionService {
                 .map(ModelMapper::transactionToTransactionOutput)
                 .toList();
     }
+
+    @Override
+    public Page<Transaction> filterTransactionsPage(TransactionFilterOptions filterOptions) {
+        Specification<Transaction> spec =
+                TransactionSpecification.buildTransactionSpecification(filterOptions);
+
+        Sort sort = convertToSort(filterOptions.getSortBy(), filterOptions.getSortOrder());
+        Pageable pageable = PageRequest.of(filterOptions.getPage(), filterOptions.getSize(), sort);
+
+        Page<Transaction> pageResult = transactionRepository.findAll(spec, pageable);
+
+        return pageResult;
+    }
 }
