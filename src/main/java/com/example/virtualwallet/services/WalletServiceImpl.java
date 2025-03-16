@@ -90,16 +90,16 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletPageOutput getWalletPageById(String currency, int page, int size) {
+    public WalletPageOutput getWalletPageById(UUID walletId, int page, int size) {
         User user = userService.getAuthenticatedUser();
-        Currency enumCurrency = validateAndConvertCurrency(currency);
-        if (!checkIfUserHasActiveWalletWithCurrency(user.getId(), enumCurrency)) {
-            throw new EntityNotFoundException("Wallet", "currency", currency);
-        }
-        Wallet wallet = getOrCreateWalletByUsernameAndCurrency(user.getUsername(), enumCurrency);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Object[]> queryResult = walletRepository.findWalletHistory(wallet.getId(), pageable);
 
+        if (!walletRepository.checkIfUserHasActiveWalletWithId(user.getId(), walletId)) {
+            throw new EntityNotFoundException("Wallet", walletId);
+        }
+        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new EntityNotFoundException("Wallet", walletId));
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Object[]> queryResult = walletRepository.findWalletHistory(walletId, pageable);
         List<ActivityOutput> history = queryResult.stream().map(ModelMapper::mapObjectToActivity).toList();
 
         WalletPageOutput pageOutput = new WalletPageOutput();

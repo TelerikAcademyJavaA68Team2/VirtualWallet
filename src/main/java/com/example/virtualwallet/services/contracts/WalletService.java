@@ -17,7 +17,7 @@ public interface WalletService {
 
     WalletsWithHistoryOutput getActiveWalletsOfAuthenticatedUser(String mainCurrency, int page, int size);
 
-    WalletPageOutput getWalletPageById(String currency, int page, int size);
+    WalletPageOutput getWalletPageById(UUID walletId, int page, int size);
 
     void softDeleteAuthenticatedUserWalletByCurrency(String currency);
 

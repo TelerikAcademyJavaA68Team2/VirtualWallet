@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
 import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
 
@@ -38,14 +40,14 @@ public class WalletController {
         return new ResponseEntity<>(currency + " Wallet deleted successfully!", HttpStatus.OK);
     }
 
-    @GetMapping("/{currency}")
-    public ResponseEntity<?> getWalletHistory(@PathVariable String currency,
+    @GetMapping("/{walletId}")
+    public ResponseEntity<?> getWalletHistory(@PathVariable UUID walletId,
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size) {
         if (requestIsWithInvalidPageOrSize(page, size)) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
-        return new ResponseEntity<>(walletService.getWalletPageById(currency, page, size), HttpStatus.OK);
+        return new ResponseEntity<>(walletService.getWalletPageById(walletId, page, size), HttpStatus.OK);
     }
 
 
