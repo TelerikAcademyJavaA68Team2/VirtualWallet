@@ -23,6 +23,8 @@ public class ActivityOutput {
     private String toCurrency;
     private String senderUsername;
     private String recipientUsername;
+    private String senderPhoto;
+    private String recipientPhoto;
     private String status;
     private LocalDateTime date;
 
@@ -36,6 +38,8 @@ public class ActivityOutput {
             String toCurrency,
             String senderUsername,
             String recipientUsername,
+            String senderPhoto,
+            String recipientPhoto,
             String status,
             LocalDateTime date
     ) {
@@ -48,6 +52,8 @@ public class ActivityOutput {
         this.toCurrency = toCurrency;
         this.senderUsername = senderUsername;
         this.recipientUsername = recipientUsername;
+        this.senderPhoto = senderPhoto;
+        this.recipientPhoto = recipientPhoto;
         this.status = status;
         this.date = date;
     }

@@ -124,9 +124,13 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         NULL AS toCurrency,
                         t.sender_username AS senderUsername,
                         t.recipient_username AS recipientUsername,
+                        su.photo as senderPhoto,
+                        ru.photo as recipientPhoto,
                         NULL AS status,
                         t.date as date
                     FROM Transaction t
+                    JOIN user su ON t.sender_username = su.username
+                    JOIN user ru ON t.sender_username = ru.username
                     WHERE t.sender_username = :userUsername OR t.recipient_username = :userUsername
                     
                     UNION ALL
@@ -141,6 +145,8 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         NULL AS toCurrency,
                         NULL AS senderUsername,
                         tf.recipient_username AS recipientUsername,
+                        NULL as senderPhoto,
+                        NULL as recipientPhoto,
                         tf.status AS status,
                         tf.date as date
                     FROM Transfer tf
@@ -158,6 +164,8 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         e.to_currency AS toCurrency,
                         NULL AS senderUsername,
                         NULL AS recipientUsername,
+                        NULL as senderPhoto,
+                        NULL as recipientPhoto,
                         NULL AS status,
                         e.date as date
                     FROM Exchange e

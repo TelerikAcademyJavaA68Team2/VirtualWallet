@@ -211,7 +211,9 @@ public class ModelMapper {
                 (String) row[7],
                 (String) row[8],
                 (String) row[9],
-                row[10] != null ? ((Timestamp) row[10]).toLocalDateTime() : null
+                (String) row[10],
+                (String) row[11],
+                row[12] != null ? ((Timestamp) row[12]).toLocalDateTime() : null
 
         );
     }
