@@ -5,19 +5,19 @@ INSERT INTO virtual_wallet.user (id, first_name, last_name, username, email, pas
                                  status, created_at)
 VALUES ('001e4567-e89b-12d3-a456-426614174000', 'Georgi', 'Benchev', 'georgi', 'georgi@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
-        '0876285805', '/images/default-profile-pic.png', 'ADMIN', 'ACTIVE', NOW()),
+        '0876285805', 'https://avatars.githubusercontent.com/u/184780317?v=4&size=64', 'ADMIN', 'ACTIVE', NOW()),
 
        ('002e4567-e89b-12d3-a456-426614174000', 'Ivan', 'Ivanov', 'vankata', 'vankata@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
-        '0000000000', '/images/default-profile-pic.png', 'ADMIN', 'ACTIVE', NOW()),
+        '0000000000', 'https://avatars.githubusercontent.com/u/73892591?v=4', 'ADMIN', 'ACTIVE', NOW()),
 
        ('003e4567-e89b-12d3-a456-426614174000', 'Yordan', 'Tsolov', 'yordan', 'yordan@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
-        '0000000001', '/images/default-profile-pic.png', 'ADMIN', 'ACTIVE', NOW()),
+        '0000000001', 'https://avatars.githubusercontent.com/u/117528680?s=130&v=4', 'ADMIN', 'ACTIVE', NOW()),
 
        ('004e4567-e89b-12d3-a456-426614174000', 'Dimitar', 'Dimitrov', 'dimitar', 'dimitar@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
-        '0000000002', '/images/default-profile-pic.png', 'ADMIN', 'ACTIVE', NOW()),
+        '0000000002', 'https://avatars.githubusercontent.com/u/58068879?s=130&v=4', 'ADMIN', 'ACTIVE', NOW()),
 
        ('005e4567-e89b-12d3-a456-426614174000', 'Ivan', 'Georgiev', 'ivan', 'ivan29654@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
@@ -25,7 +25,7 @@ VALUES ('001e4567-e89b-12d3-a456-426614174000', 'Georgi', 'Benchev', 'georgi', '
 
        ('006e4567-e89b-12d3-a456-426614174000', 'Daniel', 'Kolev', 'daniel', 'daniel@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
-        '0000000004', '/images/default-profile-pic.png', 'ADMIN', 'ACTIVE', NOW()),
+        '0000000004', 'https://avatars.githubusercontent.com/u/184924322?s=130&v=4', 'ADMIN', 'ACTIVE', NOW()),
 
        ('007e4567-e89b-12d3-a456-426614174000', 'Chavdar', 'Tsvetkov', 'chavdar', 'chavo@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
@@ -33,15 +33,15 @@ VALUES ('001e4567-e89b-12d3-a456-426614174000', 'Georgi', 'Benchev', 'georgi', '
 
        ('008e4567-e89b-12d3-a456-426614174000', 'Lachezar', 'Lazarov', 'lachezar', 'lachezar@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
-        '0000000006', '/images/default-profile-pic.png', 'ADMIN', 'ACTIVE', NOW()),
+        '0000000006', 'https://avatars.githubusercontent.com/u/91571370?s=130&v=4', 'ADMIN', 'ACTIVE', NOW()),
 
        ('009e4567-e89b-12d3-a456-426614174000', 'Nikolay', 'Pilashev', 'nikolay', 'nikolay@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
-        '0000000007', '/images/default-profile-pic.png', 'ADMIN', 'ACTIVE', NOW()),
+        '0000000007', 'https://avatars.githubusercontent.com/u/181455727?s=130&v=4', 'ADMIN', 'ACTIVE', NOW()),
 
        ('010e4567-e89b-12d3-a456-426614174000', 'Viktor', 'Angelov', 'viktor', 'viktor@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
-        '0000000008', '/images/default-profile-pic.png', 'ADMIN', 'ACTIVE', NOW());
+        '0000000008', 'https://avatars.githubusercontent.com/u/87434779?s=130&v=4', 'ADMIN', 'ACTIVE', NOW());
 
 -- Cards -------------------------------------------------------------------
 INSERT INTO virtual_wallet.card (id, card_holder, card_number, created_at, cvv, expiration_date, owner_id)
