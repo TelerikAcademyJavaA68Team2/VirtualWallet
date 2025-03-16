@@ -38,11 +38,15 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         NULL AS toCurrency,
                         t.sender_username AS senderUsername,
                         t.recipient_username AS recipientUsername,
+                        su.photo AS senderPhoto,
+                        ru.photo AS recipientPhoto,
                         NULL AS status,
                         t.date as date
                     FROM Transaction t
                     JOIN Wallet sw ON t.sender_wallet_id = sw.id
+                    JOIN User su ON sw.owner_id = su.id
                     JOIN Wallet rw ON t.recipient_wallet_id = rw.id
+                    JOIN User ru ON rw.owner_id = ru.id
                     WHERE sw.id = :walletId OR rw.id = :walletId
                     
                     UNION ALL
@@ -57,6 +61,8 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         NULL AS toCurrency,
                         NULL AS senderUsername,
                         tf.recipient_username AS recipientUsername,
+                        NULL AS senderPhoto,
+                        NULL AS recipientPhoto,
                         tf.status AS status,
                         tf.date as date
                     FROM Transfer tf
@@ -75,6 +81,8 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         e.to_currency AS toCurrency,
                         NULL AS senderUsername,
                         NULL AS recipientUsername,
+                        NULL AS senderPhoto,
+                        NULL AS recipientPhoto,
                         NULL AS status,
                         e.date as date
                     FROM Exchange e
@@ -130,7 +138,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         t.date as date
                     FROM Transaction t
                     JOIN user su ON t.sender_username = su.username
-                    JOIN user ru ON t.sender_username = ru.username
+                    JOIN user ru ON t.recipient_username = ru.username
                     WHERE t.sender_username = :userUsername OR t.recipient_username = :userUsername
                     
                     UNION ALL
@@ -202,4 +210,12 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
             "AND w.currency = :currency " +
             "AND w.isDeleted = false")
     boolean checkIfUserHasActiveWalletWithCurrency(@Param("userId") UUID userId, @Param("currency") Currency currency);
+
+
+    @Query("SELECT CASE WHEN COUNT(w) > 0 THEN true ELSE false END FROM Wallet w " +
+            "WHERE w.owner.id = :userId " +
+            "AND w.id = :walletId " +
+            "AND w.isDeleted = false")
+    boolean checkIfUserHasActiveWalletWithId(@Param("userId") UUID userId, @Param("walletId") UUID walletId);
+
 }
