@@ -11526,16 +11526,6 @@ footer a:hover, footer a:active, footer a:focus {
 }
 
 
-
-.clickable-row {
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.clickable-row:hover {
-  background-color: #f1f1f1;
-}
-
 #wallet-header td,
 #add-wallet-row td {
   width: 100%; /* Ensure the header spans the full width */
@@ -11547,94 +11537,272 @@ footer a:hover, footer a:active, footer a:focus {
 
 /* Custom Table Border */
 .custom-border {
-  border: 1px solid black; /* Add a 1px black border around the table */
-  border-radius: 10px; /* Rounded corners */
-  overflow: hidden; /* Ensure borders are clipped properly */
-  border-collapse: separate; /* Avoid collapsing borders */
-  border-spacing: 0; /* Remove spacing between cells */
+  border: 1px solid black !important; /* Add a 1px black border around the table */
+  /*
+  border-radius: 10px !important; !* Rounded corners *!
+  */
+  overflow: visible;
+  z-index: 1000 !important;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 /* Remove individual borders and background colors */
 .custom-border tr,
 .custom-border td,
 .custom-border th {
-  border: none; /* Remove individual borders */
-  background-color: transparent; /* Ensure no background color interferes */
+  border: none;
+  background-color: transparent;
 }
-/* Arrow Styling */
-.bi-arrow-right,
-.bi-arrow-left {
-  margin-right: 8px; /* Space between arrow and text */
-}
-
 
 .custom-pink {
-  background-color: #f8d7da !important; /* Light pink color */
+  background-color: #f8d7da !important;
 }
 
 
+/* Ensure proper alignment for the currency selector */
+.text-end.w-100.position-relative {
+  display: flex;
+  justify-content: flex-end; /* Align content to the right */
+  align-items: center; /* Vertically center the content */
+  position: relative; /* Make this the reference point for the popup */
+  overflow: visible  !important; /* Allow the dropdown to overflow outside the table */
+}
+
+
+
+/* Currency Selector Styling */
+/* Currency Selector Styling */
+/* Currency Selector Styling */
+#currency-selector {
+  cursor: pointer;
+  user-select: none; /* Prevent text selection */
+}
+
+/* Hidden Checkbox */
+#currency-toggle {
+  display: none; /* Hide the checkbox */
+}
+
+/* Currency Popup Visibility */
+#currency-popup {
+  display: none; /* Initially hidden */
+  position: absolute;
+  top: 100%; /* Position below the trigger */
+  right: 0;
+  min-width: 120px; /* Minimum width for the dropdown */
+  z-index: 1000; /* Ensure it appears above other elements */
+  background-color: white; /* Background color */
+  border: 1px solid #e0c7ed; /* Subtle border */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+/* Show the popup when the checkbox is checked */
+#currency-toggle:checked ~ #currency-popup {
+  display: block; /* Show the dropdown */
+}
+
+/* Hover effect for dropdown items */
+#currency-popup .dropdown-item:hover {
+  background-color: #f8f9fa; /* Light grey background on hover */
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown {
+  min-width: 75px !important; /* Ensure the dropdown menu is at least 300px wide */
+  width: auto;
+  position: absolute !important;
+  z-index: 1000 !important;
+  overflow: visible !important;
+  clip: auto !important; /* Prevent clipping */
+  clip-path: none !important; /* Prevent clipping */
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown-95px {
+  min-width: 95px !important; /* Ensure the dropdown menu is at least 300px wide */
+  width: auto;
+  position: absolute !important;
+  z-index: 1000 !important;
+  overflow: visible !important;
+  clip: auto !important; /* Prevent clipping */
+  clip-path: none !important; /* Prevent clipping */
+}
+
+/* Ensure the dropdown menu is not clipped */
+.custom-dropdown-parent {
+  overflow: visible !important; /* Allow the dropdown to overflow */
+}
+
+.custom-dropdown[data-bs-popper] {
+  top: calc(100% + 0.5rem) !important; /* Add spacing below the button */
+  left: auto !important;
+  right: 0 !important; /* Align with the right edge */
+  margin-top: 0.5rem !important; /* Add spacing between button and menu */
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+/* Pagination Container */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+/* Page Size Dropdown */
+.page-size-dropdown .btn {
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  color: #495057;
+  transition: all 0.3s ease;
+}
+
+.page-size-dropdown .btn:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.page-size-dropdown .dropdown-menu {
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.page-size-dropdown .dropdown-item {
+  color: #495057;
+  transition: all 0.3s ease;
+}
+
+.page-size-dropdown .dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #0d6efd;
+}
+
+/* Pagination Buttons */
+.pagination-modern {
+  margin-left: 1rem;
+  gap: 5px;
+}
+
+/*
+.pagination-modern .page-link {
+  display: inline-flex; !* Use flexbox for alignment *!
+  align-items: center; !* Center content vertically *!
+  justify-content: center; !* Center content horizontally *!
+  height: 36px; !* Fixed height for consistency *!
+  padding: 0.5rem 0.75rem; !* Adjust padding as needed *!
+  line-height: 1; !* Ensure text and icons align properly *!
+  vertical-align: middle; !* Align buttons properly *!
+}*/
+
+
+.pagination-modern .page-item .page-link {
+  display: inline-flex !important;  /* Use flexbox for alignment */
+  align-items: center !important; /* Center content vertically */
+  justify-content: center !important; /* Center content horizontally */
+  height: 36px !important; /* Fixed height for consistency */
+  line-height: 1 !important;/* Ensure text and icons align properly */
+  vertical-align: middle !important; /* Align buttons properly */
+
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  color: #495057;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.pagination-modern .page-item .page-link:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+  color: #0d6efd;
+}
+
+.pagination-modern .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+}
+
+.pagination-modern .page-item.disabled .page-link {
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+/* Icons for Pagination */
+.pagination-modern .page-link i {
+  font-size: 1rem;
+}
+
 .form-group {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .form-group .icons {
-  right: 0;
-  left: auto;
+    right: 0;
+    left: auto;
 }
 
 .ml-3, .mx-3 {
-  margin-right: 16px !important;
-  margin-left: auto !important;
+    margin-right: 16px !important;
+    margin-left: auto !important;
 }
 
 .pl-5, .px-5 {
-  padding-right: 48px !important;
-  padding-left: auto !important;
+    padding-right: 48px !important;
+    padding-left: auto !important;
 }
 
 .custom-control {
-  padding-right: 1.5rem;
-  padding-left: 0;
-  &.custom-switch {
-    padding-right: 2.25rem !important;
-  }
+    padding-right: 1.5rem;
+    padding-left: 0;
+    &.custom-switch {
+        padding-right: 2.25rem !important;
+    }
 }
 
 .custom-control-input{
-  position:absolute;
-  left:0;
-  z-index:-1;
-  width:1rem;
-  height:1.25rem;
-  opacity:0
+    position:absolute;
+    left:0;
+    z-index:-1;
+    width:1rem;
+    height:1.25rem;
+    opacity:0
 }
 
 .table-responsive {
-  display: block;
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  .table-center {
-    th {
-      vertical-align: middle !important;
-      cursor: pointer;
-    }
-    tbody {
-      tr {
-        &:hover {
-          color: #3c4858;
-          background-color: #f8f9fa;
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    .table-center {
+        th {
+            vertical-align: middle !important;
+            cursor: pointer;
         }
-      }
+        tbody {
+            tr {
+                &:hover {
+                    color: #3c4858;
+                    background-color: #f8f9fa;
+                }
+            }
+        }
+        &.invoice-tb {
+            th, td {
+                text-align: end;
+            }
+        }
     }
-    &.invoice-tb {
-      th, td {
-        text-align: end;
-      }
-    }
-  }
 }
 
 .navbar {
-  z-index: 1050; /* Ensure it's above other elements */
+    z-index: 1050; /* Ensure it's above other elements */
 }
