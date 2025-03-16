@@ -96,6 +96,11 @@ public class ValidationHelpers {
                 ? Optional.empty() : Optional.of(Currency.valueOf(value.toUpperCase()));
     }
 
+    public static Optional<String> sanitizeStringCurrency(String value) {
+        return (value == null || value.trim().isEmpty() || value.length() < 3 || !VALID_CURRENCIES_SET.contains(value.substring(0, 3).toUpperCase()))
+                ? Optional.empty() : Optional.of(value.substring(0,3).toUpperCase());
+    }
+
     public static Optional<Role> sanitizeRole(String role) {
         if (role == null || role.trim().isEmpty()) {
             return Optional.empty();
