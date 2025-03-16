@@ -142,8 +142,7 @@
                     <tbody th:if="${wallets.history != null && wallets.history.size() > 0}" id="history-list">
                     <tr th:each="activity : ${wallets.history}"
                         class="clickable-row align-middle"
-                        th:attr="data-href='/mvc/profile/' + ${activity.activity} + 's/' + ${activity.id}"
-                        th:classappend="${activity.activity == 'transaction' && activity.senderUsername == currentUserUsername} ? 'custom-pink' : ''">
+                        th:attr="data-href='/mvc/profile/' + ${activity.activity} + 's/' + ${activity.id}">
 
 
                         <!-- Left Column: Activity Type -->
@@ -161,8 +160,21 @@
                                      class="currency-flag from-currency-flag"
                                 />
                             </div>
-                            <div th:unless="${activity.activity == 'exchange'}" th:text="${activity.activity}">
-                                Activity
+
+                            <div th:if="${activity.activity == 'transaction'}" class="d-flex align-items-center currency-exchange-container">
+                                <img th:if="${activity.senderUsername.equals(currentUserUsername)}" th:src="${activity.recipientPhoto}"
+                                     alt="Profile Photo"
+                                     style="width: 60px; height: 60px; border-radius: 50%"/>
+                                <img th:if="${activity.recipientUsername.equals(currentUserUsername)}" th:src="${activity.senderPhoto}"
+                                     alt="Profile Photo"
+                                     style="width: 60px; height: 60px; border-radius: 50%"/>
+                            </div>
+
+
+                            <div th:if="${activity.activity == 'transfer'}" class="d-flex align-items-center currency-exchange-container">
+                                <img src="/images/transfer.png"
+                                     alt="Profile Photo"
+                                     style="width: 60px; height: 60px;"/>
                             </div>
                         </td>
 
@@ -215,11 +227,18 @@
                                 <!-- Conditional Logic for Amount Sign -->
                                 <span th:if="${activity.activity == 'transaction' && activity.senderUsername != currentUserUsername}">+</span>
                                 <span th:if="${activity.activity == 'transaction' && activity.senderUsername == currentUserUsername}">-</span>
-                                <span th:if="${activity.activity != 'transaction'}">+</span>
+                                <span th:if="${activity.activity == 'exchange'}">+</span>
+                                <span th:if="${activity.activity == 'transfer' && activity.status == 'APPROVED'}">+</span>
 
                                 <!-- Amount -->
-                                <span th:if="${activity.activity != 'exchange'}"
+                                <span th:if="${activity.activity == 'transaction'}"
                                       th:text="${activity.amount}">100.00</span>
+
+                                <span th:if="${activity.activity == 'transfer' && activity.status == 'DECLINED'}"
+                                   style="text-decoration: line-through;"   th:text="${activity.amount}">100.00</span>
+                                <span th:if="${activity.activity == 'transfer' && activity.status == 'APPROVED'}"
+                                      th:text="${activity.amount}">100.00</span>
+
                                 <span th:if="${activity.activity == 'exchange'}"
                                       th:text="${activity.toAmount}">90.00</span>
 
