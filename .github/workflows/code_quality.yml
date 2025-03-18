@@ -1,10 +1,11 @@
-name: Qodana Code Quality Check
+name: Qodana
 on:
   workflow_dispatch:
   pull_request:
   push:
-    branches:
-      - master
+    branches: # Specify your branches here
+      - main # The 'main' branch
+      - 'releases/*' # The release branches
 
 jobs:
   qodana:
@@ -20,5 +21,8 @@ jobs:
           fetch-depth: 0
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2024.3
+        with:
+          pr-mode: false
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+          QODANA_ENDPOINT: 'https://qodana.cloud'
