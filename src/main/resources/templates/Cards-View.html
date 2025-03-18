@@ -37,8 +37,12 @@
                             <div class="flip-card-front"
                                  th:classappend="${#strings.startsWith(card.cardNumber, '4')} ? 'visa-card' :
                              (${#strings.startsWith(card.cardNumber, '5')} ? 'mastercard-card' : 'grey-card')">
-                                <img th:if="${#strings.startsWith(card.cardNumber, '4')}" src="/images/visa-logo.jpg" alt="Visa">
-                                <img th:if="${#strings.startsWith(card.cardNumber, '5')}" src="/images/mastercard-logo.png" alt="MasterCard">
+                                <img th:if="${#strings.startsWith(card.cardNumber, '4')}"
+                                     src="/images/visa-logo.png" alt="Visa"
+                                     style="width: 100px; height: 60px;">
+                                <img th:if="${#strings.startsWith(card.cardNumber, '5')}"
+                                     src="/images/mastercard-logo.png" alt="MasterCard"
+                                     style="width: 110px; height: 60px;">
                                 <h6 class="card-subtitle mt-4">•••• •••• ••••
                                     <span th:text="${#strings.substring(card.cardNumber, #strings.length(card.cardNumber) - 4)}"></span>
                                 </h6>

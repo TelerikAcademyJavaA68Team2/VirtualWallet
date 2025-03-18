@@ -11456,6 +11456,17 @@ footer a:hover, footer a:active, footer a:focus {
   color: white;
 }
 
+.visa-card {
+  background: linear-gradient(135deg, #1A1F71,#0072CE); /* Blue to white */
+  color: #FFFFFF; /* White text for contrast */
+}
+
+.mastercard-card {
+  background: linear-gradient(45deg, #EE5F00, #EB001B, #333333); /* Orange to red to dark gray */
+  color: #FFFFFF;
+}
+
+
 /* Front Side (Card Display) */
 .flip-card-front {
   display: flex;
