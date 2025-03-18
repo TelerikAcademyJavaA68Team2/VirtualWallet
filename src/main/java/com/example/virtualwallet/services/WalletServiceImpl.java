@@ -114,14 +114,23 @@ public class WalletServiceImpl implements WalletService {
         List<ActivityOutput> history = queryResult.stream().map(ModelMapper::mapObjectToActivity).toList();
 
         WalletPageOutput pageOutput = new WalletPageOutput();
-        pageOutput.setPageSize(size);
-        pageOutput.setCurrentPage(page);
-        pageOutput.setTotalPages(queryResult.getTotalPages());
-        pageOutput.setTotalElements(queryResult.getTotalElements());
 
-        pageOutput.setActivities(history);
+        pageOutput.setHistory(history);
+        pageOutput.setWalletId(walletId);
         pageOutput.setBalance(wallet.getBalance());
         pageOutput.setCurrency(wallet.getCurrency());
+        pageOutput.setHistory(history);
+
+        List<Wallet> listWallets = walletRepository.findActiveWalletsByUserId(user.getId());
+        List<WalletBasicOutput> wallets = listWallets.stream().filter(e -> e.getId() != walletId).map(ModelMapper::mapWalletToBasicWalletOutput).toList();
+        pageOutput.setWallets(wallets);
+
+        pageOutput.setTotalElements(queryResult.getTotalElements());
+        pageOutput.setCurrentPage(page);
+        pageOutput.setTotalPages(queryResult.getTotalPages());
+        pageOutput.setPageSize(size);
+        pageOutput.setHasNextPage(queryResult.hasNext());
+        pageOutput.setHasPreviousPage(queryResult.hasPrevious());
         return pageOutput;
     }
 

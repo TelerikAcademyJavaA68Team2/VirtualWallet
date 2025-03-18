@@ -1,6 +1,7 @@
 package com.example.virtualwallet.models.dtos.pageable;
 
 import com.example.virtualwallet.models.dtos.wallet.ActivityOutput;
+import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -19,7 +20,9 @@ public class WalletPageOutput {
 
     private Currency currency;
 
-    private List<ActivityOutput> activities;
+    private List<ActivityOutput> history;
+
+    private List<WalletBasicOutput> wallets;
 
     // Pagination metadata
     private long totalElements;
