@@ -3,14 +3,11 @@
 <head th:insert="~{fragments/Page-Layout :: head(Wallets)}"></head>
 <body id="page-top">
 <nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
-
-
 <section class="section mt-60">
     <div class="container-fluid mt-5 p-0">
         <div class="row gx-2 justify-content-center">
             <div class="col-lg-6">
                 <table class="table table-striped table-hover w-100 m-0 custom-border">
-
                     <thead>
                     <tr id="wallet-header" class="clickable-row align-middle" style="cursor: pointer;">
                         <td colspan="2" class="p-3 w-100">
@@ -30,8 +27,7 @@
                                             <span th:text="${mainCurrency}">BGN</span>
                                         </button>
                                         <!-- Dropdown Menu -->
-                                        <ul class="dropdown-menu dropdown-menu-end text-center custom-dropdown"
-                                            aria-labelledby="currencyDropdown">
+                                        <ul class="dropdown-menu dropdown-menu-end text-center custom-dropdown"                                             aria-labelledby="currencyDropdown">
                                             <li th:each="currency : ${walletCurrencies}">
                                                 <a class="dropdown-item" href="#"
                                                    th:href="@{/mvc/profile/wallets(mainCurrency=${currency})}"
@@ -50,7 +46,6 @@
                     </tr>
                     </thead>
                     <tbody id="wallet-list" style="display: none;">
-
                     <!-- Wallet Rows -->
                     <tr th:each="wallet : ${wallets.wallets}" class="clickable-row align-middle"
                         th:attr="data-href='/mvc/profile/wallets/' + ${wallet.walletId}">
@@ -67,22 +62,33 @@
                             </div>
                         </td>
                     </tr>
-
                     <!-- Add New Wallet Row -->
-                    <tr id="add-wallet-row" class="clickable-row align-middle">
+                    <!-- Add New Wallet Row -->
+                    <tr id="add-wallet-row" class="align-middle" th:if="${otherCurrencies.size() > 0}">
                         <td colspan="2" class="p-3 d-flex justify-content-center align-items-center w-100">
-                            <a href="/mvc/profile/wallets/new" class="d-flex align-items-center"
-                               style="text-decoration: none; color: inherit;">
-                                <span class="bi-plus" style="cursor: pointer; font-size: 24px;"></span>
-                                <span style="margin-left: 8px;">Add New Wallet</span>
-                            </a>
+                            <div class="position-relative " style=" min-width: 100%; ">
+                                <a href="#" id="add-new-wallet-button" class="d-flex align-items-center"
+                                   style="text-decoration: none; color: inherit;">
+                                    <span class="bi-plus" style="cursor: pointer; font-size: 24px;"></span>
+                                    <span style="margin-left: 8px;">Add New Wallet</span>
+                                </a>
+                                <!-- Dropdown for Other Currencies -->
+                                <ul id="add-wallet-dropdown"
+                                    class="dropdown-menu dropdown-menu-end text-start custom-dropdown"
+                                    style="display: none; position: absolute; top: 100%; left: 15%; transform: translateX(-50%); z-index: 1000; min-width: 300px; width: 33%; ">
+                                    <li th:each="currency : ${otherCurrencies}">
+                                        <a class="dropdown-item" href="#"
+                                           th:href="@{/mvc/profile/wallets/new(currency=${currency})}"
+                                           th:text="${currency}+'  ('+#{'currency.' + ${currency}}+')'">EUR</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
-
                     </tbody>
                 </table>
 
-                <!--NEW HISTORY Table  -->
+                <!-- History Table -->
                 <div class="py-4">
 
                 </div>
@@ -92,17 +98,16 @@
                             th:text="${wallets.pageSize * (wallets.currentPage+1)}"></span>
                         of <span th:text="${wallets.totalElements}"></span> history events
                     </div>
-                    <div th:if="${wallets.totalPages - 1 == wallets.currentPage}" class="text-muted  align-middle">Showing <span
+                    <div th:if="${wallets.totalPages - 1 == wallets.currentPage}" class="text-muted  align-middle">
+                        Showing <span
                             th:text="${wallets.currentPage * wallets.pageSize + 1 }"></span> to <span
                             th:text="${wallets.totalElements}"></span>
                         of <span th:text="${wallets.totalElements}"></span> history events
                     </div>
                 </div>
-                <!--NEW HISTORY Table  -->
 
                 <table style="border: 1px solid darkgray;"
                        class="table table-striped table-hover w-100 m-0 custom-border">
-                    <!-- Table Header -->
                     <thead>
                     <tr id="history-header" class="align-middle">
                         <td colspan="3" class="p-3 w-100 ">
@@ -136,15 +141,11 @@
                             </div>
                         </td>
                     </tr>
-
                     </thead>
-
                     <tbody th:if="${wallets.history != null && wallets.history.size() > 0}" id="history-list">
                     <tr th:each="activity : ${wallets.history}"
                         class="clickable-row align-middle"
                         th:attr="data-href='/mvc/profile/' + ${activity.activity} + 's/' + ${activity.id}">
-
-
                         <!-- Left Column: Activity Type -->
                         <td class="px-3 justify-content-center align-items-start activity-column">
                             <!-- Exchange -->
@@ -160,24 +161,24 @@
                                      class="currency-flag from-currency-flag"
                                 />
                             </div>
-
-                            <div th:if="${activity.activity == 'transaction'}" class="d-flex align-items-center currency-exchange-container">
-                                <img th:if="${activity.senderUsername.equals(currentUserUsername)}" th:src="${activity.recipientPhoto}"
+                            <div th:if="${activity.activity == 'transaction'}"
+                                 class="d-flex align-items-center currency-exchange-container">
+                                <img th:if="${activity.senderUsername.equals(currentUserUsername)}"
+                                     th:src="${activity.recipientPhoto}"
                                      alt="Profile Photo"
                                      style="width: 60px; height: 60px; border-radius: 50%"/>
-                                <img th:if="${activity.recipientUsername.equals(currentUserUsername)}" th:src="${activity.senderPhoto}"
+                                <img th:if="${activity.recipientUsername.equals(currentUserUsername)}"
+                                     th:src="${activity.senderPhoto}"
                                      alt="Profile Photo"
                                      style="width: 60px; height: 60px; border-radius: 50%"/>
                             </div>
-
-
-                            <div th:if="${activity.activity == 'transfer'}" class="d-flex align-items-center currency-exchange-container">
+                            <div th:if="${activity.activity == 'transfer'}"
+                                 class="d-flex align-items-center currency-exchange-container">
                                 <img src="/images/transfer.png"
                                      alt="Profile Photo"
                                      style="width: 60px; height: 60px;"/>
                             </div>
                         </td>
-
                         <!-- Middle Column: Conditional Logic -->
                         <td class="p-3 d-flex flex-column justify-content-center align-items-start"
                             style="text-align: left;">
@@ -192,15 +193,12 @@
                                     <span th:text="'from ' + ${activity.senderUsername}"></span>
                                 </div>
                             </div>
-
                             <!-- Exchange -->
                             <div th:if="${activity.activity == 'exchange'}">
                                 <span th:text="${activity.fromCurrency}"></span>
                                 <i class="bi bi-arrow-right ms-2" style="font-size: 16px;"></i>
                                 <span th:text="${activity.toCurrency}"></span>
                             </div>
-
-
                             <div th:if="${activity.activity == 'transfer'}">
                                 <div th:if="${activity.status == 'APPROVED'}">
                                     <i class="bi bi-check-circle-fill" style="font-size: 16px; color: green"></i>
@@ -210,16 +208,12 @@
                                     <i class="bi bi-x-circle-fill" style="font-size: 16px; color: red"></i>
                                     <span style="color: red" th:text="'DECLINED'"></span>
                                 </div>
-
-
                             </div>
-
                             <!-- Date -->
                             <small class="text-muted mt-1"
                                    th:text="${#temporals.format(activity.date, 'yyyy-MM-dd HH:mm')}">
                                 2023-10-01 12:34</small>
                         </td>
-
                         <!-- Right Column: Amount, Currency, and Date -->
                         <td class="p-3 text-end justify-content-center align-items-end">
                             <!-- Amount and Currency -->
@@ -229,19 +223,15 @@
                                 <span th:if="${activity.activity == 'transaction' && activity.senderUsername == currentUserUsername}">-</span>
                                 <span th:if="${activity.activity == 'exchange'}">+</span>
                                 <span th:if="${activity.activity == 'transfer' && activity.status == 'APPROVED'}">+</span>
-
                                 <!-- Amount -->
                                 <span th:if="${activity.activity == 'transaction'}"
                                       th:text="${activity.amount}">100.00</span>
-
                                 <span th:if="${activity.activity == 'transfer' && activity.status == 'DECLINED'}"
-                                   style="text-decoration: line-through;"   th:text="${activity.amount}">100.00</span>
+                                      style="text-decoration: line-through;" th:text="${activity.amount}">100.00</span>
                                 <span th:if="${activity.activity == 'transfer' && activity.status == 'APPROVED'}"
                                       th:text="${activity.amount}">100.00</span>
-
                                 <span th:if="${activity.activity == 'exchange'}"
                                       th:text="${activity.toAmount}">90.00</span>
-
                                 <!-- Currency -->
                                 <span th:if="${activity.activity == 'exchange'}"
                                       th:text="#{'currency.symbol.' + ${activity.toCurrency}}">USD</span>
@@ -260,7 +250,6 @@
                         </td>
                     </tr>
                     </tbody>
-
                     <!-- Empty State: No History Data -->
                     <tbody th:unless="${wallets.history != null && wallets.history.size() > 0}">
                     <tr>
@@ -279,66 +268,11 @@
                         </td>
                     </tr>
                     </tbody>
-
                 </table>
-
-
-                <div class="pagination-container">
-                    <!-- Pagination Buttons -->
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination pagination-modern">
-                            <!-- First Page Button -->
-                            <li class="page-item" th:if="${wallets.currentPage > 6 && wallets.totalPages > 6}">
-                                <a class="page-link" href="#"
-                                   th:href="@{/mvc/profile/wallets(page=0, size=${wallets.pageSize})}">
-                                    <i class="bi bi-chevron-double-left"></i>
-                                </a>
-                            </li>
-
-                            <!-- Previous Page Button -->
-                            <li class="page-item" th:if="${wallets.hasPreviousPage && wallets.currentPage <= wallets.totalPages}">
-                                <a class="page-link" href="#"
-                                   th:href="@{/mvc/profile/wallets(page=${wallets.currentPage - 1}, size=${wallets.pageSize})}">
-                                    <i class="bi bi-chevron-left"></i>
-                                </a>
-                            </li>
-
-                            <!-- Page Number Buttons -->
-                            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(
-                wallets.currentPage > 6 ? (wallets.currentPage - 6) : 0,
-                wallets.currentPage + 6 < wallets.totalPages - 1 ? (wallets.currentPage + 6) : (wallets.totalPages - 1)
-            )}"
-                                th:if="${wallets.totalPages > 0}"
-                                th:classappend="${pageNumber == wallets.currentPage} ? 'active' : ''">
-                                <a class="page-link" href="#"
-                                   th:href="@{/mvc/profile/wallets(page=${pageNumber}, size=${wallets.pageSize})}"
-                                   th:text="${pageNumber + 1}"></a>
-                            </li>
-
-                            <!-- Next Page Button -->
-                            <li class="page-item" th:unless="${wallets.currentPage >= wallets.totalPages - 1}">
-                                <a class="page-link" href="#"
-                                   th:href="@{/mvc/profile/wallets(page=${wallets.currentPage + 1}, size=${wallets.pageSize})}">
-                                    <i class="bi bi-chevron-right"></i>
-                                </a>
-                            </li>
-
-                            <!-- Last Page Button -->
-                            <li class="page-item" th:if="${wallets.currentPage < wallets.totalPages - 7}">
-                                <a class="page-link" href="#"
-                                   th:href="@{/mvc/profile/wallets(page=${wallets.totalPages - 1}, size=${wallets.pageSize})}">
-                                    <i class="bi bi-chevron-double-right"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-
             </div>
         </div>
     </div>
 </section>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Toggle wallet list visibility
@@ -362,16 +296,40 @@
         // Make rows clickable
         const rows = document.querySelectorAll(".clickable-row");
         rows.forEach(row => {
-            row.addEventListener("click", function () {
+            row.addEventListener("click", function (event) {
+                // Prevent clicks on child elements from triggering the row click
+                if (event.target.tagName === "A" || event.target.tagName === "BUTTON") {
+                    return;
+                }
+
                 const href = row.getAttribute("data-href");
                 if (href) {
                     window.location.href = href;
                 }
             });
         });
+
+        // Toggle add new wallet dropdown
+        const addNewWalletButton = document.getElementById("add-new-wallet-button");
+        const addWalletDropdown = document.getElementById("add-wallet-dropdown");
+
+        addNewWalletButton.addEventListener("click", function (event) {
+            event.preventDefault(); // Prevent default link behavior
+            if (addWalletDropdown.style.display === "none" || addWalletDropdown.style.display === "") {
+                addWalletDropdown.style.display = "block"; // Show the dropdown
+            } else {
+                addWalletDropdown.style.display = "none"; // Hide the dropdown
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (event) {
+            if (!addNewWalletButton.contains(event.target) && !addWalletDropdown.contains(event.target)) {
+                addWalletDropdown.style.display = "none";
+            }
+        });
     });
 </script>
-
 <footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
 <div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
 </body>
