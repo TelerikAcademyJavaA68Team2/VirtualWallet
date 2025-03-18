@@ -2,14 +2,12 @@ package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
+import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.User;
-import com.example.virtualwallet.models.dtos.card.CardEdit;
-import com.example.virtualwallet.models.dtos.card.CardInput;
-import com.example.virtualwallet.models.dtos.card.CardOutput;
-import com.example.virtualwallet.models.dtos.card.CardOutputForList;
+import com.example.virtualwallet.models.dtos.card.*;
 import com.example.virtualwallet.repositories.CardRepository;
 import com.example.virtualwallet.services.contracts.UserService;
 import org.junit.jupiter.api.AfterAll;
@@ -23,9 +21,12 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Month;
+import java.time.YearMonth;
 import java.util.*;
 
 import static com.example.virtualwallet.Helpers.*;
+import static com.example.virtualwallet.helpers.ValidationHelpers.CARD_MUST_NOT_BE_EXPIRED;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -62,13 +63,13 @@ public class CardServiceImplTests {
 
         User user = createMockUserWithoutCardsAndWallets();
         Card mockCard = createMockCard(user);
-        when(cardRepository.findById(any())).thenReturn(Optional.of(mockCard));
+        when(cardRepository.findActiveCardById(any())).thenReturn(Optional.of(mockCard));
 
         Card result = cardService.getCardById(mockCard.getId());
 
         assertNotNull(result);
         Assertions.assertEquals(mockCard, result);
-        verify(cardRepository, times(1)).findById(mockCard.getId());
+        verify(cardRepository, times(1)).findActiveCardById(mockCard.getId());
     }
 
     @Test
@@ -78,7 +79,7 @@ public class CardServiceImplTests {
         CardOutput mockCardOutput = createMockCardOutput();
         mockCardOutput.setCardId(mockCard.getId());
 
-        when(cardRepository.findById(eq(mockCard.getId()))).thenReturn(Optional.of(mockCard));
+        when(cardRepository.findActiveCardById(eq(mockCard.getId()))).thenReturn(Optional.of(mockCard));
         modelMapper.when(() -> ModelMapper.cardOutputFromCard(mockCard)).thenReturn(mockCardOutput);
 
         // Act
@@ -86,12 +87,12 @@ public class CardServiceImplTests {
 
         assertNotNull(result);
         Assertions.assertEquals(mockCardOutput, result);
-        verify(cardRepository, times(1)).findById(mockCardOutput.getCardId());
+        verify(cardRepository, times(1)).findActiveCardById(mockCardOutput.getCardId());
     }
 
     @Test
     public void getById_ShouldThrow_Exception_When_CardNotFound() {
-        when(cardRepository.findById(any())).thenReturn(Optional.empty());
+        when(cardRepository.findActiveCardById(any())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> cardService.getCardById(UUID.randomUUID()));
     }
@@ -187,6 +188,35 @@ public class CardServiceImplTests {
     }
 
     @Test
+    public void getAllCardsOutputForListMVC_Should_ReturnUserCardsOutPutForListMVC() {
+        // Arrange
+        User user = createMockUserWithoutCardsAndWallets();
+        Card mockCard = createMockCard(user);
+        user.setCards(new HashSet<>(List.of(mockCard)));
+
+        CardOutputForListMVC mockCardOutputForList = createMockCardOutputForListMVC();
+        mockCardOutputForList.setCardId(mockCard.getId());
+
+        when(cardRepository.getAllByOwner_Id(user.getId()))
+                .thenReturn(user.getCards().stream().toList());
+        modelMapper.when(() -> ModelMapper.displayForListCardOutputMVCFromCreditCard(mockCard)).thenReturn(mockCardOutputForList);
+
+        List<CardOutputForListMVC> expectedCardsOutputForList = List.of(mockCardOutputForList);
+
+        // Act
+        List<CardOutputForListMVC> cards = cardService.getAllCardsOutputForListMVCByUser(user.getId());
+
+        // Assert
+        assertNotNull(cards);
+        assertEquals(1, cards.size());
+        Assertions.assertEquals(expectedCardsOutputForList, cards);
+        assertEquals(mockCardOutputForList, cards.get(0));
+
+        verify(cardRepository, Mockito.times(1))
+                .getAllByOwner_Id(user.getId());
+    }
+
+    @Test
     public void addCard_Should_AddCard_WhenValidArgsAndNoCardExists() {
         CardInput cardInput = createMockCardInput();
         User user = createMockUserWithoutCardsAndWallets();
@@ -208,6 +238,23 @@ public class CardServiceImplTests {
 
         assertEquals(cardOutputResult, cardOutput);
         assertNotNull(cardOutputResult);
+    }
+
+    @Test
+    public void addCard_Should_ThrowInvalidUserInputException_WhenCardIsExpired() {
+        CardInput cardInput = createMockCardInput();
+        User user = createMockUserWithoutCardsAndWallets();
+        Card card = createMockCard(user);
+        cardInput.setExpirationDate("07/23");
+
+        when(userService.getAuthenticatedUser())
+                .thenReturn(user);
+        when(cardRepository.getCardByCardNumber(card.getCardNumber())).thenReturn(null);
+        InvalidUserInputException exception = assertThrows(InvalidUserInputException.class, () -> cardService.addCard(cardInput));
+
+        verify(cardRepository, never()).save(any(Card.class));
+        assertEquals(CARD_MUST_NOT_BE_EXPIRED, exception.getMessage());
+
     }
 
     @Test
@@ -269,7 +316,7 @@ public class CardServiceImplTests {
 
         verify(cardRepository, never()).save(any(Card.class));
 
-        assertEquals(format("Card with number %s already exists.", card.getCardNumber()), duplicateEntityException.getMessage());
+        assertEquals(format("Card with number: %s already exists.", card.getCardNumber()), duplicateEntityException.getMessage());
     }
 
     @Test
@@ -284,14 +331,14 @@ public class CardServiceImplTests {
         cardOutput.setCardHolder(cardEdit.getCardHolder());
 
         doReturn(user).when(userService).getAuthenticatedUser();
-        when(cardRepository.findById(any())).thenReturn(Optional.of(card));
+        when(cardRepository.findActiveCardById(any())).thenReturn(Optional.of(card));
         modelMapper.when(() -> ModelMapper.updateCardFromCardEdit(cardEdit, card)).thenReturn(cardUpdated);
         when(cardRepository.save(cardUpdated)).thenReturn(cardUpdated);
         modelMapper.when(() -> ModelMapper.cardOutputFromCard(cardUpdated)).thenReturn(cardOutput);
 
         CardOutput result = cardService.updateCard(cardEdit, card.getId());
 
-        verify(cardRepository, Mockito.times(1)).findById(card.getId());
+        verify(cardRepository, Mockito.times(1)).findActiveCardById(card.getId());
         verify(cardRepository, Mockito.times(1)).save(cardUpdated);
         assertEquals(result, cardOutput);
 
@@ -313,13 +360,13 @@ public class CardServiceImplTests {
         anotherCard.setCardNumber(MOCK_CARD_CARD_NUMBER_ANOTHER);
 
         doReturn(user).when(userService).getAuthenticatedUser();
-        when(cardRepository.findById(any())).thenReturn(Optional.of(anotherCard));
+        when(cardRepository.findActiveCardById(any())).thenReturn(Optional.of(anotherCard));
 
         UnauthorizedAccessException unauthorizedAccessException = Assertions.assertThrows(UnauthorizedAccessException.class,
                 () -> cardService.updateCard(cardEdit, card.getId()));
 
         verify(cardRepository, never()).save(any(Card.class));
-        assertEquals("Only the card's owner can modify cards!", unauthorizedAccessException.getMessage());
+        assertEquals("Only the card's owner can modify card's details!", unauthorizedAccessException.getMessage());
 
     }
 
@@ -337,7 +384,7 @@ public class CardServiceImplTests {
         anotherCard.setCardNumber(MOCK_CARD_CARD_NUMBER_ANOTHER);
 
         doReturn(user).when(userService).getAuthenticatedUser();
-        when(cardRepository.findById(any())).thenReturn(Optional.of(card));
+        when(cardRepository.findActiveCardById(any())).thenReturn(Optional.of(card));
         when(cardRepository.getCardByCardNumber(cardEdit.getCardNumber())).thenReturn(anotherCard);
 
         Assertions.assertThrows(DuplicateEntityException.class,
@@ -353,7 +400,7 @@ public class CardServiceImplTests {
         Card card = createMockCard(user);
 
         doReturn(user).when(userService).getAuthenticatedUser();
-        when(cardRepository.findById(any())).thenReturn(Optional.of(card));
+        when(cardRepository.findActiveCardById(any())).thenReturn(Optional.of(card));
         when(cardRepository.save(any())).thenReturn(card);
 
         cardService.softDeleteCard(card.getId());
@@ -370,7 +417,7 @@ public class CardServiceImplTests {
         Card card = createMockCard(anotherUser);
 
         doReturn(user).when(userService).getAuthenticatedUser();
-        when(cardRepository.findById(any())).thenReturn(Optional.of(card));
+        when(cardRepository.findActiveCardById(any())).thenReturn(Optional.of(card));
 
         Assertions.assertThrows(UnauthorizedAccessException.class,
                 () -> cardService.softDeleteCard(card.getId()));
