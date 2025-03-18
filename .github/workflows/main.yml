@@ -39,13 +39,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mariadb-server mariadb-client
-          sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
-          sudo mysql -u root -proot -e "CREATE DATABASE virtual_wallet;
 
       - name: Start MariaDB Service
         run: |
           sudo systemctl start mariadb
           sudo mysql -u root -e "CREATE DATABASE virtual_wallet;"
+          sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
+          sudo mysql -u root -proot -e "CREATE DATABASE virtual_wallet;"
 
       - name: Build and Run Tests
         run: ./gradlew clean build --info
