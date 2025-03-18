@@ -19,7 +19,7 @@ public interface WalletService {
 
     WalletPageOutput getWalletPageById(UUID walletId, int page, int size);
 
-    void softDeleteAuthenticatedUserWalletByCurrency(String currency);
+    void softDeleteAuthenticatedUserWalletById(UUID walletId);
 
     boolean checkIfUserHasActiveWalletWithCurrency(UUID userId, Currency currency);
 

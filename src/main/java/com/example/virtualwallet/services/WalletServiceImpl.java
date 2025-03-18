@@ -3,6 +3,7 @@ package com.example.virtualwallet.services;
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
+import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
@@ -59,7 +60,7 @@ public class WalletServiceImpl implements WalletService {
         newWallet.setCurrency(currency);
         newWallet.setOwner(userService.loadUserByUsername(userUsername));
         walletRepository.save(newWallet);
-        return newWallet; // todo check if this will return the id of the new wallet
+        return newWallet;
     }
 
     @Override
@@ -72,11 +73,21 @@ public class WalletServiceImpl implements WalletService {
 
         List<ActivityOutput> history = queryResult.stream().map(ModelMapper::mapObjectToActivity).toList();
         List<WalletBasicOutput> wallets = listWallets.stream().map(ModelMapper::mapWalletToBasicWalletOutput).toList();
+        BigDecimal estimatedBalance;
 
-        BigDecimal estimatedBalance = exchangeRateService.findCurrentBalanceByCurrency(mainCurrency, wallets);
+        String estimatedCurrency = mainCurrency;
+        if (wallets.isEmpty()) {
+            estimatedBalance = BigDecimal.ZERO;
+        } else if (wallets.stream().noneMatch(wallet -> wallet.getCurrency().equals(mainCurrency))) {
+            estimatedCurrency = wallets.get(0).getCurrency();
+            estimatedBalance = exchangeRateService.findCurrentBalanceByCurrency(mainCurrency, wallets);
+        } else {
+            estimatedBalance = exchangeRateService.findCurrentBalanceByCurrency(mainCurrency, wallets);
+        }
 
         WalletsWithHistoryOutput output = new WalletsWithHistoryOutput();
         output.setEstimatedBalance(estimatedBalance);
+        output.setEstimatedCurrency(estimatedCurrency);
         output.setWallets(wallets);
         output.setHistory(history);
 
@@ -115,14 +126,15 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void softDeleteAuthenticatedUserWalletByCurrency(String currency) {
-        Currency enumCurrency = validateAndConvertCurrency(currency);
+    public void softDeleteAuthenticatedUserWalletById(UUID walletId) {
         User user = userService.getAuthenticatedUser();
-        Optional<Wallet> wallet = walletRepository.findByUsernameAndCurrency(user.getUsername(), enumCurrency);
+        Optional<Wallet> wallet = walletRepository.findById(walletId);
         if (wallet.isEmpty()) {
-            throw new EntityNotFoundException("Wallet", "Currency", currency);
+            throw new EntityNotFoundException("Wallet", walletId);
+        } else if (!wallet.get().getOwner().equals(user)) {
+            throw new UnauthorizedAccessException("You are not the owner of this wallet");
         } else if (wallet.get().isDeleted()) {
-            throw new InvalidUserInputException("Your wallet with currency: " + currency + " is already deleted!");
+            throw new DuplicateEntityException("This wallet is already deleted!");
         } else if (wallet.get().getBalance().doubleValue() >= 0.01) {
             throw new InvalidUserInputException(EXCHANGE_REMAINING_CURRENCY);
         }

@@ -34,10 +34,10 @@ public class WalletController {
         return new ResponseEntity<>(currency + " Wallet created successfully!", HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteWallet(@RequestParam String currency) {
-        walletService.softDeleteAuthenticatedUserWalletByCurrency(currency);
-        return new ResponseEntity<>(currency + " Wallet deleted successfully!", HttpStatus.OK);
+    @DeleteMapping("/{walletId}")
+    public ResponseEntity<?> deleteWallet(@PathVariable UUID walletId) {
+        walletService.softDeleteAuthenticatedUserWalletById(walletId);
+       return ResponseEntity.ok("Wallet deleted");
     }
 
     @GetMapping("/{walletId}")
