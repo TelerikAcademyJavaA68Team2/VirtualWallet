@@ -18,6 +18,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class EmailConfirmationServiceImpl implements EmailConfirmationService {
 
+    public static final String EMAIL_IS_ALREADY_CONFIRMED = "Your email is already confirmed.";
+    public static final String CONFIRMATION_WAS_NOT_FOUND = "The confirmation token was not found!";
+    public static final String TOKEN_EXPIRED = "Email confirmation has expired please send new confirmation email.";
+    public static final String CONFIRMATION_ALREADY_SENT = "Email confirmation was already sent";
+
     private final EmailConfirmationRepository emailConfirmationRepository;
     private final UserService userService;
     private final EmailService emailService;
@@ -26,11 +31,11 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
     @Override
     public void createAndSendEmailConfirmationToUser(User request, boolean isRestRequest) {
         if (!request.getStatus().equals(AccountStatus.PENDING)) {
-            throw new InvalidUserInputException("Email is already confirmed");
+            throw new InvalidUserInputException(EMAIL_IS_ALREADY_CONFIRMED);
         }
 
         if (emailConfirmationRepository.checkIfTokenWasAlreadySent(request.getEmail(), LocalDateTime.now().minusMinutes(15))) {
-            throw new DuplicateEntityException("Email confirmation was already sent");
+            throw new DuplicateEntityException(CONFIRMATION_ALREADY_SENT);
         }
 
         User user = userService.loadUserByUsername(request.getUsername());
@@ -42,13 +47,14 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
     }
 
     public void confirmEmailToken(UUID id) {
-        EmailConfirmationToken token = emailConfirmationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("The confirmation token was not found!"));
+        EmailConfirmationToken token = emailConfirmationRepository.findById(id).orElseThrow(()
+                -> new EntityNotFoundException(CONFIRMATION_WAS_NOT_FOUND));
 
         if (token.getConfirmedAt() != null) {
-            throw new EmailConfirmedException("Your email is already confirmed.");
+            throw new EmailConfirmedException(EMAIL_IS_ALREADY_CONFIRMED);
         }
         if (token.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new EmailConfirmationException("Email confirmation has expired please send new confirmation email.");
+            throw new EmailConfirmationException(TOKEN_EXPIRED);
         }
         User user = token.getUser();
         user.setStatus(AccountStatus.ACTIVE);

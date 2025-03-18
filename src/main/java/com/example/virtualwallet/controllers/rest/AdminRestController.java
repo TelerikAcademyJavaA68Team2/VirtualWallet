@@ -32,46 +32,89 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithI
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@Tag(name = "Admin Management", description = "Endpoints for admin actions like user, post, and comment management")
+@Tag(name = "Admin Management", description = "Endpoints for admin actions like user and transaction management")
 public class AdminRestController {
 
     public static final String INVALID_PAGE_OR_SIZE_PARAMETERS = "Invalid page or size parameters.";
+    public static final String NO_TRANSACTIONS = "No transactions with this filters!";
+    public static final String NO_TRANSFERS = "No transfers with these filters!";
 
     private final UserService userService;
     private final TransactionService transactionService;
     private final TransferService transferService;
     private final ExchangeService exchangeService;
 
-
+    @Operation(summary = "Retrieve user by ID", description = "Get a user profile",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200"),
+                    @ApiResponse(description = "Bad Request - User not found", responseCode = "400"),
+            }
+    )
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUserInfoById(@PathVariable UUID id) {
         return new ResponseEntity<>(userService.getUserProfileById(id), HttpStatus.OK);
     }
 
+    @Operation(summary = "Promote to admin", description = "Promote a given user to admin",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200"),
+                    @ApiResponse(description = "Bad Request - User not found", responseCode = "400"),
+                    @ApiResponse(description = "User is already admin", responseCode = "400"),
+            }
+    )
     @PostMapping("/users/{id}/make-admin")
     public ResponseEntity<?> promoteUserToAdmin(@PathVariable UUID id) {
         userService.promoteToAdmin(id);
         return new ResponseEntity<>("Admin promotion was successful", HttpStatus.OK);
     }
 
+    @Operation(summary = "Revoke admin rights", description = "Demote an admin to user",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200"),
+                    @ApiResponse(description = "Bad Request - User not found", responseCode = "400"),
+                    @ApiResponse(description = "User is already with user rights", responseCode = "400"),
+            }
+    )
     @PostMapping("/users/{id}/revoke-admin")
     public ResponseEntity<?> demoteAdminToUser(@PathVariable UUID id) {
         userService.demoteToUser(id);
         return new ResponseEntity<>("Admin demoted successfully", HttpStatus.OK);
     }
 
+    @Operation(summary = "Block a desired user", description = "Block a desired user by ID",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200"),
+                    @ApiResponse(description = "Bad Request - User not found", responseCode = "400"),
+                    @ApiResponse(description = "User is already blocked", responseCode = "400"),
+            }
+    )
     @PostMapping("/users/{id}/block")
     public ResponseEntity<?> blockUser(@PathVariable UUID id) {
         userService.blockUser(id);
         return new ResponseEntity<>("Block was successful", HttpStatus.OK);
     }
 
+    @Operation(summary = "Unblock a desired user", description = "Unblock a desired user by ID",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200"),
+                    @ApiResponse(description = "Bad Request - User not found", responseCode = "400"),
+                    @ApiResponse(description = "User is not blocked", responseCode = "400"),
+            }
+    )
     @PostMapping("/users/{id}/unblock")
     public ResponseEntity<?> unblockUser(@PathVariable UUID id) {
         userService.unblockUser(id);
         return new ResponseEntity<>("Unblock was successful", HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Retrieve all users with filter options",
+            description = "Fetch a list of all users with " +
+                    "filter options, sorting and pagination.",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200")
+            }
+    )
     @GetMapping("/users")
     public ResponseEntity<?> filterUsers(
             @RequestParam(required = false) String username,
@@ -112,7 +155,7 @@ public class AdminRestController {
 
     @Operation(
             summary = "Retrieve all transactions with filter options",
-            description = "Fetch a list of all transactions with " +
+            description = "Fetch a list of all application transactions with " +
                     "filter options, sorting and pagination.",
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200")
@@ -152,14 +195,14 @@ public class AdminRestController {
 
         List<TransactionOutput> result = transactionService.filterTransactions(transactionFilterOptions);
         if (result.isEmpty()) {
-            return new ResponseEntity<>("No transactions with this filters!", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(NO_TRANSACTIONS, HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);
     }
 
     @Operation(
-            summary = "Retrieve all transfers with filter options",
-            description = "Fetch a list of transfers wallets with " +
+            summary = "Retrieve all application transfers with filter options",
+            description = "Fetch a list of transfers with " +
                     "filter options, sorting and pagination.",
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200")
@@ -179,7 +222,7 @@ public class AdminRestController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         if (page < 0 || size <= 0) {
-            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+            return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
 
         TransferFilterOptions filterOptions = new TransferFilterOptions(
@@ -196,12 +239,20 @@ public class AdminRestController {
         List<TransferOutput> result = transferService.filterTransfers(filterOptions);
 
         if (result.isEmpty()) {
-            return new ResponseEntity<>("No transfers with these filters!", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(NO_TRANSFERS, HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);
     }
 
 
+    @Operation(
+            summary = "Retrieve all application exchanges with filter options",
+            description = "Fetch a list of all exchanges with " +
+                    "filter options, sorting and pagination.",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200")
+            }
+    )
     @GetMapping("/exchanges")
     public ResponseEntity<?> getExchangesAndFilter(@RequestParam(required = false) String fromDate,
                                                    @RequestParam(required = false) String toDate,
@@ -217,7 +268,7 @@ public class AdminRestController {
                                                    @RequestParam(defaultValue = "0") int page,
                                                    @RequestParam(defaultValue = "10") int size) {
         if (page < 0 || size <= 0) {
-            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+            return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
         ExchangeFilterOptions filterOptions = new ExchangeFilterOptions(
                 fromDate,
@@ -241,17 +292,40 @@ public class AdminRestController {
         return ResponseEntity.ok(result);
     }
 
-
+    @Operation(
+            description = "Retrieve a transfer by its ID",
+            summary = "Get transfer by ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully retrieved transfer"),
+                    @ApiResponse(responseCode = "404", description = "Transfer not found")
+            }
+    )
     @GetMapping("/transfers/{id}")
     public FullTransferInfoOutput getFullTransferById(@PathVariable UUID id) {
         return transferService.getTransferById(id);
     }
 
+    @Operation(
+            description = "Retrieve a transaction by its ID",
+            summary = "Get transaction by ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully retrieved transaction"),
+                    @ApiResponse(responseCode = "404", description = "Transaction not found")
+            }
+    )
     @GetMapping("/transactions/{id}")
     public FullTransactionInfoOutput getTransferById(@PathVariable UUID id) {
         return transactionService.getTransactionById(id);
     }
 
+    @Operation(
+            description = "Retrieve an exchange by its ID",
+            summary = "Get exchange by ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully retrieved exchange"),
+                    @ApiResponse(responseCode = "404", description = "Exchange not found")
+            }
+    )
     @GetMapping("/exchanges/{id}")
     public FullExchangeInfoOutput getExchangeById(@PathVariable UUID id) {
         return exchangeService.getExchangeById(id);

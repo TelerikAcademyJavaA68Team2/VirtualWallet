@@ -28,8 +28,11 @@ import org.springframework.web.server.ResponseStatusException;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     public static final String WRONG_CREDENTIALS = "Wrong username or password!";
-    public static final String USER_ALREADY_EXISTS = "User already exists!";
     public static final String DELETE_ACCOUNT_CAPTCHA = "Delete my account";
+    public static final String WRONG_CAPTCHA = "Wrong captcha";
+    public static final String WRONG_PASSWORD = "Wrong password";
+    public static final String CONFIRMATION_FAILED = "Password Confirmation failed";
+    public static final String CONFIRM_YOUR_EMAIL = "Thanks for registering please confirm your email";
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -65,7 +68,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = userService.loadUserByUsername(request.getUsername());
         emailConfirmationService.createAndSendEmailConfirmationToUser(user, true);
-        return "Thanks for registering please confirm your email";
+        return CONFIRM_YOUR_EMAIL;
     }
 
     @Override
@@ -81,11 +84,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void updateUserPassword(PasswordUpdateInput request) {
         if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
-            throw new PasswordMismatchException("Password confirmation failed");
+            throw new PasswordMismatchException(CONFIRMATION_FAILED);
         }
         User user = userService.getAuthenticatedUser();
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidUserInputException("Wrong password");
+            throw new InvalidUserInputException(WRONG_PASSWORD);
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -95,17 +98,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void softDeleteAuthenticatedUser(DeleteAccountInput request) {
         if (!request.getCaptcha().equalsIgnoreCase(DELETE_ACCOUNT_CAPTCHA)) {
-            throw new CaptchaMismatchException("Wrong captcha");
+            throw new CaptchaMismatchException(WRONG_CAPTCHA);
         }
         if (!passwordEncoder.matches(request.getPassword(), userService.getAuthenticatedUser().getPassword())) {
-            throw new PasswordMismatchException("Wrong password");
+            throw new PasswordMismatchException(WRONG_PASSWORD);
         }
         userService.softDeleteAuthenticatedUser();
     }
 
     private void validateUserRequest(RegisterUserInput request) {
         if (!request.getPasswordConfirm().equals(request.getPassword())) {
-            throw new InvalidUserInputException("Password Confirmation failed");
+            throw new InvalidUserInputException(CONFIRMATION_FAILED);
         }
         if (userService.checkIfUsernameIsTaken(request.getUsername())) {
             throw new DuplicateEntityException("User", "username", request.getUsername());

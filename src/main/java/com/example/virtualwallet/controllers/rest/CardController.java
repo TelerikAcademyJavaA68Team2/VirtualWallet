@@ -66,7 +66,7 @@ public class CardController {
         return ResponseEntity.ok(cardService.addCard(cardInput));
     }
 
-    @PutMapping("/{cardId}")
+
     @Operation(
             description = "Update an existing card by optionally deciding which field you want to update:" +
                     "card number, cardholder, expiration date, or CVV",
@@ -78,12 +78,12 @@ public class CardController {
                     @ApiResponse(responseCode = "409", description = "Duplicate entity conflict")
             }
     )
+    @PutMapping("/{cardId}")
     public ResponseEntity<CardOutput> updateCardDetails(@PathVariable UUID cardId,
                                   @Valid @RequestBody CardEdit cardEdit) {
         return ResponseEntity.ok(cardService.updateCard(cardEdit, cardId));
     }
 
-    @DeleteMapping("/{cardId}")
     @Operation(
             description = "Delete a card by ID",
             summary = "Delete a card",
@@ -93,6 +93,7 @@ public class CardController {
                     @ApiResponse(responseCode = "403", description = "Unauthorized to delete this card")
             }
     )
+    @DeleteMapping("/{cardId}")
     public ResponseEntity<Void> deleteCard(@PathVariable UUID cardId){
         cardService.softDeleteCard(cardId);
         return ResponseEntity.noContent().build();

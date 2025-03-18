@@ -23,7 +23,7 @@ public class EmailServiceImpl implements EmailService {
 
             String urlStart = isRestRequest ? "api" : "mvc";
             String link = """
-                    http://localhost:8080/%s/email/confirm?token=%s""".formatted(urlStart, tokenId);
+                    http://localhost:8080/%s/auth/email-confirm?token=%s""".formatted(urlStart, tokenId);
             String finalHtmlMessage = buildEmail(firstName, link);
             helper.setText(finalHtmlMessage, true);
             helper.setTo(toEmail);

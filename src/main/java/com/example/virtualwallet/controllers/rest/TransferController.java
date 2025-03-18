@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/profile/transfers")
@@ -50,8 +52,9 @@ public class TransferController {
             @RequestParam(defaultValue = "desc") String sortOrder,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+
         if (page < 0 || size <= 0) {
-            return ResponseEntity.badRequest().body("Invalid page or size parameters.");
+            return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
 
         TransferFilterOptions filterOptions = new TransferFilterOptions(
@@ -73,6 +76,14 @@ public class TransferController {
         return ResponseEntity.ok(result);
     }
 
+    @Operation(
+            description = "Retrieve a transfer by its ID",
+            summary = "Get transfer by ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully retrieved transfer"),
+                    @ApiResponse(responseCode = "404", description = "Transfer not found")
+            }
+    )
     @GetMapping("/{id}")
     public FullTransferInfoOutput getFullTransferById(@PathVariable UUID id) {
         return transferService.getTransferById(id);
@@ -99,7 +110,8 @@ public class TransferController {
             summary = "Randomly returns a true/false boolean to confirm/decline a transfer's withdraw status",
             description = "Make an additional call to /withdraw api to confirm a transfer's status",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Successfully returned a boolean"),
+                    @ApiResponse(responseCode = "200", description = "Successfully returned a boolean which " +
+                            "determines if the transfer is a approved or declined"),
             }
     )
     @GetMapping("/withdraw")

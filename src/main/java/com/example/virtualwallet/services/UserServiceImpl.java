@@ -43,9 +43,9 @@ public class UserServiceImpl implements UserService {
     public static final String USER_ALREADY_ADMIN = "The user already has role Admin.";
     public static final String USER_ALREADY_USER = "The user already has role User.";
     public static final String USER_ALREADY_BLOCKED = "The user is already Blocked.";
+    public static final String USER_NOT_BLOCKED = "The user is not Blocked.";
 
     private final UserRepository userRepository;
-
 
     @Override
     public void createUser(User user) {
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
     public void unblockUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         if (user.getStatus().equals(AccountStatus.ACTIVE) || user.getStatus().equals(AccountStatus.DELETED)) {
-            throw new InvalidUserInputException("The user is not Blocked.");
+            throw new InvalidUserInputException(USER_NOT_BLOCKED);
         } else if (user.getStatus().equals(AccountStatus.BLOCKED)) {
             user.setStatus(AccountStatus.ACTIVE);
         } else if (user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {

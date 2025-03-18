@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Profile Management", description = "API for managing user profile")
 public class ProfileController {
 
+    public static final String UPDATED_SUCCESSFULLY = "Account updated successfully";
+
     private final UserService userService;
 
     @Operation(
@@ -60,6 +62,6 @@ public class ProfileController {
     public ResponseEntity<String> updateProfile(@Valid @RequestBody ProfileUpdateInput input ) {
         userService.updateAuthenticatedUser(input);
 
-        return ResponseEntity.ok("Account updated successfully");
+        return ResponseEntity.ok(UPDATED_SUCCESSFULLY);
     }
 }

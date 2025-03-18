@@ -83,6 +83,14 @@ public class TransactionController {
         return ResponseEntity.ok(result);
     }
 
+    @Operation(
+            description = "Retrieve a transaction by its ID",
+            summary = "Get transaction by ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully retrieved transaction"),
+                    @ApiResponse(responseCode = "404", description = "Transaction not found")
+            }
+    )
     @GetMapping("/{id}")
     public FullTransactionInfoOutput getFullTransactionInfoById(@PathVariable UUID id) {
         return transactionService.getTransactionById(id);

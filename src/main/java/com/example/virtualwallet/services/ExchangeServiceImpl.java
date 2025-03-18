@@ -1,6 +1,7 @@
 package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
+import com.example.virtualwallet.exceptions.InsufficientFundsException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.Exchange;
@@ -101,7 +102,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         BigDecimal amountToAdd = amountToRemove.multiply(exchangeRate);
 
         if (fromWallet.getBalance().compareTo(amountToRemove) < 0) {
-            throw new InvalidUserInputException("Insufficient balance in " + fromCurrency + " wallet");
+            throw new InsufficientFundsException("Insufficient balance in " + fromCurrency + " wallet");
         }
 
         fromWallet.setBalance(fromWallet.getBalance().subtract(amountToRemove));

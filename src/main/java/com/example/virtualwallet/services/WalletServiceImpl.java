@@ -34,6 +34,8 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndCon
 public class WalletServiceImpl implements WalletService {
 
     public static final String EXCHANGE_REMAINING_CURRENCY = "Please exchange your remaining balance before deleting";
+    public static final String NOT_OWNER = "You are not the owner of this wallet";
+    public static final String ALREADY_DELETED = "This wallet is already deleted!";
 
     private final WalletRepository walletRepository;
     private final ExchangeRateService exchangeRateService;
@@ -44,7 +46,6 @@ public class WalletServiceImpl implements WalletService {
         return walletRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Wallet", id));
     }
-
 
     @Override
     public Wallet getOrCreateWalletByUsernameAndCurrency(String userUsername, Currency currency) {
@@ -141,9 +142,9 @@ public class WalletServiceImpl implements WalletService {
         if (wallet.isEmpty()) {
             throw new EntityNotFoundException("Wallet", walletId);
         } else if (!wallet.get().getOwner().equals(user)) {
-            throw new UnauthorizedAccessException("You are not the owner of this wallet");
+            throw new UnauthorizedAccessException(NOT_OWNER);
         } else if (wallet.get().isDeleted()) {
-            throw new DuplicateEntityException("This wallet is already deleted!");
+            throw new DuplicateEntityException(ALREADY_DELETED);
         } else if (wallet.get().getBalance().doubleValue() >= 0.01) {
             throw new InvalidUserInputException(EXCHANGE_REMAINING_CURRENCY);
         }
