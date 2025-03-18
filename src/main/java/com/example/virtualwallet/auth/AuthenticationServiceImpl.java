@@ -1,7 +1,6 @@
 package com.example.virtualwallet.auth;
 
 import com.example.virtualwallet.services.contracts.EmailConfirmationService;
-import com.example.virtualwallet.services.contracts.EmailService;
 import com.example.virtualwallet.auth.jwt.JwtService;
 import com.example.virtualwallet.exceptions.CaptchaMismatchException;
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
