@@ -39,6 +39,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mariadb-server mariadb-client
+          sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
+          sudo mysql -u root -proot -e "CREATE DATABASE virtual_wallet;
 
       - name: Start MariaDB Service
         run: |
