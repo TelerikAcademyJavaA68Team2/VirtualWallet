@@ -66,11 +66,16 @@ public class WalletMvcController {
             page = 0;
             size = 10;
         }
-        WalletPageOutput output = walletService.getWalletPageById(walletId, page, size);
+        try {
+            WalletPageOutput output = walletService.getWalletPageById(walletId, page, size);
 
-        model.addAttribute("wallet", output);
-        model.addAttribute("currentUserUsername", userService.getAuthenticatedUser().getUsername());
-        return "Wallet-View";
+            model.addAttribute("wallet", output);
+            model.addAttribute("currentUserUsername", userService.getAuthenticatedUser().getUsername());
+            return "Wallet-View";
+        } catch (EntityNotFoundException e) {
+            return "redirect:/mvc/profile/wallets";
+        }
+
     }
 
 
