@@ -3,10 +3,7 @@ package com.example.virtualwallet;
 import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.Transfer;
 import com.example.virtualwallet.models.Wallet;
-import com.example.virtualwallet.models.dtos.card.CardEdit;
-import com.example.virtualwallet.models.dtos.card.CardInput;
-import com.example.virtualwallet.models.dtos.card.CardOutput;
-import com.example.virtualwallet.models.dtos.card.CardOutputForList;
+import com.example.virtualwallet.models.dtos.card.*;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
@@ -42,7 +39,7 @@ public class Helpers {
     public static final String MOCK_ACCOUNT_STATUS = "ACTIVE";
     public static final String MOCK_USER_ORDER_BY = "username";
     public static final String MOCK_CVV = "123";
-    public static final YearMonth MOCK_YEAR_MONTH_EXPIRATION_DATE = YearMonth.of(2025, 7);
+    public static final YearMonth MOCK_YEAR_MONTH_EXPIRATION_DATE = YearMonth.of(2050, 7);
     public static final String MOCK_STRING_EXPIRATION_DATE = "07/25";
 
     public static User createMockUserWithCardsAndWallets() {
@@ -116,6 +113,14 @@ public class Helpers {
 
     public static CardOutputForList createMockCardOutputForList() {
         CardOutputForList mockCardOutputForList = new CardOutputForList();
+        mockCardOutputForList.setCardId(UUID.randomUUID());
+        mockCardOutputForList.setCardNumber(MOCK_CARD_CARD_NUMBER);
+        mockCardOutputForList.setExpirationDate(MOCK_YEAR_MONTH_EXPIRATION_DATE);
+        return mockCardOutputForList;
+    }
+
+    public static CardOutputForListMVC createMockCardOutputForListMVC() {
+        CardOutputForListMVC mockCardOutputForList = new CardOutputForListMVC();
         mockCardOutputForList.setCardId(UUID.randomUUID());
         mockCardOutputForList.setCardNumber(MOCK_CARD_CARD_NUMBER);
         mockCardOutputForList.setExpirationDate(MOCK_YEAR_MONTH_EXPIRATION_DATE);
