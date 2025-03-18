@@ -9,6 +9,7 @@ import java.util.List;
 public class WalletsWithHistoryOutput {
 
     private BigDecimal estimatedBalance;
+    private String estimatedCurrency;
 
     private List<WalletBasicOutput> wallets;
 
