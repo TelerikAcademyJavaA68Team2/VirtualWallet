@@ -11436,8 +11436,8 @@ footer a:hover, footer a:active, footer a:focus {
   padding: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: end;
+  align-items: start;
 }
 
 /* FRONT SIDE: Dynamic Colors */
@@ -11460,8 +11460,8 @@ footer a:hover, footer a:active, footer a:focus {
 .flip-card-front {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: end;
+  align-items: start;
 }
 
 /* Styling for the back side to mimic a real card layout */
