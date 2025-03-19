@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments/Page-Layout :: head(Fund-Wallet)}"></head>
+<body id="page-top">
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<section class="section bg-light">
+    <div class="container mt-10">
+        <div class="row justify-content-center">
+            <div class="col-12 text-center">
+                <div class="section-title mb-4 pb-2">
+                    <h4 class="title mb-4"></h4>
+                </div>
+            </div><!--end col-->
+        </div><!--end row-->
+
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-6 col-12 mt-4 pt-2">
+                <div class="rounded bg-white border shadow">
+                    <div class="bg-light p-4 text-center rounded-top">
+                        <h4 class="mb-0 text-primary">Add Funds</h4>
+                    </div>
+
+                    <div class="p-4">
+                        <!--
+                            Display separate messages if the user has no active cards
+                            or no active wallets, keeping them visually distinct.
+                        -->
+                        <th:block th:if="${cards.size()} == 0">
+                            <div class="alert alert-warning text-center">
+                                <p>You have no active cards yet!</p>
+                                <a class="btn btn-primary mt-2" th:href="@{/mvc/profile/cards/new}">
+                                    Add a New Card
+                                </a>
+                            </div>
+                        </th:block>
+
+                        <th:block th:if="${wallets.size()} == 0">
+                            <div class="alert alert-warning text-center">
+                                <p>You have no active wallets yet!</p>
+                                <a class="btn btn-primary mt-2" th:href="@{/mvc/profile/wallets#}">
+                                    Add a New Wallet
+                                </a>
+                            </div>
+                        </th:block>
+
+                        <!--
+                            Only show the form if both cards & wallets are non-empty.
+                        -->
+                        <th:block th:unless="${cards.size()} == 0 or ${wallets.size()} == 0">
+                            <form th:action="@{/mvc/profile/wallets/fund-wallet}"
+                                  th:object="${transferInput}"
+                                  method="post"
+                                  id="fund-wallet-form">
+
+                                <div class="row">
+                                    <!-- Card Selection -->
+                                    <div class="col-md-12">
+                                        <label for="cardId">Select Card</label>
+                                        <select id="cardId" class="form-control"
+                                                th:field="*{cardId}">
+                                            <option th:each="card : ${cards}"
+                                                    th:value="${card.id}"
+                                                    th:text="${card.cardNumber}">
+                                            </option>
+                                        </select>
+                                        <!-- Show validation errors for cardId if any -->
+                                        <div th:if="${#fields.hasErrors('cardId')}"
+                                             class="alert alert-danger">
+                                            <span th:errors="*{cardId}"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Wallet Selection -->
+                                    <div class="col-md-12 mt-3">
+                                        <label for="walletId">Select Wallet</label>
+                                        <select id="walletId" class="form-control"
+                                                th:field="*{walletId}">
+                                            <option th:each="wallet : ${wallets}"
+                                                    th:value="${wallet.id}"
+                                                    th:text="${wallet.currency}">
+                                            </option>
+                                        </select>
+                                        <!-- Show validation errors for walletId if any -->
+                                        <div th:if="${#fields.hasErrors('walletId')}"
+                                             class="alert alert-danger">
+                                            <span th:errors="*{walletId}"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Amount -->
+                                    <div class="col-md-12 mt-3">
+                                        <label for="amount">Amount</label>
+                                        <input id="amount" type="number"
+                                               min="1" step="1.0"
+                                               class="form-control font-weight-bold"
+                                               th:field="*{amount}" required/>
+                                        <!-- Show validation errors for amount if any -->
+                                        <div th:if="${#fields.hasErrors('amount')}"
+                                             class="alert alert-danger">
+                                            <span th:errors="*{amount}"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Submit button -->
+                                    <div class="col-md-12 mt-4">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            Fund Wallet
+                                        </button>
+                                    </div>
+                                </div><!-- end row -->
+                            </form>
+                        </th:block>
+                    </div><!-- end p-4 -->
+                </div><!-- end rounded -->
+            </div><!--end col-->
+        </div><!--end row-->
+    </div><!--end container-->
+</section><!--end section-->
+
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>
