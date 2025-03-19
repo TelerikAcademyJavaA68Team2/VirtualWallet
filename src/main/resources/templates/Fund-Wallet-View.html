@@ -24,10 +24,6 @@
                     </div>
 
                     <div class="p-4">
-                        <!--
-                            Display separate messages if the user has no active cards
-                            or no active wallets, keeping them visually distinct.
-                        -->
                         <th:block th:if="${cards.size()} == 0">
                             <div class="alert alert-warning text-center">
                                 <p>You have no active cards yet!</p>
@@ -46,9 +42,6 @@
                             </div>
                         </th:block>
 
-                        <!--
-                            Only show the form if both cards & wallets are non-empty.
-                        -->
                         <th:block th:unless="${cards.size()} == 0 or ${wallets.size()} == 0">
                             <form th:action="@{/mvc/profile/wallets/fund-wallet}"
                                   th:object="${transferInput}"
