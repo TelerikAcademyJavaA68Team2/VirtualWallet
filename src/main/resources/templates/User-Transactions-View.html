@@ -24,7 +24,7 @@
                     <thead>
                     <!-- First Row: Page Size Dropdown and Muted Text -->
                     <tr>
-                        <th colspan="5" class=" border-bottom">
+                        <th colspan="6" class=" border-bottom">
                             <!-- Flex Container for Size Dropdown, Muted Text, and Search Button -->
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <!-- First Column: Size Dropdown -->
@@ -56,8 +56,10 @@
                                     <div th:unless="${transactions.totalPages <= pageNumber}"
                                          class=" text-muted ms-3 mb-0">
                                         <span th:text="${startIndex + 1}"></span> to
-                                        <span th:if="${(pageNumber + 1) * pageSize < transactions.totalElements}" th:text="${(pageNumber + 1) * pageSize}"></span>
-                                        <span th:unless="${(pageNumber + 1) * pageSize < transactions.totalElements}" th:text="${transactions.totalElements}"></span>
+                                        <span th:if="${(pageNumber + 1) * pageSize < transactions.totalElements}"
+                                              th:text="${(pageNumber + 1) * pageSize}"></span>
+                                        <span th:unless="${(pageNumber + 1) * pageSize < transactions.totalElements}"
+                                              th:text="${transactions.totalElements}"></span>
                                         of <span th:text="${transactions.totalElements}"></span> results
                                     </div>
                                     <!-- Second Column: Muted Text -->
@@ -71,7 +73,7 @@
                                 <div class="col text-center">
                                     <input type="submit" class="btn btn-primary rounded-pill" value="Search">
                                     <a href="/mvc/profile/transactions">
-                                        <span class="ms-1 btn btn-outline-dark rounded-pill">Clear</span>
+                                        <span class="ms-1 btn btn-outline-dark rounded-pill">Reset filters</span>
                                     </a>
                                 </div>
                                 <div class="col text-center">
@@ -81,7 +83,7 @@
                     </tr>
 
                     <!-- Second Row: Form Fields -->
-                    <tr>
+                    <tr th:colspan="6">
 
                         <th class="text-center" style="width: 15%">
                             <!-- Flex Container for From Date and To Date -->
@@ -111,7 +113,7 @@
                         </th>
 
                         <!-- Min Amount and Max Amount -->
-                        <th class="text-center" style="width: 20%">
+                        <th class="text-center" style="width: 16%">
                             <div class="flex-box">
                                 <label for="min-amount" class="form-label visually-hidden">Min Amount</label>
                                 <input type="number" step="1.0" id="min-amount" name="minAmount"
@@ -124,6 +126,29 @@
                                        min="0" th:value="${maxAmount}" placeholder="Max Amount">
                             </div>
                         </th>
+
+                        <th class="text-center " style="width: 6%;">
+                            <div class="d-flex">
+                                <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
+                                        style="background-color: white"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="bi bi-currency-dollar"></span>
+                                </button>
+                                <ul class="dropdown-menu text-center custom-dropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'-ALL-'"
+                                           th:href="@{/mvc/profile/transactions(page=${pageNumber}, size=${pageSize}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                    <li th:each="currency : ${currencies}">
+                                        <a class="dropdown-item" href="#" th:text="${currency}"
+                                           th:href="@{/mvc/profile/transactions(page=${pageNumber}, size=${pageSize}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency= *{currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </th>
+
 
                         <!-- Sender -->
                         <th class="text-center">
@@ -139,7 +164,6 @@
                                    th:value="${recipient}" placeholder="Recipient">
                         </th>
 
-                        <!-- Currency -->
                         <th class="text-center">
                             <label for="description" class="form-label visually-hidden">Description</label>
                             <input type="text" id="description" name="description" class="form-control form-control-sm"
@@ -189,6 +213,28 @@
                         )}">
                                 Amount
                                 <span th:if="${sortBy == 'amount'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+                        <!-- Currency Column -->
+                        <th class="clickable-header" th:classappend="${sortBy == 'amount'} ? 'active' : ''">
+                            <a th:href="@{/mvc/profile/transactions(
+                            page=${pageNumber},
+                            size=${pageSize},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            minAmount=${minAmount},
+                            maxAmount=${maxAmount},
+                            currency=${currency},
+                            sender=${sender},
+                            recipient=${recipient},
+                            sortBy='currency',
+                            sortOrder=${sortBy == 'currency' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                <span class="bi bi-currency-dollar"></span>
+                                <span th:if="${sortBy == 'currency'}">
                                 <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
                                 <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
                             </span>
@@ -275,6 +321,7 @@
                             <span th:text="${transaction.amount}"></span>
                             <span th:text="#{'currency.symbol.' + ${transaction.currency}}">$</span>
                         </td>
+                        <td th:text="${transaction.currency}"></td>
                         <td th:text="${transaction.senderUsername}"></td>
                         <td th:text="${transaction.recipientUsername}"></td>
                         <td th:text="${transaction.description}"></td>
