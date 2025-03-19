@@ -16,11 +16,12 @@
                 </div>
             </div><!--end col-->
         </div><!--end row-->
-        <div th:if="${transactions.isEmpty()}">
-            <h2 th:text="#{transactions.empty}" th:align="center"></h2>
+        <div th:if="${transactions.isEmpty()}" class="mt-4 align-items-center align-middle text-center">
+            <img src="/images/noHistoryYet.png">
+            <h2 th:text="#{transactions.empty}" class="mt-4" th:align="center"></h2>
         </div>
 
-        <div class="table-responsive bg-white shadow rounded mt-3">
+        <div th:unless="${transactions.isEmpty()}" class="table-responsive bg-white shadow rounded mt-3">
             <!-- Form Wrapping the Table -->
             <form id="query-form" th:action="@{/mvc/profile/transactions}" method="get">
                 <table class="table table-striped mb-0">
