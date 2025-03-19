@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments/Page-Layout :: head(Transfer)}"></head>
+<body id="page-top">
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<!-- Transfer Details View -->
+<section class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 th:text="#{transfer.details}">Transfer Details</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Recipient -->
+                    <div class="mb-3">
+                        <label class="fw-bold" th:text="#{transfer.recipient}">Recipient:</label>
+                        <span th:text="${transfer.recipientUsername}" class="text-dark"></span>
+                    </div>
+
+                    <!-- Amount & Currency -->
+                    <div class="mb-3">
+                        <label class="fw-bold" th:text="#{transfer.amount}">Amount:</label>
+                        <span th:text="${transfer.amount}" class="text-dark"></span>
+                        <span th:text="${transfer.currency}" class="text-dark"></span>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="mb-3">
+                        <label class="fw-bold " th:text="#{transfer.status}">Status:</label>
+                        <span th:text="${transfer.status}" class="badge"
+                              th:classappend="${transfer.status == 'Approved' ? 'bg-success' : 'bg-danger'}">
+                        </span>
+                    </div>
+
+                    <!-- Card Numbers (Masked for Security) -->
+                    <div class="mb-3">
+                        <label class="fw-bold" th:text="#{transfer.card}">Card Used:</label>
+                        <span th:text="${transfer.cardNumbers}" class="text-dark"></span>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="mb-3">
+                        <label class="fw-bold" th:text="#{transfer.date}">Date:</label>
+                        <span th:text="${#temporals.format(transfer.date, 'yyyy-MM-dd HH:mm:ss')}" class="text-dark"></span>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="card-footer d-flex justify-content-between">
+                    <!-- Back Button -->
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                        <span th:text="#{transfer.back}">Back</span>
+                    </a>
+
+                    <!-- View All Transfers Button -->
+                    <a href="/mvc/profile/transfers" class="btn btn-outline-dark">
+                        <span th:text="#{transfer.viewAll}">View All Transfers</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>
