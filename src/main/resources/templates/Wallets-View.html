@@ -27,7 +27,8 @@
                                             <span th:text="${mainCurrency}">BGN</span>
                                         </button>
                                         <!-- Dropdown Menu -->
-                                        <ul class="dropdown-menu dropdown-menu-end text-center custom-dropdown"                                             aria-labelledby="currencyDropdown">
+                                        <ul class="dropdown-menu dropdown-menu-end text-center custom-dropdown"
+                                            aria-labelledby="currencyDropdown">
                                             <li th:each="currency : ${walletCurrencies}">
                                                 <a class="dropdown-item" href="#"
                                                    th:href="@{/mvc/profile/wallets(mainCurrency=${currency})}"
@@ -271,7 +272,6 @@
                 </table>
 
 
-
                 <div class="pagination-container">
                     <!-- Pagination Buttons -->
                     <nav aria-label="Page navigation">
@@ -285,7 +285,8 @@
                             </li>
 
                             <!-- Previous Page Button -->
-                            <li class="page-item" th:if="${wallets.hasPreviousPage && wallets.currentPage <= wallets.totalPages}">
+                            <li class="page-item"
+                                th:if="${wallets.hasPreviousPage && wallets.currentPage <= wallets.totalPages}">
                                 <a class="page-link" href="#"
                                    th:href="@{/mvc/profile/wallets(page=${wallets.currentPage - 1}, size=${wallets.pageSize})}">
                                     <i class="bi bi-chevron-left"></i>
@@ -294,14 +295,24 @@
 
                             <!-- Page Number Buttons -->
                             <li class="page-item" th:each="pageNumber : ${#numbers.sequence(
-                 wallets.currentPage > 6 ? (wallets.currentPage - 6) : 0,
-                 wallets.currentPage + 6 < wallets.totalPages - 1 ? (wallets.currentPage + 6) : (wallets.totalPages - 1)
-             )}"
-                                th:if="${wallets.totalPages > 0}"
+                                    wallets.currentPage > 6 ? (wallets.currentPage - 6) : 0,
+                                    wallets.currentPage + 6 < wallets.totalPages - 1 ? (wallets.currentPage + 6) : (wallets.totalPages - 1)
+                                )}"
+                                th:if="${wallets.totalPages > 0 && wallets.currentPage < wallets.totalPages}"
                                 th:classappend="${pageNumber == wallets.currentPage} ? 'active' : ''">
                                 <a class="page-link" href="#"
-                                   th:href="@{/mvc/profile/wallets(page=${pageNumber}, size=${wallets.pageSize})}"
+                                   th:href="@{/mvc/profile/wallets(
+                                   page=${pageNumber},
+                                    size=${wallets.pageSize})}"
                                    th:text="${pageNumber + 1}"></a>
+                            </li>
+
+                            <li class="page-item"
+                                th:unless="${wallets.totalPages > 0 && wallets.currentPage < wallets.totalPages}">
+                                <a class="page-link" href="#"
+                                   th:href="@{/mvc/profile/wallets(page=0, size=${wallets.pageSize})}">
+                                    <i class="bi bi-house-fill"></i>
+                                </a>
                             </li>
 
                             <!-- Next Page Button -->

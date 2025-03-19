@@ -16,12 +16,12 @@
                 </div>
             </div><!--end col-->
         </div><!--end row-->
-        <div th:if="${transactions.isEmpty()}" class="mt-4 align-items-center align-middle text-center">
-            <img src="/images/noHistoryYet.png">
-            <h2 th:text="#{transactions.empty}" class="mt-4" th:align="center"></h2>
-        </div>
+        <!--  <div th:if="${transactions.totalPages==0}" class="mt-4 align-items-center align-middle text-center">
+              <img src="/images/noHistoryYet.png">
+              <h2 th:text="#{transactions.empty}" class="mt-4" th:align="center"></h2>
+          </div>-->
 
-        <div th:unless="${transactions.isEmpty()}" class="table-responsive bg-white shadow rounded mt-3">
+        <div class="table-responsive bg-white shadow rounded mt-3">
             <!-- Form Wrapping the Table -->
             <form id="query-form" th:action="@{/mvc/profile/transactions}" method="get">
                 <table class="table table-striped mb-0">
@@ -58,10 +58,14 @@
                                         </ul>
                                     </div>
                                     <!-- Second Column: Muted Text -->
-                                    <div class=" text-muted ms-3 mb-0">
+                                    <div  th:unless="${transactions.totalPages <= pageNumber}" class=" text-muted ms-3 mb-0">
                                         <span th:text="${startIndex + 1}"></span> to <span
                                             th:text="${transactions.totalElements}"></span>
                                         of <span th:text="${transactions.totalElements}"></span> results
+                                    </div>
+                                    <!-- Second Column: Muted Text -->
+                                    <div  th:if="${transactions.totalPages <= pageNumber}" class=" text-muted ms-3 mb-0">
+                                        <span th:text="'0 results'"></span>
                                     </div>
                                 </div>
 
@@ -266,7 +270,7 @@
                     </thead>
 
                     <!-- Table Body -->
-                    <tbody>
+                    <tbody th:if="${transactions.totalElements != null}">
                     <tr th:each="transaction : ${transactions}" class="clickable-row"
                         th:attr="data-href='/mvc/profile/transactions/' + ${transaction.id}">
                         <td th:text="${transaction.date != null ? #temporals.format(transaction.date, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
@@ -279,9 +283,19 @@
                         <td th:text="${transaction.description}"></td>
                     </tr>
                     </tbody>
+                    <tr th:if="${transactions.totalPages <= pageNumber}"
+                        class="justify-content-center align-items-center">
+                        <td colspan="5" class="text-center p-5 justify-content-center align-items-center w-100">
+                            <img src="/images/emptyPage.png"
+                                 alt="Page Is Empty"
+                                 style="max-width: 200px;"/>
+                        </td>
+                    </tr>
                 </table>
             </form>
         </div>
+
+
         <div class="pagination-container">
             <!-- Pagination Buttons -->
             <nav aria-label="Page navigation">
@@ -332,7 +346,7 @@
                             pageNumber > 6 ? (pageNumber - 6) : 0,
                             pageNumber + 6 < transactions.totalPages - 1 ? (pageNumber + 6) : (transactions.totalPages - 1)
                         )}"
-                        th:if="${transactions.totalPages > 0}"
+                        th:if="${transactions.totalPages > 0 && pageNumber < transactions.totalPages}"
                         th:classappend="${page == pageNumber} ? 'active' : ''">
                         <a class="page-link" href="#"
                            th:href="@{/mvc/profile/transactions(
@@ -351,6 +365,16 @@
                                )}"
                            th:text="${page + 1}"></a>
                     </li>
+
+
+                    <li class="page-item"
+                        th:unless="${transactions.totalPages > 0 && pageNumber < transactions.totalPages}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/profile/transactions}">
+                            <i class="bi bi-house-fill"></i>
+                        </a>
+                    </li>
+
                     <!-- Next Page Button -->
                     <li class="page-item" th:unless="${pageNumber >= transactions.totalPages - 1}">
                         <a class="page-link" href="#"
