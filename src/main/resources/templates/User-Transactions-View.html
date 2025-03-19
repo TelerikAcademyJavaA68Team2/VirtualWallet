@@ -15,12 +15,7 @@
                         Transaction History</h1>
                 </div>
             </div><!--end col-->
-        </div><!--end row-->
-        <!--  <div th:if="${transactions.totalPages==0}" class="mt-4 align-items-center align-middle text-center">
-              <img src="/images/noHistoryYet.png">
-              <h2 th:text="#{transactions.empty}" class="mt-4" th:align="center"></h2>
-          </div>-->
-
+        </div>
         <div class="table-responsive bg-white shadow rounded mt-3">
             <!-- Form Wrapping the Table -->
             <form id="query-form" th:action="@{/mvc/profile/transactions}" method="get">
@@ -41,30 +36,32 @@
                                         </button>
                                         <ul class="dropdown-menu text-center custom-dropdown-95px">
                                             <li><a class="dropdown-item" href="#"
-                                                   th:href="@{/mvc/profile/transactions(page=${pageNumber}, size=5, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">5</a>
+                                                   th:href="@{/mvc/profile/transactions(page=0, size=5, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">5</a>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                   th:href="@{/mvc/profile/transactions(page=${pageNumber}, size=10, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">10</a>
+                                                   th:href="@{/mvc/profile/transactions(page=0, size=10, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">10</a>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                   th:href="@{/mvc/profile/transactions(page=${pageNumber}, size=25, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">25</a>
+                                                   th:href="@{/mvc/profile/transactions(page=0, size=25, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">25</a>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                   th:href="@{/mvc/profile/transactions(page=${pageNumber}, size=50, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">50</a>
+                                                   th:href="@{/mvc/profile/transactions(page=0, size=50, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">50</a>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                   th:href="@{/mvc/profile/transactions(page=${pageNumber}, size=100, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">100</a>
+                                                   th:href="@{/mvc/profile/transactions(page=0, size=100, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">100</a>
                                             </li>
                                         </ul>
                                     </div>
                                     <!-- Second Column: Muted Text -->
-                                    <div  th:unless="${transactions.totalPages <= pageNumber}" class=" text-muted ms-3 mb-0">
-                                        <span th:text="${startIndex + 1}"></span> to <span
-                                            th:text="${transactions.totalElements}"></span>
+                                    <div th:unless="${transactions.totalPages <= pageNumber}"
+                                         class=" text-muted ms-3 mb-0">
+                                        <span th:text="${startIndex + 1}"></span> to
+                                        <span th:if="${(pageNumber + 1) * pageSize < transactions.totalElements}" th:text="${(pageNumber + 1) * pageSize}"></span>
+                                        <span th:unless="${(pageNumber + 1) * pageSize < transactions.totalElements}" th:text="${transactions.totalElements}"></span>
                                         of <span th:text="${transactions.totalElements}"></span> results
                                     </div>
                                     <!-- Second Column: Muted Text -->
-                                    <div  th:if="${transactions.totalPages <= pageNumber}" class=" text-muted ms-3 mb-0">
+                                    <div th:if="${transactions.totalPages <= pageNumber}" class=" text-muted ms-3 mb-0">
                                         <span th:text="'0 results'"></span>
                                     </div>
                                 </div>

@@ -118,17 +118,17 @@ public class AuthenticationMvcController {
         }
     }
 
-    @GetMapping("/email-confirm/resend")
+/*    @GetMapping("/email-confirm/resend")
     public String resendEmail() {
-        /*try {
+        try {
             emailConfirmationService.confirmEmailToken(token);
             return "redirect:/mvc/profile";
         } catch (EmailConfirmationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (EmailConfirmedException e) {
             return "redirect:/mvc/profile";
-        }*/
+        }
         return null;
-    }
+    }*/
 
 }
