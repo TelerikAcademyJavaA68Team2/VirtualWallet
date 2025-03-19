@@ -61,6 +61,10 @@ public class TransactionSpecification {
                     predicates.add(cb.like(root.get("recipientUsername"), "%" + recipientUsername + "%"))
             );
 
+            filterOptions.getDescription().ifPresent(description ->
+                    predicates.add(cb.like(root.get("description"), "%" + description + "%"))
+            );
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }

@@ -139,8 +139,6 @@ public class TransactionServiceImpl implements TransactionService {
         Sort sort = convertToSort(filterOptions.getSortBy(), filterOptions.getSortOrder());
         Pageable pageable = PageRequest.of(filterOptions.getPage(), filterOptions.getSize(), sort);
 
-        Page<Transaction> pageResult = transactionRepository.findAll(spec, pageable);
-
-        return pageResult;
+        return transactionRepository.findAll(spec, pageable);
     }
 }

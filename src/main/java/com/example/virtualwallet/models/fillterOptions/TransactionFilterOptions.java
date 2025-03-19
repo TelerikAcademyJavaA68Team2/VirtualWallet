@@ -23,6 +23,7 @@ public class TransactionFilterOptions {
     private Optional<String> sender;
     private Optional<String> recipient;
     private Optional<String> direction;
+    private Optional<String> description;
     private String sortBy;
     private String sortOrder;
     private int page;
@@ -38,6 +39,7 @@ public class TransactionFilterOptions {
             String sender,
             String recipient,
             String direction,
+            String description,
             String sortBy,
             String sortOrder,
             int page,
@@ -52,6 +54,7 @@ public class TransactionFilterOptions {
         this.sender = sanitizeOptional(sender);
         this.recipient = sanitizeOptional(recipient);
         this.direction = sanitizeOptional(direction);
+        this.description = sanitizeOptional(description);
         this.sortBy = validateSortBy(sortBy);
         this.sortOrder = validateSortOrder(sortOrder);
         this.page = page;
@@ -59,7 +62,7 @@ public class TransactionFilterOptions {
     }
 
     private String validateSortBy(String sortBy) {
-        List<String> validFields = Arrays.asList("amount", "date", "currency", "senderUsername", "recipientUsername");
+        List<String> validFields = Arrays.asList("amount", "date", "currency", "senderUsername", "recipientUsername","description");
         return (sortBy != null && !sortBy.isEmpty() && validFields.contains(sortBy)) ? sortBy : "date";
     }
 }

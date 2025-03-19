@@ -11647,7 +11647,11 @@ footer a:hover, footer a:active, footer a:focus {
 }
 
 .clickable-row {
-  cursor: pointer;
+  cursor: pointer; /* Change cursor to pointer */
+}
+
+.clickable-row:hover {
+  background-color: #e9ecef; /* A light gray, commonly used in Bootstrap */
 }
 
 /* Pagination Container */
@@ -11843,4 +11847,37 @@ footer a:hover, footer a:active, footer a:focus {
 /* Allow the middle and right columns to share the remaining space */
 td:not(.activity-column) {
   width: auto; /* Automatically adjust to fill remaining space */
+}
+
+
+
+/* Style for clickable table headers */
+.clickable-header {
+  padding: 0; /* Remove default padding to ensure full cell clickability */
+  text-align: left; /* Center-align the content */
+  background-color: #f8f9fa; /* Light background for better contrast */
+  border-bottom: 2px solid #dee2e6; /* Add a border for visual separation */
+  cursor: pointer; /* Change cursor to pointer to indicate clickability */
+}
+
+.clickable-header a {
+  display: block; /* Make the anchor tag fill the entire cell */
+  padding: 5px; /* Add padding for better spacing */
+  text-decoration: none; /* Remove underline */
+  color: black; /* Use Bootstrap's primary blue color */
+  font-weight: bold; /* Bold text for emphasis */
+  transition: background-color 0.2s ease, color 0.2s ease; /* Smooth hover effect */
+}
+
+.clickable-header a:hover,
+.clickable-header a:focus {
+  background-color: grey; /* Change background color on hover/focus */
+  color: white; /* Change text color for contrast */
+  text-decoration: none; /* Ensure no underline appears on hover */
+}
+
+/* Optional: Add arrows for sorting indicators */
+.clickable-header a i {
+  margin-left: 5px; /* Add spacing between text and arrow */
+  font-size: 0.8em; /* Adjust arrow size */
 }

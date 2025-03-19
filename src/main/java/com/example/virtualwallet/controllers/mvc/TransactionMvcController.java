@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.math.BigDecimal;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.convertToCustomFormat;
+import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
 
 @RequiredArgsConstructor
 @Controller
@@ -35,12 +36,18 @@ public class TransactionMvcController {
             @RequestParam(required = false) String sender,
             @RequestParam(required = false) String recipient,
             @RequestParam(required = false) String direction,
+            @RequestParam(required = false) String description,
             @RequestParam(required = false, defaultValue = "date") String sortBy,
             @RequestParam(required = false, defaultValue = "desc") String sortOrder,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model
     ) {
+        if (requestIsWithInvalidPageOrSize(page, size)) {
+            page = 0;
+            size = 10;
+        }
+
         User user = userService.getAuthenticatedUser();
         String fromDateToDisplay = fromDate;
         String toDateToDisplay = toDate;
@@ -55,7 +62,7 @@ public class TransactionMvcController {
         }
         TransactionFilterOptions filterOptions = new TransactionFilterOptions(
                 user.getUsername(), fromDate, toDate, minAmount, maxAmount, currency,
-                sender, recipient, direction, sortBy, sortOrder, page, size
+                sender, recipient, direction, description, sortBy, sortOrder, page, size
         );
 
         Page<Transaction> transactionsPage = transactionService.filterTransactionsPage(filterOptions);
@@ -64,7 +71,7 @@ public class TransactionMvcController {
         int startIndex = page * size;
         int endIndex = Math.min(startIndex + transactionsPage.getNumberOfElements(), totalTransactions);
 
-        model.addAttribute("transactions", transactionsPage.getContent());
+        model.addAttribute("transactions", transactionsPage);
         model.addAttribute("totalTransactions", totalTransactions);
         model.addAttribute("startIndex", startIndex);
         model.addAttribute("endIndex", endIndex);
@@ -79,6 +86,7 @@ public class TransactionMvcController {
         model.addAttribute("sender", sender);
         model.addAttribute("recipient", recipient);
         model.addAttribute("direction", direction);
+        model.addAttribute("description", description);
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortOrder", sortOrder);
 
