@@ -5,6 +5,7 @@ import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletsWithHistoryOutput;
 import com.example.virtualwallet.models.enums.Currency;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface WalletService {
@@ -16,6 +17,8 @@ public interface WalletService {
     void update(Wallet wallet);
 
     WalletsWithHistoryOutput getActiveWalletsOfAuthenticatedUser(String mainCurrency, int page, int size);
+
+    List<Wallet> getActiveWalletsOfUser(UUID user);
 
     WalletPageOutput getWalletPageById(UUID walletId, int page, int size);
 
