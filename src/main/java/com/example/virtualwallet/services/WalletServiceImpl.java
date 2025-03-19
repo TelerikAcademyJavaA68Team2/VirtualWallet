@@ -102,6 +102,11 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    public List<Wallet> getActiveWalletsOfUser(UUID user) {
+        return walletRepository.findActiveWalletsByUserId(user);
+    }
+
+    @Override
     public WalletPageOutput getWalletPageById(UUID walletId, int page, int size) {
         User user = userService.getAuthenticatedUser();
 

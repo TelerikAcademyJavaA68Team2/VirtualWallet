@@ -1,6 +1,5 @@
 package com.example.virtualwallet.models.dtos.transfer;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
@@ -11,15 +10,16 @@ import java.util.UUID;
 
 @Data
 @PropertySource("classpath:messages.properties")
-public class TransferInput {
+public class TransferInputMVC {
 
     @NotNull(message = "{error.cardIdEmpty}")
     private UUID cardId;
+
+    @NotNull(message = "{error.walletIdEmpty}")
+    private UUID walletId;
 
     @NotNull(message = "{error.amountEmpty}")
     @Positive(message = "{error.amountPositive}")
     private BigDecimal amount;
 
-    @NotBlank(message = "{error.currencyEmpty}")
-    private String currency;
 }
