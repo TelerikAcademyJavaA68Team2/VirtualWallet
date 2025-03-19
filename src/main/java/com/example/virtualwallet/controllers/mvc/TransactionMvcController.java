@@ -2,6 +2,7 @@ package com.example.virtualwallet.controllers.mvc;
 
 import com.example.virtualwallet.models.Transaction;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.services.contracts.TransactionService;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.convertToCustomFormat;
 import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
@@ -65,9 +68,11 @@ public class TransactionMvcController {
                 sender, recipient, direction, description, sortBy, sortOrder, page, size
         );
 
+        List<String> currencies = Arrays.stream(Currency.values()).map((Enum::name)).toList();
         Page<Transaction> transactionsPage = transactionService.filterTransactionsPage(filterOptions);
 
         int startIndex = page * size;
+        model.addAttribute("currencies", currencies);
         model.addAttribute("transactions", transactionsPage);
         model.addAttribute("startIndex", startIndex);
         model.addAttribute("pageNumber", page);
