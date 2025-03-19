@@ -58,48 +58,51 @@
                                 <div class="row">
                                     <!-- Card Selection -->
                                     <div class="col-md-12">
-                                        <label for="cardId">Select Card</label>
-                                        <select id="cardId" class="form-control"
-                                                th:field="*{cardId}">
-                                            <option th:each="card : ${cards}"
-                                                    th:value="${card.id}"
-                                                    th:text="${card.cardNumber}">
-                                            </option>
-                                        </select>
+                                        <label for="cardId" class="font-weight-bold">Select Card</label>
+                                        <div class="position-relative">
+                                            <select id="cardId" class="form-select form-control"
+                                                    th:field="*{cardId}">
+                                                <option value="" selected disabled>Select a Card</option>
+                                                <option th:each="card : ${cards}"
+                                                        th:value="${card.id}"
+                                                        th:text="${card.cardNumber}">
+                                                </option>
+                                            </select>
+                                        </div>
                                         <!-- Show validation errors for cardId if any -->
-                                        <div th:if="${#fields.hasErrors('cardId')}"
-                                             class="alert alert-danger">
+                                        <div th:if="${#fields.hasErrors('cardId')}" class="alert alert-danger mt-2">
                                             <span th:errors="*{cardId}"></span>
                                         </div>
                                     </div>
 
                                     <!-- Wallet Selection -->
                                     <div class="col-md-12 mt-3">
-                                        <label for="walletId">Select Wallet</label>
-                                        <select id="walletId" class="form-control"
-                                                th:field="*{walletId}">
-                                            <option th:each="wallet : ${wallets}"
-                                                    th:value="${wallet.id}"
-                                                    th:text="${wallet.currency}">
-                                            </option>
-                                        </select>
+                                        <label for="walletId" class="font-weight-bold">Select Wallet</label>
+                                        <div class="position-relative">
+                                            <select id="walletId" class="form-select form-control"
+                                                    th:field="*{walletId}">
+                                                <option value="" selected disabled>Select a Wallet</option>
+                                                <option th:each="wallet : ${wallets}"
+                                                        th:value="${wallet.id}"
+                                                        th:text="${wallet.currency}">
+                                                </option>
+                                            </select>
+                                        </div>
                                         <!-- Show validation errors for walletId if any -->
-                                        <div th:if="${#fields.hasErrors('walletId')}"
-                                             class="alert alert-danger">
+                                        <div th:if="${#fields.hasErrors('walletId')}" class="alert alert-danger mt-2">
                                             <span th:errors="*{walletId}"></span>
                                         </div>
                                     </div>
 
                                     <!-- Amount -->
                                     <div class="col-md-12 mt-3">
-                                        <label for="amount">Amount</label>
+                                        <label for="amount" class="font-weight-bold">Amount</label>
                                         <input id="amount" type="number"
                                                min="1" step="1.0"
                                                class="form-control font-weight-bold"
                                                th:field="*{amount}" required/>
                                         <!-- Show validation errors for amount if any -->
-                                        <div th:if="${#fields.hasErrors('amount')}"
-                                             class="alert alert-danger">
+                                        <div th:if="${#fields.hasErrors('amount')}" class="alert alert-danger mt-2">
                                             <span th:errors="*{amount}"></span>
                                         </div>
                                     </div>
