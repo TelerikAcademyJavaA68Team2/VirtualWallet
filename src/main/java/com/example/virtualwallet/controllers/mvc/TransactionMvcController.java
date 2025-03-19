@@ -67,17 +67,11 @@ public class TransactionMvcController {
 
         Page<Transaction> transactionsPage = transactionService.filterTransactionsPage(filterOptions);
 
-        int totalTransactions = (int) transactionsPage.getTotalElements();
         int startIndex = page * size;
-        int endIndex = Math.min(startIndex + transactionsPage.getNumberOfElements(), totalTransactions);
-
         model.addAttribute("transactions", transactionsPage);
-        model.addAttribute("totalTransactions", totalTransactions);
         model.addAttribute("startIndex", startIndex);
-        model.addAttribute("endIndex", endIndex);
         model.addAttribute("pageNumber", page);
         model.addAttribute("pageSize", size);
-        model.addAttribute("lastPage", transactionsPage.getTotalPages() - 1);
         model.addAttribute("fromDate", fromDateToDisplay);
         model.addAttribute("toDate", toDateToDisplay);
         model.addAttribute("minAmount", minAmount);
