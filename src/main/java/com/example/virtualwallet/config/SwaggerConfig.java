@@ -19,17 +19,19 @@ import org.springframework.context.annotation.Configuration;
                         name = "Georgi Benchev and Ivan Ivanov",
                         email = "gega4321@gmail.com ; ivanovivanbusiness@gmail.com"
                 ),
-                description = "This is the **MoneyMe Virtual Wallet API**, a secure and efficient digital wallet " +
-                        "solution developed using **Spring Boot**. The application allows users to:\n" +
-                        "- **Register and authenticate** using JWT authentication.\n" +
-                        "- **Add and manage credit/debit cards** securely.\n" +
-                        "- **Deposit money** into their virtual wallet from a linked bank card.\n" +
-                        "- **Send money** to users using phone numbers, usernames, or emails.\n" +
-                        "- **View transaction history**, filterable by date, recipient, sender, etc.\n" +
-                        "- **Manage multiple wallets**, one for each supported currency.\n" +
-                        "- **Admin features**: Manage users, block/unblock accounts, and monitor transactions.\n" +
-                        "- **Security features**: Identity verification and email verification.\n\n" +
-                        "The API follows **RESTful principles** and provides a structured, scalable financial solution.",
+                description = """
+                        This is the **MoneyMe Virtual Wallet API**, a secure and efficient digital wallet \
+                        solution developed using **Spring Boot**. The application allows users to:
+                        - **Register and authenticate** using JWT authentication.
+                        - **Add and manage credit/debit cards** securely.
+                        - **Deposit money** into their virtual wallet from a linked bank card.
+                        - **Send money** to users using phone numbers, usernames, or emails.
+                        - **View transaction history**, filterable by date, recipient, sender, etc.
+                        - **Manage multiple wallets**, one for each supported currency.
+                        - **Admin features**: Manage users, block/unblock accounts, and monitor transactions.
+                        - **Security features**: Identity verification and email verification.
+                        
+                        The API follows **RESTful principles** and provides a structured, scalable financial solution.""",
                 title = "MoneyMe - Virtual Wallet API",
                 version = "1.0"
         ),
