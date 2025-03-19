@@ -5,6 +5,7 @@ import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.*;
 import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
+import com.example.virtualwallet.models.dtos.transfer.TransferInputMVC;
 import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.Role;
@@ -52,9 +53,44 @@ public class TransferServiceImpl implements TransferService {
         User user = userService.getAuthenticatedUser();
 
         Card card = cardService.getCardById(transferInput.getCardId());
+
         validateCardIsNotExpired(card.getExpirationDate(), EXPIRED_CARD);
 
         Currency currency = validateAndConvertCurrency(transferInput.getCurrency());
+
+        validateUserIsCardOwner(card, user, NOT_CARD_OWNER);
+
+        Wallet wallet = walletService.getOrCreateWalletByUsernameAndCurrency(user.getUsername(),
+                currency);
+
+        TransactionStatus transferStatus = callMockWithdrawApi();
+
+        Transfer transfer = new Transfer();
+        transfer.setCard(card);
+        transfer.setWallet(wallet);
+        transfer.setAmount(transferInput.getAmount());
+        transfer.setCurrency(currency);
+        transfer.setStatus(transferStatus);
+        transfer.setRecipientUsername(user.getUsername());
+
+        if (transfer.getStatus() == TransactionStatus.APPROVED) {
+            wallet.setBalance(wallet.getBalance().add(transferInput.getAmount()));
+            walletService.update(wallet);
+        }
+        Transfer transferToSave = transferRepository.save(transfer);
+
+        return transferToFullTransferInfoOutput(transferToSave);
+    }
+
+    @Override
+    public FullTransferInfoOutput processTransfer(TransferInputMVC transferInput) {
+        User user = userService.getAuthenticatedUser();
+
+        Card card = cardService.getCardById(transferInput.getCardId());
+
+        validateCardIsNotExpired(card.getExpirationDate(), EXPIRED_CARD);
+
+        Currency currency = walletService.getWalletById(transferInput.getWalletId()).getCurrency();
 
         validateUserIsCardOwner(card, user, NOT_CARD_OWNER);
 
