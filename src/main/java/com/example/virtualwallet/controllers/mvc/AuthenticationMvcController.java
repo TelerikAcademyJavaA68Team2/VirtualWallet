@@ -1,9 +1,8 @@
 package com.example.virtualwallet.controllers.mvc;
 
 import com.example.virtualwallet.auth.AuthenticationService;
+import com.example.virtualwallet.exceptions.*;
 import com.example.virtualwallet.services.contracts.EmailConfirmationService;
-import com.example.virtualwallet.exceptions.DuplicateEntityException;
-import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
 import jakarta.servlet.http.HttpSession;
@@ -14,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -100,6 +101,20 @@ public class AuthenticationMvcController {
         } catch (InvalidUserInputException e) {
             errors.rejectValue("passwordConfirm", "password.mismatch", e.getMessage());
             return "Register-View";
+        }
+    }
+
+    @GetMapping("/email-confirm")
+    public String confirmEmail(@RequestParam UUID token) {
+        try {
+            emailConfirmationService.confirmEmailToken(token);
+            return "redirect:/mvc/profile";
+        } catch (EmailConfirmationException e) {
+            return "redirect:/mvc/profile?emailTokenExpired=true";
+        } catch (EmailConfirmedException e) {
+            return "redirect:/mvc/profile";
+        }catch (EntityNotFoundException e){
+            return "redirect:/mvc/home";
         }
     }
 
