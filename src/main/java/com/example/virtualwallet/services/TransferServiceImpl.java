@@ -2,7 +2,10 @@ package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.helpers.ModelMapper;
-import com.example.virtualwallet.models.*;
+import com.example.virtualwallet.models.Card;
+import com.example.virtualwallet.models.Transfer;
+import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.transfer.*;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.Role;

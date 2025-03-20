@@ -117,5 +117,4 @@ public class TransferController {
     public ResponseEntity<Boolean> withdraw() {
         return ResponseEntity.ok(new Random().nextBoolean());
     }
-
 }
