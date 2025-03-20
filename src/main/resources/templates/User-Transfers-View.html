@@ -279,7 +279,9 @@
                         th:attr="data-href='/mvc/profile/transfers/' + ${transfer.transferId}">
                         <td th:text="${transfer.date != null ? #temporals.format(transfer.date, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
                         <td >
-                            <span th:text="${transfer.amount}"></span>
+                             <span th:if="${transfer.status == 'Declined'}"
+                                   style="text-decoration: line-through;" th:text="${transfer.amount}">100.00</span>
+                            <span th:unless="${transfer.status == 'Declined'}" th:text="${transfer.amount}"></span>
                             <span th:text="#{'currency.symbol.' + ${transfer.currency}}">$</span>
                         </td>
                         <td th:text="${transfer.currency}"></td>
