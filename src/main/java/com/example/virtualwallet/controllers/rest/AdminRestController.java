@@ -6,7 +6,7 @@ import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
 import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOutput;
 import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
-import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
+import com.example.virtualwallet.models.dtos.transfer.TransfersPage;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
@@ -238,9 +238,9 @@ public class AdminRestController {
                 sortBy, sortOrder, page, size
         );
 
-        List<TransferOutput> result = transferService.filterTransfers(filterOptions);
+       TransfersPage result = transferService.filterTransfers(filterOptions);
 
-        if (result.isEmpty()) {
+        if (result.getTransfers().isEmpty()) {
             return new ResponseEntity<>(NO_TRANSFERS, HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);

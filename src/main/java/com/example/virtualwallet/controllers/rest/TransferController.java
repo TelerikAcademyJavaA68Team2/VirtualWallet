@@ -2,7 +2,7 @@ package com.example.virtualwallet.controllers.rest;
 
 import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
-import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
+import com.example.virtualwallet.models.dtos.transfer.TransfersPage;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
 import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -16,11 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
 import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
+import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
 
 @RequiredArgsConstructor
 @RestController
@@ -52,8 +52,7 @@ public class TransferController {
             @RequestParam(defaultValue = "desc") String sortOrder,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-
-        if (page < 0 || size <= 0) {
+        if (requestIsWithInvalidPageOrSize(page, size)) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
 
@@ -68,9 +67,9 @@ public class TransferController {
                 sortBy, sortOrder, page, size
         );
 
-        List<TransferOutput> result = transferService.filterTransfers(filterOptions);
+        TransfersPage result = transferService.filterTransfers(filterOptions);
 
-        if (result.isEmpty()) {
+        if (result.getTransfers().isEmpty()) {
             return new ResponseEntity<>("No transfers with these filters!", HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);
