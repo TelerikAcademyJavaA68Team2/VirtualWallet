@@ -11634,6 +11634,16 @@ footer a:hover, footer a:active, footer a:focus {
   clip-path: none !important; /* Prevent clipping */
 }
 
+.custom-dropdown-200px {
+  min-width: 200px !important; /* Ensure the dropdown menu is at least 300px wide */
+  width: auto;
+  position: absolute !important;
+  z-index: 1000 !important;
+  overflow: visible !important;
+  clip: auto !important; /* Prevent clipping */
+  clip-path: none !important; /* Prevent clipping */
+}
+
 /* Ensure the dropdown menu is not clipped */
 .custom-dropdown-parent {
   overflow: visible !important; /* Allow the dropdown to overflow */
@@ -11880,4 +11890,14 @@ td:not(.activity-column) {
 .clickable-header a i {
   margin-left: 5px; /* Add spacing between text and arrow */
   font-size: 0.8em; /* Adjust arrow size */
+}
+
+/* Approved Status */
+.status-approved {
+  color: forestgreen !important; /* Dark green text */
+}
+
+/* Declined Status */
+.status-declined {
+  color: #E74C3C !important; /* Dark red text */
 }
