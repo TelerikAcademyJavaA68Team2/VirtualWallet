@@ -2,6 +2,7 @@ package com.example.virtualwallet.controllers.mvc;
 
 import com.example.virtualwallet.models.Transaction;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.services.contracts.TransactionService;
@@ -11,12 +12,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.convertToCustomFormat;
 import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
@@ -92,5 +95,10 @@ public class TransactionMvcController {
         return "User-Transactions-View";
     }
 
-
+    @GetMapping("/{id}")
+    public String getSingleTransactionView(Model model, @PathVariable UUID id) {
+        FullTransactionInfoOutput transactionInfoOutput = transactionService.getTransactionById(id);
+        model.addAttribute("transaction", transactionInfoOutput);
+        return "Transaction-View";
+    }
 }
