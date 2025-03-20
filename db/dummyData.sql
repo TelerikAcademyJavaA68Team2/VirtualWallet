@@ -5,7 +5,7 @@ INSERT INTO virtual_wallet.user (id, first_name, last_name, username, email, pas
                                  status, created_at)
 VALUES ('001e4567-e89b-12d3-a456-426614174000', 'Georgi', 'Benchev', 'georgi', 'georgi@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
-        '0876285805', 'https://avatars.githubusercontent.com/u/184780317?v=4&size=64', 'ADMIN', 'ACTIVE', NOW()),
+        '0876285805', 'https://avatars.githubusercontent.com/u/184780317?v=4', 'ADMIN', 'ACTIVE', NOW()),
 
        ('002e4567-e89b-12d3-a456-426614174000', 'Ivan', 'Ivanov', 'vankata', 'vankata@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
