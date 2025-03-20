@@ -3,10 +3,7 @@ package com.example.virtualwallet.services;
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.*;
-import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
-import com.example.virtualwallet.models.dtos.transfer.TransferInput;
-import com.example.virtualwallet.models.dtos.transfer.TransferInputMVC;
-import com.example.virtualwallet.models.dtos.transfer.TransferOutput;
+import com.example.virtualwallet.models.dtos.transfer.*;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.enums.TransactionStatus;
@@ -132,16 +129,29 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public List<TransferOutput> filterTransfers(TransferFilterOptions filterOptions) {
+    public TransfersPage filterTransfers(TransferFilterOptions filterOptions) {
         Specification<Transfer> spec = TransferSpecification.buildTransferSpecification(filterOptions);
 
         Sort sort = convertToSort(filterOptions.getSortBy(), filterOptions.getSortOrder());
         Pageable pageable = PageRequest.of(filterOptions.getPage(), filterOptions.getSize(), sort);
 
         Page<Transfer> pageResult = transferRepository.findAll(spec, pageable);
-        return pageResult.stream()
+
+        List<TransferOutput> listTransfers = pageResult.stream()
                 .map(ModelMapper::transferToTransferOutput)
                 .toList();
+
+        TransfersPage transfersPage = new TransfersPage();
+        transfersPage.setTransfers(listTransfers);
+
+        transfersPage.setTotalElements(pageResult.getTotalElements());
+        transfersPage.setCurrentPage(filterOptions.getPage());
+        transfersPage.setTotalPages(pageResult.getTotalPages());
+        transfersPage.setPageSize(filterOptions.getSize());
+        transfersPage.setHasNextPage(pageResult.hasNext());
+        transfersPage.setHasPreviousPage(pageResult.hasPrevious());
+
+        return transfersPage;
     }
 
     private TransactionStatus callMockWithdrawApi() {
