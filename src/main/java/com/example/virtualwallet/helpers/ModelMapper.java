@@ -155,7 +155,7 @@ public class ModelMapper {
         transactionOutput.setAmount(transaction.getAmount());
         transactionOutput.setSenderUsername(transaction.getSenderUsername());
         transactionOutput.setRecipientUsername(transaction.getRecipientUsername());
-        transactionOutput.setDescription(transactionOutput.getDescription());
+        transactionOutput.setDescription(transaction.getDescription());
         return transactionOutput;
     }
 
