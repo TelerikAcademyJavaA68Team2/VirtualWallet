@@ -146,7 +146,7 @@
                                     </li>
                                     <li th:each="currency : ${currencies}">
                                         <a class="dropdown-item" href="#" th:text="${currency}"
-                                           th:href="@{/mvc/profile/transfers(age=${page}, size=${size}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency= *{currency},status=${status}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                           th:href="@{/mvc/profile/transfers(page=${page}, size=${size}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency= *{currency},status=${status}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
                                         </a>
                                     </li>
                                 </ul>
