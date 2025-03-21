@@ -1,5 +1,8 @@
 package com.example.virtualwallet.controllers.mvc;
 
+import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.enums.AccountStatus;
+import com.example.virtualwallet.services.contracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("/")
 public class PublicMvcController {
+
+    private final UserService userService;
 
     @GetMapping
     public String redirectToHomepage() {
@@ -43,5 +48,24 @@ public class PublicMvcController {
     @GetMapping("/mvc/error")
     public String showErrorPage() {
         return "error";
+    }
+
+    @GetMapping("/mvc/blocked")
+    public String showBlockedPage() {
+        User user = userService.getAuthenticatedUser();
+        if (user.getStatus().equals(AccountStatus.BLOCKED)){
+            return "Account-Blocked-View";
+        }
+
+        return "redirect:/mvc/profile/wallets";
+    }
+
+    @GetMapping("/mvc/pending")
+    public String showPendingAccountPage() {
+        User user = userService.getAuthenticatedUser();
+        if (user.getStatus().equals(AccountStatus.PENDING)){
+            return "Account-Not-Confirmed-View";
+        }
+        return "redirect:/mvc/profile/wallets";
     }
 }
