@@ -8,7 +8,7 @@ import com.example.virtualwallet.models.Exchange;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.exchange.ExchangeInput;
-import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
+import com.example.virtualwallet.models.dtos.exchange.ExchangePage;
 import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.Role;
@@ -28,12 +28,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelMapper.convertToSort;
 import static com.example.virtualwallet.helpers.ModelMapper.exchangeToFullExchangeOutput;
-import static com.example.virtualwallet.helpers.ValidationHelpers.*;
+import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndConvertCurrency;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +62,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     @Override
-    public List<ExchangeOutput> filterExchanges(ExchangeFilterOptions filterOptions) {
+    public ExchangePage filterExchanges(ExchangeFilterOptions filterOptions) {
         Specification<Exchange> spec =
                 ExchangeSpecification.buildExchangeSpecification(filterOptions);
 
@@ -77,10 +76,19 @@ public class ExchangeServiceImpl implements ExchangeService {
 
         Page<Exchange> pageResult = exchangeRepository.findAll(spec, pageable);
 
-        return pageResult
+        ExchangePage pageOutput = new ExchangePage();
+        pageOutput.setExchanges(pageResult
                 .stream()
                 .map(ModelMapper::exchangeToExchangeOutput)
-                .toList();
+                .toList());
+
+        pageOutput.setTotalElements(pageResult.getTotalElements());
+        pageOutput.setCurrentPage(filterOptions.getPage());
+        pageOutput.setTotalPages(pageResult.getTotalPages());
+        pageOutput.setPageSize(filterOptions.getSize());
+        pageOutput.setHasNextPage(pageResult.hasNext());
+        pageOutput.setHasPreviousPage(pageResult.hasPrevious());
+        return pageOutput;
     }
 
     @Override
