@@ -59,6 +59,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByID(UUID uuid) {
+        return userRepository.getUserById(uuid, AccountStatus.DELETED).orElseThrow(() -> new EntityNotFoundException("User"));
+    }
+
+    @Override
+    public User findUserByUsernameOrEmailOrPhoneNumber(String usernameOrEmailOrPhoneNumber) {
+        return userRepository.findUserByUsernameOrEmailOrPhoneNumber(usernameOrEmailOrPhoneNumber)
+                .orElseThrow(() -> new EntityNotFoundException("User"));
+    }
+
+    @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username"));

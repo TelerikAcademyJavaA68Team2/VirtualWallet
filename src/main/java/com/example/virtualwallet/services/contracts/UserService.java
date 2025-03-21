@@ -17,6 +17,10 @@ public interface UserService extends UserDetailsService {
 
     String findByUsernameOrEmailOrPhoneNumber(String input);
 
+    User getUserByID(UUID uuid);
+
+    User findUserByUsernameOrEmailOrPhoneNumber(String input);
+
     UserProfileOutput getAuthenticatedUserProfile();
 
     UserProfileOutput getUserProfileById(UUID userId);
