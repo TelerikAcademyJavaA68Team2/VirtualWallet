@@ -1,7 +1,7 @@
 package com.example.virtualwallet.controllers.rest;
 
 import com.example.virtualwallet.models.dtos.exchange.ExchangeInput;
-import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
+import com.example.virtualwallet.models.dtos.exchange.ExchangePage;
 import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.services.contracts.ExchangeService;
@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
@@ -71,8 +70,8 @@ public class ExchangeController {
                 page,
                 size);
 
-        List<ExchangeOutput> result = exchangeService.filterExchanges(filterOptions);
-        if (result.isEmpty()) {
+        ExchangePage result = exchangeService.filterExchanges(filterOptions);
+        if (result.getExchanges().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);

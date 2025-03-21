@@ -1,6 +1,6 @@
 package com.example.virtualwallet.controllers.rest;
 
-import com.example.virtualwallet.models.dtos.exchange.ExchangeOutput;
+import com.example.virtualwallet.models.dtos.exchange.ExchangePage;
 import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
 import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
 import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOutput;
@@ -287,8 +287,8 @@ public class AdminRestController {
                 page,
                 size);
 
-        List<ExchangeOutput> result = exchangeService.filterExchanges(filterOptions);
-        if (result.isEmpty()) {
+        ExchangePage result = exchangeService.filterExchanges(filterOptions);
+        if (result.getExchanges().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);
