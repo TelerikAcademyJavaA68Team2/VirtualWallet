@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments/Page-Layout :: head(Title)}"></head>
+<body id="page-top">
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<!-- Hero Start -->
+<section class="bg-home">
+    <div class="home-center">
+        <div class="home-desc-center">
+            <div class="container">
+                <div class="row align-items-center">
+                    <!-- Left Column: Image -->
+                    <div class="col-lg-7 col-md-6">
+                        <div class="mr-lg-5">
+                            <img th:src="@{/images/make-transaction.jpg}" class="img-fluid d-block mx-auto"
+                                 alt="Make a Transaction">
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Main Content -->
+                    <div class="col-lg-5 col-md-6 mt-4 mt-sm-0 pt-2 pt-sm-0">
+                        <!-- If user is NOT blocked, show the form -->
+                        <div th:if="${user.status != T(com.example.virtualwallet.models.enums.AccountStatus).BLOCKED ||
+                         user.status != T(com.example.virtualwallet.models.enums.AccountStatus).BLOCKED_AND_DELETED}">
+                            <div class="bg-white shadow rounded p-4">
+                                <!-- ============ STEP 1: SEARCH FOR RECIPIENT ============ -->
+                                <form th:action="@{/mvc/profile/transactions/send}" method="get">
+                                    <h3 class="title-with-margin" th:text="#{transaction.findUserTitle}">Find
+                                        Recipient</h3>
+
+                                    <!-- Input Field For Searching -->
+                                    <div class="form-group position-relative">
+                                        <label for="contactSearch" th:text="#{transaction.findUserLabel}">Enter username
+                                            / email / phone</label>
+                                        <input th:value="${recipient != null} ? ${recipient.username} : ''" th:placeholder="${recipient != null} ? ${recipient.username} : 'Enter recipient...'" id="contactSearch" type="text" name="user"
+                                               class="form-control" required>
+                                    </div>
+
+                                    <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
+                                        <span th:text="${error}">Error message will appear here</span>
+                                    </div>
+                                    <!-- Search Button -->
+                                    <button type="submit" class="btn btn-primary" th:text="#{transaction.searchButton}">
+                                        Search
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Show only if a recipient was found -->
+                            <div th:if="${recipient}" class="bg-white shadow rounded mt-4 p-4">
+                                <h4 th:text="#{transaction.recipientFound}">Recipient Found</h4>
+
+                                <!-- Display recipient username -->
+                                <p><strong th:text="${recipient.username}">Recipient Username</strong></p>
+
+                                <!-- Show recipient profile picture -->
+                                <div class="text-center">
+                                    <img th:src="${recipient.photo}"
+                                         th:alt="Photo"
+                                         class="avatar avatar-medium rounded-pill shadow mx-auto"/>
+                                </div>
+
+                                <form th:action="@{/mvc/profile/transactions/new}" th:object="${transactionInput}"
+                                      method="post">
+                                    <!-- Store recipient ID in a hidden field -->
+                                    <input type="hidden" th:field="*{recipientId}"/>
+
+                                    <!-- ============ STEP 2: SELECT WALLET ============ -->
+                                    <div th:if="${errorWallet}" class="alert alert-danger mt-3" role="alert">
+                                        <span th:text="${errorWallet}">Error message will appear here</span>
+                                        <a href="/mvc/profile/wallets/fund-wallet" class="btn btn-success rounded-pill ms-3">Fund your Wallet</a>
+                                    </div>
+                                    <th:block th:if="${activeWallets.size()} == 0">
+                                        <div class="alert alert-warning text-center">
+                                            <p>You have no active wallets yet!</p>
+                                            <a class="btn btn-primary mt-2" th:href="@{/mvc/profile/wallets#}">
+                                                Add a New Wallet
+                                            </a>
+                                        </div>
+                                    </th:block>
+                                    <div th:if="${activeWallets.size()} > 0" class="form-group">
+                                        <label for="walletID" th:text="#{transaction.chooseWallet}">Select Your
+                                            Wallet:</label>
+                                        <select id="walletID" class="form-select form-control" th:field="*{walletId}" required>
+                                            <option disabled selected value="">Select a Wallet</option>
+                                            <option th:each="wallet : ${activeWallets}"
+                                                    th:value="${wallet.id}"
+                                                    th:text="${wallet.currency}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- ============ STEP 3: ENTER TRANSACTION DETAILS ============ -->
+                                    <div th:if="${activeWallets.size()} > 0" class="form-group position-relative mt-3">
+                                        <label for="amount" th:text="#{transaction.create.amountText}">Amount:</label>
+                                        <input type="number" min="0" step="1.00" id="amount" class="form-control"
+                                               th:field="*{amount}" required placeholder="Enter amount">
+                                    </div>
+
+                                    <!-- Optional Description -->
+                                    <div th:if="${activeWallets.size()} > 0" class="form-group position-relative mt-3">
+                                        <label for="description" th:text="#{transaction.create.descriptionText}">Description:</label>
+                                        <input type="text" id="description" class="form-control"
+                                               th:field="*{description}" placeholder="e.g. 'The money I owe you', etc..">
+                                    </div>
+
+                                    <!-- Clear & Submit (with Modal Confirmation) -->
+                                    <input th:if="${activeWallets.size()} > 0" class="btn btn-light mt-3" type="reset"
+                                           th:value="#{transaction.clearButton}"/>
+
+                                    <!-- Button that triggers the confirmation modal -->
+                                    <button th:if="${activeWallets.size()} > 0" type="button" class="btn btn-primary mt-3" id="openModal"
+                                            data-bs-toggle="modal" data-bs-target="#confirm-transaction">
+                                        <span th:text="#{transaction.submitButton}">Send Money</span>
+                                    </button>
+
+                                    <!-- ============ CONFIRMATION MODAL ============ -->
+                                    <div class="modal fade" id="confirm-transaction" tabindex="-1" role="dialog"
+                                         aria-labelledby="confirmTransactionTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content rounded shadow border-0">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="confirmTransactionTitle"
+                                                        th:text="#{transaction.confirmDetailsTitle}">Confirm
+                                                        Transaction</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="p-4">
+                                                        <p class="text-muted mb-3"
+                                                           th:text="#{transaction.confirmDetailsDescription}">Please
+                                                            confirm the details below:</p>
+
+                                                        <p><strong>Recipient:</strong> <span
+                                                                th:text="${recipient.username}"></span></p>
+                                                        <p><strong>Wallet:</strong> <span id="wallet-confirm"></span>
+                                                        </p>
+                                                        <p><strong>Amount:</strong> <span id="amount-confirm"></span>
+                                                        </p>
+                                                        <p><strong>Description:</strong> <span
+                                                                id="description-confirm"></span></p>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-outline-light"
+                                                            data-dismiss="modal">Edit
+                                                    </button>
+                                                    <input class="btn btn-primary" type="submit"
+                                                           th:value="#{transaction.submitButton}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Modal -->
+                                </form>
+                            </div>
+                        </div>
+
+                            <!-- If user IS blocked, show a warning message -->
+                            <div th:if="${user.status == T(com.example.virtualwallet.models.enums.AccountStatus).BLOCKED}">
+                                <div class="alert alert-warning">
+                                    <h4 class="mb-4" th:text="#{account.blocked.title}">Account Blocked</h4>
+                                    <p th:text="#{account.blocked.textOne}">You cannot make transactions at this
+                                        time.</p>
+                                </div>
+                            </div>
+                            <div th:if="${user.status == T(com.example.virtualwallet.models.enums.AccountStatus).BLOCKED_AND_DELETED}">
+                                <div class="alert alert-warning">
+                                    <h4 class="mb-4" th:text="#{account.blocked.title}">Account Blocked</h4>
+                                    <p th:text="#{account.blocked.textOne}">You cannot make transactions at this
+                                        time.</p>
+                                </div>
+                            </div>
+                        </div> <!-- End Column -->
+                    </div> <!-- End Row -->
+                </div> <!-- End Container -->
+            </div>
+        </div>
+</section> <!-- End Section -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById("openModal").addEventListener("click", function () {
+        // Fill modal with selected values before opening
+        const walletSelect = document.getElementById("walletID");
+        document.getElementById("wallet-confirm").innerText = walletSelect.options[walletSelect.selectedIndex].text;
+        document.getElementById("amount-confirm").innerText = document.getElementById("amount").value;
+        document.getElementById("description-confirm").innerText = document.getElementById("description").value || "No description provided";
+
+        // Open modal
+        new bootstrap.Modal(document.getElementById('confirm-transaction')).show();
+    });
+</script>
+
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>
