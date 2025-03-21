@@ -114,13 +114,9 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                <input required="" type="checkbox" class="custom-control-input"
-                                                       id="customCheck1">
-                                                <label class="custom-control-label" for="customCheck1"
-                                                       th:text="#{register.confirmLegalAge}"></label>
-                                            </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="customCheck1" required>
+                                            <label class="form-check-label" for="customCheck1" th:text="#{register.confirmLegalAge}"></label>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -142,6 +138,8 @@
     </div>
 </section><!--end section-->
 <!-- Hero End -->
+
 <footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
 </body>
 </html>
