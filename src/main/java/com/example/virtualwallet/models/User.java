@@ -47,7 +47,7 @@ public class User implements UserDetails {
     private String phoneNumber;
 
     @Column(name = "photo")
-    private String photo = "default photo";
+    private String photo;
 
     @Column(nullable = false, name = "status")
     @Enumerated(EnumType.STRING)
