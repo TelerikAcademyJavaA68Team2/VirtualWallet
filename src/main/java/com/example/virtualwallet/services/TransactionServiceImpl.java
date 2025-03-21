@@ -27,6 +27,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -113,6 +114,38 @@ public class TransactionServiceImpl implements TransactionService {
         walletService.update(senderWallet);
         walletService.update(recipientWallet);
         return transactionToTransactionOutput(transactionToSave);
+    }
+
+    @Override
+    public void createTransactionMVC(User sender, User recipient, Wallet senderWallet, BigDecimal amount, String description) {
+        if (sender.getId().equals(recipient.getId())) {
+            throw new InvalidUserInputException(CANNOT_SEND_MONEY_TO_YOURSELF);
+        }
+
+        if (senderWallet.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException(format(NOT_ENOUGH_FUNDS, recipient.getUsername()));
+        }
+
+        Wallet recipientWallet = walletService.getOrCreateWalletByUsernameAndCurrency
+                (recipient.getUsername(), senderWallet.getCurrency());
+
+        senderWallet.setBalance(senderWallet.getBalance().subtract(amount));
+        recipientWallet.setBalance(recipientWallet.getBalance().add(amount));
+
+        Transaction transaction = new Transaction();
+        transaction.setSenderUsername(sender.getUsername());
+        transaction.setRecipientUsername(recipient.getUsername());
+        transaction.setSenderWallet(senderWallet);
+        transaction.setRecipientWallet(recipientWallet);
+        transaction.setAmount(amount);
+        transaction.setCurrency(senderWallet.getCurrency());
+        transaction.setDescription(description != null ? description : "Transaction");
+        transaction.setDate(LocalDateTime.now());
+
+        transactionRepository.save(transaction);
+
+        walletService.update(senderWallet);
+        walletService.update(recipientWallet);
     }
 
     @Override
