@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -152,18 +153,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getAuthenticatedUser() {
         try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal instanceof UserDetails userDetails) {
-                return userRepository.findUserByUsername(userDetails.getUsername())
-                        .orElseThrow(() -> new EntityNotFoundException("User not found."));
-            } else {
-                throw new UnauthorizedAccessException(LOG_IN_FIRST);
+            UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (user == null) {
+                throw new InvalidUserInputException(LOG_IN_FIRST);
             }
+            return loadUserByUsername(user.getUsername());
         } catch (Exception e) {
             throw new UnauthorizedAccessException(e.getMessage());
         }
     }
-
 
     @Override
     public void changePasswordOfAuthenticatedUser(PasswordUpdateInput input) {
@@ -185,7 +183,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
+    @Transactional
     public void updateAuthenticatedUser(ProfileUpdateInput input, MultipartFile profileImage,
                                         boolean removePicture) {
 
@@ -226,7 +224,7 @@ public class UserServiceImpl implements UserService {
                 throw new InvalidFileException(INVALID_IMAGE);
             }
         }
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
     }
 
     @Override
