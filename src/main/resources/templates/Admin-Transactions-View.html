@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/Page-Layout :: head('Transactions')}">
+</head>
+<body>
+<header th:insert="~{fragments/Page-Layout :: navigation}"></header>
+
+<section class="section">
+    <div class="container col-lg-10">
+        <div class="row justify-content-center ">
+            <div class="col-10">
+                <div class="section-title  d-flex justify-content-center align-items-center position-relative">
+                    <h1 class="title mb-0 text-center w-100" style="margin-top: 50px;"
+                        th:text="#{transactions.history.title}">
+                        Transaction History</h1>
+                </div>
+            </div><!--end col-->
+        </div>
+        <div class="table-responsive bg-white shadow rounded mt-3">
+            <!-- Form Wrapping the Table -->
+            <form id="query-form" th:action="@{/mvc/admin/transactions}" method="get">
+                <table class="table table-striped mb-0">
+                    <!-- Table Header -->
+                    <thead>
+                    <!-- First Row: Page Size Dropdown and Muted Text -->
+                    <tr>
+                        <th colspan="6" class=" border-bottom">
+                            <!-- Flex Container for Size Dropdown, Muted Text, and Search Button -->
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <!-- First Column: Size Dropdown -->
+                                <div class="col d-flex flex-row align-items-center">
+                                    <div class="btn-group me-3">
+                                        <button type="button" class="btn btn-outline-dark rounded-pill dropdown-toggle"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span th:text="'size '+${pageSize}">10</span>
+                                        </button>
+                                        <ul class="dropdown-menu text-center custom-dropdown-95px">
+                                            <li><a class="dropdown-item" href="#"
+                                                   th:href="@{/mvc/admin/transactions(page=0, size=5, specificUser=${specificUser}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">5</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                   th:href="@{/mvc/admin/transactions(page=0, size=10, specificUser=${specificUser}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">10</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                   th:href="@{/mvc/admin/transactions(page=0, size=25, specificUser=${specificUser}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">25</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                   th:href="@{/mvc/admin/transactions(page=0, size=50, specificUser=${specificUser}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">50</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                   th:href="@{/mvc/admin/transactions(page=0, size=100, specificUser=${specificUser}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency=${currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">100</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- Second Column: Muted Text -->
+                                    <div th:unless="${transactions.totalPages <= pageNumber}"
+                                         class=" text-muted ms-3 mb-0">
+                                        <span th:text="${startIndex + 1}"></span> to
+                                        <span th:if="${(pageNumber + 1) * pageSize < transactions.totalElements}"
+                                              th:text="${(pageNumber + 1) * pageSize}"></span>
+                                        <span th:unless="${(pageNumber + 1) * pageSize < transactions.totalElements}"
+                                              th:text="${transactions.totalElements}"></span>
+                                        of <span th:text="${transactions.totalElements}"></span> results
+                                    </div>
+                                    <!-- Second Column: Muted Text -->
+                                    <div th:if="${transactions.totalPages <= pageNumber}" class=" text-muted ms-3 mb-0">
+                                        <span th:text="'0 results'"></span>
+                                    </div>
+                                </div>
+
+
+                                <!-- Centered Search Button -->
+                                <div class="col text-center">
+                                    <input type="submit" class="btn btn-primary rounded-pill" value="Search">
+                                    <a href="/mvc/admin/transactions">
+                                        <span class="ms-1 btn btn-outline-dark rounded-pill">Reset filters</span>
+                                    </a>
+                                </div>
+
+                                <!-- Right-Aligned Search Specific User Btn -->
+                                <div class="col text-end">
+                                    <div class="flex-row d-flex align-items-center">
+                                        <i class="bi bi-search me-2"></i>
+                                        <label for="specific-user" class="form-label visually-hidden">Specific User</label>
+                                        <input type="text" id="specific-user" name="specificUser"
+                                               class="form-control form-control-sm"
+                                               th:value="${specificUser}" placeholder="Specific User">
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+
+                    <!-- Second Row: Form Fields -->
+                    <tr th:colspan="6">
+
+                        <th class="text-center" style="width: 15%">
+                            <!-- Flex Container for From Date and To Date -->
+                            <div class="flex-box justify-content-center w-100">
+                                <!-- From Date -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="me-2">From</span>
+                                    <div>
+                                        <label for="from-date" class="form-label visually-hidden">From Date</label>
+                                        <input type="date" id="from-date" name="fromDate"
+                                               class="form-control form-control-sm"
+                                               th:value="${fromDate}" placeholder="From Date">
+                                    </div>
+                                </div>
+
+                                <!-- To Date -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="me-2">To</span>
+                                    <div>
+                                        <label for="to-date" class="form-label visually-hidden">To Date</label>
+                                        <input type="date" id="to-date" name="toDate"
+                                               class="form-control form-control-sm"
+                                               th:value="${toDate}" placeholder="To Date">
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+
+                        <!-- Min Amount and Max Amount -->
+                        <th class="text-center" style="width: 16%">
+                            <div class="flex-box">
+                                <label for="min-amount" class="form-label visually-hidden">Min Amount</label>
+                                <input type="number" step="1.0" id="min-amount" name="minAmount"
+                                       class="form-control form-control-sm"
+                                       min="0" th:value="${minAmount}" placeholder="Min Amount">
+
+                                <label for="max-amount" class="form-label visually-hidden">Max Amount</label>
+                                <input type="number" step="1.0" id="max-amount" name="maxAmount"
+                                       class="form-control form-control-sm"
+                                       min="0" th:value="${maxAmount}" placeholder="Max Amount">
+                            </div>
+                        </th>
+
+                        <th class="text-center " style="width: 6%;">
+                            <div class="d-flex">
+                                <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
+                                        style="background-color: white"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="bi bi-currency-dollar"></span>
+                                </button>
+                                <ul class="dropdown-menu text-center custom-dropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'-ALL-'"
+                                           th:href="@{/mvc/admin/transactions(page=${pageNumber}, size=${pageSize}, specificUser=${specificUser}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                    <li th:each="currency : ${currencies}">
+                                        <a class="dropdown-item" href="#" th:text="${currency}"
+                                           th:href="@{/mvc/admin/transactions(page=${pageNumber}, size=${pageSize}, specificUser=${specificUser}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency= *{currency}, sender=${sender}, recipient=${recipient}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </th>
+
+
+                        <!-- Sender -->
+                        <th class="text-center">
+                            <label for="sender" class="form-label visually-hidden">Sender</label>
+                            <input type="text" id="sender" name="sender" class="form-control form-control-sm"
+                                   th:value="${sender}" placeholder="Sender">
+                        </th>
+
+                        <!-- Recipient -->
+                        <th class="text-center">
+                            <label for="recipient" class="form-label visually-hidden">Recipient</label>
+                            <input type="text" id="recipient" name="recipient" class="form-control form-control-sm"
+                                   th:value="${recipient}" placeholder="Recipient">
+                        </th>
+
+                        <th class="text-center">
+                            <label for="description" class="form-label visually-hidden">Description</label>
+                            <input type="text" id="description" name="description" class="form-control form-control-sm"
+                                   th:value="${description}" placeholder="Description">
+                        </th>
+                    </tr>
+
+                    <!-- Third Row: Sorting Headers -->
+                    <tr>
+                        <!-- Date Column -->
+                        <th class="clickable-header" th:classappend="${sortBy == 'date'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/transactions(
+                            page=${pageNumber},
+                            size=${pageSize},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            minAmount=${minAmount},
+                            maxAmount=${maxAmount},
+                            currency=${currency},
+                            sender=${sender},
+                            recipient=${recipient},
+                            specificUser=${specificUser},
+                            sortBy='date',
+                            sortOrder=${sortBy == 'date' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Date
+                                <span th:if="${sortBy == 'date'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+
+                        <!-- Amount Column -->
+                        <th class="clickable-header" th:classappend="${sortBy == 'amount'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/transactions(
+                            page=${pageNumber},
+                            size=${pageSize},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            minAmount=${minAmount},
+                            maxAmount=${maxAmount},
+                            currency=${currency},
+                            sender=${sender},
+                            recipient=${recipient},
+                            specificUser=${specificUser},
+                            sortBy='amount',
+                            sortOrder=${sortBy == 'amount' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Amount
+                                <span th:if="${sortBy == 'amount'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+                        <!-- Currency Column -->
+                        <th class="clickable-header" th:classappend="${sortBy == 'amount'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/transactions(
+                            page=${pageNumber},
+                            size=${pageSize},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            minAmount=${minAmount},
+                            maxAmount=${maxAmount},
+                            currency=${currency},
+                            sender=${sender},
+                            recipient=${recipient},
+                            specificUser=${specificUser},
+                            sortBy='currency',
+                            sortOrder=${sortBy == 'currency' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                <span class="bi bi-currency-dollar"></span>
+                                <span th:if="${sortBy == 'currency'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+
+                        <!-- Sender Column -->
+                        <th class="clickable-header" th:classappend="${sortBy == 'senderUsername'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/transactions(
+                            page=${pageNumber},
+                            size=${pageSize},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            minAmount=${minAmount},
+                            maxAmount=${maxAmount},
+                            currency=${currency},
+                            sender=${sender},
+                            recipient=${recipient},
+                            specificUser=${specificUser},
+                            sortBy='senderUsername',
+                            sortOrder=${sortBy == 'senderUsername' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Sender
+                                <span th:if="${sortBy == 'senderUsername'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+
+                        <!-- Recipient Column -->
+                        <th class="clickable-header" th:classappend="${sortBy == 'recipientUsername'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/transactions(
+                            page=${pageNumber},
+                            size=${pageSize},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            minAmount=${minAmount},
+                            maxAmount=${maxAmount},
+                            currency=${currency},
+                            sender=${sender},
+                            recipient=${recipient},
+                            specificUser=${specificUser},
+                            sortBy='recipientUsername',
+                            sortOrder=${sortBy == 'recipientUsername' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Recipient
+                                <span th:if="${sortBy == 'recipientUsername'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+
+                        <!-- Description Column -->
+                        <th class="clickable-header" th:classappend="${sortBy == 'description'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/transactions(
+                            page=${pageNumber},
+                            size=${pageSize},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            minAmount=${minAmount},
+                            maxAmount=${maxAmount},
+                            currency=${currency},
+                            sender=${sender},
+                            recipient=${recipient},
+                            specificUser=${specificUser},
+                            sortBy='description',
+                            sortOrder=${sortBy == 'description' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Description
+                                <span th:if="${sortBy == 'description'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <!-- Table Body -->
+                    <tbody th:if="${transactions.totalElements != null}">
+                    <tr th:each="transaction : ${transactions}" class="clickable-row"
+                        th:attr="data-href='/mvc/admin/transactions/' + ${transaction.id}">
+                        <td th:text="${transaction.date != null ? #temporals.format(transaction.date, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
+                        <td>
+                            <span th:text="${transaction.amount}"></span>
+                            <span th:text="#{'currency.symbol.' + ${transaction.currency}}">$</span>
+                        </td>
+                        <td th:text="${transaction.currency}"></td>
+                        <td th:text="${transaction.senderUsername}"></td>
+                        <td th:text="${transaction.recipientUsername}"></td>
+                        <td th:text="${transaction.description}"></td>
+                    </tr>
+                    </tbody>
+                    <tr th:if="${transactions.totalPages <= pageNumber}"
+                        class="justify-content-center align-items-center">
+                        <td colspan="6" class="text-center p-5 justify-content-center align-items-center w-100">
+                            <img src="/images/emptyPage.png"
+                                 alt="Page Is Empty"
+                                 style="max-width: 200px;"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+
+        <div class="pagination-container">
+            <!-- Pagination Buttons -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-modern">
+                    <!-- First Page Button -->
+                    <li class="page-item" th:if="${pageNumber > 6 && transactions.totalPages > 6}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/transactions(
+                                   page=0,
+                                   size=${pageSize},
+                                   fromDate=${fromDate},
+                                   toDate=${toDate},
+                                   minAmount=${minAmount},
+                                   maxAmount=${maxAmount},
+                                   currency=${currency},
+                                   sender=${sender},
+                                   recipient=${recipient},
+                                   description=${description},
+                                   sortBy=${sortBy},
+                                   sortOrder=${sortOrder},
+                                   specificUser=${specificUser}
+                               )}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <!-- Previous Page Button -->
+                    <li class="page-item"
+                        th:if="${transactions.hasPrevious() && pageNumber <= transactions.totalPages}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/transactions(
+                                   page=${pageNumber - 1},
+                                   size=${pageSize},
+                                   fromDate=${fromDate},
+                                   toDate=${toDate},
+                                   minAmount=${minAmount},
+                                   maxAmount=${maxAmount},
+                                   currency=${currency},
+                                   sender=${sender},
+                                   recipient=${recipient},
+                                   description=${description},
+                                   sortBy=${sortBy},
+                                   sortOrder=${sortOrder},
+                                   specificUser=${specificUser}
+                               )}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    <!-- Page Number Buttons -->
+                    <li class="page-item" th:each="page : ${#numbers.sequence(
+                            pageNumber > 6 ? (pageNumber - 6) : 0,
+                            pageNumber + 6 < transactions.totalPages - 1 ? (pageNumber + 6) : (transactions.totalPages - 1)
+                        )}"
+                        th:if="${transactions.totalPages > 0 && pageNumber < transactions.totalPages}"
+                        th:classappend="${page == pageNumber} ? 'active' : ''">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/transactions(
+                                   page=${page},
+                                   size=${pageSize},
+                                   fromDate=${fromDate},
+                                   toDate=${toDate},
+                                   minAmount=${minAmount},
+                                   maxAmount=${maxAmount},
+                                   currency=${currency},
+                                   sender=${sender},
+                                   recipient=${recipient},
+                                   description=${description},
+                                   sortBy=${sortBy},
+                                   sortOrder=${sortOrder},
+                                   specificUser=${specificUser}
+                               )}"
+                           th:text="${page + 1}"></a>
+                    </li>
+
+
+                    <li class="page-item"
+                        th:unless="${transactions.totalPages > 0 && pageNumber < transactions.totalPages}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/profile/transactions}">
+                            <i class="bi bi-house-fill"></i>
+                        </a>
+                    </li>
+
+                    <!-- Next Page Button -->
+                    <li class="page-item" th:unless="${pageNumber >= transactions.totalPages - 1}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/transactions(
+                                   page=${pageNumber + 1},
+                                   size=${pageSize},
+                                   fromDate=${fromDate},
+                                   toDate=${toDate},
+                                   minAmount=${minAmount},
+                                   maxAmount=${maxAmount},
+                                   currency=${currency},
+                                   sender=${sender},
+                                   recipient=${recipient},
+                                   description=${description},
+                                   sortBy=${sortBy},
+                                   sortOrder=${sortOrder},
+                                   specificUser=${specificUser}
+                               )}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <!-- Last Page Button -->
+                    <li class="page-item" th:if="${pageNumber < transactions.totalPages - 7}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/transactions(
+                                   page=${transactions.totalPages - 1},
+                                   size=${pageSize},
+                                   fromDate=${fromDate},
+                                   toDate=${toDate},
+                                   minAmount=${minAmount},
+                                   maxAmount=${maxAmount},
+                                   currency=${currency},
+                                   sender=${sender},
+                                   recipient=${recipient},
+                                   description=${description},
+                                   sortBy=${sortBy},
+                                   sortOrder=${sortOrder},
+                                   specificUser=${specificUser}
+                               )}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const clickableRows = document.querySelectorAll('.clickable-row');
+
+        // Add a click event listener to each row
+        clickableRows.forEach(function (row) {
+            row.addEventListener('click', function () {
+                // Get the data-href attribute from the clicked row
+                const href = row.getAttribute('data-href');
+                if (href) {
+                    // Redirect to the URL specified in data-href
+                    window.location.href = href;
+                }
+            });
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<script th:insert="~{fragments/Page-Layout :: coreJS}"></script>
+</body>
+</html>

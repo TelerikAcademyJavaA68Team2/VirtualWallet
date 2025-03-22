@@ -163,6 +163,7 @@ public class AdminRestController {
     )
     @GetMapping("/transactions")
     public ResponseEntity<?> getAllTransactionsWithFilter(
+            @RequestParam(required = false) String specificUser,
             @RequestParam(required = false) String fromDate,
             @RequestParam(required = false) String toDate,
             @RequestParam(required = false) BigDecimal minAmount,
@@ -179,7 +180,7 @@ public class AdminRestController {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
         TransactionFilterOptions transactionFilterOptions = new TransactionFilterOptions(
-                null,
+                specificUser,
                 fromDate,
                 toDate,
                 minAmount,
