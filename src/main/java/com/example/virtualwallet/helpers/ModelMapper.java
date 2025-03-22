@@ -201,7 +201,7 @@ public class ModelMapper {
 
     public static ActivityOutput mapObjectToActivity(Object[] row) {
         return new ActivityOutput(
-                (UUID) row[0],
+                UUID.fromString((String) row[0]),
                 (String) row[1],
                 (BigDecimal) row[2],
                 (BigDecimal) row[3],
