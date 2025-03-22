@@ -152,15 +152,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getAuthenticatedUser() {
         try {
-            UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (user == null) {
-                throw new InvalidUserInputException(LOG_IN_FIRST);
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof UserDetails userDetails) {
+                return userRepository.findUserByUsername(userDetails.getUsername())
+                        .orElseThrow(() -> new EntityNotFoundException("User not found."));
+            } else {
+                throw new UnauthorizedAccessException(LOG_IN_FIRST);
             }
-            return loadUserByUsername(user.getUsername());
         } catch (Exception e) {
             throw new UnauthorizedAccessException(e.getMessage());
         }
     }
+
 
     @Override
     public void changePasswordOfAuthenticatedUser(PasswordUpdateInput input) {
@@ -185,8 +188,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateAuthenticatedUser(ProfileUpdateInput input, MultipartFile profileImage,
                                         boolean removePicture) {
-        UUID id = getAuthenticatedUser().getId();
-        User user = getUserByID(id);
+
+        User user = getAuthenticatedUser();
 
         if (input.getFirstName() != null) {
             user.setFirstName(input.getFirstName());
