@@ -1,25 +1,30 @@
 package com.example.virtualwallet.controllers.mvc;
 
+import com.example.virtualwallet.exceptions.EntityNotFoundException;
+import com.example.virtualwallet.exceptions.InsufficientFundsException;
+import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.models.Transaction;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOutput;
+import com.example.virtualwallet.models.dtos.transactions.TransactionInputMVC;
+import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.services.contracts.TransactionService;
 import com.example.virtualwallet.services.contracts.UserService;
+import com.example.virtualwallet.services.contracts.WalletService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.convertToCustomFormat;
 import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
@@ -31,6 +36,7 @@ public class TransactionMvcController {
 
     private final UserService userService;
     private final TransactionService transactionService;
+    private final WalletService walletService;
 
     @GetMapping
     public String getUserTransactions(
@@ -101,4 +107,118 @@ public class TransactionMvcController {
         model.addAttribute("transaction", transactionInfoOutput);
         return "Transaction-View";
     }
+
+    @GetMapping("/new")
+    public String showTransactionForm(Model model) {
+        User sender = userService.getAuthenticatedUser();
+
+
+        model.addAttribute("user", sender);
+        model.addAttribute("transactionInput", new TransactionInputMVC());
+
+        return "Transaction-Create-View";
+    }
+
+    @GetMapping("/send")
+    public String findRecipient(@RequestParam String user,
+                                Model model) {
+
+        User sender = userService.getAuthenticatedUser();
+        model.addAttribute("user", sender);
+
+        try {
+            User recipient = userService.findUserByUsernameOrEmailOrPhoneNumber(user);
+            if (sender.getId().equals(recipient.getId())) {
+                model.addAttribute("error", "You cannot send money to yourself.");
+                return "Transaction-Create-View";
+            }
+
+            if (sender.getStatus().equals(AccountStatus.BLOCKED) ||
+                    sender.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
+                model.addAttribute("error", "You are blocked and cannot make transactions. " +
+                        "Please, contact our support at virtual.wallet.a68@gmail.com for more information.");
+                return "Transaction-Create-View";
+            }
+
+            if (recipient.getStatus().equals(AccountStatus.BLOCKED) ||
+                    recipient.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
+                model.addAttribute("error", "This user is blocked and cannot receive money.");
+                return "Transaction-Create-View";
+            }
+
+            TransactionInputMVC transactionInput = new TransactionInputMVC();
+            transactionInput.setRecipientId(recipient.getId());
+
+            List<Wallet> activeWallets = walletService.getActiveWalletsOfUser(sender.getId());
+
+            model.addAttribute("recipient", recipient);
+            model.addAttribute("activeWallets", activeWallets);
+            model.addAttribute("transactionInput", transactionInput);
+
+            return "Transaction-Create-View"; // Refresh the view with recipient details
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "Transaction-Create-View";
+
+        }
+    }
+
+    @PostMapping("/new")
+    public String createTransaction(@Valid @ModelAttribute("transactionInput") TransactionInputMVC transactionInput,
+                                    BindingResult bindingResult,
+                                    Model model,
+                                    RedirectAttributes redirectAttributes) {
+        User sender = userService.getAuthenticatedUser();
+        Wallet senderWallet = walletService.getWalletById(UUID.fromString(transactionInput.getWalletId()));
+        User recipient = userService.getUserByID(transactionInput.getRecipientId());
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", sender);
+            model.addAttribute("recipient", recipient);
+            model.addAttribute("activeWallets", walletService.getActiveWalletsOfUser(sender.getId()));
+            return "Transaction-Create-View";
+        }
+
+        if (senderWallet.getBalance().compareTo(transactionInput.getAmount()) < 0) {
+            model.addAttribute("user", sender);
+            model.addAttribute("errorWallet", "Not enough funds in selected wallet.");
+            model.addAttribute("recipient", recipient);
+            model.addAttribute("activeWallets", walletService.getActiveWalletsOfUser(sender.getId()));
+            return "Transaction-Create-View";
+        }
+
+        try {
+            transactionService.createTransactionMVC(sender, recipient, senderWallet,
+                    transactionInput.getAmount(),
+                    transactionInput.getDescription());
+        } catch (InsufficientFundsException | InvalidUserInputException e) {
+            model.addAttribute("user", sender);
+            model.addAttribute("errorWallet", e.getMessage());
+            model.addAttribute("recipient", recipient);
+            model.addAttribute("activeWallets", walletService.getActiveWalletsOfUser(sender.getId()));
+            return "Transaction-Create-View";
+        }
+        model.addAttribute("user", sender);
+        redirectAttributes.addFlashAttribute("user", sender);
+        redirectAttributes.addFlashAttribute("success", true);
+        redirectAttributes.addFlashAttribute("transaction", transactionInput);
+
+        return "redirect:/mvc/profile/transactions/success";
+    }
+
+    @GetMapping("/success")
+    public String transactionSuccess(@ModelAttribute("transaction") TransactionInputMVC transaction,
+                                     @ModelAttribute("success") Boolean success,
+                                     Model model) {
+        if (Boolean.TRUE.equals(success)) {
+            User recipient = userService.getUserByID(transaction.getRecipientId());
+            Wallet wallet = walletService.getWalletById(UUID.fromString(transaction.getWalletId()));
+            model.addAttribute("transaction", transaction);
+            model.addAttribute("wallet", wallet.getCurrency().toString());
+            model.addAttribute("recipientUsername", recipient.getUsername());
+            return "Transaction-Success-View";
+        }
+        return "Transaction-Success-View";
+    }
+
 }

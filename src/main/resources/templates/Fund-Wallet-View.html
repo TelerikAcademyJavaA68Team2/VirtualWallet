@@ -73,7 +73,7 @@
                                         <label for="walletId" class="font-weight-bold">Select Wallet</label>
                                         <div class="position-relative">
                                             <select id="walletId" class="form-select form-control"
-                                                    th:field="*{walletId}">
+                                                    th:field="*{walletId}" required>
                                                 <option value="" selected disabled>Select a Wallet</option>
                                                 <option th:each="wallet : ${wallets}"
                                                         th:value="${wallet.id}"

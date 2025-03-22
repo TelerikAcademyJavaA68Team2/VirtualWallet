@@ -32,8 +32,8 @@ public class AuthenticationMvcController {
         if (Boolean.TRUE.equals(error)) {
             model.addAttribute("errorMessage", "Invalid username or password");
         } else if (Boolean.TRUE.equals(deleted)) {
-            model.addAttribute("errorMessage", "Your account is deleted");
-            // todo add restore account option or send to restore account page directly
+            model.addAttribute("errorMessage", "Invalid username or password"); // no need to tell the user he is deleted
+            // ToDo add restore account option or send to restore account page directly
         }
 
         Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
@@ -81,19 +81,19 @@ public class AuthenticationMvcController {
             if (e.getMessage().startsWith("Email")) {
                 field = "email";
                 errorCode = "email.mismatch";
-                defaultMsg = "Email is already taken!";
+                defaultMsg = e.getMessage();
             }
 
             if (e.getMessage().startsWith("Username")) {
                 field = "username";
                 errorCode = "username.mismatch";
-                defaultMsg = "Username is already taken!";
+                defaultMsg = e.getMessage();
             }
 
             if (e.getMessage().startsWith("Phone")) {
                 field = "phoneNumber";
                 errorCode = "phoneNumber.mismatch";
-                defaultMsg = "Phone number is already associated with an account!";
+                defaultMsg = e.getMessage();
             }
 
             errors.rejectValue(field, errorCode, defaultMsg);
@@ -108,12 +108,12 @@ public class AuthenticationMvcController {
     public String confirmEmail(@RequestParam UUID token) {
         try {
             emailConfirmationService.confirmEmailToken(token);
-            return "redirect:/mvc/profile";
+            return "Account-Verified-View";
         } catch (EmailConfirmationException e) {
             return "redirect:/mvc/profile?emailTokenExpired=true";
         } catch (EmailConfirmedException e) {
             return "redirect:/mvc/profile";
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e){
             return "redirect:/mvc/home";
         }
     }

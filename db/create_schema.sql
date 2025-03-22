@@ -13,7 +13,7 @@ CREATE TABLE user
     phone_number VARCHAR(255)                                     NOT NULL UNIQUE,
     photo        VARCHAR(255)                                     NOT NULL,
     role         ENUM ('ADMIN', 'USER')                           NOT NULL,
-    status       ENUM ('ACTIVE', 'BLOCKED', 'DELETED', 'PENDING') NOT NULL,
+    status       ENUM ('ACTIVE', 'BLOCKED', 'DELETED', 'PENDING', 'BLOCKED_AND_DELETED') NOT NULL,
     created_at   DATETIME(6),
     deleted_at   DATETIME(6)
 );

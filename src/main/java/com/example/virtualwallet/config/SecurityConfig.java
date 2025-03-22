@@ -41,7 +41,7 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_MVC_URL_LIST =
             {"/mvc/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**", "/mvc/home", "/mvc/about", "/mvc/terms",
-                    "/mvc/privacy", "/mvc/faq", "/mvc/error", "/mvc/auth/password-reset"};
+                    "/mvc/privacy", "/mvc/faq", "/mvc/error" , "/mvc/auth/password-reset"};
 
     private static final String[] RESTRICTED_MVC_URL_LIST = {"/mvc/admin**"};
 

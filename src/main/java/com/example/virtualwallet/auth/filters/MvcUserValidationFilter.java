@@ -53,8 +53,12 @@ public class MvcUserValidationFilter extends OncePerRequestFilter {
                         response.sendRedirect("/mvc/home");
                         return;
                     }
-                } else if (isUrlForActiveUsersOnly(request) && !user.getStatus().equals(AccountStatus.ACTIVE)) {
-                    response.sendRedirect("/mvc/home");
+                } else if (isUrlForActiveUsersOnly(request) && user.getStatus().equals(AccountStatus.PENDING)) {
+                    response.sendRedirect("/mvc/pending");
+                    return;
+                }
+                else if (isUrlForActiveUsersOnly(request) && !user.getStatus().equals(AccountStatus.ACTIVE)) {
+                    response.sendRedirect("/mvc/blocked");
                     return;
                 }
             } catch (DisabledException e) {

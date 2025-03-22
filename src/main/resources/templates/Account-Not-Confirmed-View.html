@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments/Page-Layout :: head('Account Not Confirmed')}"></head>
+<body id="page-top">
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<section class="bg-home">
+  <div class="home-center">
+    <div class="home-desc-center">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-7 col-md-6">
+            <div class="mr-lg-5">
+              <img th:src="@{/images/confirm-account.jpg}" class="img-fluid d-block mx-auto" alt="account-pending">
+            </div>
+          </div>
+          <div class="col-lg-5 col-md-6 mt-4 mt-sm-0 pt-2 pt-sm-0">
+            <div class="alert alert-warning">
+              <h4 class="mb-4" th:text="#{account.pending.title}">Account Pending</h4>
+              <p th:utext="#{account.pending.textOne}">Text</p>
+            </div>
+          </div> <!--end col-->
+        </div><!--end row-->
+      </div> <!--end container-->
+    </div>
+  </div>
+</section><!--end section-->
+
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>
