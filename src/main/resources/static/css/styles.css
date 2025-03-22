@@ -11644,6 +11644,16 @@ footer a:hover, footer a:active, footer a:focus {
   clip-path: none !important; /* Prevent clipping */
 }
 
+.custom-dropdown-160px {
+  min-width: 160px !important; /* Ensure the dropdown menu is at least 300px wide */
+  width: auto;
+  position: absolute !important;
+  z-index: 1000 !important;
+  overflow: visible !important;
+  clip: auto !important; /* Prevent clipping */
+  clip-path: none !important; /* Prevent clipping */
+}
+
 /* Ensure the dropdown menu is not clipped */
 .custom-dropdown-parent {
   overflow: visible !important; /* Allow the dropdown to overflow */
