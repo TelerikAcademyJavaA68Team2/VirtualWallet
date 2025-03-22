@@ -11,6 +11,7 @@ import com.example.virtualwallet.models.enums.TransactionStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -114,7 +115,7 @@ public class ValidationHelpers {
 
     public static Optional<String> sanitizeStringCurrency(String value) {
         return (value == null || value.trim().isEmpty() || value.length() < 3 || !VALID_CURRENCIES_SET.contains(value.substring(0, 3).toUpperCase()))
-                ? Optional.empty() : Optional.of(value.substring(0,3).toUpperCase());
+                ? Optional.empty() : Optional.of(value.substring(0, 3).toUpperCase());
     }
 
     public static Optional<Role> sanitizeRole(String role) {
@@ -142,6 +143,21 @@ public class ValidationHelpers {
         return (sortOrder != null &&
                 !sortOrder.isEmpty() &&
                 (sortOrder.equals("asc") || sortOrder.equals("desc"))) ? sortOrder : "desc";
+    }
+
+    public static Optional<String> validateDateFromUrl(String date) {
+
+        if (date != null && date.matches("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$")) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate parsedDate = LocalDate.parse(date, formatter);
+                return Optional.of(parsedDate.toString());
+            } catch (Exception e) {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static boolean requestIsWithInvalidPageOrSize(int page, int size) {
