@@ -258,8 +258,13 @@ public class UserServiceImpl implements UserService {
 
         Page<User> pageResult = userRepository.findAll(spec, pageable);
         UserPageOutput output = new UserPageOutput();
-        output.setTotalResults(pageResult.getTotalElements());
-        output.setNumberOfPages(pageResult.getTotalPages());
+
+        output.setTotalElements(pageResult.getTotalElements());
+        output.setCurrentPage(filterOptions.getPage());
+        output.setTotalPages(pageResult.getTotalPages());
+        output.setPageSize(filterOptions.getSize());
+        output.setHasNextPage(pageResult.hasNext());
+        output.setHasPreviousPage(pageResult.hasPrevious());
         output.setContent(pageResult
                 .stream()
                 .map(ModelMapper::userOutputFromUser)
