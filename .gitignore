@@ -35,6 +35,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-# Ignore Spring Boot application properties
-application.properties
