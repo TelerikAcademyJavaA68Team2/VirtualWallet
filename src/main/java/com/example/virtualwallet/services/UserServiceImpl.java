@@ -185,7 +185,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateAuthenticatedUser(ProfileUpdateInput input, MultipartFile profileImage,
                                         boolean removePicture) {
-        User user = getAuthenticatedUser();
+        UUID id = getAuthenticatedUser().getId();
+        User user = getUserByID(id);
 
         if (input.getFirstName() != null) {
             user.setFirstName(input.getFirstName());
