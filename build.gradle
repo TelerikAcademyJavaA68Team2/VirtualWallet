@@ -64,7 +64,6 @@ dependencies {
 
     // MariaDB Driver
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 
     // Cloudinary API for Image Upload
     implementation 'com.cloudinary:cloudinary-http44:1.39.0'

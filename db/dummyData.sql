@@ -1,4 +1,4 @@
-# USE virtual_wallet;
+USE virtual_wallet;
 -- Users -------------------------------------------------------------------
 -- Entire Telerik Academy A68 class -> Admins -> username: full first name, password: 12345678  Hope you like our project :)
 INSERT INTO user (id, first_name, last_name, username, email, password, phone_number, photo, role,

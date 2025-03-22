@@ -1,5 +1,5 @@
-# CREATE SCHEMA IF NOT EXISTS virtual_wallet;
-# USE virtual_wallet;
+CREATE SCHEMA IF NOT EXISTS virtual_wallet;
+USE virtual_wallet;
 
 -- User Table
 CREATE TABLE user
