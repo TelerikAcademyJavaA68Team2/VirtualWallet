@@ -3,8 +3,8 @@
 <head th:insert="~{fragments/Page-Layout :: head(Profile)}">Profile</head>
 <body>
 <nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
-
 <!-- Profile Start -->
+<form th:action="@{/mvc/profile/update}" th:object="${updateRequest}" method="post" enctype="multipart/form-data">
 <section class="section mt-60">
     <div class="container">
         <div class="row justify-content-center">
@@ -12,24 +12,42 @@
                 <div class="public-profile position-relative py-2 bg-white overflow-hidden rounded shadow"
                      style="z-index: 1;">
                     <div class="row align-items-center ">
-
                         <div class="col-md-2 text-md-left text-center">
-                            <img th:src="${user.photo}"
+                            <!-- Profile Picture -->
+                            <img id="profileImagePreview"
+                                 th:src="${user.photo}"
                                  th:alt="Photo"
                                  class="avatar avatar-medium rounded-pill shadow mx-auto ms-lg-3"/>
-                        </div><!--end col-->
 
+                            <small class="text-danger d-block mt-2"
+                                   th:if="${#fields.hasErrors('profilePicture')}"
+                                   th:errors="*{profilePicture}">
+                                Profile picture error!
+                            </small>
+
+                            <!-- Upload Profile Picture -->
+                            <input type="file" name="profilePicture" id="profileImageInput"
+                                   class="form-control mt-3"
+                                   accept="image/png, image/jpeg, image/jpg, image/gif">
+
+                            <!-- Hidden Field to Track Profile Picture Reset -->
+                            <input type="hidden" name="removePicture" id="removePicture" value="false">
+                            <!-- Buttons -->
+                            <div class="d-flex justify-content-center gap-2 mt-3">
+                                <button type="button" class="btn btn-danger" id="removeProfilePicture">
+                                    Remove Picture
+                                </button>
+                            </div>
+                        </div><!--end col-->
                         <div class="col-md-8 m-4 text-md-left">
                             <h3 class="title mb-1">
                                 <span th:text="${user.firstName}"></span>
                                 <span th:text="${user.lastName}"></span>
                             </h3>
-
                             <h6 class="text-muted  d-flex">
                                 <span class="bi-person-fill"></span>
                                 <span class="ms-2" style="color: #373b3e" th:text="${user.username}"></span>
                             </h6>
-
                             <h6 class="text-muted mt-2">
                                 <span class="bi bi-envelope-fill me-2"></span>
                                 <span th:text="${user.email}"></span>
@@ -38,23 +56,16 @@
                                 <span class="bi bi-telephone-fill me-2"></span>
                                 <span th:text="${user.phoneNumber}"></span>
                             </h6>
-
                         </div>
-
-
                     </div><!--end row-->
                 </div><!--end col-->
-
             </div>
         </div>
-
         <div class="row justify-content-center">
             <div class="col-lg-4 d-flex">
                 <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow  h-100 w-100"
                      style="z-index: 1;">
                     <div>
-
-
                         <div class="d-flex align-items-center justify-content-between pb-2">
                             <h3 class=" m-0" th:text="#{user.profile.personalDetails}"></h3>
                             <a class="align-items-center text-md-end d-flex p-1 btn btn-outline-dark rounded-pill  "
@@ -63,62 +74,55 @@
                             </a>
                         </div>
 
-                        <form th:action="@{/mvc/profile/update}" th:object="${updateRequest}" method="post">
-
+                            <!-- First Name -->
                             <div class="overflow-hidden d-block mt-2">
                                 <h6 class="text-primary mb-0" th:text="#{user.header.firstName}"></h6>
                                 <h6 class="text-muted">
-                                    <input type="text" name="username" class="form-control"
+                                    <input type="text" name="firstName" class="form-control"
                                            th:field="*{firstName}" th:placeholder="#{user.header.firstName}"/>
                                     <small class="text-danger  d-block mt-1" th:if="${#fields.hasErrors('firstName')}"
                                            th:text="${#fields.errors('firstName')[0]}">First Name error!</small>
                                 </h6>
                             </div>
-
-
+                            <!-- Last Name -->
                             <div class="overflow-hidden d-block mt-1">
                                 <h6 class="text-primary mb-0" th:text="#{user.header.lastName}"></h6>
                                 <h6 class="text-muted">
-                                    <input type="text" name="username" class="form-control"
+                                    <input type="text" name="lastName" class="form-control"
                                            th:field="*{lastName}" th:placeholder="#{user.header.lastName}"/>
                                     <small class=" text-danger d-block mt-1" th:if="${#fields.hasErrors('lastName')}"
                                            th:text="${#fields.errors('lastName')[0]}">Last Name error!</small>
                                 </h6>
                             </div>
-
-
+                            <!-- Email -->
                             <div class="overflow-hidden d-block mt-1">
                                 <h6 class="text-primary mb-0" th:text="#{user.header.email}"></h6>
                                 <h6 class="text-muted">
-                                    <input type="text" name="username" class="form-control"
+                                    <input type="text" name="email" class="form-control"
                                            th:field="*{email}" th:placeholder="#{user.header.email}"/>
                                     <small class="text-danger d-block mt-1" th:if="${#fields.hasErrors('email')}"
                                            th:text="${#fields.errors('email')[0]}">Email error!</small>
                                 </h6>
                             </div>
-
+                            <!-- Phone Number -->
                             <div class="overflow-hidden d-block mt-1">
                                 <h6 class="text-primary mb-0" th:text="#{user.header.phone}"></h6>
                                 <h6 class="text-muted">
-                                    <input type="text" name="username" class="form-control"
-                                           th:field="*{phoneNumber}" th:placeholder="#{user.header.phoneNumber}"/>
-                                    <small class="text-danger d-block mt-1" th:if="${#fields.hasErrors('phoneNumber')}"
-                                           th:text="${#fields.errors('phoneNumber')[0]}">Phone Number error!</small>
+                                    <input type="text" th:field="*{phoneNumber}" class="form-control"
+                                           th:placeholder="#{user.header.phoneNumber}"/>
+                                    <small class="text-danger d-block mt-1"
+                                           th:if="${#fields.hasErrors('phoneNumber')}"
+                                           th:text="${#fields.errors('phoneNumber')[0]}">Phone number error!</small>
                                 </h6>
                             </div>
-
-                            <div class="text-md-center mt-0">
+                            <!-- Submit Button -->
+                            <div class="text-md-center mt-4">
                                 <button type="submit" class="btn btn-primary rounded-pill px-4">
                                     Save Changes
                                 </button>
                             </div>
 
-                        </form>
-
-
                     </div>
-
-
                 </div><!--end row-->
             </div>
             <div class="col-lg-4 d-flex">
@@ -143,11 +147,8 @@
                                        th:text="'Delete Account'"></a>
                                 </li>
                             </ul>
-
                         </div>
                     </div>
-
-
                     <div class="overflow-hidden d-block mt-2">
                         <h6 class="text-primary mb-0" th:text="#{user.header.username}"></h6>
                         <h6 class="text-muted  d-flex">
@@ -155,7 +156,6 @@
                             <span class="ms-1 py-custom" th:text="${user.username}"></span>
                         </h6>
                     </div>
-
                     <div class="overflow-hidden d-block mt-2">
                         <h6 class="text-primary mb-0" th:text="#{user.registeredAt}"></h6>
                         <h6 class="text-muted  d-flex">
@@ -163,7 +163,6 @@
                             <span class="ms-1 py-custom" th:text="${user.registeredAt}"></span>
                         </h6>
                     </div>
-
                     <!-- status page-->
                     <div class="h6 d-block mt-2">
                         <div class="text-primary mb-0">
@@ -180,14 +179,12 @@
                             <span th:if="${user.accountStatus} == 'Blocked'"
                                   class="bi-exclamation-circle-fill text-warning ms-0 hover-info"
                                   data-hover-text="Account is blocked"></span>
-
                         </div>
                         <div class="h6 text-muted d-flex align-items-center justify-content-between">
                             <div class="align-self-start mt-2">
                                 <span class="py-custom bi-arrow-right"></span>
                                 <span class="ms-1 py-custom" th:text="${user.getAccountStatus()}"></span>
                             </div>
-
                             <!-- Resend Email Button -->
                             <div class="d-flex flex-column align-items-end">
                                 <a th:if="${user.accountStatus} == 'Pending'"
@@ -200,7 +197,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="overflow-hidden d-block mt-2" th:if="${user.role} == 'Admin'">
                         <h6 class="text-primary mb-0" th:text="#{user.accoutType}"></h6>
                         <h6 class="text-muted  d-flex">
@@ -208,18 +204,44 @@
                             <span class="ms-1 py-custom" th:text="${user.role}"></span>
                         </h6>
                     </div>
-
-
                 </div><!--end row-->
             </div>
-
-
         </div><!--end col-->
-
     </div><!--end row-->
-
 </section>
+</form>
 <footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<!-- ✅ JavaScript for Preview & Dynamic Button -->
+<script>
+    const input = document.getElementById('profileImageInput');
+    const preview = document.getElementById('profileImagePreview');
+    const removeBtn = document.getElementById('removeProfilePicture');
+    const removeField = document.getElementById('removePicture');
+
+    const isCustomPhoto = preview.src && !preview.src.includes('default-profile-pic');
+    if (isCustomPhoto) removeBtn.style.display = 'inline-block';
+
+    input.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                removeBtn.style.display = 'inline-block';
+                removeField.value = 'false'; // File was chosen
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    removeBtn.addEventListener('click', () => {
+        preview.src = '/images/default-profile-pic.png'; // Show fallback
+        input.value = ''; // Clear file input
+        removeField.value = 'true'; // Mark for backend to remove image
+        removeBtn.style.display = 'none';
+    });
+</script>
+
 <div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
 </body>
 </html>

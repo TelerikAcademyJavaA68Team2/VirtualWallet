@@ -1,9 +1,7 @@
 package com.example.virtualwallet.services;
 
-import com.example.virtualwallet.exceptions.DuplicateEntityException;
-import com.example.virtualwallet.exceptions.EntityNotFoundException;
-import com.example.virtualwallet.exceptions.InvalidUserInputException;
-import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
+import com.example.virtualwallet.exceptions.*;
+import com.example.virtualwallet.helpers.CloudinaryHelper;
 import com.example.virtualwallet.helpers.ModelMapper;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
@@ -27,10 +25,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelMapper.convertToSort;
+import static com.example.virtualwallet.helpers.ValidationHelpers.isValidImageFile;
+import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
@@ -44,8 +46,16 @@ public class UserServiceImpl implements UserService {
     public static final String USER_ALREADY_USER = "The user already has role User.";
     public static final String USER_ALREADY_BLOCKED = "The user is already Blocked.";
     public static final String USER_NOT_BLOCKED = "The user is not Blocked.";
+    public static final String INVALID_IMAGE = "Invalid image file. Only JPG, PNG, or GIF files are allowed.";
+    public static final String FILE_TOO_LARGE = "File is too large! Max size is 5MB.";
+    public static final String PHONE_NUMBER_TAKEN = "Phone number '%s' is already associated with another account! Please, " +
+            "provide a different phone number.";
+    public static final String EMAIL_TAKEN = "Email '%s' is already associated with another account! Please, " +
+            "provide a different email.";
+    public static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     private final UserRepository userRepository;
+    private final CloudinaryHelper cloudinaryHelper;
 
     @Override
     public void createUser(User user) {
@@ -173,7 +183,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateAuthenticatedUser(ProfileUpdateInput input) {
+    public void updateAuthenticatedUser(ProfileUpdateInput input, MultipartFile profileImage,
+                                        boolean removePicture) {
         User user = getAuthenticatedUser();
 
         if (input.getFirstName() != null) {
@@ -184,15 +195,32 @@ public class UserServiceImpl implements UserService {
         }
         if (input.getEmail() != null && !user.getEmail().equals(input.getEmail())) {
             if (checkIfEmailIsTaken(input.getEmail())) {
-                throw new DuplicateEntityException("User", "Email", input.getEmail());
+                throw new DuplicateEntityException(format(EMAIL_TAKEN, input.getEmail()));
             }
             user.setEmail(input.getEmail());
         }
         if (input.getPhoneNumber() != null && !user.getPhoneNumber().equals(input.getPhoneNumber())) {
             if (checkIfPhoneNumberIsTaken(input.getPhoneNumber())) {
-                throw new DuplicateEntityException("User", "PhoneNumber", input.getPhoneNumber());
+                throw new DuplicateEntityException(format(PHONE_NUMBER_TAKEN, input.getPhoneNumber()));
             }
             user.setPhoneNumber(input.getPhoneNumber());
+        }
+        if (removePicture){
+            user.setPhoto("/images/default-profile-pic.png");
+        }
+        if (profileImage!= null && !profileImage.isEmpty()) {
+            try {
+                if (!isValidImageFile(profileImage)) {
+                    throw new InvalidFileException(INVALID_IMAGE);
+                }
+                if (profileImage.getSize() > MAX_FILE_SIZE) {
+                    throw new InvalidFileSizeException(FILE_TOO_LARGE);
+                }
+                String imageUrl = cloudinaryHelper.uploadUserProfilePhoto(profileImage);
+                user.setPhoto(imageUrl);
+            } catch (IOException | InvalidUserInputException e) {
+                throw new InvalidFileException(INVALID_IMAGE);
+            }
         }
         userRepository.save(user);
     }

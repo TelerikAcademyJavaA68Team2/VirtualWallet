@@ -1,11 +1,11 @@
 package com.example.virtualwallet.models.dtos.user;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @PropertySource("classpath:messages.properties")
@@ -23,4 +23,6 @@ public class ProfileUpdateInput {
 
     @Pattern(regexp = "\\d{10}", message = "{error.phoneDigits}")
     private String phoneNumber;
+
+    private MultipartFile profilePicture;
 }
