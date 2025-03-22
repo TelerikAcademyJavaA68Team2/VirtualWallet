@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -59,8 +60,12 @@ public class ProfileController {
             }
     )
     @PatchMapping
-    public ResponseEntity<String> updateProfile(@Valid @RequestBody ProfileUpdateInput input ) {
-        userService.updateAuthenticatedUser(input);
+    public ResponseEntity<String> updateProfile(@Valid @RequestBody ProfileUpdateInput input,
+                                                @RequestParam(value = "profileImage", required = false)
+                                                MultipartFile profileImage,
+                                                @RequestParam(value = "removeProfile", required = false,
+                                                        defaultValue = "false") boolean removeProfilePic) {
+        userService.updateAuthenticatedUser(input, profileImage, removeProfilePic);
 
         return ResponseEntity.ok(UPDATED_SUCCESSFULLY);
     }

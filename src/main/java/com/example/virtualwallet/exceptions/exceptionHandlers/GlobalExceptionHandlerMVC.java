@@ -57,4 +57,12 @@ public class GlobalExceptionHandlerMVC {
         return "redirect:" + uri;
     }
 
+    // Handle all other exceptions
+//    @ExceptionHandler(Exception.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public String handleGlobalException(Exception ex, Model model) {
+//        model.addAttribute("error", "Something went wrong. Please try again later.");
+//        model.addAttribute("status", HttpStatus.NOT_FOUND);
+//        return "error";
+//    }
 }

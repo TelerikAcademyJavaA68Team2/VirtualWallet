@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.example.virtualwallet.helpers.ModelMapper.userOutputToUserUpdateInput;
 
@@ -59,18 +60,23 @@ public class ProfileMvcController {
     }
 
     @PostMapping("/update")
-    public String updateProfile(@Valid @ModelAttribute("updateRequest") ProfileUpdateInput updateProfileRequest, BindingResult errors, Model model) {
+    public String updateProfile(@Valid @ModelAttribute("updateRequest") ProfileUpdateInput updateProfileRequest, BindingResult errors,
+                                @RequestParam(value = "profilePicture", required = false) MultipartFile profileImage,
+                                @RequestParam(value = "removePicture", required = false, defaultValue = "false") boolean removePicture){
         if (errors.hasErrors()) {
             return "Update-Profile-View";
         }
         try {
-            userService.updateAuthenticatedUser(updateProfileRequest);
+            userService.updateAuthenticatedUser(updateProfileRequest, profileImage, removePicture);
         } catch (DuplicateEntityException e) {
             if (e.getMessage().contains("Email")) {
-                errors.rejectValue("email", "email already in use", e.getMessage());
-            } else {
-                errors.rejectValue("phoneNumber", "phone number already in use", e.getMessage());
+                errors.rejectValue("email", "EmailError", e.getMessage());
+            } else if (e.getMessage().contains("Phone number")) {
+                errors.rejectValue("phoneNumber", "phoneNumberError", e.getMessage());
             }
+            return "Update-Profile-View";
+        } catch (InvalidFileException | InvalidFileSizeException e){
+            errors.rejectValue("profilePicture", "profilePicture.error", e.getMessage());
             return "Update-Profile-View";
         }
         return "redirect:/mvc/profile";

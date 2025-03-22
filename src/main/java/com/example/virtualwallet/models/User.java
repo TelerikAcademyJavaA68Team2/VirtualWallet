@@ -94,7 +94,7 @@ public class User implements UserDetails {
     public void markAsDeleted() {
         this.deletedAt = LocalDateTime.now();
         this.status = AccountStatus.DELETED;
-
+        this.photo = "/images/default-profile-pic.png";
         this.wallets.forEach(Wallet::markAsDeleted);
         this.cards.forEach(Card::markAsDeleted);
     }

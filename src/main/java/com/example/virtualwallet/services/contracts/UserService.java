@@ -8,6 +8,7 @@ import com.example.virtualwallet.models.dtos.user.ProfileUpdateInput;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public interface UserService extends UserDetailsService {
 
     void softDeleteAuthenticatedUser();
 
-    void updateAuthenticatedUser(ProfileUpdateInput input);
+    void updateAuthenticatedUser(ProfileUpdateInput input, MultipartFile profileImage, boolean removePicture);
 
     void save(User user);
 
