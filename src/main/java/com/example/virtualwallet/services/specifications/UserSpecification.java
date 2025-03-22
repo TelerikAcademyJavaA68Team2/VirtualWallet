@@ -1,6 +1,7 @@
 package com.example.virtualwallet.services.specifications;
 
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,9 +32,25 @@ public class UserSpecification {
                     predicates.add(cb.equal(root.get("role"), role))
             );
 
-            filterOptions.getStatus().ifPresent(status ->
-                    predicates.add(cb.equal(root.get("status"), status))
-            );
+            if (filterOptions.getStatus().isPresent() && filterOptions.getStatus().get().equals(AccountStatus.BLOCKED)) {
+                predicates.add(
+                        cb.or(
+                                cb.equal(root.get("status"), AccountStatus.BLOCKED),
+                                cb.equal(root.get("status"), AccountStatus.BLOCKED_AND_DELETED)
+                        )
+                );
+            }else if (filterOptions.getStatus().isPresent() && filterOptions.getStatus().get().equals(AccountStatus.DELETED)) {
+                predicates.add(
+                        cb.or(
+                                cb.equal(root.get("status"), AccountStatus.DELETED),
+                                cb.equal(root.get("status"), AccountStatus.BLOCKED_AND_DELETED)
+                        )
+                );
+            } else {
+                filterOptions.getStatus().ifPresent(status ->
+                        predicates.add(cb.equal(root.get("status"), status))
+                );
+            }
 
             filterOptions.getFromDate().ifPresent(fromDate ->
                     predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), fromDate))
