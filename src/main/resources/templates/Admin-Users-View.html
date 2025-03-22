@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/Page-Layout :: head('Users')}">
+</head>
+<body>
+<header th:insert="~{fragments/Page-Layout :: navigation}"></header>
+
+<section class="section">
+    <div class="container col-lg-10">
+        <div class="row justify-content-center ">
+            <div class="col-10">
+                <div class="section-title  d-flex justify-content-center align-items-center position-relative">
+                    <h1 class="title mb-0 text-center w-100" style="margin-top: 50px;"
+                        th:text="#{users.page.title}">
+                        Users</h1>
+                </div>
+            </div><!--end col-->
+        </div>
+        <div class="table-responsive bg-white shadow rounded mt-3">
+            <!-- Form Wrapping the Table -->
+            <form id="query-form" th:action="@{/mvc/admin/users}" method="get">
+                <table class="table table-striped mb-0">
+                    <!-- Table Header -->
+                    <thead>
+                    <!-- First Row: Page Size Dropdown and Muted Text -->
+                    <tr>
+                        <th colspan="6" class=" border-bottom">
+                            <!-- Flex Container for Size Dropdown, Muted Text, and Search Button -->
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <!-- First Column: Size Dropdown -->
+                                <div class="col d-flex flex-row align-items-center" style="min-width: 33%">
+                                    <div class="btn-group me-3">
+                                        <button type="button" class="btn btn-outline-dark rounded-pill dropdown-toggle"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span th:text="'size '+${usersPage.pageSize}">10</span>
+                                        </button>
+                                        <ul class="dropdown-menu text-center custom-dropdown-95px">
+                                            <li><a class="dropdown-item" href="#"
+                                                   th:href="@{/mvc/admin/users(page=0, size=5, username=${username}, email=${email}, phoneNumber=${phoneNumber}, role=${role}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">5</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                   th:href="@{/mvc/admin/users(page=0, size=10, username=${username}, email=${email}, phoneNumber=${phoneNumber}, role=${role}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">10</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                   th:href="@{/mvc/admin/users(page=0, size=25, username=${username}, email=${email}, phoneNumber=${phoneNumber}, role=${role}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">25</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                   th:href="@{/mvc/admin/users(page=0, size=50, username=${username}, email=${email}, phoneNumber=${phoneNumber}, role=${role}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">50</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                   th:href="@{/mvc/admin/users(page=0, size=100, username=${username}, email=${email}, phoneNumber=${phoneNumber}, role=${role}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">100</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- Second Column: Muted Text -->
+                                    <div th:unless="${usersPage.totalPages <= page}"
+                                         class=" text-muted ms-3 mb-0">
+                                        <span th:text="${size * page + 1}"></span> to
+                                        <span th:if="${(page + 1) * size < usersPage.totalElements}"
+                                              th:text="${(page + 1) * size}"></span>
+                                        <span th:unless="${(page + 1) * size < usersPage.totalElements}"
+                                              th:text="${usersPage.totalElements}"></span>
+                                        of <span th:text="${usersPage.totalElements}"></span> results
+                                    </div>
+                                    <!-- Second Column: Muted Text -->
+                                    <div th:if="${usersPage.totalPages <= page}" class=" text-muted ms-3 mb-0">
+                                        <span th:text="'0 results'"></span>
+                                    </div>
+                                </div>
+
+
+                                <!-- Centered Search Button -->
+                                <div class="col d-flex flex-row align-items-center justify-content-center text-center"
+                                     style="min-width: 36%">
+                                    <input type="submit" class="btn btn-primary rounded-pill" value="Search">
+                                    <a href="/mvc/admin/users">
+                                        <span class="ms-1 btn btn-outline-dark rounded-pill">Reset filters</span>
+                                    </a>
+                                </div>
+                                <div class="col" style="width: 10%"></div>
+
+                            </div>
+                        </th>
+                    </tr>
+
+                    <!-- Second Row: Form Fields -->
+                    <tr th:colspan="6">
+                        <th class="text-center  " style="width: 25%;">
+                            <div class="d-flex justify-content-center">
+                                <!-- Right-Aligned Search Specific User Btn -->
+                                <div class="col text-end">
+                                    <div class="flex-row d-flex align-items-center">
+                                        <label for="username" class="form-label visually-hidden">Username</label>
+                                        <input type="text" id="username" name="username"
+                                               class="form-control form-control-sm"
+                                               th:value="${username}" placeholder="Username">
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+
+                        <th class="text-center  " style="width: 25%;">
+                            <div class="d-flex justify-content-center">
+                                <!-- Right-Aligned Search Specific User Btn -->
+                                <div class="col text-end">
+                                    <div class="flex-row d-flex align-items-center">
+                                        <label for="email" class="form-label visually-hidden">Email</label>
+                                        <input type="text" id="email" name="email"
+                                               class="form-control form-control-sm"
+                                               th:value="${email}" placeholder="Email">
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+
+                        <th class="text-center  " style="width: 15%;">
+                            <div class="w-100 d-flex justify-content-center">
+                                <!-- Right-Aligned Search Specific User Btn -->
+                                <div class="col text-end">
+                                    <div class="flex-row d-flex align-items-center">
+                                        <label for="phoneNumber" class="form-label visually-hidden">Phone Number</label>
+                                        <input type="text" id="phoneNumber" name="phoneNumber"
+                                               class="form-control form-control-sm"
+                                               th:value="${phoneNumber}" placeholder="Phone Number">
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+
+
+                        <th class="text-center " style="width: 10%;">
+                            <div class="d-flex w-100">
+                                <button type="button" class=" w-100 dropdown-toggle btn-outline-dark rounded-pill"
+                                        style="background-color: white;"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span th:text="'Role'"></span>
+                                </button>
+                                <ul class="dropdown-menu text-center custom-dropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'-ALL-'"
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'User'"
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, role='user', username=${username}, email=${email}, phoneNumber=${phoneNumber}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'Admin'"
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, role='admin', username=${username}, email=${email}, phoneNumber=${phoneNumber}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </th>
+
+
+                        <th class="text-center " style="width: 10%;">
+                            <div class="d-flex w-100">
+                                <button type="button" class="w-100 dropdown-toggle btn-outline-dark rounded-pill"
+                                        style="background-color: white;"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span th:text="'Status'"></span>
+                                </button>
+                                <ul class="dropdown-menu text-center custom-dropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'-ALL-'"
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'Pending'"
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='pending', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'Active'"
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='active', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'Blocked'"
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='blocked', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'Deleted'"
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='deleted', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" th:text="'Blocked | Deleted'"
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='deleted-and-blocked', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </th>
+
+
+                        <th class="text-center" style="width: 15%">
+                            <!-- Flex Container for From Date and To Date -->
+                            <div class="flex-box justify-content-center w-100">
+                                <!-- From Date -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="me-2">From</span>
+                                    <div>
+                                        <label for="from-date" class="form-label visually-hidden">From Date</label>
+                                        <input type="date" id="from-date" name="fromDate"
+                                               class="form-control form-control-sm"
+                                               th:value="${fromDate}" placeholder="From Date">
+                                    </div>
+                                </div>
+
+                                <!-- To Date -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="me-2">To</span>
+                                    <div>
+                                        <label for="to-date" class="form-label visually-hidden">To Date</label>
+                                        <input type="date" id="to-date" name="toDate"
+                                               class="form-control form-control-sm"
+                                               th:value="${toDate}" placeholder="To Date">
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+
+                    </tr>
+
+                    <!-- Third Row: Sorting Headers -->
+                    <tr>
+                        <th class="clickable-header" th:classappend="${sortBy == 'username'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/users(
+                            page=${page},
+                            size=${size},
+                            status=${status},
+                            role=${role},
+                            username=${username},
+                            email=${email},
+                            phoneNumber=${phoneNumber},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            sortBy='username',
+                            sortOrder=${sortBy == 'username' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Username
+                                <span th:if="${sortBy == 'username'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+
+                        <th class="clickable-header" th:classappend="${sortBy == 'email'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/users(
+                            page=${page},
+                            size=${size},
+                            status=${status},
+                            role=${role},
+                            username=${username},
+                            email=${email},
+                            phoneNumber=${phoneNumber},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            sortBy='email',
+                            sortOrder=${sortBy == 'email' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Email
+                                <span th:if="${sortBy == 'email'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+
+                        <th class="clickable-header" th:classappend="${sortBy == 'phoneNumber'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/users(
+                            page=${page},
+                            size=${size},
+                            status=${status},
+                            role=${role},
+                            username=${username},
+                            email=${email},
+                            phoneNumber=${phoneNumber},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            sortBy='phoneNumber',
+                            sortOrder=${sortBy == 'phoneNumber' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Phone Number
+                                <span th:if="${sortBy == 'phoneNumber'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+
+                        <th class="clickable-header" th:classappend="${sortBy == 'role'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/users(
+                            page=${page},
+                            size=${size},
+                            status=${status},
+                            role=${role},
+                            username=${username},
+                            email=${email},
+                            phoneNumber=${phoneNumber},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            sortBy='role',
+                            sortOrder=${sortBy == 'role' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Role
+                                <span th:if="${sortBy == 'role'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+
+                        <th class="clickable-header" th:classappend="${sortBy == 'status'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/users(
+                            page=${page},
+                            size=${size},
+                            status=${status},
+                            role=${role},
+                            username=${username},
+                            email=${email},
+                            phoneNumber=${phoneNumber},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            sortBy='status',
+                            sortOrder=${sortBy == 'status' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Status
+                                <span th:if="${sortBy == 'status'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+
+                        <th class="clickable-header" th:classappend="${sortBy == 'createdAt'} ? 'active' : ''">
+                            <a th:href="@{/mvc/admin/users(
+                            page=${page},
+                            size=${size},
+                            status=${status},
+                            role=${role},
+                            username=${username},
+                            email=${email},
+                            phoneNumber=${phoneNumber},
+                            fromDate=${fromDate},
+                            toDate=${toDate},
+                            sortBy='createdAt',
+                            sortOrder=${sortBy == 'createdAt' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                        )}">
+                                Registered at
+                                <span th:if="${sortBy == 'createdAt'}">
+                                <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
+                                <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
+                            </span>
+                            </a>
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <!-- Table Body -->
+                    <tbody th:if="${usersPage.totalElements != null}">
+                    <tr th:each="user : ${usersPage.content}" class="clickable-row align-middle"
+                        th:attr="data-href='/mvc/admin/users/' + ${user.id}">
+
+
+                        <td>
+                            <img th:src="${user.photo}"
+                                 alt="Page Is Empty" class="rounded-circle me-2"
+                                 style="max-width: 50px;"/>
+                            <span th:text="${user.username}"></span>
+                        </td>
+                        <td th:text="${user.email}">
+                        </td>
+                        <td th:text="${user.phoneNumber}"></td>
+                        <td th:text="${user.role}"></td>
+                        <td th:text="${user.accountStatus}"></td>
+
+                        <td th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
+                    </tr>
+                    </tbody>
+                    <tr th:if="${usersPage.totalPages <= usersPage.currentPage}"
+                        class="justify-content-center align-items-center">
+                        <td colspan="6" class="text-center p-5 justify-content-center align-items-center w-100">
+                            <img src="/images/emptyPage.png"
+                                 alt="Page Is Empty"
+                                 style="max-width: 200px;"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+
+        <div class="pagination-container">
+            <!-- Pagination Buttons -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-modern">
+                    <!-- First Page Button -->
+                    <li class="page-item"
+                        th:if="${usersPage.currentPage > 6 && usersPage.totalPages > 6 && usersPage.totalPages>=usersPage.currentPage}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/users(
+                                       page=0,
+                                       size=${size},
+                                       status=${status},
+                                       role=${role},
+                                       username=${username},
+                                       email=${email},
+                                       phoneNumber=${phoneNumber},
+                                       fromDate=${fromDate},
+                                       toDate=${toDate},
+                                       sortBy=${sortBy},
+                                       sortOrder=${sortOrder}
+                                   )}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <!-- Previous Page Button -->
+                    <li class="page-item"
+                        th:if="${usersPage.hasPreviousPage && usersPage.currentPage <= usersPage.totalPages}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/users(
+                                   page=${page - 1},
+                                   size=${size},
+                                   status=${status},
+                                   role=${role},
+                                   username=${username},
+                                   email=${email},
+                                   phoneNumber=${phoneNumber},
+                                   fromDate=${fromDate},
+                                   toDate=${toDate},
+                                   sortBy=${sortBy},
+                                   sortOrder=${sortOrder}
+                               )}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    <!-- Page Number Buttons -->
+                    <li class="page-item" th:each="p : ${#numbers.sequence(
+                            usersPage.currentPage > 6 ? (usersPage.currentPage - 6) : 0,
+                            usersPage.currentPage + 6 < usersPage.totalPages - 1 ? (usersPage.currentPage + 6) : (usersPage.totalPages - 1)
+                        )}"
+                        th:if="${usersPage.totalPages > 0 && usersPage.currentPage < usersPage.totalPages}"
+                        th:classappend="${p == usersPage.currentPage} ? 'active' : ''">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/users(
+                                   page=${p},
+                                   size=${size},
+                                   status=${status},
+                                   role=${role},
+                                   username=${username},
+                                   email=${email},
+                                   phoneNumber=${phoneNumber},
+                                   fromDate=${fromDate},
+                                   toDate=${toDate},
+                                   sortBy=${sortBy},
+                                   sortOrder=${sortOrder}
+                               )}"
+                           th:text="${p + 1}"></a>
+                    </li>
+
+
+                    <li class="page-item"
+                        th:unless="${usersPage.totalPages > 0 && usersPage.currentPage < usersPage.totalPages}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/users}">
+                            <i class="bi bi-house-fill"></i>
+                        </a>
+                    </li>
+
+                    <!-- Next Page Button -->
+                    <li class="page-item" th:unless="${usersPage.currentPage >= usersPage.totalPages - 1}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/users(
+                                   page=${page + 1},
+                                   size=${size},
+                                   status=${status},
+                                   role=${role},
+                                   username=${username},
+                                   email=${email},
+                                   phoneNumber=${phoneNumber},
+                                   fromDate=${fromDate},
+                                   toDate=${toDate},
+                                   sortBy=${sortBy},
+                                   sortOrder=${sortOrder}
+                               )}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <!-- Last Page Button -->
+                    <li class="page-item" th:if="${usersPage.currentPage < usersPage.totalPages - 7}">
+                        <a class="page-link" href="#"
+                           th:href="@{/mvc/admin/users(
+                                   page=${usersPage.totalPages - 1},
+                                   size=${size},
+                                   status=${status},
+                                   role=${role},
+                                   username=${username},
+                                   email=${email},
+                                   phoneNumber=${phoneNumber},
+                                   fromDate=${fromDate},
+                                   toDate=${toDate},
+                                   sortBy=${sortBy},
+                                   sortOrder=${sortOrder}
+                               )}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const clickableRows = document.querySelectorAll('.clickable-row');
+
+        // Add a click event listener to each row
+        clickableRows.forEach(function (row) {
+            row.addEventListener('click', function () {
+                // Get the data-href attribute from the clicked row
+                const href = row.getAttribute('data-href');
+                if (href) {
+                    // Redirect to the URL specified in data-href
+                    window.location.href = href;
+                }
+            });
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<script th:insert="~{fragments/Page-Layout :: coreJS}"></script>
+</body>
+</html>
