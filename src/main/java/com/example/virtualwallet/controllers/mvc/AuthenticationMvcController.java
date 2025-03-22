@@ -81,19 +81,19 @@ public class AuthenticationMvcController {
             if (e.getMessage().startsWith("Email")) {
                 field = "email";
                 errorCode = "email.mismatch";
-                defaultMsg = "Email is already taken!";
+                defaultMsg = e.getMessage();
             }
 
             if (e.getMessage().startsWith("Username")) {
                 field = "username";
                 errorCode = "username.mismatch";
-                defaultMsg = "Username is already taken!";
+                defaultMsg = e.getMessage();
             }
 
             if (e.getMessage().startsWith("Phone")) {
                 field = "phoneNumber";
                 errorCode = "phoneNumber.mismatch";
-                defaultMsg = "Phone number is already associated with an account!";
+                defaultMsg = e.getMessage();
             }
 
             errors.rejectValue(field, errorCode, defaultMsg);
@@ -108,12 +108,12 @@ public class AuthenticationMvcController {
     public String confirmEmail(@RequestParam UUID token) {
         try {
             emailConfirmationService.confirmEmailToken(token);
-            return "redirect:/mvc/profile";
+            return "Account-Verified-View";
         } catch (EmailConfirmationException e) {
             return "redirect:/mvc/profile?emailTokenExpired=true";
         } catch (EmailConfirmedException e) {
             return "redirect:/mvc/profile";
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e){
             return "redirect:/mvc/home";
         }
     }
