@@ -2,6 +2,7 @@ package com.example.virtualwallet.exceptions.exceptionHandlers;
 
 import com.example.virtualwallet.exceptions.EntityNotFoundException;
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -42,6 +43,18 @@ public class GlobalExceptionHandlerMVC {
         redirectAttributes.addFlashAttribute("error", ex.getMessage());
         redirectAttributes.addFlashAttribute("status", HttpStatus.UNAUTHORIZED);
         return "redirect:/mvc/auth/login";
+    }
+
+    @ExceptionHandler(ClassCastException.class)
+    public String handleClassCastException(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        return "redirect:" + uri;
+    }
+
+    @ExceptionHandler(NumberFormatException.class)
+    public String handleNumberFormatException(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        return "redirect:" + uri;
     }
 
 }
