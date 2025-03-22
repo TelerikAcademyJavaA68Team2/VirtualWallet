@@ -2,14 +2,17 @@ package com.example.virtualwallet.controllers.mvc;
 
 import com.example.virtualwallet.models.Transaction;
 import com.example.virtualwallet.models.dtos.exchange.ExchangePage;
+import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransfersPage;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
+import com.example.virtualwallet.models.fillterOptions.UserFilterOptions;
 import com.example.virtualwallet.services.contracts.ExchangeService;
 import com.example.virtualwallet.services.contracts.TransactionService;
 import com.example.virtualwallet.services.contracts.TransferService;
+import com.example.virtualwallet.services.contracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -29,6 +32,7 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 @RequestMapping("/mvc/admin")
 public class AdminMvcController {
 
+    private final UserService userService;
     private final TransactionService transactionService;
     private final TransferService transferService;
     private final ExchangeService exchangeService;
@@ -234,6 +238,72 @@ public class AdminMvcController {
         model.addAttribute("currencies", currencies);
         model.addAttribute("exchangePage", exchangePage);
         return "Admin-Exchanges-View";
+    }
+
+
+    @GetMapping("/users")
+    public String filterUsers(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate,
+            @RequestParam(defaultValue = "username") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        if (requestIsWithInvalidPageOrSize(page, size)) {
+            page = 0;
+            size = 10;
+        }
+
+
+        fromDate = validateDateFromUrl(fromDate).orElse(null);
+        toDate = validateDateFromUrl(toDate).orElse(null);
+
+        String fromDateToDisplay = fromDate;
+        String toDateToDisplay = toDate;
+        if (fromDate != null && !fromDate.isEmpty() && !fromDate.endsWith("00")) {
+            fromDate = fromDate.concat(" - 00:00");
+            fromDate = convertToCustomFormat(fromDate);
+        }
+        if (toDate != null && !toDate.isEmpty() && !toDate.endsWith("00")) {
+            toDate = toDate.concat(" - 00:00");
+            toDate = convertToCustomFormat(toDate);
+        }
+        UserFilterOptions userFilterOptions = new UserFilterOptions(
+                username,
+                email,
+                phoneNumber,
+                role,
+                status,
+                fromDate,
+                toDate,
+                sortBy,
+                sortOrder,
+                page,
+                size
+        );
+
+        UserPageOutput usersPage = userService.filterUsers(userFilterOptions);
+
+        model.addAttribute("usersPage", usersPage);
+        model.addAttribute("username", username);
+        model.addAttribute("email", email);
+        model.addAttribute("phoneNumber", phoneNumber);
+        model.addAttribute("role", role);
+        model.addAttribute("status", status);
+        model.addAttribute("fromDate", fromDateToDisplay);
+        model.addAttribute("toDate", toDateToDisplay);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortOrder", sortOrder);
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+
+        return "Admin-Users-View";
     }
 
 
