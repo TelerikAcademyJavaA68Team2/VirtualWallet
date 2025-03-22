@@ -8,9 +8,13 @@ import java.util.List;
 @Data
 public class UserPageOutput {
 
-    int numberOfPages;
+    private List<UserOutput> content;
 
-    long totalResults;
+    private long totalElements;
+    private int currentPage;
+    private int totalPages;
+    private int pageSize;
+    private boolean hasNextPage;
+    private boolean hasPreviousPage;
 
-    List<UserOutput> content;
 }
