@@ -257,19 +257,20 @@ public class AdminRestController {
             }
     )
     @GetMapping("/exchanges")
-    public ResponseEntity<?> getExchangesAndFilter(@RequestParam(required = false) String fromDate,
-                                                   @RequestParam(required = false) String toDate,
-                                                   @RequestParam(required = false) String fromCurrency,
-                                                   @RequestParam(required = false) String toCurrency,
-                                                   @RequestParam(required = false) BigDecimal minStartAmount,
-                                                   @RequestParam(required = false) BigDecimal maxStartAmount,
-                                                   @RequestParam(required = false) BigDecimal minEndAmount,
-                                                   @RequestParam(required = false) BigDecimal maxEndAmount,
-                                                   @RequestParam(required = false) String recipientUsername,
-                                                   @RequestParam(defaultValue = "date") String sortBy,
-                                                   @RequestParam(defaultValue = "desc") String sortOrder,
-                                                   @RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<?> getExchangesAndFilter(
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate,
+            @RequestParam(required = false) String fromCurrency,
+            @RequestParam(required = false) String toCurrency,
+            @RequestParam(required = false) BigDecimal minStartAmount,
+            @RequestParam(required = false) BigDecimal maxStartAmount,
+            @RequestParam(required = false) BigDecimal minEndAmount,
+            @RequestParam(required = false) BigDecimal maxEndAmount,
+            @RequestParam(required = false) String recipientUsername,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortOrder,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         if (page < 0 || size <= 0) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
