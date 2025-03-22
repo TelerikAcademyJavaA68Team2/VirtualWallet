@@ -222,7 +222,7 @@ public class UserServiceImpl implements UserService {
                 throw new InvalidFileException(INVALID_IMAGE);
             }
         }
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
     }
 
     @Override
