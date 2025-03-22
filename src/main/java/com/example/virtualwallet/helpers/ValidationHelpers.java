@@ -26,7 +26,7 @@ public class ValidationHelpers {
 
     public static final Set<String> VALID_CURRENCIES_SET = Set.of("BGN", "USD", "EUR", "GBP", "JPY", "CNH", "AUD", "CAD", "CHF");
     public static final Set<String> VALID_TRANSACTION_STATUS_SET = Set.of("APPROVED", "DECLINED");
-    public static final Set<String> VALID_ACCOUNT_STATUS_SET = Set.of("ACTIVE", "BLOCKED", "PENDING", "DELETED", "DELETED_AND_BLOCKED");
+    public static final Set<String> VALID_ACCOUNT_STATUS_SET = Set.of("ACTIVE", "BLOCKED", "PENDING", "DELETED", "DELETED-AND-BLOCKED");
     public static final Set<String> VALID_ROLE_SET = Set.of("ADMIN", "USER");
 
     private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd - HH:mm");
@@ -122,14 +122,17 @@ public class ValidationHelpers {
         if (role == null || role.trim().isEmpty()) {
             return Optional.empty();
         }
-        return VALID_ROLE_SET.contains(role) ? Optional.of(Role.valueOf(role.toUpperCase())) : Optional.empty();
+        return VALID_ROLE_SET.contains(role.toUpperCase()) ? Optional.of(Role.valueOf(role.toUpperCase())) : Optional.empty();
     }
 
     public static Optional<AccountStatus> sanitizeAccountStatus(String status) {
         if (status == null || status.trim().isEmpty()) {
             return Optional.empty();
         }
-        return VALID_ACCOUNT_STATUS_SET.contains(status) ? Optional.of(AccountStatus.valueOf(status.toUpperCase())) : Optional.empty();
+        if (status.equalsIgnoreCase("DELETED-AND-BLOCKED")){
+            return Optional.of(AccountStatus.BLOCKED_AND_DELETED);
+        }
+        return VALID_ACCOUNT_STATUS_SET.contains(status.toUpperCase()) ? Optional.of(AccountStatus.valueOf(status.toUpperCase())) : Optional.empty();
     }
 
     public static Optional<BigDecimal> sanitizeBigDecimal(BigDecimal value) {
