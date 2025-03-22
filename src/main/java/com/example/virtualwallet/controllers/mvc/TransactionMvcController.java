@@ -26,8 +26,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.example.virtualwallet.helpers.ValidationHelpers.convertToCustomFormat;
-import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
+import static com.example.virtualwallet.helpers.ValidationHelpers.*;
+import static com.example.virtualwallet.helpers.ValidationHelpers.validateDateFromUrl;
 
 @RequiredArgsConstructor
 @Controller
@@ -59,6 +59,9 @@ public class TransactionMvcController {
             page = 0;
             size = 10;
         }
+
+        fromDate = validateDateFromUrl(fromDate).orElse(null);
+        toDate = validateDateFromUrl(toDate).orElse(null);
 
         User user = userService.getAuthenticatedUser();
         String fromDateToDisplay = fromDate;

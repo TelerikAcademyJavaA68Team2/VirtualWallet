@@ -19,8 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static com.example.virtualwallet.helpers.ValidationHelpers.convertToCustomFormat;
-import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
+import static com.example.virtualwallet.helpers.ValidationHelpers.*;
+import static com.example.virtualwallet.helpers.ValidationHelpers.validateDateFromUrl;
 
 @RequiredArgsConstructor
 @Controller
@@ -56,6 +56,9 @@ public class TransferMvcController {
             page = 0;
             size = 10;
         }
+        fromDate = validateDateFromUrl(fromDate).orElse(null);
+        toDate = validateDateFromUrl(toDate).orElse(null);
+
         String fromDateToDisplay = fromDate;
         String toDateToDisplay = toDate;
         if (fromDate != null && !fromDate.isEmpty() && !fromDate.endsWith("00")) {
