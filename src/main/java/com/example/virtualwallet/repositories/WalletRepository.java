@@ -42,11 +42,11 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         ru.photo AS recipientPhoto,
                         NULL AS status,
                         t.date as date
-                    FROM Transaction t
-                    JOIN Wallet sw ON t.sender_wallet_id = sw.id
-                    JOIN User su ON sw.owner_id = su.id
-                    JOIN Wallet rw ON t.recipient_wallet_id = rw.id
-                    JOIN User ru ON rw.owner_id = ru.id
+                    FROM transaction t
+                    JOIN wallet sw ON t.sender_wallet_id = sw.id
+                    JOIN user su ON sw.owner_id = su.id
+                    JOIN wallet rw ON t.recipient_wallet_id = rw.id
+                    JOIN user ru ON rw.owner_id = ru.id
                     WHERE sw.id = :walletId OR rw.id = :walletId
                     
                     UNION ALL
@@ -65,7 +65,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         NULL AS recipientPhoto,
                         tf.status AS status,
                         tf.date as date
-                    FROM Transfer tf
+                    FROM transfer tf
                     JOIN wallet w ON tf.wallet_id = w.id
                     WHERE tf.wallet_id = :walletId
                     
@@ -85,34 +85,34 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         NULL AS recipientPhoto,
                         NULL AS status,
                         e.date as date
-                    FROM Exchange e
-                    JOIN Wallet fw ON e.from_wallet_id = fw.id
-                    JOIN Wallet tw ON e.to_wallet_id = tw.id
+                    FROM exchange e
+                    JOIN wallet fw ON e.from_wallet_id = fw.id
+                    JOIN wallet tw ON e.to_wallet_id = tw.id
                     WHERE fw.id = :walletId OR tw.id = :walletId
                     
                     ORDER BY date DESC""",
             countQuery = """
                     SELECT COUNT(*) FROM (
                        SELECT t.id
-                    FROM Transaction t
-                    JOIN Wallet sw ON t.sender_wallet_id = sw.id
-                    JOIN Wallet rw ON t.recipient_wallet_id = rw.id
+                    FROM transaction t
+                    JOIN wallet sw ON t.sender_wallet_id = sw.id
+                    JOIN wallet rw ON t.recipient_wallet_id = rw.id
                     WHERE sw.id = :walletId OR rw.id = :walletId
                     
                     UNION ALL
                     
                     SELECT\s
                         tf.id
-                    FROM Transfer tf
+                    FROM transfer tf
                     JOIN wallet w ON tf.wallet_id = w.id
                     WHERE tf.wallet_id = :walletId
                     
                     UNION ALL
                     
                     SELECT e.id
-                    FROM Exchange e
-                    JOIN Wallet fw ON e.from_wallet_id = fw.id
-                    JOIN Wallet tw ON e.to_wallet_id = tw.id
+                    FROM exchange e
+                    JOIN wallet fw ON e.from_wallet_id = fw.id
+                    JOIN wallet tw ON e.to_wallet_id = tw.id
                     WHERE fw.id = :walletId OR tw.id = :walletId
                     ) AS total
                     """,
@@ -136,7 +136,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         ru.photo as recipientPhoto,
                         NULL AS status,
                         t.date as date
-                    FROM Transaction t
+                    FROM transaction t
                     JOIN user su ON t.sender_username = su.username
                     JOIN user ru ON t.recipient_username = ru.username
                     WHERE t.sender_username = :userUsername OR t.recipient_username = :userUsername
@@ -157,7 +157,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         NULL as recipientPhoto,
                         tf.status AS status,
                         tf.date as date
-                    FROM Transfer tf
+                    FROM transfer tf
                     WHERE tf.recipient_username = :userUsername
                     
                     UNION ALL
@@ -176,27 +176,27 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
                         NULL as recipientPhoto,
                         NULL AS status,
                         e.date as date
-                    FROM Exchange e
+                    FROM exchange e
                     WHERE e.recipient_username = :userUsername
                     
                     ORDER BY date DESC""",
             countQuery = """
                     SELECT COUNT(*) FROM (
                        SELECT t.id
-                    FROM Transaction t
+                    FROM transaction t
                     WHERE t.sender_username = :userUsername OR t.recipient_username = :userUsername
                     
                     UNION ALL
                     
                     SELECT\s
                         tf.id
-                    FROM Transfer tf
+                    FROM transfer tf
                     WHERE tf.recipient_username = :userUsername
                     
                     UNION ALL
                     
                     SELECT e.id
-                    FROM Exchange e
+                    FROM exchange e
                     WHERE e.recipient_username = :userUsername
                     ) AS total
                     """,

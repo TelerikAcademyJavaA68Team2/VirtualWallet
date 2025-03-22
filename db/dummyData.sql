@@ -1,7 +1,7 @@
-USE virtual_wallet;
+# USE virtual_wallet;
 -- Users -------------------------------------------------------------------
 -- Entire Telerik Academy A68 class -> Admins -> username: full first name, password: 12345678  Hope you like our project :)
-INSERT INTO virtual_wallet.user (id, first_name, last_name, username, email, password, phone_number, photo, role,
+INSERT INTO user (id, first_name, last_name, username, email, password, phone_number, photo, role,
                                  status, created_at)
 VALUES ('001e4567-e89b-12d3-a456-426614174000', 'Georgi', 'Benchev', 'georgi', 'georgi@gmail.com',
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
@@ -44,7 +44,7 @@ VALUES ('001e4567-e89b-12d3-a456-426614174000', 'Georgi', 'Benchev', 'georgi', '
         '0000000008', 'https://avatars.githubusercontent.com/u/87434779?s=130&v=4', 'ADMIN', 'ACTIVE', NOW());
 
 -- Cards -------------------------------------------------------------------
-INSERT INTO virtual_wallet.card (id, card_holder, card_number, created_at, cvv, expiration_date, owner_id)
+INSERT INTO card (id, card_holder, card_number, created_at, cvv, expiration_date, owner_id)
 VALUES ('101e4567-e89b-12d3-a452-426614184001', 'Georgi Benchev', '9723191723910001', NOW(), '001', '12/25',
         '001e4567-e89b-12d3-a456-426614174000'),
 
@@ -106,7 +106,7 @@ VALUES ('101e4567-e89b-12d3-a452-426614184001', 'Georgi Benchev', '9723191723910
         '010e4567-e89b-12d3-a456-426614174000');
 
 -- Wallets -----------------------------------------------------------------
-INSERT INTO virtual_wallet.wallet (id, balance, currency, created_at, owner_id)
+INSERT INTO wallet (id, balance, currency, created_at, owner_id)
 VALUES ('111e4567-e89b-12d3-a452-426614874000', 5000.00, 'BGN', NOW(), '001e4567-e89b-12d3-a456-426614174000'),
        ('111e4567-e89b-12d3-a452-426614874001', 5000.00, 'EUR', NOW(), '001e4567-e89b-12d3-a456-426614174000'),
        ('111e4567-e89b-12d3-a452-426614874002', 30000.00, 'USD', NOW(), '001e4567-e89b-12d3-a456-426614174000'),
@@ -149,7 +149,7 @@ VALUES ('111e4567-e89b-12d3-a452-426614874000', 5000.00, 'BGN', NOW(), '001e4567
 
 
 -- Exchanges ---------------------------------------------------------------
-INSERT INTO virtual_wallet.exchange
+INSERT INTO exchange
 (id, amount, to_amount, from_currency, to_currency, exchange_rate, from_wallet_id, to_wallet_id, recipient_username,
  date)
 VALUES ('001e0001-e89b-12d3-a452-426614874000', 100.00, 100.00 * 1.9558, 'EUR', 'BGN', 1.9558,
@@ -264,7 +264,7 @@ VALUES ('001e0001-e89b-12d3-a452-426614874000', 100.00, 100.00 * 1.9558, 'EUR', 
 
 
 -- Transactions ------------------------------------------------------------
-INSERT INTO virtual_wallet.transaction (id, amount, currency, sender_username, recipient_username, sender_wallet_id,
+INSERT INTO transaction (id, amount, currency, sender_username, recipient_username, sender_wallet_id,
                          recipient_wallet_id, date, description)
 VALUES ('050e1000-e89b-12d3-a452-426614874000', 100.00, 'BGN', 'georgi', 'vankata',
         '111e4567-e89b-12d3-a452-426614874000', '222e4567-e89b-12d3-a452-426614874000', NOW(), 'happy birthday! <3'),
@@ -458,7 +458,7 @@ VALUES ('050e1000-e89b-12d3-a452-426614874000', 100.00, 'BGN', 'georgi', 'vankat
 ;
 
 -- Transfers
-INSERT INTO virtual_wallet.transfer (id, amount, currency, card_id, wallet_id, status, recipient_username, date)
+INSERT INTO transfer (id, amount, currency, card_id, wallet_id, status, recipient_username, date)
 VALUES ('090e0001-e89b-12d3-a456-426682274099', 5347.43, 'BGN', '101e4567-e89b-12d3-a452-426614184001',
         '111e4567-e89b-12d3-a452-426614874000', 'APPROVED', 'georgi', NOW()),
        ('090e0002-e89b-12d3-a456-426682274099', 7087.80, 'EUR', '102e4567-e89b-12d3-a452-426614874001',
@@ -532,7 +532,7 @@ VALUES ('090e0001-e89b-12d3-a456-426682274099', 5347.43, 'BGN', '101e4567-e89b-1
 
 
 -- Exchange Rates ----------------------------------------------------------
-INSERT INTO virtual_wallet.exchange_rate (id, from_currency, to_currency, rate)
+INSERT INTO exchange_rate (id, from_currency, to_currency, rate)
 VALUES ('123e1234-e01b-12d3-a456-426614174013', 'BGN', 'EUR', 0.5113),
        ('123e1234-e02b-12d3-a456-426614174016', 'BGN', 'USD', 0.5543),
        ('123e1234-e04b-12d3-a456-426614174021', 'BGN', 'GBP', 0.4346),
@@ -617,7 +617,7 @@ VALUES ('123e1234-e01b-12d3-a456-426614174013', 'BGN', 'EUR', 0.5113),
 
 
 -- Email Confirmation Tokens -----------------------------------------------
-INSERT INTO virtual_wallet.email_confirmation_token
+INSERT INTO email_confirmation_token
     (id, user_id, expires_at, created_at)
 VALUES ('001e4567-e77b-77d3-a456-776614174000', '001e4567-e89b-12d3-a456-426614174000',
         DATE_ADD(NOW(), INTERVAL 15 MINUTE), NOW()),
