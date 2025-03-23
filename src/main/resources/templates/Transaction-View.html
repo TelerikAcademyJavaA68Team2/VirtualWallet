@@ -9,8 +9,8 @@
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4 th:text="#{transaction.details}">Transaction Details</h4>
+                <div class="card-header bg-primary text-white text-center align-items-center">
+                    <span style="font-size: 24px" th:text="#{transaction.details}">Transaction Details</span>
                 </div>
                 <div class="card-body">
                     <!-- Sender -->
@@ -48,12 +48,12 @@
                 <!-- Footer -->
                 <div class="card-footer d-flex justify-content-between">
                     <!-- Back Button -->
-                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                    <a href="javascript:history.back()" class="btn btn-outline-primary rounded-pill">
                         <span th:text="#{transaction.back}">Back</span>
                     </a>
 
                     <!-- View All Transactions Button -->
-                    <a href="/mvc/profile/transactions" class="btn btn-outline-dark">
+                    <a href="/mvc/profile/transactions" class="btn btn-outline-dark rounded-pill">
                         <span th:text="#{transaction.viewAllTransactions}">View All Transactions</span>
                     </a>
                 </div>
