@@ -88,7 +88,7 @@ public class SecurityConfig {
             HttpSession session = request.getSession();
             User user = (User) authentication.getPrincipal();
             session.setAttribute("currentUser", user.getUsername());
-            response.sendRedirect("/mvc/home");
+            response.sendRedirect("/mvc/profile/wallets");
         };
     }
 
