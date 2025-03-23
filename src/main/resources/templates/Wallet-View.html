@@ -4,10 +4,32 @@
 <body id="page-top">
 <nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
 <section class="section mt-60">
-    <div class="container-fluid mt-5 p-0">
+    <div class="container-fluid mt-0 p-0">
         <div class="row gx-2 justify-content-center">
             <div class="col-lg-6">
-                <table class="table table-striped table-hover w-100 m-0 custom-border">
+
+                <div class="d-flex gap-5 justify-content-center">
+                    <!-- Fund a Wallet Button -->
+                    <a href="/mvc/profile/wallets/fund-wallet" class="circle-btn">
+                        <span style="font-size: 50px;" class="bi bi-plus"></span>
+                        <span class="btn-text">Fund Wallet</span>
+                    </a>
+
+                    <!-- Send Money Button -->
+                    <a href="/mvc/profile/transactions/new" class="circle-btn">
+                        <span class="bi bi-arrow-left-right"></span>
+                        <span class="btn-text">Send Money</span>
+                    </a>
+
+                    <!-- Exchange Money Button -->
+                    <a href="/mvc/profile/exchange/new" class="circle-btn">
+                        <span class="bi bi-currency-exchange"></span>
+                        <span class="btn-text">Exchange</span>
+                    </a>
+                </div>
+
+
+                <table class="table table-striped table-hover w-100 mt-4 custom-border">
                     <thead>
                     <tr id="wallet-header" class="clickable-row align-middle" style="cursor: pointer;">
                         <td colspan="2" class="p-3 w-100">
@@ -17,10 +39,6 @@
                                          alt="Flag"
                                          style="width: 50px; height: 50px; margin-right: 12px;"/>
                                     <span th:text="#{'currency.' + ${wallet.currency}}">US Dollar</span>
-                                    <!-- Fund a Wallet Button -->
-                                    <a href="/mvc/profile/wallets/fund-wallet" class="btn btn-success rounded-pill ms-3">Fund Wallet</a>
-                                    <!-- Send Money Button -->
-                                    <a href="/mvc/profile/transactions/new" class="btn btn-primary rounded-pill ms-3">Send Money</a>
                                 </div>
 
                                 <div class="text-end w-100 position-relative custom-dropdown-parent">
