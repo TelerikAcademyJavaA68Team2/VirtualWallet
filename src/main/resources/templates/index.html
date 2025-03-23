@@ -14,8 +14,8 @@
                     <h1 class="display-1 lh-1 mb-3">Showcase your app beautifully.</h1>
                     <p class="lead fw-normal text-muted mb-3">Launch your mobile app landing page faster with this free,
                         open source theme from Start Bootstrap!</p>
-                    <a class="btn btn-outline-primary py-3 px-4 rounded-pill mb-3" href="/mvc/register"
-                       th:href="@{/mvc/register}"><strong>Sign up for free!</strong></a>
+                    <a class="btn btn-outline-primary py-3 px-4 rounded-pill mb-3" href="/mvc/auth/register"
+                       th:href="@{/mvc/auth/register}"><strong>Sign up for free!</strong></a>
                     <div class="d-flex flex-column flex-lg-row align-items-center">
                         <div th:insert="~{fragments/Page-Layout :: download-buttons}">
                         </div>
@@ -72,7 +72,7 @@
                 <div class="h2 fs-1 text-white mb-4">"An intuitive solution to a common problem that we all face,
                     wrapped up in a single app!"
                 </div>
-                <a href="/mvc/register" th:href="@{/mvc/register}">
+                <a href="/mvc/auth/register" th:href="@{/mvc/auth/register}">
                     <img src="/assets/img/MoneyMeLogo.jpg" alt="..." style="height: 3rem"/>
                 </a>
             </div>
@@ -195,7 +195,7 @@
                 <br/>
                 Start sending.
             </h2>
-            <a class="btn btn-outline-light py-3 px-4 rounded-pill" href="/mvc/register" th:href="@{/mvc/register}"
+            <a class="btn btn-outline-light py-3 px-4 rounded-pill" href="/mvc/auth/register" th:href="@{/mvc/auth/register}"
                th:text="#{wallet.sign-up}">Sign up for free!</a>
         </div>
     </div>
