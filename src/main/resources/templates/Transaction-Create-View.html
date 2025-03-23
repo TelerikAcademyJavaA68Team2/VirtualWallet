@@ -75,19 +75,18 @@
                                            class="btn btn-success rounded-pill ms-3">Fund your Wallet</a>
                                     </div>
                                     <th:block th:if="${activeWallets.size()} == 0">
-                                        <div class="alert alert-warning text-center">
+                                        <div class="alert alert-warning text-center mt-3">
                                             <p>You have no active wallets yet!</p>
-                                            <a class="btn btn-primary rounded-pill mt-2" th:href="@{/mvc/profile/wallets#}">
+                                            <a class="btn btn-primary rounded-pill mt-2" th:href="@{/mvc/profile/wallets}">
                                                 Add a New Wallet
                                             </a>
                                         </div>
                                     </th:block>
                                     <div th:if="${activeWallets.size()} > 0" class="form-group">
-                                        <label for="walletID" th:text="#{transaction.chooseWallet}">Select Your
-                                            Wallet:</label>
+                                        <label class="mt-2" for="walletID" th:text="#{transaction.choseCurrency}">Select Currency:</label>
                                         <select id="walletID" class="form-select form-control" th:field="*{walletId}"
                                                 required>
-                                            <option disabled selected value="">Select a Wallet</option>
+                                            <option disabled selected value="">Select Currency</option>
                                             <option th:each="wallet : ${activeWallets}"
                                                     th:value="${wallet.id}"
                                                     th:text="${wallet.currency}">
@@ -96,14 +95,14 @@
                                     </div>
 
                                     <!-- ============ STEP 3: ENTER TRANSACTION DETAILS ============ -->
-                                    <div th:if="${activeWallets.size()} > 0" class="form-group position-relative mt-3">
+                                    <div th:if="${activeWallets.size()} > 0" class="form-group position-relative mt-2">
                                         <label for="amount" th:text="#{transaction.create.amountText}">Amount:</label>
                                         <input type="number" min="0" step="1.00" id="amount" class="form-control"
                                                th:field="*{amount}" required placeholder="Enter amount">
                                     </div>
 
                                     <!-- Optional Description -->
-                                    <div th:if="${activeWallets.size()} > 0" class="form-group position-relative mt-3">
+                                    <div th:if="${activeWallets.size()} > 0" class="form-group position-relative mt-2">
                                         <label for="description" th:text="#{transaction.create.descriptionText}">Description:</label>
                                         <input type="text" id="description" class="form-control"
                                                th:field="*{description}"
