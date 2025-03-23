@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/Page-Layout :: head(Profile)}">Profile</head>
+<body>
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<!-- Profile Start -->
+<section class="section mt-60">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 center pb-3">
+                <div class="public-profile position-relative py-2 bg-white overflow-hidden rounded shadow"
+                     style="z-index: 1;">
+                    <div class="row align-items-center ">
+
+                        <div class="col-md-2 text-md-left text-center">
+                            <img th:src="${user.photo}"
+                                 th:alt="Photo"
+                                 class="avatar avatar-medium rounded-pill shadow mx-auto ms-lg-3"/>
+                        </div><!--end col-->
+
+                        <div class="col-md-8 m-4 text-md-left">
+                            <h3 class="title mb-1">
+                                <span th:text="${user.firstName}"></span>
+                                <span th:text="${user.lastName}"></span>
+                            </h3>
+
+                            <h6 class="text-muted  d-flex">
+                                <span class="bi-person-fill"></span>
+                                <span class="ms-2" style="color: #373b3e" th:text="${user.username}"></span>
+                            </h6>
+
+                            <h6 class="text-muted mt-2">
+                                <span class="bi bi-envelope-fill me-2"></span>
+                                <span th:text="${user.email}"></span>
+                            </h6>
+                            <h6 class="text-muted mt-2">
+                                <span class="bi bi-telephone-fill me-2"></span>
+                                <span th:text="${user.phoneNumber}"></span>
+                            </h6>
+
+                        </div>
+
+
+                    </div><!--end row-->
+                </div><!--end col-->
+
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-4 d-flex">
+                <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow h-100 w-100"
+                     style="z-index: 1;">
+                    <div>
+
+
+                        <div class="d-flex align-items-center justify-content-between pb-2">
+                            <h3 class=" m-0" th:text="#{user.profile.personalDetails}"></h3>
+                        </div>
+
+
+                        <div class="overflow-hidden d-block mt-2">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.firstName}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="py-custom bi-arrow-right"></span>
+                                <span class="ms-1 py-custom" th:text="${user.firstName}"></span>
+                            </h6>
+                        </div>
+                        <div class="overflow-hidden d-block mt-2">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.lastName}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="py-custom bi-arrow-right"></span>
+                                <span class="ms-1 py-custom" th:text="${user.lastName}"></span>
+                            </h6>
+                        </div>
+
+
+                        <div class="overflow-hidden d-block mt-2">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.email}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="py-custom bi-envelope-fill"></span>
+                                <span class="ms-1 py-custom" th:text="${user.email}"></span>
+                            </h6>
+                        </div>
+
+                        <div class="overflow-hidden d-block mt-2">
+                            <h6 class="text-primary mb-0" th:text="#{user.header.phone}"></h6>
+                            <h6 class="text-muted  d-flex">
+                                <span class="py-custom bi-telephone-fill"></span>
+                                <span class="ms-1 py-custom" th:text="${user.phoneNumber}"></span>
+                            </h6>
+                        </div>
+
+                    </div>
+
+
+                </div><!--end row-->
+            </div>
+            <div class="col-lg-4 d-flex">
+                <div class="public-profile position-relative p-4 bg-white overflow-hidden rounded shadow h-100 w-100"
+                     style="z-index: 1;">
+
+                    <div class="d-flex align-items-center justify-content-between pb-2">
+                        <h3 style="margin-top: 0.10rem; margin-bottom: 0.15rem"
+                            th:text="#{user.profile.accountDetails}"></h3>
+
+                    </div>
+
+
+                    <div class="overflow-hidden d-block mt-2">
+                        <h6 class="text-primary mb-0" th:text="#{user.header.username}"></h6>
+                        <h6 class="text-muted  d-flex">
+                            <span class="py-custom bi-person-fill"></span>
+                            <span class="ms-1 py-custom" th:text="${user.username}"></span>
+                        </h6>
+                    </div>
+
+                    <div class="overflow-hidden d-block mt-2">
+                        <h6 class="text-primary mb-0" th:text="#{user.registeredAt}"></h6>
+                        <h6 class="text-muted  d-flex">
+                            <span class="py-custom bi-bookmark-heart-fill"></span>
+                            <span class="ms-1 py-custom" th:text="${user.registeredAt}"></span>
+                        </h6>
+                    </div>
+
+                    <!-- status page-->
+                    <div class="h6 d-block mt-2">
+                        <div class="text-primary mb-0">
+                            <span th:text="#{user.accountStatus}"></span>
+                            <span th:if="${user.accountStatus} == 'Pending'"
+                                  class="bi-info-circle-fill text-warning ms-0 hover-info"
+                                  data-hover-text="Account is not verified"></span>
+                            <span th:if="${user.accountStatus} == 'Active'"
+                                  class="bi-check-circle-fill text-success ms-0 hover-info"
+                                  data-hover-text="Account is verified"></span>
+                            <span th:if="${user.accountStatus} == 'Deleted'"
+                                  class="bi-x-circle-fill text-danger ms-0 hover-info"
+                                  data-hover-text="Account is deleted"></span>
+                            <span th:if="${user.accountStatus} == 'Blocked | Deleted'"
+                                  class="bi-x-circle-fill text-dark ms-0 hover-info"
+                                  data-hover-text="Account is blocked & deleted"></span>
+                            <span th:if="${user.accountStatus} == 'Blocked'"
+                                  class="bi-exclamation-circle-fill text-danger ms-0 hover-info"
+                                  data-hover-text="Account is blocked"></span>
+
+
+                        </div>
+                        <div class="h6 text-muted d-flex align-items-center justify-content-between">
+                            <div class="align-self-start mt-2">
+                                <span class="py-custom bi-arrow-right"></span>
+                                <span class="ms-1 py-custom" th:text="${user.getAccountStatus()}"></span>
+                            </div>
+
+                            <div th:if="${user.accountStatus != 'Pending'}">
+                                <a th:if="${(user.accountStatus == 'Active' || user.accountStatus == 'Deleted')}"
+                                   class="d-flex align-items-center justify-content-center p-1 btn btn-danger rounded-pill"
+                                   th:href="@{/mvc/admin/users/{id}/block(id=${user.id})}"
+                                   style="height: 30px; width: 75px;">
+                                    <span th:text="'Block'">Block</span>
+                                </a>
+                                <a th:unless="${(user.accountStatus == 'Active' || user.accountStatus == 'Deleted')}"
+                                   class="d-flex align-items-center justify-content-center p-1 btn btn-success rounded-pill"
+                                   th:href="@{/mvc/admin/users/{id}/unblock(id=${user.id})}"
+                                   style="height: 30px; width: 75px;">
+                                    <span th:text="'Unblock'">Unblock</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="h6 d-block mt-2">
+
+                    <div class="h6 text-muted d-flex align-items-center justify-content-between">
+                            <div class="text-primary">
+                                <span class="text-primary mb-0" th:text="#{user.accoutType}"></span>
+                                <h6 class="text-muted  d-flex">
+                                    <span class="py-custom bi-person-fill"></span>
+                                    <span class="ms-1 py-custom" th:text="${user.role}"></span>
+                                </h6>
+                            </div>
+
+                            <div th:if="${user.accountStatus != 'Pending'}">
+                                <a th:if="${user.role == 'Admin'}"
+                                   class="d-flex align-items-center justify-content-center p-1 btn btn-danger rounded-pill"
+                                   th:href="@{/mvc/admin/users/{id}/revoke-admin(id=${user.id})}"
+                                   style="height: 30px; width: 75px;">
+                                    <span th:text="'Demote'">Demote</span>
+                                </a>
+                                <a th:if="${user.role == 'User'}"
+                                   class="d-flex align-items-center justify-content-center p-1 btn btn-success rounded-pill"
+                                   th:href="@{/mvc/admin/users/{id}/make-admin(id=${user.id})}"
+                                   style="height: 30px; width: 75px;">
+                                    <span th:text="'Promote'">Promote</span>
+                                </a>
+                            </div>
+
+                    </div>
+
+
+                </div><!--end row-->
+
+
+            </div>
+
+
+        </div><!--end col-->
+
+    </div><!--end row-->
+
+</section>
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>
