@@ -124,14 +124,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public void blockUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
-        if (user.getStatus().equals(AccountStatus.BLOCKED)) {
-            throw new InvalidUserInputException(USER_ALREADY_BLOCKED);
-        } else if (user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
+        if (user.getStatus().equals(AccountStatus.BLOCKED)
+                || user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
             throw new InvalidUserInputException(USER_ALREADY_BLOCKED);
         } else if (user.getStatus().equals(AccountStatus.ACTIVE)) {
             user.setStatus(AccountStatus.BLOCKED);
         } else if (user.getStatus().equals(AccountStatus.DELETED)) {
             user.setStatus(AccountStatus.BLOCKED_AND_DELETED);
+        } else if (user.getStatus().equals(AccountStatus.PENDING)) {
+            throw new InvalidUserInputException("Pending users can't be blocked");
         }
         userRepository.save(user);
     }
@@ -145,6 +146,8 @@ public class UserServiceImpl implements UserService {
             user.setStatus(AccountStatus.ACTIVE);
         } else if (user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
             user.setStatus(AccountStatus.DELETED);
+        } else if (user.getStatus().equals(AccountStatus.PENDING)) {
+            throw new InvalidUserInputException("Pending users can't be blocked");
         }
         userRepository.save(user);
     }
@@ -207,10 +210,10 @@ public class UserServiceImpl implements UserService {
             }
             user.setPhoneNumber(input.getPhoneNumber());
         }
-        if (removePicture){
+        if (removePicture) {
             user.setPhoto("/images/default-profile-pic.png");
         }
-        if (profileImage!= null && !profileImage.isEmpty()) {
+        if (profileImage != null && !profileImage.isEmpty()) {
             try {
                 if (!isValidImageFile(profileImage)) {
                     throw new InvalidFileException(INVALID_IMAGE);

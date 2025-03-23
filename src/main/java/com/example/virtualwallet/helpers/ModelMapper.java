@@ -73,7 +73,9 @@ public class ModelMapper {
     }
 
     public static UserProfileOutput userProfileFromUser(User user) {
-        return new UserProfileOutput(user.getFirstName(),
+        return new UserProfileOutput(
+                user.getId(),
+                user.getFirstName(),
                 user.getLastName(),
                 user.getUsername(),
                 user.getEmail(),

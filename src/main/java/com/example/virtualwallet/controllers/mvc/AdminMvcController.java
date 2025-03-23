@@ -1,9 +1,14 @@
 package com.example.virtualwallet.controllers.mvc;
 
+import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.models.Transaction;
 import com.example.virtualwallet.models.dtos.exchange.ExchangePage;
+import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
 import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
+import com.example.virtualwallet.models.dtos.transactions.FullTransactionInfoOutput;
+import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransfersPage;
+import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
@@ -15,15 +20,16 @@ import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 
@@ -304,6 +310,77 @@ public class AdminMvcController {
         model.addAttribute("size", size);
 
         return "Admin-Users-View";
+    }
+
+
+    @GetMapping("/transactions/{id}")
+    public String getSingleTransactionView(Model model, @PathVariable UUID id) {
+        FullTransactionInfoOutput transactionInfoOutput = transactionService.getTransactionById(id);
+        model.addAttribute("transaction", transactionInfoOutput);
+        return "Transaction-View";
+    }
+
+    @GetMapping("/transfers/{id}")
+    public String getSingleTransferView(Model model, @PathVariable UUID id) {
+        FullTransferInfoOutput transferOutput = transferService.getTransferById(id);
+        model.addAttribute("transfer", transferOutput);
+        return "Transfer-View";
+    }
+
+    @GetMapping("/exchanges/{id}")
+    public String getSingleTransferView(@PathVariable UUID id, Model model) {
+        FullExchangeInfoOutput exchange = exchangeService.getExchangeById(id);
+        model.addAttribute("exchange", exchange);
+        return "Exchange-View";
+    }
+
+
+    @GetMapping("/users/{id}")
+    public String getProfile(@PathVariable UUID id, Model model) {
+        if (userService.getAuthenticatedUser().getId().equals(id)) {
+            return "redirect:/mvc/profile";
+        }
+
+        UserProfileOutput profile = userService.getUserProfileById(id);
+
+        model.addAttribute("user", profile);
+        return "Admin-User-View";
+    }
+
+    @GetMapping("/users/{id}/block")
+    public String blockUser(@PathVariable UUID id) {
+        try {
+            userService.blockUser(id);
+        } catch (InvalidUserInputException ignored) {
+        }
+        return "redirect:/mvc/admin/users/" + id;
+    }
+
+    @GetMapping("/users/{id}/unblock")
+    public String unblockUser(@PathVariable UUID id) {
+        try {
+            userService.unblockUser(id);
+        } catch (InvalidUserInputException ignored) {
+        }
+        return "redirect:/mvc/admin/users/" + id;
+    }
+
+    @GetMapping("/users/{id}/make-admin")
+    public String makeAdmin(@PathVariable UUID id) {
+        try {
+            userService.promoteToAdmin(id);
+        } catch (InvalidUserInputException ignored) {
+        }
+        return "redirect:/mvc/admin/users/" + id;
+    }
+
+    @GetMapping("/users/{id}/revoke-admin")
+    public String revokeAdmin(@PathVariable UUID id) {
+        try {
+            userService.demoteToUser(id);
+        } catch (InvalidUserInputException ignored) {
+        }
+        return "redirect:/mvc/admin/users/" + id;
     }
 
 
