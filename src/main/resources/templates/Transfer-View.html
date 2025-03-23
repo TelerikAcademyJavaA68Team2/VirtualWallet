@@ -16,20 +16,20 @@
                     <!-- Recipient -->
                     <div class="mb-3">
                         <label class="fw-bold" th:text="#{transfer.recipient}">Recipient:</label>
-                        <span th:text="${transfer.recipientUsername}" class="text-dark"></span>
+                        <span th:text="${transfer.recipientUsername}" class="text-dark ms-1"></span>
                     </div>
 
                     <!-- Amount & Currency -->
                     <div class="mb-3">
                         <label class="fw-bold" th:text="#{transfer.amount}">Amount:</label>
-                        <span th:text="${transfer.amount}" class="text-dark"></span>
+                        <span th:text="${transfer.amount}" class="text-dark ms-1"></span>
                         <span th:text="${transfer.currency}" class="text-dark"></span>
                     </div>
 
                     <!-- Status -->
                     <div class="mb-3">
                         <label class="fw-bold " th:text="#{transfer.status}">Status:</label>
-                        <span th:text="${transfer.status}" class="badge"
+                        <span th:text="${transfer.status}" class="badge ms-1"
                               th:classappend="${transfer.status == 'Approved' ? 'bg-success' : 'bg-danger'}">
                         </span>
                     </div>
@@ -37,13 +37,13 @@
                     <!-- Card Numbers (Masked for Security) -->
                     <div class="mb-3">
                         <label class="fw-bold" th:text="#{transfer.card}">Card Used:</label>
-                        <span th:text="${transfer.cardNumbers}" class="text-dark"></span>
+                        <span th:text="${transfer.cardNumbers}" class="text-dark ms-1"></span>
                     </div>
 
                     <!-- Date -->
                     <div class="mb-3">
                         <label class="fw-bold" th:text="#{transfer.date}">Date:</label>
-                        <span th:text="${#temporals.format(transfer.date, 'yyyy-MM-dd HH:mm:ss')}" class="text-dark"></span>
+                        <span th:text="${#temporals.format(transfer.date, 'yyyy-MM-dd HH:mm:ss')}" class="text-dark ms-1"></span>
                     </div>
                 </div>
 
