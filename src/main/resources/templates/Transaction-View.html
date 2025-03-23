@@ -16,32 +16,32 @@
                     <!-- Sender -->
                     <div class="mb-3">
                         <label class="fw-bold" th:text="#{transaction.sender}">Sender:</label>
-                        <span th:text="${transaction.senderUsername}" class="text-dark"></span>
+                        <span th:text="${transaction.senderUsername}" class="text-dark ms-1"></span>
                     </div>
 
                     <!-- Recipient -->
                     <div class="mb-3">
                         <label class="fw-bold" th:text="#{transaction.recipient}">Recipient:</label>
-                        <span th:text="${transaction.recipientUsername}" class="text-dark"></span>
+                        <span th:text="${transaction.recipientUsername}" class="text-dark ms-1"></span>
                     </div>
 
                     <!-- Amount & Currency -->
                     <div class="mb-3">
                         <label class="fw-bold" th:text="#{transaction.amount}">Amount:</label>
-                        <span th:text="${transaction.amount}" class="text-dark"></span>
+                        <span th:text="${transaction.amount}" class="text-dark ms-1"></span>
                         <span th:text="${transaction.currency}" class="text-dark"></span>
                     </div>
 
                     <!-- Description -->
                     <div class="mb-3">
                         <label class="fw-bold" th:text="#{transaction.description}">Description:</label>
-                        <span th:text="${transaction.description}" class="text-dark"></span>
+                        <span th:text="${transaction.description}" class="text-dark ms-1"></span>
                     </div>
 
                     <!-- Date -->
                     <div class="mb-3">
                         <label class="fw-bold" th:text="#{transaction.date}">Date:</label>
-                        <span th:text="${#temporals.format(transaction.date, 'yyyy-MM-dd HH:mm:ss')}" class="text-dark"></span>
+                        <span th:text="${#temporals.format(transaction.date, 'yyyy-MM-dd HH:mm:ss')}" class="text-dark ms-1"></span>
                     </div>
                 </div>
 
