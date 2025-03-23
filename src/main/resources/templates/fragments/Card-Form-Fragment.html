@@ -64,10 +64,10 @@
         <!-- Form Buttons -->
         <div class="mt-4 d-flex justify-content-between">
             <th:block th:with="buttonLabel=${action == 'edit' ? 'card.edit.button' : 'card.create.button'}">
-                <input type="submit" id="submit" name="send" class="submitBnt btn btn-primary w-50"
+                <input type="submit" id="submit" name="send" class="submitBnt btn btn-primary rounded-pill "
                        th:value="#{${buttonLabel}}">
             </th:block>
-            <button type="button" class="btn btn-secondary w-40" onclick="history.back()">Cancel</button>
+            <button type="button" class="btn btn-outline-dark rounded-pill " onclick="history.back()">Cancel</button>
         </div>
 
     </div>
