@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments/Page-Layout :: head(Exchange)}"></head>
+<body id="page-top">
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+
+<section class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white text-center align-items-center">
+          <span style="font-size: 24px" th:text="#{exchange.details}">Exchange Details</span>
+        </div>
+        <div class="card-body">
+          <!-- Sender -->
+          <div class="mb-3">
+            <label class="fw-bold" th:text="#{exchange.recipient}">Recipient:</label>
+            <span th:text="${exchange.recipientUsername}" class="text-dark ms-1"></span>
+          </div>
+
+          <!-- Amount & Currency -->
+          <div class="mb-3">
+            <label class="fw-bold" th:text="#{exchange.from}">From:</label>
+            <span th:text="${exchange.amount}" class="text-dark ms-4"></span>
+            <span th:text="${exchange.fromCurrency}" class="text-dark"></span>
+          </div>
+          <!-- Amount & Currency -->
+          <div class="mb-3">
+            <label class="fw-bold" th:text="#{exchange.to}">To:</label>
+            <span th:text="${exchange.toAmount}" class="text-dark ms-5"></span>
+            <span th:text="${exchange.toCurrency}" class="text-dark"></span>
+          </div>
+          <!-- Exchange rate -->
+          <div class="mb-3">
+            <label class="fw-bold" th:text="#{exchange.rate}">Exchange rate:</label>
+            <span th:text="'1'+#{'currency.symbol.' + ${exchange.fromCurrency}}+' = '+ ${exchange.exchangeRate}+#{'currency.symbol.' + ${exchange.toCurrency}}" class="text-dark ms-1"></span>
+          </div>
+
+          <!-- Date -->
+          <div class="mb-3">
+            <label class="fw-bold" th:text="#{exchange.date}">Date:</label>
+            <span th:text="${#temporals.format(exchange.date, 'yyyy-MM-dd HH:mm:ss')}" class="text-dark ms-1"></span>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer d-flex justify-content-between">
+          <!-- Back Button -->
+          <a href="javascript:history.back()" class="btn btn-outline-primary rounded-pill">
+            <span th:text="#{exchange.back}">Back</span>
+          </a>
+
+          <a href="/mvc/profile/exchanges" class="btn btn-outline-dark rounded-pill">
+            <span th:text="#{exchange.viewAllExchanges}">View All Exchanges</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>
