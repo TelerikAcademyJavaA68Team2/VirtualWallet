@@ -11974,6 +11974,7 @@ td:not(.activity-column) {
   height: 110px; /* Adjust size as needed */
   margin: 0 ;
 
+  cursor: pointer;
   overflow: hidden; /* Ensures the image doesn't overflow the circular boundary */
   border-radius: 50%; /* Enforce circular shape */
 }
