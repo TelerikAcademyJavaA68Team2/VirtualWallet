@@ -86,6 +86,7 @@ public class MvcUserValidationFilter extends OncePerRequestFilter {
         String requestUri = request.getRequestURI();
         return requestUri.startsWith("/mvc/profile/transactions/new") ||
                 requestUri.startsWith("/mvc/profile/transfers/new") ||
+                requestUri.startsWith("/mvc/profile/wallets/fund-wallet") ||
                 requestUri.startsWith("/mvc/profile/exchanges/new");
     }
 }

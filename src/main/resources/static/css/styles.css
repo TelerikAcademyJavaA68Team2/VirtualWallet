@@ -11911,3 +11911,103 @@ td:not(.activity-column) {
 .status-declined {
   color: #E74C3C !important; /* Dark red text */
 }
+
+
+
+
+.profile-picture-container {
+   position: relative;
+   width: 110px; /* Adjust size as needed */
+   height: 110px; /* Adjust size as needed */
+   margin: 0 ;
+}
+
+/* Profile Picture */
+#profileImagePreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image fits within the container */
+  border-radius: 50%; /* Makes the image circular */
+  cursor: pointer; /* Indicates it's clickable */
+}
+
+
+/* Remove Picture Button */
+.remove-btn {
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.8); /* Semi-transparent red */
+  color: black;
+  border: none;
+  border-radius: 50%; /* Makes the button circular */
+  width: 30px; /* Button size */
+  height: 30px; /* Button size */
+  font-size: 18px; /* Adjust icon size for better fit */
+  display: flex; /* Use Flexbox for centering */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  cursor: pointer;
+  padding: 0; /* Ensure no padding is causing overflow */
+}
+
+/* Hover Effect for Remove Button */
+.remove-btn:hover {
+  background-color: rgba(255, 0, 0, 1); /* Fully opaque red */
+}
+
+/* Icon inside the button */
+.remove-btn .bi {
+  margin: 0; /* Remove any default margins */
+  padding: 0; /* Remove any default padding */
+  width: 30px;
+  height: 30px;
+  line-height: 1; /* Prevent vertical misalignment */
+  display: block; /* Ensure the icon behaves as a block element */
+  font-size: 30px; /* Adjust the icon size if necessary */
+}
+
+
+
+
+.profile-image-label {
+  position: relative; /* Make the label a containing block for absolute positioning */
+  width: 110px; /* Adjust size as needed */
+  height: 110px; /* Adjust size as needed */
+  margin: 0 ;
+
+  cursor: pointer;
+  overflow: hidden; /* Ensures the image doesn't overflow the circular boundary */
+  border-radius: 50%; /* Enforce circular shape */
+}
+
+
+/* Hover effect to remove grayscale when hovered over */
+.profile-image-label:hover #profileImagePreview {
+  filter: grayscale(0%); /* Remove grayscale on hover */
+}
+
+
+/* Edit Icon Container */
+.profile-image-label::after {
+  content: "\f044"; /* Unicode for the edit (pencil) icon */
+  font-family: 'Font Awesome 5 Free'; /* Use Font Awesome for the icon */
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for true centering */
+  font-size: 30px; /* Icon size */
+  color: rgba(0, 0, 0, 0.5); /* Gray color */
+  background-color: rgba(255, 255, 255, 0.7); /* White background with some transparency */
+  border-radius: 50%; /* Make the background round */
+  padding-top: 52px; /* Space around the icon */
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  width: 111px; /* Adjust size as needed */
+  height: 111px; /* Adjust size as needed */
+}
+
+/* Hover effect for the edit icon */
+.profile-image-label:hover::after {
+  background-color: rgba(66, 66, 66, 0.8); /* Darker gray background on hover */
+  color: rgba(255, 255, 255, 0.9); /* Lighten icon color for contrast */
+}
+
