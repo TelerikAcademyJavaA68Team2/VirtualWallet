@@ -45,17 +45,17 @@ public class GlobalExceptionHandlerMVC {
         return "redirect:/mvc/auth/login";
     }
 
-    @ExceptionHandler(ClassCastException.class)
-    public String handleClassCastException(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        return "redirect:" + uri;
-    }
-
-    @ExceptionHandler(NumberFormatException.class)
-    public String handleNumberFormatException(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        return "redirect:" + uri;
-    }
+//    @ExceptionHandler(ClassCastException.class)
+//    public String handleClassCastException(HttpServletRequest request) {
+//        String uri = request.getRequestURI();
+//        return "redirect:" + uri;
+//    }
+//
+//    @ExceptionHandler(NumberFormatException.class)
+//    public String handleNumberFormatException(HttpServletRequest request) {
+//        String uri = request.getRequestURI();
+//        return "redirect:" + uri;
+//    }
 
     // Handle all other exceptions
 //    @ExceptionHandler(Exception.class)

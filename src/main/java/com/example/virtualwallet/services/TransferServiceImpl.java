@@ -18,6 +18,7 @@ import com.example.virtualwallet.services.contracts.UserService;
 import com.example.virtualwallet.services.contracts.WalletService;
 import com.example.virtualwallet.services.specifications.TransferSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,9 @@ public class TransferServiceImpl implements TransferService {
     private final UserService userService;
     private final CardService cardService;
     private final WalletService walletService;
+
+    @Value("${app.url}")
+    private String appUrl;
 
     @Transactional
     public FullTransferInfoOutput processTransfer(TransferInput transferInput) {
@@ -158,7 +162,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     private TransactionStatus callMockWithdrawApi() {
-        String url = "http://localhost:8080/api/profile/transfers/withdraw";
+        String url = appUrl + "/api/profile/transfers/withdraw";
 
         try {
             ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
