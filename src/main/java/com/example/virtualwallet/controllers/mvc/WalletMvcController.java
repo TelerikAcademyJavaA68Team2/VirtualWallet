@@ -122,8 +122,6 @@ public class WalletMvcController {
 
         TransferInputMVC transferInput = new TransferInputMVC();
 
-
-        model.addAttribute("currencies", Currency.values());
         model.addAttribute("transferInput", transferInput);
         model.addAttribute("cards", cards);
         model.addAttribute("wallets", wallets);
@@ -133,7 +131,7 @@ public class WalletMvcController {
 
 
     @PostMapping("/fund-wallet")
-    public String fundWallet(@Valid TransferInputMVC transferInput,
+    public String fundWallet(@Valid @ModelAttribute("transferInput")TransferInputMVC transferInput,
                              BindingResult bindingResult,
                              Model model) {
 
