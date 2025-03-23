@@ -26,7 +26,10 @@
 <nav th:fragment="navigation" class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm" id="mainNav">
     <div class="container px-5">
         <!-- Brand / Logo -->
-        <a class="navbar-brand fw-bold" th:href="@{/mvc/home}" th:text="#{wallet.name}">
+        <a sec:authorize="!isAuthenticated()" class="navbar-brand fw-bold" th:href="@{/mvc/home}" th:text="#{wallet.name}">
+            MoneyMe
+        </a>
+        <a sec:authorize="isAuthenticated()" class="navbar-brand fw-bold" th:href="@{/mvc/profile/wallets}" th:text="#{wallet.name}">
             MoneyMe
         </a>
 
@@ -110,7 +113,7 @@
                         </li>
                         <li>
                             <a class="dropdown-item"
-                               th:href="@{/mvc/profile/wallets#}"
+                               th:href="@{/mvc/profile/wallets} + '#add-wallet-section'"
                                th:text="#{navigation.addWallet}">
                                 Add Wallet
                             </a>

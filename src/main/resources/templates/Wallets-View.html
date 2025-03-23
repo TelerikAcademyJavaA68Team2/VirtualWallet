@@ -93,7 +93,7 @@
                     <tr id="add-wallet-row" class="align-middle" th:if="${otherCurrencies.size() > 0}">
                         <td colspan="2" class="p-3 d-flex justify-content-center align-items-center w-100">
                             <div class="position-relative " style=" min-width: 100%; ">
-                                <a href="#" id="add-new-wallet-button" class="d-flex align-items-center"
+                                <a href="#" id="add-wallet-section" class="d-flex align-items-center"
                                    style="text-decoration: none; color: inherit;">
                                     <span class="bi-plus" style="cursor: pointer; font-size: 24px;"></span>
                                     <span style="margin-left: 8px;">Add New Wallet</span>
@@ -364,22 +364,44 @@
     </div>
 </section>
 <script>
+    function handleAddWalletHash() {
+        if (window.location.hash === "#add-wallet-section") {
+            const walletList = document.getElementById("wallet-list");
+            const target = document.getElementById("add-wallet-section");
+            const dropdown = document.getElementById("add-wallet-dropdown");
+
+            if (walletList && target) {
+                walletList.style.display = "table-row-group";
+
+                setTimeout(() => {
+                    target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                    if (dropdown) {
+                        dropdown.style.display = "block";
+                    }
+
+                    // Clear the hash so it doesn't trigger again
+                    history.replaceState(null, null, ' ');
+                }, 100);
+            }
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         // Toggle wallet list visibility
         const walletHeader = document.getElementById("wallet-header");
         const walletList = document.getElementById("wallet-list");
 
         walletHeader.addEventListener("click", function (event) {
-            // Check if the click originated from the currency dropdown or its children
             if (event.target.closest(".dropdown") || event.target.closest("#currency-selector")) {
                 return; // Ignore clicks on the currency dropdown or selector
             }
 
             // Toggle wallet list visibility
             if (walletList.style.display === "none" || walletList.style.display === "") {
-                walletList.style.display = "table-row-group"; // Show the wallet list
+                walletList.style.display = "table-row-group";
             } else {
-                walletList.style.display = "none"; // Hide the wallet list
+                walletList.style.display = "none";
             }
         });
 
@@ -387,7 +409,6 @@
         const rows = document.querySelectorAll(".clickable-row");
         rows.forEach(row => {
             row.addEventListener("click", function (event) {
-                // Prevent clicks on child elements from triggering the row click
                 if (event.target.tagName === "A" || event.target.tagName === "BUTTON") {
                     return;
                 }
@@ -400,15 +421,15 @@
         });
 
         // Toggle add new wallet dropdown
-        const addNewWalletButton = document.getElementById("add-new-wallet-button");
+        const addNewWalletButton = document.getElementById("add-wallet-section");
         const addWalletDropdown = document.getElementById("add-wallet-dropdown");
 
         addNewWalletButton.addEventListener("click", function (event) {
-            event.preventDefault(); // Prevent default link behavior
+            event.preventDefault();
             if (addWalletDropdown.style.display === "none" || addWalletDropdown.style.display === "") {
-                addWalletDropdown.style.display = "block"; // Show the dropdown
+                addWalletDropdown.style.display = "block";
             } else {
-                addWalletDropdown.style.display = "none"; // Hide the dropdown
+                addWalletDropdown.style.display = "none";
             }
         });
 
@@ -418,8 +439,15 @@
                 addWalletDropdown.style.display = "none";
             }
         });
+
+        // Handle hash scroll on initial load (from another page)
+        handleAddWalletHash();
     });
+
+    // Handle hash scroll on same-page navigation
+    window.addEventListener("hashchange", handleAddWalletHash);
 </script>
+
 <footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
 <div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
 </body>
