@@ -86,11 +86,11 @@ public class TransferServiceImpl implements TransferService {
     public FullTransferInfoOutput processTransfer(TransferInputMVC transferInput) {
         User user = userService.getAuthenticatedUser();
 
-        Card card = cardService.getCardById(transferInput.getCardId());
+        Card card = cardService.getCardById(UUID.fromString(transferInput.getCardId()));
 
         validateCardIsNotExpired(card.getExpirationDate(), EXPIRED_CARD);
 
-        Currency currency = walletService.getWalletById(transferInput.getWalletId()).getCurrency();
+        Currency currency = walletService.getWalletById(UUID.fromString(transferInput.getWalletId())).getCurrency();
 
         validateUserIsCardOwner(card, user, NOT_CARD_OWNER);
 

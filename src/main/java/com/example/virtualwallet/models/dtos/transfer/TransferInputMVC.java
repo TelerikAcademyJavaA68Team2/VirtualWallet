@@ -6,17 +6,16 @@ import lombok.Data;
 import org.springframework.context.annotation.PropertySource;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Data
 @PropertySource("classpath:messages.properties")
 public class TransferInputMVC {
 
     @NotNull(message = "{error.cardIdEmpty}")
-    private UUID cardId;
+    private String cardId;
 
     @NotNull(message = "{error.walletIdEmpty}")
-    private UUID walletId;
+    private String walletId;
 
     @NotNull(message = "{error.amountEmpty}")
     @Positive(message = "{error.amountPositive}")
