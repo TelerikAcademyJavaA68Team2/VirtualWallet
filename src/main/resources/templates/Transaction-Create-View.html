@@ -33,7 +33,9 @@
                                     <div class="form-group position-relative">
                                         <label for="contactSearch" th:text="#{transaction.findUserLabel}">Enter username
                                             / email / phone</label>
-                                        <input th:value="${recipient != null} ? ${recipient.username} : ''" th:placeholder="${recipient != null} ? ${recipient.username} : 'Enter recipient...'" id="contactSearch" type="text" name="user"
+                                        <input th:value="${recipient != null} ? ${recipient.username} : ''"
+                                               th:placeholder="${recipient != null} ? ${recipient.username} : 'Enter recipient...'"
+                                               id="contactSearch" type="text" name="user"
                                                class="form-control" required>
                                     </div>
 
@@ -69,7 +71,8 @@
                                     <!-- ============ STEP 2: SELECT WALLET ============ -->
                                     <div th:if="${errorWallet}" class="alert alert-danger mt-3" role="alert">
                                         <span th:text="${errorWallet}">Error message will appear here</span>
-                                        <a href="/mvc/profile/wallets/fund-wallet" class="btn btn-success rounded-pill ms-3">Fund your Wallet</a>
+                                        <a href="/mvc/profile/wallets/fund-wallet"
+                                           class="btn btn-success rounded-pill ms-3">Fund your Wallet</a>
                                     </div>
                                     <th:block th:if="${activeWallets.size()} == 0">
                                         <div class="alert alert-warning text-center">
@@ -82,7 +85,8 @@
                                     <div th:if="${activeWallets.size()} > 0" class="form-group">
                                         <label for="walletID" th:text="#{transaction.chooseWallet}">Select Your
                                             Wallet:</label>
-                                        <select id="walletID" class="form-select form-control" th:field="*{walletId}" required>
+                                        <select id="walletID" class="form-select form-control" th:field="*{walletId}"
+                                                required>
                                             <option disabled selected value="">Select a Wallet</option>
                                             <option th:each="wallet : ${activeWallets}"
                                                     th:value="${wallet.id}"
@@ -102,7 +106,8 @@
                                     <div th:if="${activeWallets.size()} > 0" class="form-group position-relative mt-3">
                                         <label for="description" th:text="#{transaction.create.descriptionText}">Description:</label>
                                         <input type="text" id="description" class="form-control"
-                                               th:field="*{description}" placeholder="e.g. 'The money I owe you', etc..">
+                                               th:field="*{description}"
+                                               placeholder="e.g. 'The money I owe you', etc..">
                                     </div>
 
                                     <!-- Clear & Submit (with Modal Confirmation) -->
@@ -110,76 +115,84 @@
                                            th:value="#{transaction.clearButton}"/>
 
                                     <!-- Button that triggers the confirmation modal -->
-                                    <button th:if="${activeWallets.size()} > 0" type="button" class="btn btn-primary mt-3" id="openModal"
+                                    <button th:if="${activeWallets.size()} > 0" type="button"
+                                            class="btn btn-primary mt-3" id="openModal"
                                             data-bs-toggle="modal" data-bs-target="#confirm-transaction">
                                         <span th:text="#{transaction.submitButton}">Send Money</span>
                                     </button>
 
-                                    <!-- ============ CONFIRMATION MODAL ============ -->
-                                    <div class="modal fade" id="confirm-transaction" tabindex="-1" role="dialog"
-                                         aria-labelledby="confirmTransactionTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content rounded shadow border-0">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="confirmTransactionTitle"
-                                                        th:text="#{transaction.confirmDetailsTitle}">Confirm
-                                                        Transaction</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
+                                    <div class="modal fade" id="confirm-transaction" tabindex="-1" aria-labelledby="confirmTransactionTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <!-- Modal Header -->
+                                                <div class="modal-header bg-gradient-primary-to-secondary p-4">
+                                                    <h5 class="modal-title font-alt text-white" id="confirmTransactionTitle"
+                                                        th:text="#{transaction.confirmDetailsTitle}">Confirm Transaction</h5>
+                                                    <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <div class="modal-body">
-                                                    <div class="p-4">
-                                                        <p class="text-muted mb-3"
-                                                           th:text="#{transaction.confirmDetailsDescription}">Please
-                                                            confirm the details below:</p>
 
-                                                        <p><strong>Recipient:</strong> <span
-                                                                th:text="${recipient.username}"></span></p>
-                                                        <p><strong>Wallet:</strong> <span id="wallet-confirm"></span>
-                                                        </p>
-                                                        <p><strong>Amount:</strong> <span id="amount-confirm"></span>
-                                                        </p>
-                                                        <p><strong>Description:</strong> <span
-                                                                id="description-confirm"></span></p>
+                                                <!-- Modal Body -->
+                                                <div class="modal-body border-0 p-4 text-center">
+                                                    <p class="text-muted mb-4" th:text="#{transaction.confirmDetailsDescription}">
+                                                        Please confirm the details below:
+                                                    </p>
+
+                                                    <!-- Centered Recipient Image -->
+                                                    <div class="mb-3">
+                                                        <img th:src="${recipient.photo}" alt="Recipient Photo"
+                                                             class="rounded-circle shadow" style="width: 100px; height: 100px; object-fit: cover;">
                                                     </div>
+
+                                                    <!-- Centered Info -->
+                                                    <p class="mb-2"><strong th:text="#{transaction.recipient}">Recipient:</strong> <span th:text="${recipient.username}">JohnDoe</span></p>
+                                                    <p class="mb-2"><strong th:text="#{transaction.wallet}">Wallet:</strong> <span id="wallet-confirm">Main Wallet</span></p>
+                                                    <p class="mb-2"><strong th:text="#{transaction.amount}">Amount:</strong> <span id="amount-confirm">$100</span></p>
+                                                    <p class="mb-0"><strong th:text="#{transaction.description}">Description:</strong> <span id="description-confirm">Dinner payment</span></p>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-outline-light"
-                                                            data-dismiss="modal">Edit
+
+                                                <!-- Modal Footer -->
+                                                <div class="modal-footer border-0 px-4 pb-4 justify-content-between">
+                                                    <!-- EDIT BUTTON (Closes Modal) -->
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                        <span th:text="#{transaction.editButton}">Edit</span>
                                                     </button>
-                                                    <input class="btn btn-primary" type="submit"
-                                                           th:value="#{transaction.submitButton}">
+
+                                                    <!-- CONFIRM BUTTON -->
+                                                    <form th:action="@{/mvc/transactions/confirm}" method="post">
+                                                        <!-- Include hidden inputs here if needed -->
+                                                        <button type="submit" class="btn btn-primary" th:text="#{transaction.submitButton}">
+                                                            Send Money
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- End Modal -->
+
                                 </form>
                             </div>
                         </div>
 
-                            <!-- If user IS blocked, show a warning message -->
-                            <div th:if="${user.status == T(com.example.virtualwallet.models.enums.AccountStatus).BLOCKED}">
-                                <div class="alert alert-warning">
-                                    <h4 class="mb-4" th:text="#{account.blocked.title}">Account Blocked</h4>
-                                    <p th:utext="#{account.blocked.textOne}">You cannot make transactions at this
-                                        time.</p>
-                                </div>
+                        <!-- If user IS blocked, show a warning message -->
+                        <div th:if="${user.status == T(com.example.virtualwallet.models.enums.AccountStatus).BLOCKED}">
+                            <div class="alert alert-warning">
+                                <h4 class="mb-4" th:text="#{account.blocked.title}">Account Blocked</h4>
+                                <p th:utext="#{account.blocked.textOne}">You cannot make transactions at this
+                                    time.</p>
                             </div>
-                            <div th:if="${user.status == T(com.example.virtualwallet.models.enums.AccountStatus).BLOCKED_AND_DELETED}">
-                                <div class="alert alert-warning">
-                                    <h4 class="mb-4" th:text="#{account.blocked.title}">Account Blocked</h4>
-                                    <p th:utext="#{account.blocked.textOne}">You cannot make transactions at this
-                                        time.</p>
-                                </div>
+                        </div>
+                        <div th:if="${user.status == T(com.example.virtualwallet.models.enums.AccountStatus).BLOCKED_AND_DELETED}">
+                            <div class="alert alert-warning">
+                                <h4 class="mb-4" th:text="#{account.blocked.title}">Account Blocked</h4>
+                                <p th:utext="#{account.blocked.textOne}">You cannot make transactions at this
+                                    time.</p>
                             </div>
-                        </div> <!-- End Column -->
-                    </div> <!-- End Row -->
-                </div> <!-- End Container -->
-            </div>
+                        </div>
+                    </div> <!-- End Column -->
+                </div> <!-- End Row -->
+            </div> <!-- End Container -->
         </div>
+    </div>
 </section> <!-- End Section -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
