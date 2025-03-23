@@ -27,7 +27,7 @@
                         <th:block th:if="${cards.size()} == 0">
                             <div class="alert alert-warning text-center">
                                 <p>You have no active cards yet!</p>
-                                <a class="btn btn-primary mt-2" th:href="@{/mvc/profile/cards/new}">
+                                <a class="btn btn-primary rounded-pill mt-2" th:href="@{/mvc/profile/cards/new}">
                                     Add a New Card
                                 </a>
                             </div>
@@ -36,7 +36,7 @@
                         <th:block th:if="${wallets.size()} == 0">
                             <div class="alert alert-warning text-center">
                                 <p>You have no active wallets yet!</p>
-                                <a class="btn btn-primary mt-2" th:href="@{/mvc/profile/wallets#}">
+                                <a class="btn btn-primary rounded-pill mt-2" th:href="@{/mvc/profile/wallets#}">
                                     Add a New Wallet
                                 </a>
                             </div>
@@ -101,8 +101,8 @@
                                     </div>
 
                                     <!-- Submit button -->
-                                    <div class="col-md-12 mt-4">
-                                        <button type="submit" class="btn btn-primary w-100">
+                                    <div class="col-md-12 mt-4 text-center">
+                                        <button type="submit" class="btn btn-primary rounded-pill">
                                             Fund Wallet
                                         </button>
                                     </div>

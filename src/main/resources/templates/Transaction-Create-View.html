@@ -43,7 +43,7 @@
                                         <span th:text="${error}">Error message will appear here</span>
                                     </div>
                                     <!-- Search Button -->
-                                    <button type="submit" class="btn btn-primary" th:text="#{transaction.searchButton}">
+                                    <button type="submit" class="btn btn-primary rounded-pill" th:text="#{transaction.searchButton}">
                                         Search
                                     </button>
                                 </form>
@@ -77,7 +77,7 @@
                                     <th:block th:if="${activeWallets.size()} == 0">
                                         <div class="alert alert-warning text-center">
                                             <p>You have no active wallets yet!</p>
-                                            <a class="btn btn-primary mt-2" th:href="@{/mvc/profile/wallets#}">
+                                            <a class="btn btn-primary rounded-pill mt-2" th:href="@{/mvc/profile/wallets#}">
                                                 Add a New Wallet
                                             </a>
                                         </div>
@@ -111,12 +111,12 @@
                                     </div>
 
                                     <!-- Clear & Submit (with Modal Confirmation) -->
-                                    <input th:if="${activeWallets.size()} > 0" class="btn btn-light mt-3" type="reset"
+                                    <input th:if="${activeWallets.size()} > 0" class="btn btn-outline-dark rounded-pill mt-3" type="reset"
                                            th:value="#{transaction.clearButton}"/>
 
                                     <!-- Button that triggers the confirmation modal -->
                                     <button th:if="${activeWallets.size()} > 0" type="button"
-                                            class="btn btn-primary mt-3" id="openModal"
+                                            class="btn btn-primary rounded-pill mt-3" id="openModal"
                                             data-bs-toggle="modal" data-bs-target="#confirm-transaction">
                                         <span th:text="#{transaction.submitButton}">Send Money</span>
                                     </button>
@@ -153,14 +153,14 @@
                                                 <!-- Modal Footer -->
                                                 <div class="modal-footer border-0 px-4 pb-4 justify-content-between">
                                                     <!-- EDIT BUTTON (Closes Modal) -->
-                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                    <button type="button" class="btn btn-outline-dark rounded-pill" data-bs-dismiss="modal">
                                                         <span th:text="#{transaction.editButton}">Edit</span>
                                                     </button>
 
                                                     <!-- CONFIRM BUTTON -->
                                                     <form th:action="@{/mvc/transactions/confirm}" method="post">
                                                         <!-- Include hidden inputs here if needed -->
-                                                        <button type="submit" class="btn btn-primary" th:text="#{transaction.submitButton}">
+                                                        <button type="submit" class="btn btn-primary rounded-pill" th:text="#{transaction.submitButton}">
                                                             Send Money
                                                         </button>
                                                     </form>
