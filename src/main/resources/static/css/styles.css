@@ -12025,8 +12025,8 @@ td:not(.activity-column) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px; /* Circle size */
-  height: 60px; /* Circle size */
+  width: 55px; /* Circle size */
+  height: 55px; /* Circle size */
   border-radius: 50%; /* Make it circular */
   font-size: 28px; /* Icon size */
   background-color: grey; /* Darker gray background on hover */

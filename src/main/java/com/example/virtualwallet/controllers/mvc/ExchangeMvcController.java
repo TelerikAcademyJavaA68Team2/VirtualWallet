@@ -1,6 +1,7 @@
 package com.example.virtualwallet.controllers.mvc;
 
 import com.example.virtualwallet.models.dtos.exchange.ExchangePage;
+import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.services.contracts.ExchangeService;
@@ -9,12 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 
@@ -26,7 +29,15 @@ public class ExchangeMvcController {
     private final ExchangeService exchangeService;
     private final UserService userService;
 
-  @GetMapping
+
+    @GetMapping("/{id}")
+    public String getSingleTransferView(@PathVariable UUID id, Model model) {
+        FullExchangeInfoOutput exchange = exchangeService.getExchangeById(id);
+        model.addAttribute("exchange", exchange);
+        return "Exchange-View";
+    }
+
+    @GetMapping
     public String getExchangesAndFilter(
             @RequestParam(required = false) String fromDate,
             @RequestParam(required = false) String toDate,
