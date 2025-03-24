@@ -76,6 +76,10 @@ public class CardMvcController {
     @GetMapping("/{id}/edit")
     public String getEditCardDetailsPage(Model model, @PathVariable UUID id) {
         Card card = cardService.getCardById(id);
+        User user = userService.getAuthenticatedUser();
+        if (!card.getOwner().equals(user)){
+            return "redirect:/mvc/profile/cards";
+        }
         CardEdit cardEdit = ModelMapper.cardEditFromCard(card);
         model.addAttribute("action", "edit");
         model.addAttribute("cardId", id);
