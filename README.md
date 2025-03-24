@@ -1,5 +1,12 @@
 # MoneyMe - Virtual Wallet (Spring Boot Project) - Team 2
 
+## Access Our Project
+
+We have deployed our project using **Heroku** and **AWS RDB**. Also, we provide **Swagger API Documentation** to facilitate testing and exploration of the wallet’s endpoints.
+
+- **App URL**: [`https://money-me-84fb9ba46b45.herokuapp.com/`](https://money-me-84fb9ba46b45.herokuapp.com/)  
+- **Swagger URL**: [`https://money-me-84fb9ba46b45.herokuapp.com/swagger-ui/index.html`](https://money-me-84fb9ba46b45.herokuapp.com/swagger-ui/index.html)
+
 ## Overview
 
 **MoneyMe** is a secure and efficient digital wallet solution designed to help users manage their finances effortlessly. Users can deposit funds, transfer money, and exchange currencies, while administrators oversee platform activities to maintain security and efficiency.
@@ -11,7 +18,6 @@
 - **User Management**
   - Register and authenticate using JWT authentication.
   - Manage user profiles and account settings.
-  - Identity verification for enhanced security.
   
 - **Wallet & Transactions**
   - Add and manage credit/debit cards securely.
@@ -39,8 +45,11 @@
 - **JPA**
 - **JWT Authentication**
 - **Swagger API Documentation**
-- **Cloudinary API for Identity Verification**
+- **Cloudinary API for Profile Picture Upload**
 - **Starter Mail for Email Verification**
+- **FormSpree for contact forms**
+- **Heroku for application hosting platform**
+- **AWS MARIADB RDB for database hosting**
 
 ---
 
@@ -76,13 +85,14 @@ Follow these steps to set up and run the application:
 
 ⚠️ **Security Disclaimer**  
 - Do **not** use actual credit card details.  
-- Users must verify their identity before completing high-value transactions. 
 
 ---
 
 ## Database Diagram
 
-(image or a link to the database schema)
+![database_schema](https://github.com/user-attachments/assets/d12b1914-566e-4c80-a0e1-50751e88afe9)
+
+<br>
 
 ---
 
@@ -106,11 +116,4 @@ For further information, please feel free to contact us:
 | **Ivan Ivanov**       | ivanovivanbusiness@gmail.com | [GitHub Link](https://github.com/ivanoffcode)    |
 
 ---
-
-## Access Our Project
-
-We have deployed our project using **Heroku**. Also, we provide **Swagger API Documentation** to facilitate testing and exploration of the wallet’s endpoints.
-
-- **App URL**: [`https://money-me-84fb9ba46b45.herokuapp.com/`](https://money-me-84fb9ba46b45.herokuapp.com/)  
-- **Swagger URL**: [`https://money-me-84fb9ba46b45.herokuapp.com/swagger-ui/index.html`](https://money-me-84fb9ba46b45.herokuapp.com/swagger-ui/index.html)
 
