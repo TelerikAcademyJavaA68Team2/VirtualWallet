@@ -304,32 +304,32 @@
                 <span th:text="#{footer.powered}"></span>
                 <a href="https://en.wikipedia.org/wiki/Spring_Boot" target="_blank" class="text-success">Spring Boot</a>
                 <br>
-                <!-- Feedback Button -->
+                <!-- Contact Us Button -->
                 <button class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0"
                         data-bs-toggle="modal" data-bs-target="#feedbackModal">
                 <span class="d-flex align-items-center">
                     <i class="bi-chat-text-fill me-2"></i>
-                    <span class="small">Send Feedback</span>
+                    <span class="small">Contact Us!</span>
                 </span>
                 </button>
             </div>
         </div>
     </div>
-    <div th:insert="~{fragments/Page-Layout :: feedbackModal}"></div>
+    <div th:insert="~{fragments/Page-Layout :: contactModal}"></div>
 </footer>
-<div th:fragment="feedbackModal" class="modal fade" id="feedbackModal" tabindex="-1"
+<div th:fragment="contactModal" class="modal fade" id="feedbackModal" tabindex="-1"
      aria-labelledby="feedbackModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header bg-gradient-primary-to-secondary p-4">
-                <h5 class="modal-title font-alt text-white" id="feedbackModalLabel">Send Feedback</h5>
+                <h5 class="modal-title font-alt text-white" id="feedbackModalLabel">Contact Us!</h5>
                 <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <!-- Modal Body -->
             <div class="modal-body border-0 p-4">
-                <form th:action="@{/mvc/feedback}" method="post">
+                <form id="feedbackForm" action="https://formspree.io/f/xanejbge" method="POST">
                     <!-- Name -->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="name" name="name" type="text" placeholder="Your Name" required>
@@ -344,20 +344,24 @@
 
                     <!-- Phone -->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="phone" name="phone" type="tel" placeholder="(123) 456-7890" required>
+                        <input class="form-control" id="phone" name="phone" type="tel" placeholder="(123) 456-7890">
                         <label for="phone">Phone Number</label>
                     </div>
 
                     <!-- Message -->
                     <div class="form-floating mb-3">
-                        <textarea class="form-control" id="message" name="message" style="height: 10rem" placeholder="Write your message here..." required></textarea>
+                        <textarea class="form-control" id="message" name="message" style="height: 10rem"
+                                  placeholder="Write your message here..." required></textarea>
                         <label for="message">Message</label>
                     </div>
+
+                    <!-- Honeypot -->
+                    <input type="text" name="_gotcha" style="display:none">
 
                     <!-- Submit Button -->
                     <div class="d-grid">
                         <button class="btn btn-primary rounded-pill btn-lg" type="submit">
-                            Submit
+                            Send
                         </button>
                     </div>
                 </form>
@@ -365,6 +369,66 @@
         </div>
     </div>
 </div>
+
+<!-- ✅ Success Modal (stays on current page) -->
+<div class="modal fade" id="feedbackSuccessModal" tabindex="-1" aria-labelledby="feedbackSuccessLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title w-100 text-success" id="feedbackSuccessLabel">Message Sent</h5>
+            </div>
+            <div class="modal-body">
+                <p>Thanks! We've received your message and will respond shortly.</p>
+            </div>
+            <div class="modal-footer justify-content-center border-0">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ JS Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("feedbackForm");
+        if (!form) return;
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault(); // ✅ Stops default form submission
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: formData,
+                    headers: { Accept: "application/json" }
+                });
+
+                if (response.ok) {
+                    // ✅ Hide the feedback form modal
+                    const feedbackModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('feedbackModal'));
+                    feedbackModal.hide();
+
+                    // ✅ Show the success modal
+                    const successModal = new bootstrap.Modal(document.getElementById('feedbackSuccessModal'));
+                    successModal.show();
+
+                    form.reset();
+                } else {
+                    alert("Form submission failed. Please try again.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("There was a problem submitting your message.");
+            }
+        });
+    });
+</script>
+
+
+
+
 <div th:fragment="coreJS">
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -378,13 +442,8 @@
             });
         });
     </script>
-
     <!-- Core theme JS-->
     <script src="/js/scripts.js"></script>
-    <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-    <!-- * *                               SB Forms JS                               * *-->
-    <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-    <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
     <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
 </div>
 </body>
