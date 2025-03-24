@@ -16,13 +16,12 @@
 - **Wallet & Transactions**
   - Add and manage credit/debit cards securely.
   - Deposit money into the virtual wallet from linked bank cards.
-  - Transfer funds to other users via phone number, username, or email.
+  - Transfer funds to other users via phone number, username, or email (after account verification).
   - View and filter transaction history by date, recipient, sender, etc.
-  - Set up and manage multiple virtual wallets, one wallet for each support currency.
+  - Set up and manage multiple virtual wallets, one wallet for each supported currency.
 
 - **Security Features**
   - Email verification for registration completion.
-  - Identity verification by uploading a photo of Identity card.
   - Admin-controlled user blocking/unblocking.
   
 - **Administrative Controls**
@@ -112,6 +111,6 @@ For further information, please feel free to contact us:
 
 We have deployed our project using **Heroku**. Also, we provide **Swagger API Documentation** to facilitate testing and exploration of the wallet’s endpoints.
 
-- **App URL**: [`https://your-heroku-app.herokuapp.com`](https://your-heroku-app.herokuapp.com)  
-- **Swagger URL**: [`https://your-heroku-app.herokuapp.com/swagger-ui/index.html`](https://your-heroku-app.herokuapp.com/swagger-ui/index.html)
+- **App URL**: [`https://money-me-84fb9ba46b45.herokuapp.com/`](https://money-me-84fb9ba46b45.herokuapp.com/)  
+- **Swagger URL**: [`https://money-me-84fb9ba46b45.herokuapp.com/swagger-ui/index.html`](https://money-me-84fb9ba46b45.herokuapp.com/swagger-ui/index.html)
 
