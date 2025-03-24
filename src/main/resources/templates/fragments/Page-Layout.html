@@ -85,30 +85,6 @@
                         </li>
                     </ul>
                 </li>
-                <!-- Cards (Dropdown) -->
-                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                    <a class="nav-link dropdown-toggle me-lg-3" href="#" id="cardsDropdown"
-                       role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                       th:text="#{navigation.cards}">
-                        Cards
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="cardsDropdown">
-                        <li>
-                            <a class="dropdown-item"
-                               th:href="@{/mvc/admin/transfers}"
-                               th:text="#{navigation.viewTransfers}">
-                                All Transactions
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item"
-                               th:href="@{/mvc/admin/exchanges}"
-                               th:text="#{navigation.viewExchanges}">
-                                All Transactions
-                            </a>
-                        </li>
-                    </ul>
-                </li>
             </ul>
             <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
                 <!-- Cards (Dropdown) -->
