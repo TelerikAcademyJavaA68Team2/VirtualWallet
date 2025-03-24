@@ -1,5 +1,6 @@
 package com.example.virtualwallet.config;
 
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -29,7 +30,6 @@ import org.springframework.context.annotation.Configuration;
                         - **View transaction history**, filterable by date, recipient, sender, etc.
                         - **Manage multiple wallets**, one for each supported currency.
                         - **Admin features**: Manage users, block/unblock accounts, and monitor transactions.
-                        - **Security features**: Identity verification and email verification.
                         
                         The API follows **RESTful principles** and provides a structured, scalable financial solution.""",
                 title = "MoneyMe - Virtual Wallet API",
@@ -42,9 +42,13 @@ import org.springframework.context.annotation.Configuration;
                 ),
                 @Server(
                         description = "Heroku Deployment",
-                        url = "https://your-heroku-app.herokuapp.com"
+                        url = "https://money-me-84fb9ba46b45.herokuapp.com/"
                 )
-        }
+        },
+        externalDocs = @ExternalDocumentation(
+                description = "📘 GitHub Repository",
+                url = "https://github.com/TelerikAcademyJavaA68Team2/VirtualWallet"
+        )
 )
 @SecurityScheme(
         name = "Bearer Authentication",
