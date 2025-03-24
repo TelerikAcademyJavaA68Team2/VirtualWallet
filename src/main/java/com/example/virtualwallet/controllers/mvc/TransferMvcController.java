@@ -34,6 +34,9 @@ public class TransferMvcController {
     @GetMapping("/{id}")
     public String getSingleTransferView(Model model, @PathVariable UUID id) {
         FullTransferInfoOutput transferOutput = transferService.getTransferById(id);
+        String recipientId = userService.findUserByUsernameOrEmailOrPhoneNumber(transferOutput.getRecipientUsername()).getId().toString();
+
+        model.addAttribute("recipientId", recipientId);
         model.addAttribute("transfer", transferOutput);
         return "Transfer-View";
     }

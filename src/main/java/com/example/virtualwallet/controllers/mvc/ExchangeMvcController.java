@@ -33,6 +33,9 @@ public class ExchangeMvcController {
     @GetMapping("/{id}")
     public String getSingleTransferView(@PathVariable UUID id, Model model) {
         FullExchangeInfoOutput exchange = exchangeService.getExchangeById(id);
+        String recipientId = userService.findUserByUsernameOrEmailOrPhoneNumber(exchange.getRecipientUsername()).getId().toString();
+
+        model.addAttribute("recipientId", recipientId);
         model.addAttribute("exchange", exchange);
         return "Exchange-View";
     }
