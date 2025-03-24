@@ -56,6 +56,9 @@ public class ExchangeMvcController {
 
         List<WalletBasicOutput> wallets = walletService.getActiveUserWalletsDto();
 
+        if (wallets.isEmpty()){
+            return "Exchange-Error-View";
+        }
 
         List<Currency> currenciesList = Arrays.stream(Currency.values()).toList();
         Set<String> activeCurrencies = wallets.stream()
