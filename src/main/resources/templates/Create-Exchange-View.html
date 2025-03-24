@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="~{fragments/Page-Layout :: head(Exchange)}"></head>
+<body id="page-top">
+<nav th:insert="~{fragments/Page-Layout :: navigation}"></nav>
+<section class="section bg-light">
+    <div class="container mt-10">
+        <div class="row justify-content-center">
+            <div class="col-12 text-center">
+                <div class="section-title mb-4 pb-2">
+                    <h4 class="title mb-4">Create Exchange</h4>
+                </div>
+            </div><!--end col-->
+        </div><!--end row-->
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-6 col-12 mt-4 pt-2">
+                <div class="rounded bg-white border shadow">
+                    <div class="bg-light p-4 text-center rounded-top">
+                        <h4 class="mb-0 text-primary">Exchange Currencies</h4>
+                    </div>
+                    <div class="p-4">
+                        <form th:action="@{/mvc/profile/exchanges/new}" th:object="${exchangeInput}" method="post"
+                              id="exchange-form">
+                            <!-- First Row -->
+                            <div class="row justify-content-center">
+                                <!-- From Currency Dropdown -->
+                                <div class="col-md-5 col-12 mb-3">
+                                    <div class="dropdown">
+                                        <label for="fromCurrencyDropdown" class="font-weight-bold">From Currency</label>
+                                        <button class="btn btn-light dropdown-toggle w-100 text-start d-flex align-items-center"
+                                                type="button"
+                                                id="fromCurrencyDropdown" data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                            <img th:src="@{/images/flags/flag__${fromCurrency}__.png}" alt="Flag"
+                                                 width="40" height="40" class="me-2"/>
+                                            <div>
+                                                <span th:text="${fromCurrency}" class="d-block"></span>
+                                                <small th:text="#{'currency.' + ${fromCurrency}}"
+                                                       class="d-block text-muted"></small>
+                                            </div>
+                                        </button>
+                                        <ul class="dropdown-menu w-100" aria-labelledby="fromCurrencyDropdown">
+                                            <li th:each="currency : ${activeCurrencies}">
+                                                <a class="dropdown-item d-flex align-items-start" href="#"
+                                                   th:href="@{/mvc/profile/exchanges/new(fromCurrency=${currency})}">
+                                                    <img th:src="@{/images/flags/flag__${currency}__.png}"
+                                                         alt="Flag" width="40" height="40" class="me-2"/>
+                                                    <div>
+                                                        <span th:text="${currency}" class="d-block"></span>
+                                                        <small th:text="#{'currency.' + ${currency}}"
+                                                               class="d-block text-muted"></small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- Switch Button -->
+                                <div class="col-md-2 col-3 d-flex align-items-center justify-content-center mb-3">
+                                    <a class="btn btn-outline-dark rounded-pill w-100" href="#"
+                                       th:href="@{/mvc/profile/exchanges/new(fromCurrency=${toCurrency}, toCurrency=${fromCurrency})}">
+                                        <span class="bi bi-arrow-repeat"></span>
+                                    </a>
+                                </div>
+                                <!-- To Currency Dropdown -->
+                                <div class="col-md-5 col-12 mb-3">
+                                    <label for="toCurrencyDropdown" class="font-weight-bold">To Currency</label>
+                                    <div class="dropdown">
+                                        <button class="btn btn-light dropdown-toggle w-100 text-start d-flex align-items-center"
+                                                type="button"
+                                                id="toCurrencyDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <img th:src="@{/images/flags/flag__${toCurrency}__.png}"
+                                                 alt="Flag" width="40" height="40" class="me-2"/>
+                                            <div>
+                                                <span th:text="${toCurrency}" class="d-block"></span>
+                                                <small th:text="#{'currency.' + ${toCurrency}}"
+                                                       class="d-block text-muted"></small>
+                                            </div>
+                                        </button>
+                                        <ul class="dropdown-menu w-100" aria-labelledby="toCurrencyDropdown">
+                                            <li th:each="currency : ${otherActiveCurrencies}">
+                                                <a class="dropdown-item d-flex align-items-start " href="#"
+                                                   th:href="@{/mvc/profile/exchanges/new(fromCurrency=${param.fromCurrency}, toCurrency=${currency})}">
+                                                    <img th:src="@{/images/flags/flag__${currency}__.png}"
+                                                         alt="Flag" width="40" height="40" class="me-2"/>
+                                                    <div>
+                                                        <span th:text="${currency}" class="d-block"></span>
+                                                        <small th:text="#{'currency.' + ${currency}}"
+                                                               class="d-block text-muted"></small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li th:each="currency : ${otherInactiveCurrencies}">
+                                                <a class="dropdown-item d-flex align-items-start  bg-secondary-hover"
+                                                   href="#"
+                                                   th:href="@{/mvc/profile/exchanges/new(fromCurrency=${param.fromCurrency}, toCurrency=${currency})}">
+                                                    <img th:src="@{/images/flags/flag__${currency}__.png}"
+                                                         alt="Flag" width="40" height="40" class="me-2 gray-flag"/>
+                                                    <div>
+                                                        <span th:text="${currency}" class="d-block"></span>
+                                                        <small th:text="#{'currency.' + ${currency}}"
+                                                               class="d-block text-muted"></small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div><!-- end first row -->
+
+
+                            <!-- Second Row -->
+                            <div class="row mt-4">
+                                <!-- Amount Input -->
+                                <div class="col-md-6 col-12 mb-3">
+                                    <label for="amount" class="font-weight-bold">Amount</label>
+                                    <span class="text-muted ps-3" th:text="' max '+${maxAmount}"></span>
+                                    <input id="amount" type="number" min="1" step="1.0"
+                                           class="form-control font-weight-bold"
+                                           th:field="*{amount}"
+                                           th:max="${maxAmount}"
+                                           required/>
+                                    <div th:if="${#fields.hasErrors('amount')}" class="alert alert-danger mt-2">
+                                        <span th:errors="*{amount}"></span>
+                                    </div>
+                                    <div id="amount-warning" class="text-danger small d-none">
+                                        Amount cannot exceed your balance <span th:text="${maxAmount}"></span>.
+                                    </div>
+                                </div>
+                                <!-- Estimated Amount Display -->
+                                <div class="col-md-6 col-12 mb-3">
+                                    <label class="font-weight-bold">Estimated Amount</label>
+                                    <span class="text-muted ps-3"
+                                          th:text="'1'+ #{'currency.symbol.'+${fromCurrency}}+' = '+${exchangeRate} + #{'currency.symbol.'+${toCurrency}}"></span>
+                                    <div class="form-control text-center font-weight-bold" style="height: auto;"
+                                         id="estimated-amount">
+                                        +
+                                        <span>0</span> <span th:text="#{'currency.symbol.'+${toCurrency}}"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hidden Input Field for From Currency -->
+                            <input type="hidden" th:field="*{fromCurrency}"/>
+
+                            <!-- Hidden Input Field for To Currency -->
+                            <input type="hidden" th:field="*{toCurrency}"/>
+                            <div class="row mt-4">
+                                <div class="col-md-12 text-center">
+                                    <button type="submit" class="btn btn-primary rounded-pill">
+                                        Exchange
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </div><!-- end p-4 -->
+                </div><!-- end rounded -->
+            </div><!--end col-->
+        </div><!--end row-->
+    </div><!--end container-->
+</section><!--end section-->
+
+<!-- JavaScript for Dynamic Estimated Amount Calculation -->
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const amountInput = document.getElementById("amount");
+        const exchangeRate = parseFloat(/*[[${exchangeRate}]]*/ 1);
+        const estimatedAmountElement = document.getElementById("estimated-amount").querySelector("span");
+        const maxAmount = parseFloat(/*[[${maxAmount}]]*/ 1);
+        const warningMessage = document.getElementById("amount-warning");
+
+        amountInput.addEventListener("input", function () {
+            let amount = parseFloat(amountInput.value);
+
+            // Handle invalid input
+            if (isNaN(amount)) {
+                amountInput.value = "";
+                estimatedAmountElement.textContent = "0";
+                return;
+            }
+
+            // Cap the amount at maxAmount
+            if (!isNaN(amount) && amount > maxAmount) {
+                amountInput.value = maxAmount;
+                amount = maxAmount;
+
+                // Show the warning message
+                warningMessage.classList.remove("d-none");
+            } else {
+                // Hide the warning message
+                warningMessage.classList.add("d-none");
+            }
+
+            // Calculate the estimated amount
+            if (!isNaN(amount) && !isNaN(exchangeRate)) {
+                estimatedAmountElement.textContent = (amount * exchangeRate).toFixed(2);
+            } else {
+                estimatedAmountElement.textContent = "0";
+            }
+        });
+    });
+</script>
+
+<footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
+<div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
+</body>
+</html>
