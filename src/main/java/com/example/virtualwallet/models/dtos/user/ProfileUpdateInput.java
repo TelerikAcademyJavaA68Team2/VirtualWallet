@@ -18,7 +18,7 @@ public class ProfileUpdateInput {
     private String lastName;
 
     @Email(message = "{error.emailInvalid}")
-    @Size(min = 5, max = 200, message = "{error.emailLength}")
+    @Size(min = 5, max = 50, message = "{error.emailLength}")
     private String email;
 
     @Pattern(regexp = "\\d{10}", message = "{error.phoneDigits}")
