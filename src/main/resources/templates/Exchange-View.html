@@ -12,10 +12,17 @@
           <span style="font-size: 24px" th:text="#{exchange.details}">Exchange Details</span>
         </div>
         <div class="card-body">
-          <!-- Sender -->
-          <div class="mb-3">
+          <!-- Recipient -->
+          <div class="mb-3" sec:authorize="!hasAnyAuthority('ADMIN')">
             <label class="fw-bold" th:text="#{exchange.recipient}">Recipient:</label>
             <span th:text="${exchange.recipientUsername}" class="text-dark ms-1"></span>
+          </div>
+
+          <div class="mb-3" sec:authorize="hasAnyAuthority('ADMIN')">
+            <label class="fw-bold" th:text="#{exchange.recipient}">Recipient:</label>
+            <a th:href="@{'/mvc/admin/users/' + ${recipientId}}"
+               th:text="${exchange.recipientUsername}"
+               class="text-decoration-none text-primary ms-1"></a>
           </div>
 
           <!-- Amount & Currency -->

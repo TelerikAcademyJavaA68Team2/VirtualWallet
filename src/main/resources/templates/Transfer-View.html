@@ -14,9 +14,16 @@
                 </div>
                 <div class="card-body">
                     <!-- Recipient -->
-                    <div class="mb-3">
+                    <div class="mb-3" sec:authorize="!hasAnyAuthority('ADMIN')">
                         <label class="fw-bold" th:text="#{transfer.recipient}">Recipient:</label>
                         <span th:text="${transfer.recipientUsername}" class="text-dark ms-1"></span>
+                    </div>
+
+                    <div class="mb-3" sec:authorize="hasAnyAuthority('ADMIN')">
+                        <label class="fw-bold" th:text="#{transfer.recipient}">Recipient:</label>
+                        <a th:href="@{'/mvc/admin/users/' + ${recipientId}}"
+                           th:text="${transfer.recipientUsername}"
+                           class="text-decoration-none text-primary ms-1"></a>
                     </div>
 
                     <!-- Amount & Currency -->
