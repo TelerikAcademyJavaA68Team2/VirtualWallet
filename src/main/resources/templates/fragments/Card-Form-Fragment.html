@@ -28,7 +28,7 @@
         <!-- Card Number -->
         <div class="form-group">
             <label for="card-number" th:text="#{card.cardNumber}">Card Number</label>
-            <input type="text" class="form-control font-weight-bold" id="card-number"
+            <input type="text" pattern="\d{16}" maxlength="16" class="form-control font-weight-bold" id="card-number"
                    th:field="*{cardNumber}" placeholder="Enter 16-digit Card Number">
             <small class="text-danger" th:if="${#fields.hasErrors('cardNumber')}"
                    th:text="${#fields.errors('cardNumber')[0]}"></small>
