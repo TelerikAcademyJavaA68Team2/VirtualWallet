@@ -102,8 +102,14 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public List<Wallet> getActiveWalletsOfUser(UUID user) {
-        return walletRepository.findActiveWalletsByUserId(user);
+    public List<Wallet> getActiveWalletsOfUser(UUID userId) {
+        return walletRepository.findActiveWalletsByUserId(userId);
+    }
+
+    @Override
+    public List<WalletBasicOutput> getActiveUserWalletsDto() {
+        List<Wallet> listWallets = getActiveWalletsOfUser(userService.getAuthenticatedUser().getId());
+        return listWallets.stream().map(ModelMapper::mapWalletToBasicWalletOutput).toList();
     }
 
     @Override
