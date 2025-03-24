@@ -60,7 +60,7 @@
                             <a class="align-items-center text-md-end d-flex p-1 btn btn-outline-dark rounded-pill  "
 
                                th:href=" @{/mvc/profile/update}">
-                                <span class="bi-pencil-fill  px-1" th:text="'Edit'"></span>
+                                <span class="bi-pencil-fill  px-1" th:text="' Edit'"></span>
                             </a>
                         </div>
 
@@ -121,8 +121,9 @@
                                        th:text="'Change Password'"></a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item text-danger" href="/mvc/profile/delete"
-                                       th:text="'Delete Account'"></a>
+                                    <a class="dropdown-item text-danger" href="/mvc/profile/delete" th:text="'Delete Account'">
+
+                                    </a>
                                 </li>
                             </ul>
 
