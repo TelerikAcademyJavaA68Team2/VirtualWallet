@@ -18,7 +18,6 @@ We have deployed our project using **Heroku** and **AWS RDB**. Also, we provide 
 - **User Management**
   - Register and authenticate using JWT authentication.
   - Manage user profiles and account settings.
-  - Identity verification for enhanced security.
   
 - **Wallet & Transactions**
   - Add and manage credit/debit cards securely.
