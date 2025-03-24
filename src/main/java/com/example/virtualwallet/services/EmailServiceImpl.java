@@ -108,5 +108,4 @@ public class EmailServiceImpl implements EmailService {
                 "\n" +
                 "</div></div>";
     }
-
 }
