@@ -30,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public static final String DELETE_ACCOUNT_CAPTCHA = "Delete my account";
     public static final String WRONG_CAPTCHA = "Wrong captcha";
     public static final String WRONG_PASSWORD = "Wrong password";
-    public static final String CONFIRMATION_FAILED = "Password Confirmation failed";
+    public static final String CONFIRMATION_FAILED = "Password Confirmation must match your password!";
     public static final String CONFIRM_YOUR_EMAIL = "Thanks for registering please confirm your email";
 
     private final UserService userService;

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.UUID;
 
@@ -65,12 +66,14 @@ public class AuthenticationMvcController {
     }
 
     @PostMapping(("/register"))
-    public String executeRegisterRequest(@Valid @ModelAttribute("registerRequest") RegisterUserInput registerRequest, BindingResult errors) {
+    public String executeRegisterRequest(@Valid @ModelAttribute("registerRequest") RegisterUserInput registerRequest,
+                                         BindingResult errors, RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             return "Register-View";
         }
         try {
             authenticationService.registerForMvc(registerRequest);
+            redirectAttributes.addFlashAttribute("emailConfirmationMessage", "message");
             return "redirect:/mvc/auth/login";
         } catch (DuplicateEntityException e) {
 
@@ -78,19 +81,19 @@ public class AuthenticationMvcController {
             String errorCode = "";
             String defaultMsg = "";
 
-            if (e.getMessage().startsWith("Email")) {
+            if (e.getMessage().contains("email")) {
                 field = "email";
                 errorCode = "email.mismatch";
                 defaultMsg = e.getMessage();
             }
 
-            if (e.getMessage().startsWith("Username")) {
+            if (e.getMessage().contains("username")) {
                 field = "username";
                 errorCode = "username.mismatch";
                 defaultMsg = e.getMessage();
             }
 
-            if (e.getMessage().startsWith("Phone")) {
+            if (e.getMessage().startsWith("phone number")) {
                 field = "phoneNumber";
                 errorCode = "phoneNumber.mismatch";
                 defaultMsg = e.getMessage();
