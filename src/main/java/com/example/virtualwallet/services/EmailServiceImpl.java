@@ -2,7 +2,6 @@ package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.services.contracts.EmailService;
 import jakarta.mail.internet.MimeMessage;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,6 +12,10 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
+
+    private static final String appName = "MoneyMe Virtual Wallet";
+    private static final String CONFIRMATION_FAILED = "Send email confirmation failed";
+    public static final String EMAIL = "virtual.wallet.a68@gmail.com";
 
     private final JavaMailSender mailSender;
 
@@ -29,18 +32,18 @@ public class EmailServiceImpl implements EmailService {
             String urlStart = isRestRequest ? "api" : "mvc";
             String link = appUrl + """
                     /%s/auth/email-confirm?token=%s""".formatted(urlStart, tokenId);
-            String finalHtmlMessage = buildEmail(firstName, link);
+            String finalHtmlMessage = buildEmailConfirmation(firstName, link);
             helper.setText(finalHtmlMessage, true);
             helper.setTo(toEmail);
-            helper.setSubject("Confirm your email");
-            helper.setFrom("virtual.wallet.a68@gmail.com", "Virtual Wallet");
+            helper.setSubject("Confirm your email | " + appName);
+            helper.setFrom(EMAIL, appName);
             mailSender.send(mimeMessage);
         } catch (Exception e) {
-            throw new RuntimeException("Send email confirmation failed");
+            throw new RuntimeException(CONFIRMATION_FAILED);
         }
     }
 
-    private String buildEmail(String firstName, String link) {
+    private String buildEmailConfirmation(String firstName, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
