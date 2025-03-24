@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.example.virtualwallet.controllers.rest")
 public class GlobalExceptionHandlerRest {
 
     @ExceptionHandler(EntityNotFoundException.class)
