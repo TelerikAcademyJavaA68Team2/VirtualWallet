@@ -20,8 +20,6 @@ import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -316,21 +314,33 @@ public class AdminMvcController {
     @GetMapping("/transactions/{id}")
     public String getSingleTransactionView(Model model, @PathVariable UUID id) {
         FullTransactionInfoOutput transactionInfoOutput = transactionService.getTransactionById(id);
+        String senderId = userService.
+                findUserByUsernameOrEmailOrPhoneNumber(transactionInfoOutput.getSenderUsername()).getId().toString();
+        String recipientId = userService.
+                findUserByUsernameOrEmailOrPhoneNumber(transactionInfoOutput.getRecipientUsername()).getId().toString();
         model.addAttribute("transaction", transactionInfoOutput);
+        model.addAttribute("senderId", senderId);
+        model.addAttribute("recipientId", recipientId);
         return "Transaction-View";
     }
 
     @GetMapping("/transfers/{id}")
     public String getSingleTransferView(Model model, @PathVariable UUID id) {
         FullTransferInfoOutput transferOutput = transferService.getTransferById(id);
+        String recipientId = userService.
+                findUserByUsernameOrEmailOrPhoneNumber(transferOutput.getRecipientUsername()).getId().toString();
         model.addAttribute("transfer", transferOutput);
+        model.addAttribute("recipientId", recipientId);
         return "Transfer-View";
     }
 
     @GetMapping("/exchanges/{id}")
     public String getSingleTransferView(@PathVariable UUID id, Model model) {
         FullExchangeInfoOutput exchange = exchangeService.getExchangeById(id);
+        String recipientId = userService.
+                findUserByUsernameOrEmailOrPhoneNumber(exchange.getRecipientUsername()).getId().toString();
         model.addAttribute("exchange", exchange);
+        model.addAttribute("recipientId", recipientId);
         return "Exchange-View";
     }
 

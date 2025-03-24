@@ -14,16 +14,33 @@
                 </div>
                 <div class="card-body">
                     <!-- Sender -->
-                    <div class="mb-3">
+                    <div class="mb-3" sec:authorize="!hasAnyAuthority('ADMIN')">
                         <label class="fw-bold" th:text="#{transaction.sender}">Sender:</label>
                         <span th:text="${transaction.senderUsername}" class="text-dark ms-1"></span>
                     </div>
 
                     <!-- Recipient -->
-                    <div class="mb-3">
+                    <div class="mb-3" sec:authorize="!hasAnyAuthority('ADMIN')">
                         <label class="fw-bold" th:text="#{transaction.recipient}">Recipient:</label>
                         <span th:text="${transaction.recipientUsername}" class="text-dark ms-1"></span>
                     </div>
+
+                    <!-- Sender -->
+                    <div class="mb-3" sec:authorize="hasAnyAuthority('ADMIN')">
+                        <label class="fw-bold" th:text="#{transaction.sender}">Sender:</label>
+                        <a th:href="@{'/mvc/admin/users/' + ${senderId}}"
+                           th:text="${transaction.senderUsername}"
+                           class="text-decoration-none text-primary ms-1"></a>
+                    </div>
+
+                    <!-- Recipient -->
+                    <div class="mb-3" sec:authorize="hasAnyAuthority('ADMIN')">
+                        <label class="fw-bold" th:text="#{transaction.recipient}">Recipient:</label>
+                        <a th:href="@{'/mvc/admin/users/' + ${recipientId}}"
+                           th:text="${transaction.recipientUsername}"
+                           class="text-decoration-none text-primary ms-1"></a>
+                    </div>
+
 
                     <!-- Amount & Currency -->
                     <div class="mb-3">
