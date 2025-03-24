@@ -12,16 +12,16 @@ import org.springframework.context.annotation.PropertySource;
 public class RegisterUserInput {
 
     @NotBlank(message = "{error.firstNameBlank}")
-    @Size(min = 4, max = 32, message = "{error.firstNameLength}")
+    @Size(min = 2, max = 32, message = "{error.firstNameLength}")
     private String firstName;
 
     @NotBlank(message = "{error.lastNameBlank}")
-    @Size(min = 4, max = 32, message = "{error.lastNameLength}")
+    @Size(min = 2, max = 32, message = "{error.lastNameLength}")
     private String lastName;
 
     @NotBlank(message = "{error.emailRequired}")
     @Email(message = "{error.emailInvalid}")
-    @Size(min = 5, max = 200, message = "{error.emailLength}")
+    @Size(min = 5, max = 50, message = "{error.emailLength}")
     private String email;
 
     @NotBlank(message = "{error.username}")
