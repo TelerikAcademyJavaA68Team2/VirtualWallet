@@ -105,11 +105,11 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    <button type="button" class="btn btn-outline-dark rounded-pill" data-bs-dismiss="modal"
                                             th:text="#{card.delete.confirmation.close}"></button>
                                     <form th:action="@{'/mvc/profile/cards/' + ${card.cardId} + '/delete'}"
                                           method="post">
-                                        <input class="btn btn-danger" th:type="submit" th:value="#{card.delete}">
+                                        <input class="btn btn-danger rounded-pill" th:type="submit" th:value="#{card.delete}">
                                     </form>
                                 </div>
                             </div>
