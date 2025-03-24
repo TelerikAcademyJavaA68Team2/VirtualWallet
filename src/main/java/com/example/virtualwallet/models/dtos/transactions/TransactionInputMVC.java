@@ -1,7 +1,7 @@
 package com.example.virtualwallet.models.dtos.transactions;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.context.annotation.PropertySource;
@@ -20,9 +20,9 @@ public class TransactionInputMVC {
     private String walletId;
 
     @NotNull(message = "{error.transactionAmountBlank}")
-    @Positive(message = "{error.transactionAmountPositive}")
+    @DecimalMin(value = "0.01", message = "{error.transactionAmountPositive}")
     private BigDecimal amount;
 
-    @Size(max = 50)
+    @Size(max = 50, message = "{error.descriptionMaxChar}")
     private String description;
 }

@@ -43,7 +43,8 @@
                                         <span th:text="${error}">Error message will appear here</span>
                                     </div>
                                     <!-- Search Button -->
-                                    <button type="submit" class="btn btn-primary rounded-pill" th:text="#{transaction.searchButton}">
+                                    <button type="submit" class="btn btn-primary rounded-pill"
+                                            th:text="#{transaction.searchButton}">
                                         Search
                                     </button>
                                 </form>
@@ -77,13 +78,15 @@
                                     <th:block th:if="${activeWallets.size()} == 0">
                                         <div class="alert alert-warning text-center mt-3">
                                             <p>You have no active wallets yet!</p>
-                                            <a class="btn btn-primary rounded-pill mt-2" th:href="@{/mvc/profile/wallets}">
+                                            <a class="btn btn-primary rounded-pill mt-2"
+                                               th:href="@{/mvc/profile/wallets}">
                                                 Add a New Wallet
                                             </a>
                                         </div>
                                     </th:block>
                                     <div th:if="${activeWallets.size()} > 0" class="form-group">
-                                        <label class="mt-2" for="walletID" th:text="#{transaction.choseCurrency}">Select Currency:</label>
+                                        <label class="mt-2" for="walletID" th:text="#{transaction.choseCurrency}">Select
+                                            Currency:</label>
                                         <select id="walletID" class="form-select form-control" th:field="*{walletId}"
                                                 required>
                                             <option disabled selected value="">Select Currency</option>
@@ -99,18 +102,45 @@
                                         <label for="amount" th:text="#{transaction.create.amountText}">Amount:</label>
                                         <input type="number" min="0" step="1.00" id="amount" class="form-control"
                                                th:field="*{amount}" required placeholder="Enter amount">
+
+                                        <!-- Field-specific error -->
+                                        <div class="text-danger mt-1" th:if="${#fields.hasErrors('amount')}"
+                                             th:errors="*{amount}"></div>
                                     </div>
+
 
                                     <!-- Optional Description -->
                                     <div th:if="${activeWallets.size()} > 0" class="form-group position-relative mt-2">
                                         <label for="description" th:text="#{transaction.create.descriptionText}">Description:</label>
                                         <input type="text" id="description" class="form-control"
-                                               th:field="*{description}"
-                                               placeholder="e.g. 'The money I owe you', etc..">
+                                               th:field="*{description}" maxlength="50"
+                                               placeholder="e.g. 'The money I owe you', etc.."
+                                               style="width: 100%; font-family: monospace; letter-spacing: 0.4px;">
+                                        <small class="text-muted" id="desc-counter">0 / 50 characters</small>
+
+                                        <script>
+                                            document.addEventListener("DOMContentLoaded", function () {
+                                                const input = document.getElementById("description");
+                                                const counter = document.getElementById("desc-counter");
+
+                                                const updateCounter = () => {
+                                                    counter.textContent = `${input.value.length} / 50`;
+                                                };
+
+                                                input.addEventListener("input", updateCounter);
+                                                updateCounter(); // Init on load
+                                            });
+                                        </script>
+
+                                        <!-- Field-specific error -->
+                                        <div class="text-danger mt-1" th:if="${#fields.hasErrors('description')}"
+                                             th:errors="*{description}"></div>
                                     </div>
 
+
                                     <!-- Clear & Submit (with Modal Confirmation) -->
-                                    <input th:if="${activeWallets.size()} > 0" class="btn btn-outline-dark rounded-pill mt-3" type="reset"
+                                    <input th:if="${activeWallets.size()} > 0"
+                                           class="btn btn-outline-dark rounded-pill mt-3" type="reset"
                                            th:value="#{transaction.clearButton}"/>
 
                                     <!-- Button that triggers the confirmation modal -->
@@ -120,46 +150,65 @@
                                         <span th:text="#{transaction.submitButton}">Send Money</span>
                                     </button>
 
-                                    <div class="modal fade" id="confirm-transaction" tabindex="-1" aria-labelledby="confirmTransactionTitle" aria-hidden="true">
+                                    <div class="modal fade" id="confirm-transaction" tabindex="-1"
+                                         aria-labelledby="confirmTransactionTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
                                                 <!-- Modal Header -->
                                                 <div class="modal-header bg-gradient-primary-to-secondary p-4">
-                                                    <h5 class="modal-title font-alt text-white" id="confirmTransactionTitle"
-                                                        th:text="#{transaction.confirmDetailsTitle}">Confirm Transaction</h5>
-                                                    <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    <h5 class="modal-title font-alt text-white"
+                                                        id="confirmTransactionTitle"
+                                                        th:text="#{transaction.confirmDetailsTitle}">Confirm
+                                                        Transaction</h5>
+                                                    <button class="btn-close btn-close-white" type="button"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
 
                                                 <!-- Modal Body -->
                                                 <div class="modal-body border-0 p-4 text-center">
-                                                    <p class="text-muted mb-4" th:text="#{transaction.confirmDetailsDescription}">
+                                                    <p class="text-muted mb-4"
+                                                       th:text="#{transaction.confirmDetailsDescription}">
                                                         Please confirm the details below:
                                                     </p>
 
                                                     <!-- Centered Recipient Image -->
                                                     <div class="mb-3">
                                                         <img th:src="${recipient.photo}" alt="Recipient Photo"
-                                                             class="rounded-circle shadow" style="width: 100px; height: 100px; object-fit: cover;">
+                                                             class="rounded-circle shadow"
+                                                             style="width: 100px; height: 100px; object-fit: cover;">
                                                     </div>
 
                                                     <!-- Centered Info -->
-                                                    <p class="mb-2"><strong th:text="#{transaction.recipient}">Recipient:</strong> <span th:text="${recipient.username}">JohnDoe</span></p>
-                                                    <p class="mb-2"><strong th:text="#{transaction.wallet}">Wallet:</strong> <span id="wallet-confirm">Main Wallet</span></p>
-                                                    <p class="mb-2"><strong th:text="#{transaction.amount}">Amount:</strong> <span id="amount-confirm">$100</span></p>
-                                                    <p class="mb-0"><strong th:text="#{transaction.description}">Description:</strong> <span id="description-confirm">Dinner payment</span></p>
+                                                    <p class="mb-2"><strong th:text="#{transaction.recipient}">Recipient:</strong>
+                                                        <span th:text="${recipient.username}">JohnDoe</span></p>
+                                                    <p class="mb-2"><strong
+                                                            th:text="#{transaction.wallet}">Wallet:</strong> <span
+                                                            id="wallet-confirm">Main Wallet</span></p>
+                                                    <p class="mb-2"><strong
+                                                            th:text="#{transaction.amount}">Amount:</strong> <span
+                                                            id="amount-confirm">$100</span></p>
+                                                    <p class="mb-0">
+                                                        <strong th:text="#{transaction.description}">Description:</strong>
+                                                        <span id="description-confirm"
+                                                              class="d-block mt-1"
+                                                              style="font-size: 1.2rem; word-wrap: break-word;
+                                                              overflow-wrap: break-word; max-width: 100%;">Dinner payment</span>
+                                                    </p>
                                                 </div>
 
                                                 <!-- Modal Footer -->
                                                 <div class="modal-footer border-0 px-4 pb-4 justify-content-between">
                                                     <!-- EDIT BUTTON (Closes Modal) -->
-                                                    <button type="button" class="btn btn-outline-dark rounded-pill" data-bs-dismiss="modal">
+                                                    <button type="button" class="btn btn-outline-dark rounded-pill"
+                                                            data-bs-dismiss="modal">
                                                         <span th:text="#{transaction.editButton}">Edit</span>
                                                     </button>
 
                                                     <!-- CONFIRM BUTTON -->
                                                     <form th:action="@{/mvc/transactions/confirm}" method="post">
                                                         <!-- Include hidden inputs here if needed -->
-                                                        <button type="submit" class="btn btn-primary rounded-pill" th:text="#{transaction.submitButton}">
+                                                        <button type="submit" class="btn btn-primary rounded-pill"
+                                                                th:text="#{transaction.submitButton}">
                                                             Send Money
                                                         </button>
                                                     </form>
@@ -167,7 +216,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </form>
                             </div>
                         </div>
