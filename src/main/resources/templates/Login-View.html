@@ -35,6 +35,9 @@
                     <div th:if="${errorMessage}" class="alert alert-danger alert-pills">
                       <span class="alert-content" th:text="${errorMessage}"></span>
                     </div>
+                    <div th:if="${emailConfirmationMessage}" class="alert alert-warning text-center mb-4" role="alert">
+                      <span th:text="#{emailConfirmationMessage}">You must confirm your email to activate your account.</span>
+                    </div>
                     <!-- Username Field -->
                     <div class="form-group position-relative">
                       <label th:text="#{user.header.username}"></label><span
