@@ -2,6 +2,7 @@ package com.example.virtualwallet.services.contracts;
 
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.pageable.WalletPageOutput;
+import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletsWithHistoryOutput;
 import com.example.virtualwallet.models.enums.Currency;
 
@@ -19,6 +20,8 @@ public interface WalletService {
     WalletsWithHistoryOutput getActiveWalletsOfAuthenticatedUser(String mainCurrency, int page, int size);
 
     List<Wallet> getActiveWalletsOfUser(UUID user);
+
+    List<WalletBasicOutput> getActiveUserWalletsDto();
 
     WalletPageOutput getWalletPageById(UUID walletId, int page, int size);
 

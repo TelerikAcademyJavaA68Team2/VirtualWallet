@@ -108,7 +108,7 @@ public class TransactionMvcController {
     public String getSingleTransactionView(Model model, @PathVariable UUID id) {
         FullTransactionInfoOutput transactionInfoOutput = transactionService.getTransactionById(id);
         String senderId = userService.findUserByUsernameOrEmailOrPhoneNumber(transactionInfoOutput.getSenderUsername()).getId().toString();
-        String recipientId = userService.findUserByUsernameOrEmailOrPhoneNumber(transactionInfoOutput.getSenderUsername()).getId().toString();
+        String recipientId = userService.findUserByUsernameOrEmailOrPhoneNumber(transactionInfoOutput.getRecipientUsername()).getId().toString();
 
         model.addAttribute("senderId", senderId);
         model.addAttribute("recipientId", recipientId);

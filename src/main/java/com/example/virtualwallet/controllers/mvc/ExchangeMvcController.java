@@ -1,23 +1,27 @@
 package com.example.virtualwallet.controllers.mvc;
 
+import com.example.virtualwallet.models.dtos.exchange.ExchangeInput;
 import com.example.virtualwallet.models.dtos.exchange.ExchangePage;
 import com.example.virtualwallet.models.dtos.exchange.FullExchangeInfoOutput;
+import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
+import com.example.virtualwallet.services.contracts.ExchangeRateService;
 import com.example.virtualwallet.services.contracts.ExchangeService;
 import com.example.virtualwallet.services.contracts.UserService;
+import com.example.virtualwallet.services.contracts.WalletService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 
@@ -27,11 +31,13 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 public class ExchangeMvcController {
 
     private final ExchangeService exchangeService;
+    private final ExchangeRateService exchangeRateService;
+    private final WalletService walletService;
     private final UserService userService;
 
 
     @GetMapping("/{id}")
-    public String getSingleTransferView(@PathVariable UUID id, Model model) {
+    public String getSingleExchangeView(@PathVariable UUID id, Model model) {
         FullExchangeInfoOutput exchange = exchangeService.getExchangeById(id);
         String recipientId = userService.findUserByUsernameOrEmailOrPhoneNumber(exchange.getRecipientUsername()).getId().toString();
 
@@ -39,6 +45,95 @@ public class ExchangeMvcController {
         model.addAttribute("exchange", exchange);
         return "Exchange-View";
     }
+
+    @GetMapping("/new")
+    public String createExchange(
+            @RequestParam(required = false) String fromCurrency,
+            @RequestParam(required = false) String toCurrency,
+            Model model) {
+        String fromCurrencySanitized;
+        String toCurrencySanitized;
+
+        List<WalletBasicOutput> wallets = walletService.getActiveUserWalletsDto();
+
+        if (wallets.isEmpty()){
+            return "Exchange-Error-View";
+        }
+
+        List<Currency> currenciesList = Arrays.stream(Currency.values()).toList();
+        Set<String> activeCurrencies = wallets.stream()
+                .map(WalletBasicOutput::getCurrency)
+                .collect(Collectors.toSet());
+
+        if (fromCurrency != null && !fromCurrency.trim().isEmpty() && activeCurrencies.contains(fromCurrency.toUpperCase())) {
+            fromCurrencySanitized = fromCurrency.toUpperCase();
+        } else {
+            fromCurrencySanitized = activeCurrencies.iterator().next();
+        }
+
+
+        List<String> otherActiveCurrencies = activeCurrencies.stream()
+                .filter(e -> !e.equals(fromCurrencySanitized))
+                .toList();
+
+
+        List<String> otherInactiveCurrencies = currenciesList.stream()
+                .map(Enum::toString)
+                .filter(currency -> !activeCurrencies.contains(currency))
+                .toList();
+
+        if (toCurrency != null && !toCurrency.trim().isEmpty()) {
+            if (otherActiveCurrencies.contains(toCurrency)) {
+                toCurrencySanitized = toCurrency;
+            } else if (otherInactiveCurrencies.contains(toCurrency)) {
+                toCurrencySanitized = toCurrency;
+            } else {
+                if (wallets.size() >= 2) {
+                    toCurrencySanitized = otherActiveCurrencies.iterator().next();
+                } else {
+                    toCurrencySanitized = otherInactiveCurrencies.iterator().next();
+                }
+            }
+        } else {
+            if (wallets.size() >= 2) {
+                toCurrencySanitized = otherActiveCurrencies.iterator().next();
+            } else {
+                toCurrencySanitized = otherInactiveCurrencies.iterator().next();
+            }
+        }
+
+
+        BigDecimal rate = exchangeRateService.getExchangeRate(fromCurrencySanitized, toCurrencySanitized).getRate().stripTrailingZeros();
+        BigDecimal max = wallets.stream()
+                .filter(e -> e.getCurrency().equals(fromCurrencySanitized))
+                .findFirst()
+                .map(WalletBasicOutput::getBalance)
+                .orElse(BigDecimal.ZERO);
+
+        ExchangeInput exchangeInput = new ExchangeInput();
+        exchangeInput.setFromCurrency(fromCurrencySanitized);
+        exchangeInput.setToCurrency(toCurrencySanitized);
+        model.addAttribute("exchangeInput", exchangeInput);
+
+        model.addAttribute("fromCurrency", fromCurrencySanitized);
+        model.addAttribute("toCurrency", toCurrencySanitized);
+        model.addAttribute("exchangeRate", rate);
+        model.addAttribute("maxAmount", max);
+
+        model.addAttribute("activeCurrencies", activeCurrencies);
+        model.addAttribute("otherActiveCurrencies", otherActiveCurrencies);
+        model.addAttribute("otherInactiveCurrencies", otherInactiveCurrencies);
+
+        return "Create-Exchange-View";
+    }
+
+    @PostMapping("/new")
+    public String executeExchange(@Valid ExchangeInput request) {
+
+        exchangeService.createExchange(request);
+        return "redirect:/mvc/profile/wallets";
+    }
+
 
     @GetMapping
     public String getExchangesAndFilter(
