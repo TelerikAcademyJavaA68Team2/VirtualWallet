@@ -13,6 +13,22 @@ java {
     }
 }
 
+test {
+    environment "DB_URL", "jdbc:mariadb://localhost:3306/virtual_wallet"
+    environment "DB_USERNAME", "root"
+    environment "DB_PASSWORD", "root"
+    environment "CLOUDINARY_NAME", "dummy"
+    environment "CLOUDINARY_KEY", "dummy"
+    environment "CLOUDINARY_SECRET", "dummy"
+    environment "TWILIO_SID", "dummy"
+    environment "TWILIO_TOKEN", "dummy"
+    environment "TWILIO_PHONE", "dummy"
+    environment "MAIL_USERNAME", "dummy"
+    environment "MAIL_PASSWORD", "dummy"
+
+}
+
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -24,6 +40,12 @@ repositories {
 }
 
 dependencies {
+    // Jackson dependency for JSON processing
+    dependencyManagement {
+        imports {
+            mavenBom "com.fasterxml.jackson:jackson-bom:2.18.2"
+        }
+    }
 
     // Spring Info
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -51,10 +73,13 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
     // Jackson dependency for JSON processing
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.0'
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.0'
+//    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+//    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.18.2'
+//    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+//    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.2'
 
+
+//    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -73,6 +98,12 @@ dependencies {
 
     // Starter Mail for sending emails
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // Twilio for SMS verification
+    implementation 'com.twilio.sdk:twilio:10.7.1'
+
+    // Secrets injection
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 
 }
 
