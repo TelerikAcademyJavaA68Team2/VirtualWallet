@@ -12055,3 +12055,18 @@ td:not(.activity-column) {
   border-top-left-radius: 50% !important;
   border-bottom-left-radius: 50% !important;
 }
+
+/* Hover effect for inactive currencies */
+.bg-secondary-hover:hover {
+  background-color: #e6e6e6 !important; /* Slightly darker gray background */
+  color: #000 !important; /* Dark text */
+}
+/* Default style for inactive currencies */
+.bg-secondary-hover {
+  background-color: #f0f0f0; /* Light gray background */
+}
+
+/* Grayscale effect for flags on hover */
+.bg-secondary-hover:hover .gray-flag {
+  filter: grayscale(50%) brightness(100%); /* Makes the flag grayer and darker */
+}
