@@ -85,9 +85,33 @@
                         </li>
                     </ul>
                 </li>
+                <!-- Cards (Dropdown) -->
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle me-lg-3" href="#" id="cardsDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                       th:text="#{navigation.cards}">
+                        Cards
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="cardsDropdown">
+                        <li>
+                            <a class="dropdown-item"
+                               th:href="@{/mvc/admin/transfers}"
+                               th:text="#{navigation.viewTransfers}">
+                                All Transactions
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               th:href="@{/mvc/admin/exchanges}"
+                               th:text="#{navigation.viewExchanges}">
+                                All Transactions
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
             <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
-                <!-- Cards -->
+                <!-- Cards (Dropdown) -->
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                     <a class="nav-link me-lg-3"
                        th:href="@{/mvc/profile/cards}"
@@ -170,27 +194,26 @@
                         Features
                     </a>
                 </li>
-                <!-- <li class="nav-item" sec:authorize="!isAuthenticated()">
-                     <a class="nav-link me-lg-3"
-                        th:href="@{/mvc/home#download}">
-                         Download
-                     </a>
-                 </li>-->
+               <!-- <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link me-lg-3"
+                       th:href="@{/mvc/home#download}">
+                        Download
+                    </a>
+                </li>-->
             </ul>
 
-            <!--  &lt;!&ndash; Feedback Button &ndash;&gt;
-              <button sec:authorize="!isAuthenticated()" class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0"
-                      data-bs-toggle="modal" data-bs-target="#feedbackModal">
-                  <span class="d-flex align-items-center">
-                      <i class="bi-chat-text-fill me-2"></i>
-                      <span class="small">Send Feedback</span>
-                  </span>
-              </button>-->
+          <!--  &lt;!&ndash; Feedback Button &ndash;&gt;
+            <button sec:authorize="!isAuthenticated()" class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0"
+                    data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                <span class="d-flex align-items-center">
+                    <i class="bi-chat-text-fill me-2"></i>
+                    <span class="small">Send Feedback</span>
+                </span>
+            </button>-->
 
             <!-- ProfilePic -->
             <a sec:authorize="isAuthenticated()" th:href="@{/mvc/profile}"
-               class="btn btn-primary rounded-pill d-flex align-items-center p-0 overflow-hidden"
-               style="max-width: 200px">
+               class="btn btn-primary rounded-pill d-flex align-items-center p-0 overflow-hidden" style="max-width: 200px">
                 <img th:src="@{${#authentication.principal.photo}}" alt="Profile Picture"
                      class="rounded-start-circle" style="width: 37px; height: 37px; object-fit: cover;">
                 <span class="small text-white px-2 py-1" style="font-size: 16px"
@@ -284,136 +307,134 @@
 </footer>
 <div th:fragment="feedbackModal" class="modal fade" id="feedbackModal" tabindex="-1"
      aria-labelledby="feedbackModalLabel" aria-hidden="true">
-    <div th:fragment="contactModal" class="modal fade" id="feedbackModal" tabindex="-1"
-         aria-labelledby="feedbackModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header bg-gradient-primary-to-secondary p-4">
-                    <h5 class="modal-title font-alt text-white" id="feedbackModalLabel">Contact Us!</h5>
-                    <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
+<div th:fragment="contactModal" class="modal fade" id="feedbackModal" tabindex="-1"
+     aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header bg-gradient-primary-to-secondary p-4">
+                <h5 class="modal-title font-alt text-white" id="feedbackModalLabel">Contact Us!</h5>
+                <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
-                <!-- Modal Body -->
-                <div class="modal-body border-0 p-4">
-                    <form id="feedbackForm" action="https://formspree.io/f/xanejbge" method="POST">
-                        <!-- Name -->
-                        <div class="form-floating mb-3">
-                            <input class="form-control" id="name" name="name" type="text" placeholder="Your Name"
-                                   required>
-                            <label for="name">Full Name</label>
-                        </div>
+            <!-- Modal Body -->
+            <div class="modal-body border-0 p-4">
+                <form id="feedbackForm" action="https://formspree.io/f/xanejbge" method="POST">
+                    <!-- Name -->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="name" name="name" type="text" placeholder="Your Name" required>
+                        <label for="name">Full Name</label>
+                    </div>
 
-                        <!-- Email -->
-                        <div class="form-floating mb-3">
-                            <input class="form-control" id="email" name="email" type="email"
-                                   placeholder="name@example.com" required>
-                            <label for="email">Email Address</label>
-                        </div>
+                    <!-- Email -->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" required>
+                        <label for="email">Email Address</label>
+                    </div>
 
-                        <!-- Phone -->
-                        <div class="form-floating mb-3">
-                            <input class="form-control" id="phone" name="phone" type="tel" placeholder="(123) 456-7890">
-                            <label for="phone">Phone Number</label>
-                        </div>
+                    <!-- Phone -->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="phone" name="phone" type="tel" placeholder="(123) 456-7890">
+                        <label for="phone">Phone Number</label>
+                    </div>
 
-                        <!-- Message -->
-                        <div class="form-floating mb-3">
+                    <!-- Message -->
+                    <div class="form-floating mb-3">
                         <textarea class="form-control" id="message" name="message" style="height: 10rem"
                                   placeholder="Write your message here..." required></textarea>
-                            <label for="message">Message</label>
-                        </div>
+                        <label for="message">Message</label>
+                    </div>
 
-                        <!-- Honeypot -->
-                        <input type="text" name="_gotcha" style="display:none">
+                    <!-- Honeypot -->
+                    <input type="text" name="_gotcha" style="display:none">
 
-                        <!-- Submit Button -->
-                        <div class="d-grid">
-                            <button class="btn btn-primary rounded-pill btn-lg" type="submit">
-                                Send
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button class="btn btn-primary rounded-pill btn-lg" type="submit">
+                            Send
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ✅ Success Modal (stays on current page) -->
-    <div class="modal fade" id="feedbackSuccessModal" tabindex="-1" aria-labelledby="feedbackSuccessLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-center p-4">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title w-100 text-success" id="feedbackSuccessLabel">Message Sent</h5>
-                </div>
-                <div class="modal-body">
-                    <p>Thanks! We've received your message and will respond shortly.</p>
-                </div>
-                <div class="modal-footer justify-content-center border-0">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
-                </div>
+<!-- ✅ Success Modal (stays on current page) -->
+<div class="modal fade" id="feedbackSuccessModal" tabindex="-1" aria-labelledby="feedbackSuccessLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title w-100 text-success" id="feedbackSuccessLabel">Message Sent</h5>
+            </div>
+            <div class="modal-body">
+                <p>Thanks! We've received your message and will respond shortly.</p>
+            </div>
+            <div class="modal-footer justify-content-center border-0">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ✅ JS Script -->
+<!-- ✅ JS Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("feedbackForm");
+        if (!form) return;
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault(); // ✅ Stops default form submission
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: formData,
+                    headers: { Accept: "application/json" }
+                });
+
+                if (response.ok) {
+                    // ✅ Hide the feedback form modal
+                    const feedbackModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('feedbackModal'));
+                    feedbackModal.hide();
+
+                    // ✅ Show the success modal
+                    const successModal = new bootstrap.Modal(document.getElementById('feedbackSuccessModal'));
+                    successModal.show();
+
+                    form.reset();
+                } else {
+                    alert("Form submission failed. Please try again.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("There was a problem submitting your message.");
+            }
+        });
+    });
+</script>
+
+
+
+
+<div th:fragment="coreJS">
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Bundle (JS + Popper.js) -->
+    <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("feedbackForm");
-            if (!form) return;
-
-            form.addEventListener("submit", async function (e) {
-                e.preventDefault(); // ✅ Stops default form submission
-
-                const formData = new FormData(form);
-
-                try {
-                    const response = await fetch(form.action, {
-                        method: form.method,
-                        body: formData,
-                        headers: {Accept: "application/json"}
-                    });
-
-                    if (response.ok) {
-                        // ✅ Hide the feedback form modal
-                        const feedbackModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('feedbackModal'));
-                        feedbackModal.hide();
-
-                        // ✅ Show the success modal
-                        const successModal = new bootstrap.Modal(document.getElementById('feedbackSuccessModal'));
-                        successModal.show();
-
-                        form.reset();
-                    } else {
-                        alert("Form submission failed. Please try again.");
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert("There was a problem submitting your message.");
-                }
+            var dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+            dropdownElements.forEach(function (element) {
+                new bootstrap.Dropdown(element);
             });
         });
     </script>
-
-
-    <div th:fragment="coreJS">
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Bootstrap Bundle (JS + Popper.js) -->
-        <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
-                dropdownElements.forEach(function (element) {
-                    new bootstrap.Dropdown(element);
-                });
-            });
-        </script>
-        <!-- Core theme JS-->
-        <script src="/js/scripts.js"></script>
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-    </div>
+    <!-- Core theme JS-->
+    <script src="/js/scripts.js"></script>
+    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+</div>
 </body>
 </html>
