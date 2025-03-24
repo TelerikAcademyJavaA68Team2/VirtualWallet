@@ -26,10 +26,12 @@
 <nav th:fragment="navigation" class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm" id="mainNav">
     <div class="container px-5">
         <!-- Brand / Logo -->
-        <a sec:authorize="!isAuthenticated()" class="navbar-brand fw-bold" th:href="@{/mvc/home}" th:text="#{wallet.name}">
+        <a sec:authorize="!isAuthenticated()" class="navbar-brand fw-bold" th:href="@{/mvc/home}"
+           th:text="#{wallet.name}">
             MoneyMe
         </a>
-        <a sec:authorize="isAuthenticated()" class="navbar-brand fw-bold" th:href="@{/mvc/profile/wallets}" th:text="#{wallet.name}">
+        <a sec:authorize="isAuthenticated()" class="navbar-brand fw-bold" th:href="@{/mvc/profile/wallets}"
+           th:text="#{wallet.name}">
             MoneyMe
         </a>
 
@@ -43,11 +45,9 @@
 
         <!-- Collapsible Nav -->
         <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
-
-                <!-- Admin (Dropdown) - Visible only for Admin -->
-                <li class="nav-item dropdown" sec:authorize="isAuthenticated() and hasAnyAuthority('ADMIN')">
-                    <a class="nav-link dropdown-toggle me-lg-3"
+            <ul class="navbar-nav my-lg-0">
+                <li class="nav-item dropdown " sec:authorize="isAuthenticated() and hasAnyAuthority('ADMIN')">
+                    <a class=" nav-link dropdown-toggle me-lg-3"
                        href="#" id="adminDropdown"
                        role="button" data-bs-toggle="dropdown"
                        aria-expanded="false"
@@ -59,14 +59,14 @@
                             <a class="dropdown-item"
                                th:href="@{/mvc/admin/users}"
                                th:text="#{navigation.viewUsers}">
-                                View All Users
+                                All Users
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item"
                                th:href="@{/mvc/admin/transactions}"
                                th:text="#{navigation.viewTransactions}">
-                                View All Transactions
+                                All Transactions
                             </a>
                         </li>
                         <li>
@@ -95,58 +95,45 @@
                     <ul class="dropdown-menu" aria-labelledby="cardsDropdown">
                         <li>
                             <a class="dropdown-item"
-                               th:href="@{/mvc/profile/cards}"
-                               th:text="#{navigation.viewCards}">
-                                View Cards
+                               th:href="@{/mvc/admin/transfers}"
+                               th:text="#{navigation.viewTransfers}">
+                                All Transactions
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item"
-                               th:href="@{/mvc/profile/cards/new}"
-                               th:text="#{navigation.addCard}">
-                                Add Card
+                               th:href="@{/mvc/admin/exchanges}"
+                               th:text="#{navigation.viewExchanges}">
+                                All Transactions
                             </a>
                         </li>
                     </ul>
                 </li>
-
-                <!-- Wallets (Dropdown) -->
+            </ul>
+            <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
+                <!-- Cards (Dropdown) -->
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                    <a class="nav-link dropdown-toggle me-lg-3" href="#" id="walletsDropdown"
-                       role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                    <a class="nav-link me-lg-3"
+                       th:href="@{/mvc/profile/cards}"
+                       th:text="#{navigation.cards}">
+                        Cards
+                    </a>
+                </li>
+
+                <!-- Wallets -->
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link me-lg-3"
+                       th:href="@{/mvc/profile/wallets}"
                        th:text="#{navigation.wallets}">
                         Wallets
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="walletsDropdown">
-                        <li>
-                            <a class="dropdown-item"
-                               th:href="@{/mvc/profile/wallets}"
-                               th:text="#{navigation.viewWallets}">
-                                View Wallets
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item"
-                               th:href="@{/mvc/profile/wallets} + '#add-wallet-section'"
-                               th:text="#{navigation.addWallet}">
-                                Add Wallet
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item"
-                               th:href="@{/mvc/profile/wallets/fund-wallet}"
-                               th:text="#{navigation.fundWallet}">
-                                Fund Wallet
-                            </a>
-                        </li>
-                    </ul>
                 </li>
 
-                <!-- Your Activity (Dropdown) -->
+                <!-- Your History (Dropdown) -->
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                     <a class="nav-link dropdown-toggle me-lg-3" href="#" id="activityDropdown"
                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Your Activity
+                        Your History
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="activityDropdown">
                         <li>
@@ -200,36 +187,37 @@
                     </a>
                 </li>
 
-                <!-- Features & Download (Always Visible) -->
+                <!-- Features  -->
                 <li class="nav-item" sec:authorize="!isAuthenticated()">
                     <a class="nav-link me-lg-3"
                        th:href="@{/mvc/home#features}">
                         Features
                     </a>
                 </li>
-                <li class="nav-item" sec:authorize="!isAuthenticated()">
+               <!-- <li class="nav-item" sec:authorize="!isAuthenticated()">
                     <a class="nav-link me-lg-3"
                        th:href="@{/mvc/home#download}">
                         Download
                     </a>
-                </li>
+                </li>-->
             </ul>
 
-            <!-- Feedback Button -->
+          <!--  &lt;!&ndash; Feedback Button &ndash;&gt;
             <button sec:authorize="!isAuthenticated()" class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0"
                     data-bs-toggle="modal" data-bs-target="#feedbackModal">
                 <span class="d-flex align-items-center">
                     <i class="bi-chat-text-fill me-2"></i>
                     <span class="small">Send Feedback</span>
                 </span>
-            </button>
+            </button>-->
 
             <!-- ProfilePic -->
             <a sec:authorize="isAuthenticated()" th:href="@{/mvc/profile}"
-               class="btn btn-primary rounded-pill d-flex align-items-center p-0 overflow-hidden">
+               class="btn btn-primary rounded-pill d-flex align-items-center p-0 overflow-hidden" style="max-width: 200px">
                 <img th:src="@{${#authentication.principal.photo}}" alt="Profile Picture"
                      class="rounded-start-circle" style="width: 37px; height: 37px; object-fit: cover;">
-                <span class="small text-white px-2 py-1" style="font-size: 16px" th:text="${#authentication.principal.username}">Username</span>
+                <span class="small text-white px-2 py-1" style="font-size: 16px"
+                      th:text="${#authentication.principal.username}">Username</span>
             </a>
 
         </div>
@@ -317,6 +305,8 @@
     </div>
     <div th:insert="~{fragments/Page-Layout :: contactModal}"></div>
 </footer>
+<div th:fragment="feedbackModal" class="modal fade" id="feedbackModal" tabindex="-1"
+     aria-labelledby="feedbackModalLabel" aria-hidden="true">
 <div th:fragment="contactModal" class="modal fade" id="feedbackModal" tabindex="-1"
      aria-labelledby="feedbackModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -435,9 +425,9 @@
     <!-- Bootstrap Bundle (JS + Popper.js) -->
     <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             var dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
-            dropdownElements.forEach(function(element) {
+            dropdownElements.forEach(function (element) {
                 new bootstrap.Dropdown(element);
             });
         });
