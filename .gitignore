@@ -38,3 +38,6 @@ out/
 
 # Ignore Spring Boot application properties
 application.properties
+
+# env
+.env
