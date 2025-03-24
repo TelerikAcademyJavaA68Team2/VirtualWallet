@@ -131,7 +131,7 @@ public class WalletMvcController {
 
 
     @PostMapping("/fund-wallet")
-    public String fundWallet(@Valid @ModelAttribute("transferInput")TransferInputMVC transferInput,
+    public String fundWallet(@Valid @ModelAttribute("transferInput") TransferInputMVC transferInput,
                              BindingResult bindingResult,
                              Model model) {
 
