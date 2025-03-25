@@ -6,18 +6,20 @@ import com.example.virtualwallet.models.ExchangeRate;
 import com.example.virtualwallet.models.dtos.exchangeRates.ExchangeRateOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.enums.Currency;
+import org.springframework.web.client.RestTemplate;
 import com.example.virtualwallet.repositories.ExchangeRateRepository;
 import com.example.virtualwallet.services.contracts.ExchangeRateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.VALID_CURRENCIES_SET;
 import static com.example.virtualwallet.services.ExchangeServiceImpl.INVALID_CURRENCY;
-
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +27,16 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     public static final String INVALID_EXCHANGE_REQUEST = "Invalid exchange request";
     public static final String RATE_MUST_BE_POSITIVE = "Exchange rate must be positive!";
 
+    @Value("${exchangerate.api.base-url}")
+    private String baseUrl;
+
+    @Value("${exchangerate.api.key}")
+    private String apiKey;
+
+    private final RestTemplate restTemplate;
+
     private final ExchangeRateRepository exchangeRateRepository;
+
 
     @Override
     public void updateExchangeRate(String fromCurrency, String toCurrency, BigDecimal rate) {
@@ -43,14 +54,13 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         for (WalletBasicOutput wallet : wallets) {
             if (mainCurrency.equalsIgnoreCase(wallet.getCurrency())) {
                 sum = sum.add(wallet.getBalance());
-            }else {
+            } else {
                 sum = sum.add(wallet.getBalance()
-                        .multiply(getExchangeRate(wallet.getCurrency(), mainCurrency).getRate()));
+                        .multiply(getRate(Currency.valueOf(wallet.getCurrency()), Currency.valueOf(mainCurrency))));
             }
         }
         return sum.setScale(2, RoundingMode.HALF_UP);
     }
-
 
 
     @Override
@@ -58,21 +68,48 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         Currency enumFromCurrency;
         Currency enumToCurrency;
         if (VALID_CURRENCIES_SET.contains(fromCurrency.toUpperCase()) && VALID_CURRENCIES_SET.contains(toCurrency.toUpperCase())) {
-           if (fromCurrency.equalsIgnoreCase(toCurrency)){
-               throw new InvalidUserInputException(INVALID_EXCHANGE_REQUEST);
-           }
+            if (fromCurrency.equalsIgnoreCase(toCurrency)) {
+                throw new InvalidUserInputException(INVALID_EXCHANGE_REQUEST);
+            }
             enumFromCurrency = Currency.valueOf(fromCurrency.toUpperCase());
             enumToCurrency = Currency.valueOf(toCurrency.toUpperCase());
         } else {
             throw new InvalidUserInputException(INVALID_CURRENCY);
         }
-        return exchangeRateRepository.findByFromCurrencyAndToCurrency(enumFromCurrency, enumToCurrency);
+        BigDecimal apiRate = getRate(enumFromCurrency, enumToCurrency);
+
+        ExchangeRate rate = exchangeRateRepository.findByFromCurrencyAndToCurrency(enumFromCurrency, enumToCurrency);
+        rate.setRate(apiRate);
+        exchangeRateRepository.save(rate);
+        return rate;
+
     }
 
     @Override
     public BigDecimal getRate(Currency fromCurrency, Currency toCurrency) {
-        return exchangeRateRepository.findByFromCurrencyAndToCurrency(fromCurrency, toCurrency).getRate();
+        if (fromCurrency == toCurrency) {
+            return BigDecimal.ONE;
+        }
+
+        String url = String.format("%s/%s/latest/%s", baseUrl, apiKey, fromCurrency.name());
+
+        try {
+            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+
+            if (response != null && "success".equals(response.get("result"))) {
+                Map<String, Double> rates = (Map<String, Double>) response.get("conversion_rates");
+
+                if (rates != null && rates.containsKey(toCurrency.name())) {
+                    return BigDecimal.valueOf(rates.get(toCurrency.name()));
+                }
+            }
+            return exchangeRateRepository.findByFromCurrencyAndToCurrency(fromCurrency, toCurrency).getRate();
+
+        } catch (Exception e) {
+            return exchangeRateRepository.findByFromCurrencyAndToCurrency(fromCurrency, toCurrency).getRate();
+        }
     }
+
 
     @Override
     public List<ExchangeRateOutput> getAllExchangeRates() {
