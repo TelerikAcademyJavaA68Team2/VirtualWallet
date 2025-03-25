@@ -70,7 +70,8 @@
 
 
                                 <!-- Centered Search Button -->
-                                <div style="min-width: 40%" class="col d-flex align-items-center justify-content-center text-center">
+                                <div style="min-width: 40%"
+                                     class="col d-flex align-items-center justify-content-center text-center">
                                     <input type="submit" class="btn btn-primary rounded-pill" value="Search">
                                     <a href="/mvc/profile/exchanges">
                                         <span class="ms-1 btn btn-outline-dark rounded-pill">Reset filters</span>
@@ -79,7 +80,8 @@
 
                                 <!-- Right-Aligned Make Exchange Button -->
                                 <div class="col text-end">
-                                    <a href="/mvc/profile/exchanges/new" class="btn btn-success rounded-pill">New Exchange</a>
+                                    <a href="/mvc/profile/exchanges/new" class="btn btn-success rounded-pill">New
+                                        Exchange</a>
                                 </div>
                             </div>
                         </th>
@@ -147,10 +149,13 @@
 
                         <th class="text-center " style="width: 12.5%;">
                             <div class="d-flex">
-                                <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
-                                        style="background-color: white; min-width: 10px;"
+                                <button type="button" class="dropdown-toggle btn-outline-dark rounded-pill"
+                                        style="background-color: white; min-width: 87px;"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="bi bi-currency-dollar">From</span>
+                                    <span th:if="${fromCurrency != null && !fromCurrency.isEmpty()}"
+                                          th:text="${fromCurrency}"></span>
+                                    <span th:unless="${fromCurrency != null  && !fromCurrency.isEmpty()}"
+                                          class="bi bi-currency-dollar">From</span>
                                 </button>
                                 <ul class="dropdown-menu text-center custom-dropdown">
                                     <li>
@@ -168,10 +173,13 @@
                         </th>
                         <th class="text-center " style="width: 12.5%;">
                             <div class="d-flex">
-                                <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
+                                <button type="button" class="dropdown-toggle btn-outline-dark rounded-pill"
                                         style="background-color: white; min-width: 87px;"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="bi bi-currency-dollar">To</span>
+                                    <span th:if="${toCurrency != null  && !toCurrency.isEmpty()}"
+                                          th:text="${toCurrency}"></span>
+                                    <span th:unless="${toCurrency != null && !toCurrency.isEmpty()}"
+                                          class="bi bi-currency-dollar">To</span>
                                 </button>
                                 <ul class="dropdown-menu text-center custom-dropdown">
                                     <li>
@@ -233,7 +241,7 @@
                             sortBy='amount',
                             sortOrder=${sortBy == 'amount' && sortOrder == 'asc' ? 'desc' : 'asc'}
                         )}">
-                               From Amount
+                                From Amount
                                 <span th:if="${sortBy == 'amount'}">
                                 <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
                                 <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
@@ -257,7 +265,7 @@
                             sortBy='toAmount',
                             sortOrder=${sortBy == 'toAmount' && sortOrder == 'asc' ? 'desc' : 'asc'}
                         )}">
-                              To Amount
+                                To Amount
                                 <span th:if="${sortBy == 'toAmount'}">
                                 <i class="bi bi-caret-up-fill" th:if="${sortOrder == 'asc'}"></i>
                                 <i class="bi bi-caret-down-fill" th:if="${sortOrder == 'desc'}"></i>
@@ -266,7 +274,8 @@
                         </th>
 
                         <!-- Currency Column -->
-                        <th class="clickable-header  text-center" th:classappend="${sortBy == 'fromCurrency'} ? 'active' : ''">
+                        <th class="clickable-header  text-center"
+                            th:classappend="${sortBy == 'fromCurrency'} ? 'active' : ''">
                             <a th:href="@{/mvc/profile/exchanges(
                             page=${page},
                             size=${size},
@@ -289,7 +298,8 @@
                             </a>
                         </th>
 
-                        <th class="clickable-header  text-center" th:classappend="${sortBy == 'toCurrency'} ? 'active' : ''">
+                        <th class="clickable-header  text-center"
+                            th:classappend="${sortBy == 'toCurrency'} ? 'active' : ''">
                             <a th:href="@{/mvc/profile/exchanges(
                             page=${page},
                             size=${size},
@@ -326,7 +336,6 @@
                         <td th:text="${exchange.toAmount}"></td>
                         <td class=" text-center" th:text="${exchange.fromCurrency}"></td>
                         <td class=" text-center" th:text="${exchange.toCurrency}"></td>
-
 
 
                     </tr>
