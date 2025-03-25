@@ -4,12 +4,15 @@ import com.example.virtualwallet.models.Card;
 import com.example.virtualwallet.models.Transfer;
 import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.card.*;
+import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
+import com.example.virtualwallet.models.dtos.transfer.TransferInput;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransferStatus;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Role;
+import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
@@ -188,19 +191,6 @@ public class Helpers {
         );
     }
 
-//    public static UserFilterOptions createMockUserFilterOptions() {
-//        return new UserFilterOptions(
-//                MOCK_PHONE_NUMBER,
-//                MOCK_USER_USERNAME,
-//                MOCK_USER_EMAIL,
-//                Role.USER.name(),
-//                MOCK_ACCOUNT_STATUS,
-//                0,
-//                10,
-//                MOCK_USER_ORDER_BY
-//        );
-//    }
-
     public static Pageable createMockPageable() {
         return PageRequest.of(0, 20, Sort.unsorted());
     }
@@ -215,4 +205,35 @@ public class Helpers {
                 5L
         }));
     }
+
+    public static Card createMockExpiredCard(User owner) {
+        Card mockCard = createMockCard(owner);
+        mockCard.setExpirationDate(YearMonth.now().minusMonths(1));
+        return mockCard;
+    }
+
+    public static TransferInput createMockTransferInput(UUID cardId, String amount) {
+        TransferInput input = new TransferInput();
+        input.setCardId(cardId);
+        input.setAmount(new BigDecimal(amount));
+        input.setCurrency("USD");
+        return input;
+    }
+
+    public static TransactionFilterOptions createMockTransactionFilterOptions() {
+        TransactionFilterOptions filters = new TransactionFilterOptions();
+        filters.setPage(0);
+        filters.setSize(5);
+        filters.setSortBy("date");
+        filters.setSortOrder("asc");
+        return filters;
+    }
+
+    public static TransactionInput createMockTransactionInput() {
+        return new TransactionInput("mock@user.com",
+                new BigDecimal("50"), "USD", "Test");
+    }
+
+
+
 }

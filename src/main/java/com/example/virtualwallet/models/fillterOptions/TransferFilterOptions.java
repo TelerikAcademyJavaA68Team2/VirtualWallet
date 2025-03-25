@@ -52,6 +52,10 @@ public class TransferFilterOptions {
         this.size = size;
     }
 
+    public TransferFilterOptions() {
+
+    }
+
     private String validateSortBy(String sortBy) {
         List<String> validFields = Arrays.asList("amount", "date", "status", "currency", "recipientUsername");
         return (sortBy != null && !sortBy.isEmpty() && validFields.contains(sortBy)) ? sortBy : "date";
