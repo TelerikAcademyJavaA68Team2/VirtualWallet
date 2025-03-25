@@ -91,7 +91,8 @@ public class WalletMvcController {
     @GetMapping("/new")
     public String addNewWallet(@RequestParam String currency) {
         try {
-            walletService.createAuthenticatedUserWalletWalletByCurrency(currency);
+            UUID walletId = walletService.createAuthenticatedUserWalletWalletByCurrency(currency).getId();
+            return "redirect:/mvc/profile/wallets/" + walletId;
         } catch (Exception ignored) {
         }
         return "redirect:/mvc/profile/wallets";
