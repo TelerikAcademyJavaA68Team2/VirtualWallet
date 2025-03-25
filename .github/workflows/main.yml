@@ -61,3 +61,5 @@ jobs:
           TWILIO_PHONE: ${{ secrets.TWILIO_PHONE }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          EXCHANGE_RATE_API_URL: ${{ secrets.EXCHANGE_RATE_API_URL }}
+          EXCHANGE_RATE_API_KEY: ${{ secrets.EXCHANGE_RATE_API_KEY }}
