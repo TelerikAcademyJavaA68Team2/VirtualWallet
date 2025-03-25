@@ -68,7 +68,7 @@ Follow these steps to set up and run the application:
    - Create and configure a **MariaDB** database.  
    - Use the schema.sql script to create the database and data.sql to populate it.
 
-3. **Create .env file in root directory and configure Properties**  
+3. **Create .env file in root directory and configure variables**  
    Create a .env file in the root directory of the project and add the following environment variables:
    ```sh
    MAIL_USERNAME=your.email@gmail.com
@@ -87,6 +87,8 @@ Follow these steps to set up and run the application:
    DB_PASSWORD=db.password
    ```
  ⚠️ We recommend creating your own accounts for each service. If needed, we can provide shared credentials for development or demo purposes.
+
+ ⚠️ If you want CI/CD to work using `main.yml` you must create github secrets in your github repository.
 
 4. **Run the Application**  
    Execute `VirtualWalletApplication.class` to start the project.
