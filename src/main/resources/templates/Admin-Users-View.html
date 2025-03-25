@@ -133,8 +133,12 @@
                                 <button type="button" class=" w-100 dropdown-toggle btn-outline-dark rounded-pill"
                                         style="background-color: white;"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span th:text="'Role'"></span>
+                                     <span th:if="${role != null && !role.isEmpty()}"
+                                           th:text="${role}"></span>
+                                    <span th:unless="${role != null && !role.isEmpty()}" th:text="'Role'"></span>
                                 </button>
+
+
                                 <ul class="dropdown-menu text-center custom-dropdown">
                                     <li>
                                         <a class="dropdown-item" href="#" th:text="'-ALL-'"
@@ -143,12 +147,12 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#" th:text="'User'"
-                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, role='user', username=${username}, email=${email}, phoneNumber=${phoneNumber}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, role='User', username=${username}, email=${email}, phoneNumber=${phoneNumber}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#" th:text="'Admin'"
-                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, role='admin', username=${username}, email=${email}, phoneNumber=${phoneNumber}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, role='Admin', username=${username}, email=${email}, phoneNumber=${phoneNumber}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
                                         </a>
                                     </li>
                                 </ul>
@@ -161,7 +165,12 @@
                                 <button type="button" class="w-100 dropdown-toggle btn-outline-dark rounded-pill"
                                         style="background-color: white;"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span th:text="'Status'"></span>
+                                     <span th:if="${status != null && !status.isEmpty() && status=='deleted-and-blocked'}"
+                                           th:text="'B & D'"></span>
+                                    <span th:if="${status != null && !status.isEmpty() && status!='deleted-and-blocked'}"
+                                           th:text="${status}"></span>
+
+                                    <span th:if="${status == null || status.isEmpty() }" th:text="'Status'"></span>
                                 </button>
                                 <ul class="dropdown-menu text-center custom-dropdown">
                                     <li>
@@ -171,22 +180,22 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#" th:text="'Pending'"
-                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='pending', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='Pending', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#" th:text="'Active'"
-                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='active', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='Active', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#" th:text="'Blocked'"
-                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='blocked', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='Blocked', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#" th:text="'Deleted'"
-                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='deleted', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
+                                           th:href="@{/mvc/admin/users(page=${page}, size=${size}, status='Deleted', role=${role}, username=${username}, email=${email}, phoneNumber=${phoneNumber}, fromDate=${fromDate}, toDate=${toDate}, sortBy=${sortBy}, sortOrder=${sortOrder})}">
                                         </a>
                                     </li>
                                     <li>
