@@ -40,7 +40,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         ResetPasswordToken token = new ResetPasswordToken(tokenId, user);
         resetRepository.save(token);
 
-        emailService.sendResetPasswordEmail(user.getFirstName(), user.getEmail(), tokenId.toString(), isRestRequest);
+        emailService.sendResetPasswordEmail(user.getUsername(), user.getEmail(), tokenId.toString(), isRestRequest);
     }
 
     @Override
@@ -52,7 +52,10 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
         User user = token.getUser();
         user.setPassword(passwordEncoder.encode(input.getPassword()));
+        token.setConfirmedAt(LocalDateTime.now());
+
         userService.save(user);
+        resetRepository.save(token);
     }
 
     @Override

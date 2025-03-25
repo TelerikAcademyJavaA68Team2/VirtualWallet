@@ -44,7 +44,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendResetPasswordEmail(String firstName, String toEmail, String tokenId, boolean isRestRequest) {
+    public void sendResetPasswordEmail(String username, String toEmail, String tokenId, boolean isRestRequest) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
@@ -52,7 +52,7 @@ public class EmailServiceImpl implements EmailService {
             String urlStart = isRestRequest ? "api" : "mvc";
             String link = appUrl + """
                     /%s/auth/password-reset/%s""".formatted(urlStart, tokenId);
-            String finalHtmlMessage = buildEmailResetPassword(firstName, link);
+            String finalHtmlMessage = buildEmailResetPassword(username, link);
             helper.setText(finalHtmlMessage, true);
             helper.setTo(toEmail);
             helper.setSubject("Reset your password | " + appName);
@@ -151,7 +151,7 @@ public class EmailServiceImpl implements EmailService {
                 "                  \n" +
                 "                    </td>\n" +
                 "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
-                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Confirm your email</span>\n" +
+                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Reset your password</span>\n" +
                 "                    </td>\n" +
                 "                  </tr>\n" +
                 "                </tbody></table>\n" +
