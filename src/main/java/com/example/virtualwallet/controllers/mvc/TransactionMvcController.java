@@ -111,7 +111,10 @@ public class TransactionMvcController {
         FullTransactionInfoOutput transactionInfoOutput = transactionService.getTransactionById(id);
         String senderId = userService.findUserByUsernameOrEmailOrPhoneNumber(transactionInfoOutput.getSenderUsername()).getId().toString();
         String recipientId = userService.findUserByUsernameOrEmailOrPhoneNumber(transactionInfoOutput.getRecipientUsername()).getId().toString();
+        String currentUserUsername = userService.getAuthenticatedUser().getUsername();
 
+        model.addAttribute("personalRequest",true);
+        model.addAttribute("currentUserUsername",currentUserUsername);
         model.addAttribute("senderId", senderId);
         model.addAttribute("recipientId", recipientId);
         model.addAttribute("transaction", transactionInfoOutput);

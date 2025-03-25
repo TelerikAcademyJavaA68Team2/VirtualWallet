@@ -57,10 +57,14 @@
             <span th:text="#{exchange.back}">Back</span>
           </a>
 
-          <a th:if="${currentUser.role.name() != 'ADMIN'}" href="/mvc/profile/exchanges" class="btn btn-outline-dark rounded-pill">
+
+          <a th:if="${currentUser.role.name() == 'ADMIN' && personalRequest}" href="/mvc/profile/exchanges" class="btn btn-outline-dark rounded-pill">
             <span th:text="#{exchange.viewAllExchanges}">View All Exchanges</span>
           </a>
-          <a th:if="${currentUser.role.name() == 'ADMIN'}" href="/mvc/admin/exchanges" class="btn btn-outline-dark rounded-pill">
+          <a th:if="${currentUser.role.name() == 'ADMIN' && !personalRequest}" href="/mvc/admin/exchanges" class="btn btn-outline-dark rounded-pill">
+            <span th:text="#{exchange.viewAllExchanges}">View All Exchanges</span>
+          </a>
+          <a th:if="${currentUser.role.name() != 'ADMIN'}" href="/mvc/profile/exchanges" class="btn btn-outline-dark rounded-pill">
             <span th:text="#{exchange.viewAllExchanges}">View All Exchanges</span>
           </a>
         </div>
