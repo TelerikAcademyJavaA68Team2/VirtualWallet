@@ -14,12 +14,12 @@
                 </div>
                 <div class="card-body">
                     <!-- Recipient -->
-                    <div class="mb-3" sec:authorize="!hasAnyAuthority('ADMIN')">
+                    <div class="mb-3" th:if="${currentUser.role.name() != 'ADMIN'}">
                         <label class="fw-bold" th:text="#{transfer.recipient}">Recipient:</label>
                         <span th:text="${transfer.recipientUsername}" class="text-dark ms-1"></span>
                     </div>
 
-                    <div class="mb-3" sec:authorize="hasAnyAuthority('ADMIN')">
+                    <div class="mb-3" th:if="${currentUser.role.name() == 'ADMIN'}">
                         <label class="fw-bold" th:text="#{transfer.recipient}">Recipient:</label>
                         <a th:href="@{'/mvc/admin/users/' + ${recipientId}}"
                            th:text="${transfer.recipientUsername}"
@@ -62,7 +62,11 @@
                     </a>
 
                     <!-- View All Transfers Button -->
-                    <a href="/mvc/profile/transfers" class="btn btn-outline-dark rounded-pill">
+                    <a th:if="${currentUser.role.name() != 'ADMIN'}" href="/mvc/profile/transfers" class="btn btn-outline-dark rounded-pill">
+                        <span th:text="#{transfer.viewAll}">View All Transfers</span>
+                    </a>
+
+                    <a th:if="${currentUser.role.name() == 'ADMIN'}" href="/mvc/admin/transfers" class="btn btn-outline-dark rounded-pill">
                         <span th:text="#{transfer.viewAll}">View All Transfers</span>
                     </a>
                 </div>
