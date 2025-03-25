@@ -23,6 +23,7 @@ We have deployed our project using **Heroku** and **AWS RDB**. Also, we provide 
   - Add and manage credit/debit cards securely.
   - Deposit money into the virtual wallet from linked bank cards.
   - Transfer funds to other users via phone number, username, or email (after account verification).
+  - Exchange money with live exchange rates.
   - View and filter transaction history by date, recipient, sender, etc.
   - Set up and manage multiple virtual wallets, one wallet for each supported currency.
 
@@ -46,6 +47,7 @@ We have deployed our project using **Heroku** and **AWS RDB**. Also, we provide 
 - **JWT Authentication**
 - **Swagger API Documentation**
 - **Cloudinary API for Profile Picture Upload**
+- **ExchangeRate API for Live Exchange Rate Update**
 - **Starter Mail for Email Verification**
 - **FormSpree for contact forms**
 - **Heroku for application hosting platform**
@@ -85,6 +87,9 @@ Follow these steps to set up and run the application:
    DB_URL=your.db.url
    DB_USERNAME=db.username
    DB_PASSWORD=db.password
+
+   EXCHANGE_RATE_API_URL=exchangerate.api.url
+   EXCHANGE_RATE_API_KEY=exchangerate.api.key
    ```
  ⚠️ We recommend creating your own accounts for each service. If needed, we can provide shared credentials for development or demo purposes.
 
