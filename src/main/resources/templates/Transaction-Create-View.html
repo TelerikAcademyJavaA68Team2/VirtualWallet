@@ -100,7 +100,7 @@
                                     <!-- ============ STEP 3: ENTER TRANSACTION DETAILS ============ -->
                                     <div th:if="${activeWallets.size()} > 0" class="form-group position-relative mt-2">
                                         <label for="amount" th:text="#{transaction.create.amountText}">Amount:</label>
-                                        <input type="number" min="0" step="1.00" id="amount" class="form-control"
+                                        <input type="number" min="0" step="any" id="amount" class="form-control"
                                                th:field="*{amount}" required placeholder="Enter amount">
 
                                         <!-- Field-specific error -->
