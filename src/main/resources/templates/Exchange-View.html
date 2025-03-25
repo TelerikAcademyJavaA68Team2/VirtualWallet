@@ -13,12 +13,12 @@
         </div>
         <div class="card-body">
           <!-- Recipient -->
-          <div class="mb-3" sec:authorize="!hasAnyAuthority('ADMIN')">
+          <div class="mb-3" th:if="${currentUser.role.name() != 'ADMIN'}">
             <label class="fw-bold" th:text="#{exchange.recipient}">Recipient:</label>
             <span th:text="${exchange.recipientUsername}" class="text-dark ms-1"></span>
           </div>
 
-          <div class="mb-3" sec:authorize="hasAnyAuthority('ADMIN')">
+          <div class="mb-3" th:if="${currentUser.role.name() == 'ADMIN'}">
             <label class="fw-bold" th:text="#{exchange.recipient}">Recipient:</label>
             <a th:href="@{'/mvc/admin/users/' + ${recipientId}}"
                th:text="${exchange.recipientUsername}"
@@ -57,7 +57,10 @@
             <span th:text="#{exchange.back}">Back</span>
           </a>
 
-          <a href="/mvc/profile/exchanges" class="btn btn-outline-dark rounded-pill">
+          <a th:if="${currentUser.role.name() != 'ADMIN'}" href="/mvc/profile/exchanges" class="btn btn-outline-dark rounded-pill">
+            <span th:text="#{exchange.viewAllExchanges}">View All Exchanges</span>
+          </a>
+          <a th:if="${currentUser.role.name() == 'ADMIN'}" href="/mvc/admin/exchanges" class="btn btn-outline-dark rounded-pill">
             <span th:text="#{exchange.viewAllExchanges}">View All Exchanges</span>
           </a>
         </div>
