@@ -129,10 +129,13 @@
 
             <th class="text-center " style="width: 10%;">
               <div class="d-flex">
-                <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
-                        style="background-color: white"
+                <button type="button" class="dropdown-toggle btn-outline-dark rounded-pill"
+                        style="background-color: white; min-width: 87px;"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                  <span class="bi bi-currency-dollar"></span>
+                                    <span th:if="${currency != null && !currency.isEmpty()}"
+                                          th:text="${currency}"></span>
+                  <span th:unless="${currency != null  && !currency.isEmpty()}"
+                        class="bi bi-currency-dollar"></span>
                 </button>
                 <ul class="dropdown-menu text-center custom-dropdown">
                   <li>
@@ -154,7 +157,9 @@
                 <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
                         style="background-color: white; min-width: 160px"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                  <span th:text="'Status'"></span>
+                   <span th:if="${status != null && !status.isEmpty()}"
+                         th:text="${status}"></span>
+                  <span th:unless="${status != null && !status.isEmpty()}" th:text="'Status'"></span>
                 </button>
                 <ul class="dropdown-menu text-center custom-dropdown-160px">
                   <li>
@@ -163,12 +168,12 @@
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" th:text="'APPROVED'"
+                    <a class="dropdown-item" href="#" th:text="'Approved'"
                        th:href="@{/mvc/admin/transfers(age=${page}, size=${size}, recipient=${recipient}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency= ${currency},status='APPROVED', sortBy=${sortBy}, sortOrder=${sortOrder})}">
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" th:text="'DECLINED'"
+                    <a class="dropdown-item" href="#" th:text="'Declined'"
                        th:href="@{/mvc/admin/transfers(age=${page}, size=${size}, recipient=${recipient}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency= ${currency},status='DECLINED', sortBy=${sortBy}, sortOrder=${sortOrder})}">
                     </a>
                   </li>

@@ -134,10 +134,12 @@
                         <th class="text-center " style="width: 10%;">
                             <div class="d-flex">
                                 <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
-                                        style="background-color: white"
+                                        style="background-color: white; min-width: 87px;"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="bi bi-currency-dollar"></span>
-                                </button>
+ <span th:if="${currency != null && !currency.isEmpty()}"
+                                          th:text="${currency}"></span>
+                  <span th:unless="${currency != null  && !currency.isEmpty()}"
+                        class="bi bi-currency-dollar"></span>                                </button>
                                 <ul class="dropdown-menu text-center custom-dropdown">
                                     <li>
                                         <a class="dropdown-item" href="#" th:text="'-ALL-'"
@@ -158,8 +160,10 @@
                                 <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
                                         style="background-color: white; min-width: 200px"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span th:text="'Status'"></span>
-                                </button>
+<span th:if="${status != null && !status.isEmpty()}"
+                         th:text="${status}"></span>
+                  <span th:unless="${status != null && !status.isEmpty()}" th:text="'Status'"></span>
+                                              </button>
                                 <ul class="dropdown-menu text-center custom-dropdown-200px">
                                     <li>
                                         <a class="dropdown-item" href="#" th:text="'-ALL-'"
@@ -167,12 +171,12 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#" th:text="'APPROVED'"
+                                        <a class="dropdown-item" href="#" th:text="'Approved'"
                                            th:href="@{/mvc/profile/transfers(age=${page}, size=${size}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency= ${currency},status='APPROVED', sortBy=${sortBy}, sortOrder=${sortOrder})}">
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#" th:text="'DECLINED'"
+                                        <a class="dropdown-item" href="#" th:text="'Declined'"
                                            th:href="@{/mvc/profile/transfers(age=${page}, size=${size}, fromDate=${fromDate}, toDate=${toDate}, minAmount=${minAmount}, maxAmount=${maxAmount}, currency= ${currency},status='DECLINED', sortBy=${sortBy}, sortOrder=${sortOrder})}">
                                         </a>
                                     </li>
