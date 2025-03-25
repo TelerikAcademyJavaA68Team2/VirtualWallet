@@ -2,7 +2,7 @@
 
 ## Access Our Project
 
-We have deployed our project using **Heroku** and **AWS RDB**. Also, we provide **Swagger API Documentation** to facilitate testing and exploration of the wallet’s endpoints.
+We have deployed our project using **Heroku** and **AWS RDB**. Also, we provide **Swagger API Documentation** to facilitate testing and exploration of the REST API’s endpoints.
 
 - **App URL**: [`https://money-me-84fb9ba46b45.herokuapp.com/`](https://money-me-84fb9ba46b45.herokuapp.com/)  
 - **Swagger URL**: [`https://money-me-84fb9ba46b45.herokuapp.com/swagger-ui/index.html`](https://money-me-84fb9ba46b45.herokuapp.com/swagger-ui/index.html)
@@ -63,13 +63,30 @@ Follow these steps to set up and run the application:
    git clone https://github.com/TelerikAcademyJavaA68Team2/VirtualWallet.git
    cd virtual-wallet
    ```
-
+ 
 2. **Set Up the Database**  
    - Create and configure a **MariaDB** database.  
-   - Use the provided database scripts to populate it.
+   - Use the schema.sql script to create the database and data.sql to populate it.
 
-3. **Configure Properties**  
-   Edit `application.properties` in `src/main/resources/` to match your database settings.
+3. **Create .env file in root directory and configure Properties**  
+   Create a .env file in the root directory of the project and add the following environment variables:
+   ```sh
+   MAIL_USERNAME=your.email@gmail.com
+   MAIL_PASSWORD=mail.password
+
+   CLOUDINARY_NAME=cloudinary.api.name
+   CLOUDINARY_KEY=cloudinary.api.key
+   CLOUDINARY_SECRET=cloudinary.api.secret
+
+   TWILIO_SID=twilio.sid
+   TWILIO_TOKEN=twilio.token
+   TWILIO_PHONE=twilio.phone
+
+   DB_URL=your.db.url
+   DB_USERNAME=db.username
+   DB_PASSWORD=db.password
+   ```
+ ⚠️ We recommend creating your own accounts for each service. If needed, we can provide shared credentials for development or demo purposes.
 
 4. **Run the Application**  
    Execute `VirtualWalletApplication.class` to start the project.
@@ -84,7 +101,7 @@ Follow these steps to set up and run the application:
 - The JWT token is set to expire after **100 days** to facilitate testing.
 
 ⚠️ **Security Disclaimer**  
-- Do **not** use actual credit card details.  
+- Do **not** use actual credit card details and personal information!  
 
 ---
 
