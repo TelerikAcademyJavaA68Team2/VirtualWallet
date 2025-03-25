@@ -41,6 +41,7 @@ public class ExchangeMvcController {
         FullExchangeInfoOutput exchange = exchangeService.getExchangeById(id);
         String recipientId = userService.findUserByUsernameOrEmailOrPhoneNumber(exchange.getRecipientUsername()).getId().toString();
 
+        model.addAttribute("personalRequest", true);
         model.addAttribute("recipientId", recipientId);
         model.addAttribute("exchange", exchange);
         return "Exchange-View";

@@ -11,7 +11,7 @@ public class PasswordUpdateInput {
     @NotBlank(message = "{error.passwordRequired}")
     private String password;
 
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[+\\-*&^%$#@!])[A-Za-z\\d+\\-*&^%$#@!]{8,}$",
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[\\W_])[A-Za-z\\d\\W_]{8,}$",
             message = "{error.passwordValidation}")
     @Size(min = 8, max = 40, message = "{error.passwordLength}")
     private String newPassword;

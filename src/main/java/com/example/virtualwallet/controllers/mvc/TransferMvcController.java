@@ -37,6 +37,7 @@ public class TransferMvcController {
         FullTransferInfoOutput transferOutput = transferService.getTransferById(id);
         String recipientId = userService.findUserByUsernameOrEmailOrPhoneNumber(transferOutput.getRecipientUsername()).getId().toString();
 
+        model.addAttribute("personalRequest", true);
         model.addAttribute("recipientId", recipientId);
         model.addAttribute("transfer", transferOutput);
         return "Transfer-View";
