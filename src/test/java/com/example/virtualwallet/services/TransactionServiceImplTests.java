@@ -32,11 +32,17 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceImplTests {
 
-    @Mock private TransactionRepository transactionRepository;
-    @Mock private UserService userService;
-    @Mock private WalletService walletService;
+    @Mock
+    private TransactionRepository transactionRepository;
 
-    @InjectMocks private TransactionServiceImpl transactionService;
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private WalletService walletService;
+
+    @InjectMocks
+    private TransactionServiceImpl transactionService;
 
     private User user;
     private Wallet wallet;
