@@ -7,7 +7,7 @@ import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.Role;
-import com.example.virtualwallet.models.enums.TransactionStatus;
+import com.example.virtualwallet.models.enums.TransferStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -103,9 +103,9 @@ public class ValidationHelpers {
         return (value == null || value.trim().isEmpty()) ? Optional.empty() : Optional.of(value);
     }
 
-    public static Optional<TransactionStatus> sanitizeTransactionStatus(String value) {
+    public static Optional<TransferStatus> sanitizeTransferStatus(String value) {
         return (value == null || value.trim().isEmpty() || !VALID_TRANSACTION_STATUS_SET.contains(value.toUpperCase()))
-                ? Optional.empty() : Optional.of(TransactionStatus.valueOf(value.toUpperCase()));
+                ? Optional.empty() : Optional.of(TransferStatus.valueOf(value.toUpperCase()));
     }
 
     public static Optional<Currency> sanitizeCurrency(String value) {

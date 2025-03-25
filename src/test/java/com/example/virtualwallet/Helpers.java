@@ -7,7 +7,7 @@ import com.example.virtualwallet.models.dtos.card.*;
 import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
-import com.example.virtualwallet.models.enums.TransactionStatus;
+import com.example.virtualwallet.models.enums.TransferStatus;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Role;
 import org.springframework.data.domain.*;
@@ -160,7 +160,7 @@ public class Helpers {
         Transfer mockTransfer = new Transfer();
         mockTransfer.setId(UUID.randomUUID());
         mockTransfer.setAmount(BigDecimal.valueOf(50.00));
-        mockTransfer.setStatus(TransactionStatus.APPROVED);
+        mockTransfer.setStatus(TransferStatus.APPROVED);
         mockTransfer.setDate(LocalDateTime.now());
         mockTransfer.setCard(card);
         mockTransfer.setWallet(wallet);
