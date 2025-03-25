@@ -44,6 +44,17 @@ CREATE TABLE email_confirmation_token
     FOREIGN KEY (user_id) REFERENCES user (id)
 );
 
+-- Password Reset Token
+CREATE TABLE reset_password_token
+(
+    id           UUID PRIMARY KEY,
+    user_id      UUID        NOT NULL,
+    confirmed_at DATETIME(6),
+    created_at   DATETIME(6) NOT NULL,
+    expires_at   DATETIME(6) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id)
+);
+
 -- Wallet Table
 CREATE TABLE wallet
 (

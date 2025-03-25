@@ -2,9 +2,12 @@ package com.example.virtualwallet.controllers.mvc;
 
 import com.example.virtualwallet.auth.AuthenticationService;
 import com.example.virtualwallet.exceptions.*;
+import com.example.virtualwallet.models.dtos.auth.NewPasswordResetInput;
+import com.example.virtualwallet.models.dtos.auth.PasswordResetInput;
 import com.example.virtualwallet.services.contracts.EmailConfirmationService;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
+import com.example.virtualwallet.services.contracts.PasswordResetService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class AuthenticationMvcController {
 
     private final AuthenticationService authenticationService;
     private final EmailConfirmationService emailConfirmationService;
+    private final PasswordResetService passwordResetService;
 
 
     @GetMapping("/login")
@@ -116,8 +120,70 @@ public class AuthenticationMvcController {
             return "redirect:/mvc/profile?emailTokenExpired=true";
         } catch (EmailConfirmedException e) {
             return "redirect:/mvc/profile";
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return "redirect:/mvc/home";
         }
+    }
+
+    @GetMapping("/password-reset")
+    public String passwordReset(Model model) {
+        model.addAttribute("passwordResetInput", new PasswordResetInput());
+        return "Forgotten-Password-View";
+    }
+
+    @PostMapping("/password-reset")
+    public String processPasswordResetInput(@Valid @ModelAttribute("passwordResetInput") PasswordResetInput input, BindingResult errors, Model model) {
+        if (errors.hasErrors()) {
+            return "Forgotten-Password-View";
+        }
+        try {
+            passwordResetService.sendResetPasswordEmail(input, false);
+            return "redirect:/mvc/auth/login";
+        } catch (EntityNotFoundException e) {
+            errors.rejectValue("email", "email.not.found", e.getMessage());
+            model.addAttribute("passwordResetInput", input);
+            return "Forgotten-Password-View";
+        }catch (EmailConfirmationException e) {
+            errors.rejectValue("email", "email.abuse", e.getMessage());
+            model.addAttribute("passwordResetInput", input);
+            return "Forgotten-Password-View";
+        }
+
+    }
+
+    @GetMapping("/password-reset/{id}")
+    public String passwordResetWindow(@PathVariable UUID id, Model model) {
+        if (!passwordResetService.checkIfTokenExists(id)) {
+            return "redirect:/mvc/auth/login";
+        }
+
+        model.addAttribute("tokenId", id);
+        model.addAttribute("newPasswordInput", new NewPasswordResetInput());
+        return "Request-New-Password-View";
+    }
+
+    @PostMapping("/password-reset/{id}")
+    public String processPasswordResetInput(@PathVariable UUID id, @Valid @ModelAttribute("newPasswordInput") NewPasswordResetInput input, BindingResult errors, Model model) {
+        if (errors.hasErrors()) {
+            model.addAttribute("tokenId", id);
+            model.addAttribute("newPasswordInput", input);
+            return "Request-New-Password-View";
+        }
+
+        try {
+            passwordResetService.processResetPasswordInput(input, id);
+        } catch (InvalidUserInputException e) {
+            errors.rejectValue("password", "password.mismatch", e.getMessage());
+            model.addAttribute("tokenId", id);
+            model.addAttribute("newPasswordInput", input);
+            return "Request-New-Password-View";
+        } catch (EntityNotFoundException e) {
+            errors.rejectValue("password", "input.mismatch", e.getMessage());
+            model.addAttribute("tokenId", id);
+            model.addAttribute("newPasswordInput", input);
+            return "Request-New-Password-View";
+        }
+
+        return "redirect:/mvc/auth/login";
     }
 }
