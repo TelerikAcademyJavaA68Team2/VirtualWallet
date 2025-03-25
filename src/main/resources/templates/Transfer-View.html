@@ -50,7 +50,8 @@
                     <!-- Date -->
                     <div class="mb-3">
                         <label class="fw-bold" th:text="#{transfer.date}">Date:</label>
-                        <span th:text="${#temporals.format(transfer.date, 'yyyy-MM-dd HH:mm:ss')}" class="text-dark ms-1"></span>
+                        <span th:text="${#temporals.format(transfer.date, 'yyyy-MM-dd HH:mm:ss')}"
+                              class="text-dark ms-1"></span>
                     </div>
                 </div>
 
@@ -62,11 +63,18 @@
                     </a>
 
                     <!-- View All Transfers Button -->
-                    <a th:if="${currentUser.role.name() != 'ADMIN'}" href="/mvc/profile/transfers" class="btn btn-outline-dark rounded-pill">
+                    <a th:if="${currentUser.role.name() == 'ADMIN' && personalRequest}" href="/mvc/profile/transfers"
+                       class="btn btn-outline-dark rounded-pill">
                         <span th:text="#{transfer.viewAll}">View All Transfers</span>
                     </a>
 
-                    <a th:if="${currentUser.role.name() == 'ADMIN'}" href="/mvc/admin/transfers" class="btn btn-outline-dark rounded-pill">
+                    <a th:if="${currentUser.role.name() == 'ADMIN' && !personalRequest}" href="/mvc/admin/transfers"
+                       class="btn btn-outline-dark rounded-pill">
+                        <span th:text="#{transfer.viewAll}">View All Transfers</span>
+                    </a>
+
+                    <a th:if="${currentUser.role.name() != 'ADMIN'}" href="/mvc/profile/transfers"
+                       class="btn btn-outline-dark rounded-pill">
                         <span th:text="#{transfer.viewAll}">View All Transfers</span>
                     </a>
                 </div>

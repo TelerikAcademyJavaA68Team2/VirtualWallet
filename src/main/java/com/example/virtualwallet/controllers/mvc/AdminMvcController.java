@@ -326,6 +326,8 @@ public class AdminMvcController {
                 findUserByUsernameOrEmailOrPhoneNumber(transactionInfoOutput.getSenderUsername()).getId().toString();
         String recipientId = userService.
                 findUserByUsernameOrEmailOrPhoneNumber(transactionInfoOutput.getRecipientUsername()).getId().toString();
+
+        model.addAttribute("personalRequest",false);
         model.addAttribute("transaction", transactionInfoOutput);
         model.addAttribute("senderId", senderId);
         model.addAttribute("recipientId", recipientId);
@@ -337,6 +339,8 @@ public class AdminMvcController {
         FullTransferInfoOutput transferOutput = transferService.getTransferById(id);
         String recipientId = userService.
                 findUserByUsernameOrEmailOrPhoneNumber(transferOutput.getRecipientUsername()).getId().toString();
+
+        model.addAttribute("personalRequest", false);
         model.addAttribute("transfer", transferOutput);
         model.addAttribute("recipientId", recipientId);
         return "Transfer-View";
@@ -347,6 +351,8 @@ public class AdminMvcController {
         FullExchangeInfoOutput exchange = exchangeService.getExchangeById(id);
         String recipientId = userService.
                 findUserByUsernameOrEmailOrPhoneNumber(exchange.getRecipientUsername()).getId().toString();
+
+        model.addAttribute("personalRequest", false);
         model.addAttribute("exchange", exchange);
         model.addAttribute("recipientId", recipientId);
         return "Exchange-View";
