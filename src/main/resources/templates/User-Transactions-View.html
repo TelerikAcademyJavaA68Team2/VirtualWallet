@@ -132,10 +132,13 @@
 
                         <th class="text-center " style="width: 6%;">
                             <div class="d-flex">
-                                <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
-                                        style="background-color: white"
+                                <button type="button" class="dropdown-toggle btn-outline-dark rounded-pill"
+                                        style="background-color: white; min-width: 87px;"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="bi bi-currency-dollar"></span>
+                                    <span th:if="${currency != null && !currency.isEmpty()}"
+                                          th:text="${currency}"></span>
+                                    <span th:unless="${currency != null  && !currency.isEmpty()}"
+                                          class="bi bi-currency-dollar"></span>
                                 </button>
                                 <ul class="dropdown-menu text-center custom-dropdown">
                                     <li>
