@@ -169,13 +169,13 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void createAuthenticatedUserWalletWalletByCurrency(String currency) {
+    public Wallet createAuthenticatedUserWalletWalletByCurrency(String currency) {
         Currency enumCurrency = validateAndConvertCurrency(currency);
         User user = userService.getAuthenticatedUser();
         if (walletRepository.checkIfUserHasActiveWalletWithCurrency(user.getId(), enumCurrency)) {
             throw new DuplicateEntityException("Wallet", "Currency", currency);
         }
-        getOrCreateWalletByUsernameAndCurrency(user.getUsername(), enumCurrency);
+        return getOrCreateWalletByUsernameAndCurrency(user.getUsername(), enumCurrency);
     }
 
     @Override

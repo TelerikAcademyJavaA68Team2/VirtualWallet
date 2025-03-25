@@ -29,5 +29,5 @@ public interface WalletService {
 
     boolean checkIfUserHasActiveWalletWithCurrency(UUID userId, Currency currency);
 
-    void createAuthenticatedUserWalletWalletByCurrency(String currency);
+    Wallet createAuthenticatedUserWalletWalletByCurrency(String currency);
 }
