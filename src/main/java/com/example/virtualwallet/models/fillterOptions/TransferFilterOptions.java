@@ -1,7 +1,7 @@
 package com.example.virtualwallet.models.fillterOptions;
 
 import com.example.virtualwallet.models.enums.Currency;
-import com.example.virtualwallet.models.enums.TransactionStatus;
+import com.example.virtualwallet.models.enums.TransferStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -21,7 +21,7 @@ public class TransferFilterOptions {
     private Optional<BigDecimal> minAmount;
     private Optional<BigDecimal> maxAmount;
     private Optional<Currency> currency;
-    private Optional<TransactionStatus> status;
+    private Optional<TransferStatus> status;
     private String sortBy;
     private String sortOrder;
     private int page;
@@ -44,7 +44,7 @@ public class TransferFilterOptions {
         this.minAmount = sanitizeBigDecimal(minAmount);
         this.maxAmount = sanitizeBigDecimal(maxAmount);
         this.currency = sanitizeCurrency(currency);
-        this.status = sanitizeTransactionStatus(status);
+        this.status = sanitizeTransferStatus(status);
 
         this.sortBy = validateSortBy(sortBy);
         this.sortOrder = validateSortOrder(sortOrder);

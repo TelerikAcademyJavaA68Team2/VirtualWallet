@@ -9,7 +9,7 @@ import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.transfer.*;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.Role;
-import com.example.virtualwallet.models.enums.TransactionStatus;
+import com.example.virtualwallet.models.enums.TransferStatus;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
 import com.example.virtualwallet.repositories.TransferRepository;
 import com.example.virtualwallet.services.contracts.CardService;
@@ -67,7 +67,7 @@ public class TransferServiceImpl implements TransferService {
         Wallet wallet = walletService.getOrCreateWalletByUsernameAndCurrency(user.getUsername(),
                 currency);
 
-        TransactionStatus transferStatus = callMockWithdrawApi();
+        TransferStatus transferStatus = callMockWithdrawApi();
 
         Transfer transfer = new Transfer();
         transfer.setCard(card);
@@ -77,7 +77,7 @@ public class TransferServiceImpl implements TransferService {
         transfer.setStatus(transferStatus);
         transfer.setRecipientUsername(user.getUsername());
 
-        if (transfer.getStatus() == TransactionStatus.APPROVED) {
+        if (transfer.getStatus() == TransferStatus.APPROVED) {
             wallet.setBalance(wallet.getBalance().add(transferInput.getAmount()));
             walletService.update(wallet);
         }
@@ -101,7 +101,7 @@ public class TransferServiceImpl implements TransferService {
         Wallet wallet = walletService.getOrCreateWalletByUsernameAndCurrency(user.getUsername(),
                 currency);
 
-        TransactionStatus transferStatus = callMockWithdrawApi();
+        TransferStatus transferStatus = callMockWithdrawApi();
 
         Transfer transfer = new Transfer();
         transfer.setCard(card);
@@ -111,7 +111,7 @@ public class TransferServiceImpl implements TransferService {
         transfer.setStatus(transferStatus);
         transfer.setRecipientUsername(user.getUsername());
 
-        if (transfer.getStatus() == TransactionStatus.APPROVED) {
+        if (transfer.getStatus() == TransferStatus.APPROVED) {
             wallet.setBalance(wallet.getBalance().add(transferInput.getAmount()));
             walletService.update(wallet);
         }
@@ -161,12 +161,12 @@ public class TransferServiceImpl implements TransferService {
         return transfersPage;
     }
 
-    private TransactionStatus callMockWithdrawApi() {
+    private TransferStatus callMockWithdrawApi() {
         String url = appUrl + "/api/profile/transfers/withdraw";
 
         try {
             ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
-            return Boolean.TRUE.equals(response.getBody()) ? TransactionStatus.APPROVED : TransactionStatus.DECLINED;
+            return Boolean.TRUE.equals(response.getBody()) ? TransferStatus.APPROVED : TransferStatus.DECLINED;
         } catch (Exception e) {
             throw new RuntimeException("Mock Withdraw API error: " + e.getMessage());
         }

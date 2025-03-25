@@ -83,6 +83,8 @@ public class TransactionMvcController {
         List<String> currencies = Arrays.stream(Currency.values()).map((Enum::name)).toList();
         Page<Transaction> transactionsPage = transactionService.filterTransactionsPage(filterOptions);
 
+        String sanitizedCurrency = sanitizeStringCurrency(currency).orElse(null);
+
         int startIndex = page * size;
         model.addAttribute("currencies", currencies);
         model.addAttribute("transactions", transactionsPage);
@@ -93,7 +95,7 @@ public class TransactionMvcController {
         model.addAttribute("toDate", toDateToDisplay);
         model.addAttribute("minAmount", minAmount);
         model.addAttribute("maxAmount", maxAmount);
-        model.addAttribute("currency", currency);
+        model.addAttribute("currency", sanitizedCurrency);
         model.addAttribute("sender", sender);
         model.addAttribute("recipient", recipient);
         model.addAttribute("direction", direction);

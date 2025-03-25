@@ -10,6 +10,7 @@ import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransfersPage;
 import com.example.virtualwallet.models.dtos.user.UserProfileOutput;
 import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.enums.TransferStatus;
 import com.example.virtualwallet.models.fillterOptions.ExchangeFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
@@ -85,6 +86,7 @@ public class AdminMvcController {
         List<String> currencies = Arrays.stream(Currency.values()).map((Enum::name)).toList();
         Page<Transaction> transactionsPage = transactionService.filterTransactionsPage(filterOptions);
 
+        String sanitizedCurrency = sanitizeStringCurrency(currency).orElse(null);
         int startIndex = page * size;
         model.addAttribute("specificUser", specificUser);
         model.addAttribute("currencies", currencies);
@@ -96,7 +98,7 @@ public class AdminMvcController {
         model.addAttribute("toDate", toDateToDisplay);
         model.addAttribute("minAmount", minAmount);
         model.addAttribute("maxAmount", maxAmount);
-        model.addAttribute("currency", currency);
+        model.addAttribute("currency", sanitizedCurrency);
         model.addAttribute("sender", sender);
         model.addAttribute("recipient", recipient);
         model.addAttribute("description", description);
@@ -153,14 +155,17 @@ public class AdminMvcController {
         TransfersPage result = transferService.filterTransfers(filterOptions);
         List<String> currencies = Arrays.stream(Currency.values()).map((Enum::name)).toList();
 
+        String sanitizedCurrency = sanitizeStringCurrency(currency).orElse(null);
+        TransferStatus enumStatus = sanitizeTransferStatus(status).orElse(null);
+        String sanitizedStatus = enumStatus == null ? null : enumStatus.toString();
 
         model.addAttribute("recipient", recipient);
         model.addAttribute("fromDate", fromDateToDisplay);
         model.addAttribute("toDate", toDateToDisplay);
         model.addAttribute("minAmount", minAmount);
         model.addAttribute("maxAmount", maxAmount);
-        model.addAttribute("currency", currency);
-        model.addAttribute("status", status);
+        model.addAttribute("currency", sanitizedCurrency);
+        model.addAttribute("status", sanitizedStatus);
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortOrder", sortOrder);
         model.addAttribute("page", page);
@@ -225,11 +230,14 @@ public class AdminMvcController {
         ExchangePage exchangePage = exchangeService.filterExchanges(filterOptions);
         List<String> currencies = Arrays.stream(Currency.values()).map((Enum::name)).toList();
 
+        String sanitizedFromCurrency = sanitizeStringCurrency(fromCurrency).orElse(null);
+        String sanitizedToCurrency = sanitizeStringCurrency(toCurrency).orElse(null);
+
         model.addAttribute("recipient", recipientUsername);
         model.addAttribute("fromDate", fromDateToDisplay);
         model.addAttribute("toDate", toDateToDisplay);
-        model.addAttribute("fromCurrency", fromCurrency);
-        model.addAttribute("toCurrency", toCurrency);
+        model.addAttribute("fromCurrency", sanitizedFromCurrency);
+        model.addAttribute("toCurrency", sanitizedToCurrency);
         model.addAttribute("minStartAmount", minStartAmount);
         model.addAttribute("maxStartAmount", maxStartAmount);
         model.addAttribute("minEndAmount", minEndAmount);

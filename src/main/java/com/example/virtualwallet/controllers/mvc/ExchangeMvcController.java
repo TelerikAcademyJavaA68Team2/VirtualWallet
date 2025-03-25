@@ -110,6 +110,7 @@ public class ExchangeMvcController {
                 .map(WalletBasicOutput::getBalance)
                 .orElse(BigDecimal.ZERO);
 
+
         ExchangeInput exchangeInput = new ExchangeInput();
         exchangeInput.setFromCurrency(fromCurrencySanitized);
         exchangeInput.setToCurrency(toCurrencySanitized);
@@ -188,10 +189,13 @@ public class ExchangeMvcController {
         ExchangePage exchangePage = exchangeService.filterExchanges(filterOptions);
         List<String> currencies = Arrays.stream(Currency.values()).map((Enum::name)).toList();
 
+        String sanitizedFromCurrency = sanitizeStringCurrency(fromCurrency).orElse(null);
+        String sanitizedToCurrency = sanitizeStringCurrency(toCurrency).orElse(null);
+
         model.addAttribute("fromDate", fromDateToDisplay);
         model.addAttribute("toDate", toDateToDisplay);
-        model.addAttribute("fromCurrency", fromCurrency);
-        model.addAttribute("toCurrency", toCurrency);
+        model.addAttribute("fromCurrency", sanitizedFromCurrency);
+        model.addAttribute("toCurrency", sanitizedToCurrency);
         model.addAttribute("minStartAmount", minStartAmount);
         model.addAttribute("maxStartAmount", maxStartAmount);
         model.addAttribute("minEndAmount", minEndAmount);

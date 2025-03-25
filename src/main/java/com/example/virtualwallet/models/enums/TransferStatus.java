@@ -1,6 +1,6 @@
 package com.example.virtualwallet.models.enums;
 
-public enum TransactionStatus {
+public enum TransferStatus {
 
     APPROVED,
     DECLINED;

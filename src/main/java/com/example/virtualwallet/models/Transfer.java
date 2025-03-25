@@ -1,6 +1,6 @@
 package com.example.virtualwallet.models;
 
-import com.example.virtualwallet.models.enums.TransactionStatus;
+import com.example.virtualwallet.models.enums.TransferStatus;
 import com.example.virtualwallet.models.enums.Currency;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,7 +32,7 @@ public class Transfer {
 
     @Column(nullable = false, name = "status")
     @Enumerated(EnumType.STRING)
-    private TransactionStatus status;
+    private TransferStatus status;
 
     @Column(nullable = false, name = "recipient_username")
     private String recipientUsername;

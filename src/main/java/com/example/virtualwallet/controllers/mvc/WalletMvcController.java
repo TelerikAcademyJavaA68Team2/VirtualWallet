@@ -14,7 +14,7 @@ import com.example.virtualwallet.models.dtos.transfer.TransferInputMVC;
 import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletsWithHistoryOutput;
 import com.example.virtualwallet.models.enums.Currency;
-import com.example.virtualwallet.models.enums.TransactionStatus;
+import com.example.virtualwallet.models.enums.TransferStatus;
 import com.example.virtualwallet.services.contracts.CardService;
 import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -148,7 +148,7 @@ public class WalletMvcController {
 
             FullTransferInfoOutput transferInfoOutput = transferService.processTransfer(transferInput);
 
-            if (transferInfoOutput.getStatus().equals(TransactionStatus.APPROVED.toString())) {
+            if (transferInfoOutput.getStatus().equals(TransferStatus.APPROVED.toString())) {
                 model.addAttribute("amount", transferInfoOutput.getAmount());
                 model.addAttribute("currency", transferInfoOutput.getCurrency());
                 return "Funding-Successful-View";

@@ -3,6 +3,7 @@ package com.example.virtualwallet.controllers.mvc;
 import com.example.virtualwallet.models.dtos.transfer.FullTransferInfoOutput;
 import com.example.virtualwallet.models.dtos.transfer.TransfersPage;
 import com.example.virtualwallet.models.enums.Currency;
+import com.example.virtualwallet.models.enums.TransferStatus;
 import com.example.virtualwallet.models.fillterOptions.TransferFilterOptions;
 import com.example.virtualwallet.services.contracts.TransferService;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -86,13 +87,16 @@ public class TransferMvcController {
         TransfersPage result = transferService.filterTransfers(filterOptions);
         List<String> currencies = Arrays.stream(Currency.values()).map((Enum::name)).toList();
 
+        TransferStatus enumStatus = sanitizeTransferStatus(status).orElse(null);
+        String sanitizedStatus = enumStatus == null ? null : enumStatus.toString();
+        String sanitizedCurrency = sanitizeStringCurrency(currency).orElse(null);
 
         model.addAttribute("fromDate",fromDateToDisplay);
         model.addAttribute("toDate",toDateToDisplay);
         model.addAttribute("minAmount",minAmount);
         model.addAttribute("maxAmount",maxAmount);
-        model.addAttribute("currency",currency);
-        model.addAttribute("status",status);
+        model.addAttribute("currency",sanitizedCurrency);
+        model.addAttribute("status",sanitizedStatus);
         model.addAttribute("sortBy",sortBy);
         model.addAttribute("sortOrder",sortOrder);
         model.addAttribute("page",page);
