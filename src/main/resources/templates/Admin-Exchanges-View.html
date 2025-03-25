@@ -146,10 +146,13 @@
 
                         <th class="text-center " style="width: 10%;">
                             <div class="d-flex">
-                                <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
-                                        style="background-color: white; min-width: 10px;"
+                                <button type="button" class="dropdown-toggle btn-outline-dark rounded-pill"
+                                        style="background-color: white; min-width: 87px;"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="bi bi-currency-dollar">From</span>
+                                    <span th:if="${fromCurrency != null && !fromCurrency.isEmpty()}"
+                                          th:text="${fromCurrency}"></span>
+                                    <span th:unless="${fromCurrency != null  && !fromCurrency.isEmpty()}"
+                                          class="bi bi-currency-dollar">From</span>
                                 </button>
                                 <ul class="dropdown-menu text-center custom-dropdown">
                                     <li>
@@ -168,10 +171,13 @@
 
                         <th class="text-center " style="width: 10%;">
                             <div class="d-flex">
-                                <button type="button" class=" dropdown-toggle btn-outline-dark rounded-pill"
+                                <button type="button" class="dropdown-toggle btn-outline-dark rounded-pill"
                                         style="background-color: white; min-width: 87px;"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="bi bi-currency-dollar">To</span>
+                                    <span th:if="${toCurrency != null  && !toCurrency.isEmpty()}"
+                                          th:text="${toCurrency}"></span>
+                                    <span th:unless="${toCurrency != null && !toCurrency.isEmpty()}"
+                                          class="bi bi-currency-dollar">To</span>
                                 </button>
                                 <ul class="dropdown-menu text-center custom-dropdown">
                                     <li>
