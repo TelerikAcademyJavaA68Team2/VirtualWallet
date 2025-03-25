@@ -58,9 +58,9 @@
                                         </ul>
                                     </div>
                                     <div th:unless="${walletCurrencies.size() > 0}" class="ms-2">
-            <span class="btn rounded-pill" style="pointer-events: none;">
-                <span th:text="${mainCurrency}">BGN</span>
-            </span>
+                                         <span class="btn rounded-pill" style="pointer-events: none;">
+                                             <span th:text="${mainCurrency}">BGN</span>
+                                         </span>
                                     </div>
                                 </div>
                             </div>
@@ -95,15 +95,41 @@
                                     <span style="margin-left: 8px;">Add New Wallet</span>
                                 </a>
                                 <!-- Dropdown for Other Currencies -->
+                                <!--    <ul id="add-wallet-dropdown"
+                                        class="dropdown-menu dropdown-menu-end text-start custom-dropdown"
+                                        style="display: none; position: absolute; top: 100%; left: 15%; transform: translateX(-50%); z-index: 1000; min-width: 300px; width: 33%; ">
+                                        <li th:each="currency : ${otherCurrencies}">
+                                            <a class="dropdown-item" href="#"
+                                               th:href="@{/mvc/profile/wallets/new(currency=${currency})}"
+                                               th:text="${currency}+'  ('+#{'currency.' + ${currency}}+')'">
+
+
+
+
+
+                                                EUR</a>
+                                        </li>
+                                    </ul>    -->
+
                                 <ul id="add-wallet-dropdown"
-                                    class="dropdown-menu dropdown-menu-end text-start custom-dropdown"
-                                    style="display: none; position: absolute; top: 100%; left: 15%; transform: translateX(-50%); z-index: 1000; min-width: 300px; width: 33%; ">
+                                    class="dropdown-menu dropdown-menu-end w-100 text-start "
+                                    style="display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); z-index: 1000; min-width: 300px; width: 33%; ">
                                     <li th:each="currency : ${otherCurrencies}">
-                                        <a class="dropdown-item" href="#"
-                                           th:href="@{/mvc/profile/wallets/new(currency=${currency})}"
-                                           th:text="${currency}+'  ('+#{'currency.' + ${currency}}+')'">EUR</a>
+                                        <a class="dropdown-item d-flex align-items-start" href="#"
+                                           th:href="@{/mvc/profile/wallets/new(currency=${currency})}">
+                                            <img th:src="@{/images/flags/flag__${currency}__.png}"
+                                                 alt="Flag" width="40" height="40" class="me-2"/>
+                                            <div>
+                                                <span th:text="${currency}"
+                                                      class="d-block"></span>
+                                                <small th:text="#{'currency.' + ${currency}}"
+                                                       class="d-block text-muted"></small>
+                                            </div>
+                                        </a>
                                     </li>
                                 </ul>
+
+
                             </div>
                         </td>
                     </tr>
@@ -369,7 +395,7 @@
                 walletList.style.display = "table-row-group";
 
                 setTimeout(() => {
-                    target.scrollIntoView({ behavior: "smooth", block: "center" });
+                    target.scrollIntoView({behavior: "smooth", block: "center"});
 
                     if (dropdown) {
                         dropdown.style.display = "block";
