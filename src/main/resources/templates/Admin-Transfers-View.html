@@ -116,12 +116,12 @@
             <th class="text-center" style="width: 25%">
               <div class="flex-box">
                 <label for="min-amount" class="form-label visually-hidden">Min Amount</label>
-                <input type="number" step="1.0" id="min-amount" name="minAmount"
+                <input type="number" step="any" id="min-amount" name="minAmount"
                        class="form-control form-control-sm"
                        min="0" th:value="${minAmount}" placeholder="Min Amount">
 
                 <label for="max-amount" class="form-label visually-hidden">Max Amount</label>
-                <input type="number" step="1.0" id="max-amount" name="maxAmount"
+                <input type="number" step="any" id="max-amount" name="maxAmount"
                        class="form-control form-control-sm"
                        min="0" th:value="${maxAmount}" placeholder="Max Amount">
               </div>
