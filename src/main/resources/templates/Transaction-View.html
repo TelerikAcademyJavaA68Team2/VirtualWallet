@@ -14,15 +14,31 @@
                 </div>
                 <div class="card-body">
                     <!-- Sender -->
-                    <div class="mb-3" th:if="${currentUser.role.name() != 'ADMIN'}">
-                        <label class="fw-bold" th:text="#{transaction.sender}">Sender:</label>
-                        <span th:text="${transaction.senderUsername}" class="text-dark ms-1"></span>
+                    <div class="mb-3 d-flex justify-content-between" th:if="${currentUser.role.name() != 'ADMIN'}">
+                        <div>
+                            <label class="fw-bold" th:text="#{transaction.sender}">Sender:</label>
+                            <span th:text="${transaction.senderUsername}" class="text-dark ms-1"></span>
+                        </div>
+                        <a th:if="${personalRequest && transaction.recipientUsername == currentUserUsername}"
+                           th:href="@{/mvc/profile/transactions/send(user=${transaction.senderUsername})}"
+                           class="text-decoration-none ms-1">
+                            <span style="color: black" th:text="'Send money to '"></span>
+                            <span class="font-weight-bold" th:text="${transaction.senderUsername}"></span>
+                        </a>
                     </div>
 
                     <!-- Recipient -->
-                    <div class="mb-3" th:if="${currentUser.role.name() != 'ADMIN'}">
-                        <label class="fw-bold" th:text="#{transaction.recipient}">Recipient:</label>
-                        <span th:text="${transaction.recipientUsername}" class="text-dark ms-1"></span>
+                    <div class="mb-3 d-flex justify-content-between" th:if="${currentUser.role.name() != 'ADMIN'}">
+                        <div>
+                            <label class="fw-bold" th:text="#{transaction.recipient}">Recipient:</label>
+                            <span th:text="${transaction.recipientUsername}" class="text-dark ms-1"></span>
+                        </div>
+                        <a th:if="${personalRequest && transaction.senderUsername == currentUserUsername}"
+                           th:href="@{/mvc/profile/transactions/send(user=${transaction.recipientUsername})}"
+                           class="text-decoration-none ms-1">
+                            <span style="color: black" th:text="'Send money to '"></span>
+                            <span class="font-weight-bold" th:text="${transaction.recipientUsername}"></span>
+                        </a>
                     </div>
 
                     <!-- Sender -->
@@ -88,7 +104,8 @@
                     </a>
 
                     <!-- View All Transactions Button -->
-                    <a th:if="${currentUser.role.name() == 'ADMIN' && personalRequest }" href="/mvc/profile/transactions"
+                    <a th:if="${currentUser.role.name() == 'ADMIN' && personalRequest }"
+                       href="/mvc/profile/transactions"
                        class="btn btn-outline-dark rounded-pill">
                         <span th:text="#{transaction.viewAllTransactions}">View All Transactions</span>
                     </a>
