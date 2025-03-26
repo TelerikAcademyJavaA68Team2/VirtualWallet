@@ -93,7 +93,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         return exchangeRateRepository.findByFromCurrencyAndToCurrency(fromCurrency, toCurrency).getRate();
     }
 
-    @Scheduled(cron = "${EXCHANGE_RATE_SCHEDULER_CRON}", zone = "UTC")
+    @Scheduled(cron = "2 1 0 * * *", zone = "UTC")
     @Override
     public void fetchAndUpdateAllExchangeRatesDaily() {
         LocalDateTime timeOfUpdate = LocalDateTime.now();
@@ -131,7 +131,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                 e.printStackTrace();
             }
         }
-        System.out.println(UPDATED_AT + timeOfUpdate + "${EXCHANGE_RATE_SCHEDULER_CRON}");
+        System.out.println(UPDATED_AT + timeOfUpdate);
     }
 
     @EventListener(ApplicationReadyEvent.class)
