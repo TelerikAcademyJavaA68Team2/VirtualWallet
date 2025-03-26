@@ -53,6 +53,9 @@ public class UserServiceImpl implements UserService {
     public static final String EMAIL_TAKEN = "Email '%s' is already associated with another account! Please, " +
             "provide a different email.";
     public static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+    public static final String PENDING_USERS_CAN_T_BE_BLOCKED = "Pending users can't be blocked";
+    public static final String NO_CHANGES_WERE_MADE = "No changes were made";
+    public static final String DEFAULT_PROFILE_PIC_PNG = "/images/default-profile-pic.png";
 
     private final UserRepository userRepository;
     private final CloudinaryHelper cloudinaryHelper;
@@ -82,7 +85,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findUserByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username"));
+                .orElseThrow(() -> new UsernameNotFoundException(format("User with username %s not found!", username)));
     }
 
     @Override
@@ -131,7 +134,7 @@ public class UserServiceImpl implements UserService {
         } else if (user.getStatus().equals(AccountStatus.DELETED)) {
             user.setStatus(AccountStatus.BLOCKED_AND_DELETED);
         } else if (user.getStatus().equals(AccountStatus.PENDING)) {
-            throw new InvalidUserInputException("Pending users can't be blocked");
+            throw new InvalidUserInputException(PENDING_USERS_CAN_T_BE_BLOCKED);
         }
         userRepository.save(user);
     }
@@ -146,7 +149,7 @@ public class UserServiceImpl implements UserService {
         } else if (user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
             user.setStatus(AccountStatus.DELETED);
         } else if (user.getStatus().equals(AccountStatus.PENDING)) {
-            throw new InvalidUserInputException("Pending users can't be blocked");
+            throw new InvalidUserInputException(PENDING_USERS_CAN_T_BE_BLOCKED);
         }
         userRepository.save(user);
     }
@@ -181,7 +184,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(new BCryptPasswordEncoder().encode(input.getNewPassword()));
             userRepository.save(user);
         } else {
-            throw new EntityNotFoundException("No changes were made");
+            throw new InvalidUserInputException(NO_CHANGES_WERE_MADE);
         }
     }
 
@@ -208,8 +211,9 @@ public class UserServiceImpl implements UserService {
             }
             user.setPhoneNumber(input.getPhoneNumber());
         }
-        if (removePicture) {
-            user.setPhoto("/images/default-profile-pic.png");
+        if (removePicture)
+        {
+            user.setPhoto(DEFAULT_PROFILE_PIC_PNG);
         }
         if (profileImage != null && !profileImage.isEmpty()) {
             try {

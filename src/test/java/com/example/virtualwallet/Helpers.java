@@ -6,29 +6,26 @@ import com.example.virtualwallet.models.Wallet;
 import com.example.virtualwallet.models.dtos.card.*;
 import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
-import com.example.virtualwallet.models.dtos.user.UserOutput;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransferStatus;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
-import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.example.virtualwallet.services.UserServiceImpl.DEFAULT_PROFILE_PIC_PNG;
+
 public class Helpers {
 
     public static final String MOCK_USER_FIRST_NAME = "MockFirstNameUser";
-    public static final String MOCK_ADMIN_FIRST_NAME = "MockFirstNameAdmin";
     public static final String MOCK_USER_LAST_NAME = "MockLastNameUser";
-    public static final String MOCK_ADMIN_LAST_NAME = "MockLastNameAdmin";
     public static final String MOCK_CARD_CARDHOLDER = "Mock Holder";
     public static final String MOCK_CARD_CARDHOLDER_EDIT = "Mock Holder Edited";
     public static final String MOCK_CARD_CARD_NUMBER = "1234567891234567";
@@ -36,11 +33,8 @@ public class Helpers {
     public static final String MOCK_USER_USERNAME = "MockUsername";
     public static final String MOCK_ADMIN_USERNAME = "MockAdminName";
     public static final String MOCK_PASSWORD = "MockPassword";
-    public static final String MOCK_PHONE_NUMBER = "1231231234";
     public static final String MOCK_USER_EMAIL = "mock@user.com";
     public static final String MOCK_ADMIN_EMAIL = "mock@admin.com";
-    public static final String MOCK_ACCOUNT_STATUS = "ACTIVE";
-    public static final String MOCK_USER_ORDER_BY = "username";
     public static final String MOCK_CVV = "123";
     public static final YearMonth MOCK_YEAR_MONTH_EXPIRATION_DATE = YearMonth.of(2050, 7);
     public static final String MOCK_STRING_EXPIRATION_DATE = "07/25";
@@ -68,7 +62,7 @@ public class Helpers {
         mockUser.setUsername(MOCK_USER_USERNAME);
         mockUser.setPassword(MOCK_PASSWORD);
         mockUser.setRole(Role.USER);
-        mockUser.setPhoto("/static/images/default-profile-pic.png");
+        mockUser.setPhoto(DEFAULT_PROFILE_PIC_PNG);
         mockUser.setStatus(AccountStatus.ACTIVE);
         mockUser.setRole(Role.USER);
         mockUser.setCreatedAt(LocalDateTime.now());
