@@ -22,6 +22,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PasswordResetServiceImpl implements PasswordResetService {
 
+    public static final String PASSWORD_EMAIL_WAS_ALREADY_SEND = "The reset password email was already send!";
+    public static final String PASSWORD_CONFIRMATION_FAILED = "Password confirmation failed";
+    public static final String THE_TOKEN_IS_INVALID_OR = "The token is invalid or";
+
     private final PasswordResetRepository resetRepository;
     private final EmailService emailService;
     private final UserService userService;
@@ -33,7 +37,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
         User user = userService.findUserByUsernameOrEmailOrPhoneNumber(input.getEmail());
         if (resetRepository.checkIfTokenWasAlreadySent(user.getEmail(), LocalDateTime.now())) {
-            throw new EmailConfirmationException("The reset password email was already send!");
+            throw new EmailConfirmationException(PASSWORD_EMAIL_WAS_ALREADY_SEND);
         }
 
         UUID tokenId = UUID.randomUUID();
@@ -46,10 +50,10 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     @Override
     public void processResetPasswordInput(NewPasswordResetInput input, UUID tokenId) {
         if (!input.getPassword().equals(input.getPasswordConfirm())) {
-            throw new InvalidUserInputException("Password confirmation failed");
+            throw new InvalidUserInputException(PASSWORD_CONFIRMATION_FAILED);
         }
         ResetPasswordToken token = resetRepository.findById(tokenId).orElseThrow(
-                () -> new EntityNotFoundException("The token is invalid or"));
+                () -> new EntityNotFoundException(THE_TOKEN_IS_INVALID_OR));
 
         User user = token.getUser();
         user.setPassword(passwordEncoder.encode(input.getPassword()));
