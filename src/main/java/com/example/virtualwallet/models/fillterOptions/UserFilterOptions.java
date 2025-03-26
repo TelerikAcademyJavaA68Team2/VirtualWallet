@@ -3,6 +3,8 @@ package com.example.virtualwallet.models.fillterOptions;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Role;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -11,6 +13,8 @@ import java.util.Optional;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 
+@NoArgsConstructor
+@Setter
 @Getter
 public class UserFilterOptions {
 
