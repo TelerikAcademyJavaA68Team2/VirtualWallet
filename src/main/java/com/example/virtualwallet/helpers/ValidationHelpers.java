@@ -24,7 +24,7 @@ public class ValidationHelpers {
     public static final String UNAUTHORIZED_MESSAGE_CARD = "Only the card's owner can modify card's details!";
     public static final String CARD_MUST_NOT_BE_EXPIRED = "Card must not be expired!";
 
-    public static final Set<String> VALID_CURRENCIES_SET = Set.of("BGN", "USD", "EUR", "GBP", "JPY", "CNH", "AUD", "CAD", "CHF");
+    public static final Set<String> VALID_CURRENCIES_SET = Set.of("BGN", "USD", "EUR", "GBP", "JPY", "CNY", "AUD", "CAD", "CHF");
     public static final Set<String> VALID_TRANSACTION_STATUS_SET = Set.of("APPROVED", "DECLINED");
     public static final Set<String> VALID_ACCOUNT_STATUS_SET = Set.of("ACTIVE", "BLOCKED", "PENDING", "DELETED", "DELETED-AND-BLOCKED");
     public static final Set<String> VALID_ROLE_SET = Set.of("ADMIN", "USER");

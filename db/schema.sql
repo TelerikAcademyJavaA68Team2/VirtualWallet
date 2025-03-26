@@ -60,7 +60,7 @@ CREATE TABLE wallet
 (
     id         UUID PRIMARY KEY,
     balance    DECIMAL(38, 2)                                                     NOT NULL,
-    currency   ENUM ('BGN', 'EUR', 'USD','GBP', 'JPY', 'CNH','AUD', 'CAD', 'CHF') NOT NULL,
+    currency   ENUM ('BGN', 'EUR', 'USD','GBP', 'JPY', 'CNY','AUD', 'CAD', 'CHF') NOT NULL,
     owner_id   UUID                                                               NOT NULL,
     created_at DATETIME(6)                                                        NOT NULL,
     deleted_at DATETIME(6),
@@ -75,8 +75,8 @@ CREATE TABLE exchange
     amount             DECIMAL(38, 2)                                                 NOT NULL,
     to_amount          DECIMAL(38, 2)                                                 NOT NULL,
     exchange_rate      DECIMAL(38, 10)                                                NOT NULL,
-    from_currency      ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNH','AUD','CAD','CHF') NOT NULL,
-    to_currency        ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNH','AUD','CAD','CHF') NOT NULL,
+    from_currency      ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
+    to_currency        ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
     recipient_username VARCHAR(255)                                                   NOT NULL,
     from_wallet_id     UUID                                                           NOT NULL,
     to_wallet_id       UUID                                                           NOT NULL,
@@ -90,7 +90,7 @@ CREATE TABLE transaction
 (
     id                  UUID PRIMARY KEY,
     amount              DECIMAL(38, 2)                                                 NOT NULL,
-    currency            ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNH','AUD','CAD','CHF') NOT NULL,
+    currency            ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
     sender_username     VARCHAR(255)                                                   NOT NULL,
     recipient_username  VARCHAR(255)                                                   NOT NULL,
     description         VARCHAR(255)                                                   NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE transfer
 (
     id                 UUID PRIMARY KEY,
     amount             DECIMAL(38, 2)                                                 NOT NULL,
-    currency           ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNH','AUD','CAD','CHF') NOT NULL,
+    currency           ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
     status             ENUM ('APPROVED', 'DECLINED')                                  NOT NULL,
     recipient_username VARCHAR(255)                                                   NOT NULL,
     date               DATETIME(6)                                                    NOT NULL,
@@ -121,6 +121,7 @@ CREATE TABLE exchange_rate
 (
     id            UUID PRIMARY KEY,
     rate          DECIMAL(38, 10)                                                NOT NULL,
-    from_currency ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNH','AUD','CAD','CHF') NOT NULL,
-    to_currency   ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNH','AUD','CAD','CHF') NOT NULL
+    from_currency ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
+    to_currency   ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
+    last_updated   DATETIME(6)
 );

@@ -6,6 +6,10 @@ import com.example.virtualwallet.models.ExchangeRate;
 import com.example.virtualwallet.models.dtos.exchangeRates.ExchangeRateOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.enums.Currency;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 import com.example.virtualwallet.repositories.ExchangeRateRepository;
 import com.example.virtualwallet.services.contracts.ExchangeRateService;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -24,8 +29,11 @@ import static com.example.virtualwallet.services.ExchangeServiceImpl.INVALID_CUR
 @Service
 @RequiredArgsConstructor
 public class ExchangeRateServiceImpl implements ExchangeRateService {
+
     public static final String INVALID_EXCHANGE_REQUEST = "Invalid exchange request";
     public static final String RATE_MUST_BE_POSITIVE = "Exchange rate must be positive!";
+    public static final String FAILED_UPDATE = "Failed to update exchange rates from: ";
+    public static final String UPDATED_AT = "Exchange rates updated at: ";
 
     @Value("${exchangerate.api.base-url}")
     private String baseUrl;
@@ -56,7 +64,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                 sum = sum.add(wallet.getBalance());
             } else {
                 sum = sum.add(wallet.getBalance()
-                        .multiply(getRate(Currency.valueOf(wallet.getCurrency()), Currency.valueOf(mainCurrency))));
+                        .multiply(getExchangeRate(wallet.getCurrency(), mainCurrency).getRate()));
             }
         }
         return sum.setScale(2, RoundingMode.HALF_UP);
@@ -76,40 +84,59 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         } else {
             throw new InvalidUserInputException(INVALID_CURRENCY);
         }
-        BigDecimal apiRate = getRate(enumFromCurrency, enumToCurrency);
-
-        ExchangeRate rate = exchangeRateRepository.findByFromCurrencyAndToCurrency(enumFromCurrency, enumToCurrency);
-        rate.setRate(apiRate);
-        exchangeRateRepository.save(rate);
-        return rate;
-
+        return exchangeRateRepository.findByFromCurrencyAndToCurrency(enumFromCurrency, enumToCurrency);
     }
 
     @Override
     public BigDecimal getRate(Currency fromCurrency, Currency toCurrency) {
-        if (fromCurrency == toCurrency) {
-            return BigDecimal.ONE;
-        }
-
-        String url = String.format("%s/%s/latest/%s", baseUrl, apiKey, fromCurrency.name());
-
-        try {
-            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
-
-            if (response != null && "success".equals(response.get("result"))) {
-                Map<String, Double> rates = (Map<String, Double>) response.get("conversion_rates");
-
-                if (rates != null && rates.containsKey(toCurrency.name())) {
-                    return BigDecimal.valueOf(rates.get(toCurrency.name()));
-                }
-            }
-            return exchangeRateRepository.findByFromCurrencyAndToCurrency(fromCurrency, toCurrency).getRate();
-
-        } catch (Exception e) {
-            return exchangeRateRepository.findByFromCurrencyAndToCurrency(fromCurrency, toCurrency).getRate();
-        }
+        return exchangeRateRepository.findByFromCurrencyAndToCurrency(fromCurrency, toCurrency).getRate();
     }
 
+    @Scheduled(cron = "2 1 0 * * *", zone = "UTC")
+    public void fetchAndUpdateAllExchangeRatesDaily() {
+        LocalDateTime timeOfUpdate = LocalDateTime.now();
+        for (Currency fromCurrency : Currency.values()) {
+            try {
+
+                String url = String.format("%s/%s/latest/%s", baseUrl, apiKey, fromCurrency.name());
+                Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+
+                if (response != null && "success".equals(response.get("result"))) {
+                    Map<String, Double> rates = (Map<String, Double>) response.get("conversion_rates");
+
+                    for (Currency toCurrency : Currency.values()) {
+                        if (!fromCurrency.equals(toCurrency) && rates != null && rates.containsKey(toCurrency.name())) {
+                            BigDecimal rateValue = BigDecimal.valueOf(rates.get(toCurrency.name()));
+
+                            ExchangeRate exchangeRate = exchangeRateRepository
+                                    .findByFromCurrencyAndToCurrency(fromCurrency, toCurrency);
+
+                            if (exchangeRate == null) {
+                                exchangeRate = new ExchangeRate();
+                                exchangeRate.setFromCurrency(fromCurrency);
+                                exchangeRate.setToCurrency(toCurrency);
+                                exchangeRate.setLastUpdated(timeOfUpdate);
+                            }
+
+                            exchangeRate.setRate(rateValue);
+                            exchangeRate.setLastUpdated(timeOfUpdate);
+                            exchangeRateRepository.save(exchangeRate);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println(FAILED_UPDATE + fromCurrency + "at" + timeOfUpdate);
+                e.printStackTrace();
+            }
+        }
+        System.out.println(UPDATED_AT + timeOfUpdate);
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    @Profile("!test")
+    public void initializeExchangeRatesOnStartup() {
+        fetchAndUpdateAllExchangeRatesDaily();
+    }
 
     @Override
     public List<ExchangeRateOutput> getAllExchangeRates() {

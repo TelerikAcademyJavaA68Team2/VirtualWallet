@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -30,4 +31,7 @@ public class ExchangeRate {
 
     @Column(nullable = false, precision = 38, scale = 10, name = "rate")
     private BigDecimal rate;
+
+    @Column(name = "last_updated")
+    private LocalDateTime lastUpdated;
 }
