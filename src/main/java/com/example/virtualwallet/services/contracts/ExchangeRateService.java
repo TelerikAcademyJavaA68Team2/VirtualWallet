@@ -16,6 +16,10 @@ public interface ExchangeRateService {
 
     ExchangeRate getExchangeRate(String fromCurrency, String toCurrency);
 
+    void fetchAndUpdateAllExchangeRatesDaily();
+
+    void initializeExchangeRatesAPIUpdate();
+
     BigDecimal getRate(Currency fromCurrency, Currency toCurrency);
 
     List<ExchangeRateOutput> getAllExchangeRates();
