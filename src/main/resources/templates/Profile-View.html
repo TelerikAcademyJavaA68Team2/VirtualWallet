@@ -183,12 +183,12 @@
 
                                 <!-- Error Message -->
                                 <small th:if="${emailError && !emailTokenExpired}"
-                                       th:text="'email was already sent'"
+                                       th:text="'Email was already sent'"
                                        class="text-danger mt-1 d-block text-end custom-error">
                                 </small>
                                 <!-- Error Message -->
                                 <small th:if="${emailTokenExpired}"
-                                       th:text="'email confirmation is expired'"
+                                       th:text="'Email confirmation is expired'"
                                        class="text-danger mt-1 d-block text-end custom-error">
                                 </small>
                             </div>
