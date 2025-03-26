@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.UUID;
 
 import static com.example.virtualwallet.helpers.ModelHelpers.maskCreditCard;
@@ -30,7 +31,7 @@ public class ModelMapper {
         Card card = new Card();
         card.setCreatedAt(LocalDateTime.now());
         card.setCardNumber(cardInput.getCardNumber());
-        card.setCardHolder(cardInput.getCardHolder());
+        card.setCardHolder(cardInput.getCardHolder().toUpperCase(Locale.ROOT));
         card.setCvv(cardInput.getCvv());
         card.setExpirationDate(cardInput.getExpirationDateAsYearMonth());
         card.setOwner(user);
@@ -38,7 +39,7 @@ public class ModelMapper {
     }
 
     public static Card modifySoftDeletedCardFromCardInput(Card card, CardInput cardInput) {
-        card.setCardHolder(cardInput.getCardHolder());
+        card.setCardHolder(cardInput.getCardHolder().toUpperCase(Locale.ROOT));
         card.setCvv(cardInput.getCvv());
         card.setExpirationDate(cardInput.getExpirationDateAsYearMonth());
         return card;
@@ -106,7 +107,7 @@ public class ModelMapper {
             card.setCvv(cardEdit.getCvv());
         }
         if (cardEdit.getCardHolder() != null) {
-            card.setCardHolder(cardEdit.getCardHolder());
+            card.setCardHolder(cardEdit.getCardHolder().toUpperCase(Locale.ROOT));
         }
         if (cardEdit.getExpirationDateAsYearMonth() != null) {
             card.setExpirationDate(cardEdit.getExpirationDateAsYearMonth());
