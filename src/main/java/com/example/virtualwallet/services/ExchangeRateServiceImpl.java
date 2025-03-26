@@ -134,7 +134,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @EventListener(ApplicationReadyEvent.class)
     @Profile("!test")
-    public void initializeExchangeRatesOnStartup() {
+    public void initializeExchangeRatesAPIUpdate() {
         fetchAndUpdateAllExchangeRatesDaily();
     }
 
