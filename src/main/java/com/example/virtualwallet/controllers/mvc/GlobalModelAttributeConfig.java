@@ -20,7 +20,7 @@ public class GlobalModelAttributeConfig {
         try {
             return userService.getAuthenticatedUser();
         } catch (UnauthorizedAccessException e) {
-            return null;
+            return new User();
         }
     }
 }
