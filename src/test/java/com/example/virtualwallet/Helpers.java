@@ -202,5 +202,15 @@ public class Helpers {
         return exchange;
     }
 
+    public static ExchangeRate createMockExchangeRate(Currency from, Currency to, BigDecimal rate) {
+        ExchangeRate exchangeRate = new ExchangeRate();
+        exchangeRate.setId(UUID.randomUUID());
+        exchangeRate.setFromCurrency(from);
+        exchangeRate.setToCurrency(to);
+        exchangeRate.setRate(rate);
+        exchangeRate.setLastUpdated(LocalDateTime.now());
+        return exchangeRate;
+    }
+
 
 }
