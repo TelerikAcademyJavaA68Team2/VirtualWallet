@@ -89,21 +89,6 @@ public class Helpers {
         return mockCard;
     }
 
-    public static Card createMockDeletedCard(User owner) {
-        Card mockCard = new Card();
-        mockCard.setId(UUID.randomUUID());
-        mockCard.setCardHolder(MOCK_CARD_CARDHOLDER);
-        mockCard.setCardNumber(MOCK_CARD_CARD_NUMBER);
-        mockCard.setCvv(MOCK_CVV);
-        mockCard.setExpirationDate(MOCK_YEAR_MONTH_EXPIRATION_DATE);
-        mockCard.setCreatedAt(LocalDateTime.now());
-        mockCard.setOwner(owner);
-        mockCard.setTransfers(new HashSet<>());
-        mockCard.markAsDeleted();
-
-        return mockCard;
-    }
-
     public static CardOutput createMockCardOutput() {
         CardOutput mockCardOutput = new CardOutput();
         mockCardOutput.setCardId(UUID.randomUUID());
@@ -179,33 +164,6 @@ public class Helpers {
         return mockAdmin;
     }
 
-    public static UserOutput createMockUserOutput() {
-        return new UserOutput(UUID.randomUUID(),
-                null,
-                MOCK_USER_USERNAME,
-                MOCK_USER_EMAIL,
-                MOCK_PHONE_NUMBER,
-                Role.USER,
-                AccountStatus.ACTIVE,
-                LocalDateTime.now()
-        );
-    }
-
-    public static Pageable createMockPageable() {
-        return PageRequest.of(0, 20, Sort.unsorted());
-    }
-
-    public static Page<Object[]> createMockPage() {
-        return new PageImpl<>(Collections.singletonList(new Object[]{
-                MOCK_USER_USERNAME,
-                MOCK_USER_EMAIL,
-                MOCK_PHONE_NUMBER,
-                Role.USER.name(),
-                true,
-                5L
-        }));
-    }
-
     public static Card createMockExpiredCard(User owner) {
         Card mockCard = createMockCard(owner);
         mockCard.setExpirationDate(YearMonth.now().minusMonths(1));
@@ -233,7 +191,5 @@ public class Helpers {
         return new TransactionInput("mock@user.com",
                 new BigDecimal("50"), "USD", "Test");
     }
-
-
 
 }
