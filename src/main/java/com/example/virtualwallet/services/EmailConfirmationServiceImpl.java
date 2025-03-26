@@ -19,7 +19,7 @@ import java.util.UUID;
 public class EmailConfirmationServiceImpl implements EmailConfirmationService {
 
     public static final String EMAIL_IS_ALREADY_CONFIRMED = "Your email is already confirmed.";
-    public static final String CONFIRMATION_WAS_NOT_FOUND = "The confirmation token was not found!";
+    public static final String CONFIRMATION_WAS_NOT_FOUND = "The confirmation token was";
     public static final String TOKEN_EXPIRED = "Email confirmation has expired please send new confirmation email.";
     public static final String CONFIRMATION_ALREADY_SENT = "Email confirmation was already sent";
 
