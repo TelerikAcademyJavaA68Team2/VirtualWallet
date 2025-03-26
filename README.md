@@ -114,7 +114,7 @@ Follow these steps to set up and run the application:
 
 ## Database Diagram
 
-![database_schema](https://github.com/user-attachments/assets/d12b1914-566e-4c80-a0e1-50751e88afe9)
+![database_schema](https://github.com/user-attachments/assets/f8ef7cf4-9b54-4b7e-82f1-1fb523fcc047)
 
 <br>
 
