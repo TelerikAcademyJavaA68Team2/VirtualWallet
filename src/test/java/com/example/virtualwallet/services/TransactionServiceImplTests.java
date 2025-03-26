@@ -35,7 +35,6 @@ class TransactionServiceImplTests {
     public static final String RECIPIENT = "Recipient";
     public static final String TEST_DESCRIPTION = "Test description";
     public static final String VALUE = "100";
-    public static final String SELF = "Self";
     public static final String VALUE_2 = "30";
     public static final String SENDER = "Sender";
     public static final String RECIPIENT_MAIL = "user2@x.com";

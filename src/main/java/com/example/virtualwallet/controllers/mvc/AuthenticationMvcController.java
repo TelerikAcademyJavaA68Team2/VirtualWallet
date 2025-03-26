@@ -47,7 +47,6 @@ public class AuthenticationMvcController {
                 model.addAttribute("errorMessage", "Invalid username or password");
             } else if (Boolean.TRUE.equals(deleted)) {
                 model.addAttribute("errorMessage", "Invalid username or password");
-                // ToDo add restore account option or send to restore account page directly
             }
 
             Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
