@@ -13691,3 +13691,36 @@ td:not(.activity-column) {
 .bg-secondary-hover:hover .gray-flag {
     filter: grayscale(50%) brightness(100%); /* Makes the flag grayer and darker */
 }
+
+
+/* Base styling for the info icon */
+.hover-info {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Tooltip container */
+.hover-info::after {
+    content: attr(data-hover-text); /* Dynamically fetch the text from the data-hover-text attribute */
+    position: absolute;
+    bottom: 100%; /* Position the tooltip above the icon */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333; /* Background color of the tooltip */
+    color: #fff; /* Text color */
+    border-radius: 4px; /* Rounded corners */
+    white-space: pre-line; /* Allow text to wrap and respect newlines */
+    line-height: 1.4; /* Line height for readability */
+    opacity: 0; /* Initially hidden */
+    visibility: hidden; /* Initially hidden */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth fade-in effect */
+    z-index: 10; /* Ensure the tooltip appears above other elements */
+    width: 310px; /* Set a fixed width for better formatting */
+    text-align: center; /* Center-align the text */
+}
+
+/* Show the tooltip on hover */
+.hover-info:hover::after {
+    opacity: 1; /* Make the tooltip visible */
+    visibility: visible; /* Make the tooltip visible */
+}
