@@ -1,15 +1,12 @@
 package com.example.virtualwallet;
 
-import com.example.virtualwallet.models.Card;
-import com.example.virtualwallet.models.Transfer;
-import com.example.virtualwallet.models.Wallet;
+import com.example.virtualwallet.models.*;
 import com.example.virtualwallet.models.dtos.card.*;
 import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransferStatus;
-import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.Role;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 
@@ -38,6 +35,11 @@ public class Helpers {
     public static final String MOCK_CVV = "123";
     public static final YearMonth MOCK_YEAR_MONTH_EXPIRATION_DATE = YearMonth.of(2050, 7);
     public static final String MOCK_STRING_EXPIRATION_DATE = "07/25";
+    public static final String USD = "USD";
+    public static final String DATE = "date";
+    public static final String SORT_ORDER = "asc";
+    public static final String BIG_DECIMAL = "50.42";
+    public static final String DESCRIPTION = "Test description";
 
     public static User createMockUserWithCardsAndWallets() {
         User mockUser = createMockUserWithoutCardsAndWallets();
@@ -168,7 +170,7 @@ public class Helpers {
         TransferInput input = new TransferInput();
         input.setCardId(cardId);
         input.setAmount(new BigDecimal(amount));
-        input.setCurrency("USD");
+        input.setCurrency(USD);
         return input;
     }
 
@@ -176,14 +178,29 @@ public class Helpers {
         TransactionFilterOptions filters = new TransactionFilterOptions();
         filters.setPage(0);
         filters.setSize(5);
-        filters.setSortBy("date");
-        filters.setSortOrder("asc");
+        filters.setSortBy(DATE);
+        filters.setSortOrder(SORT_ORDER);
         return filters;
     }
 
     public static TransactionInput createMockTransactionInput() {
-        return new TransactionInput("mock@user.com",
-                new BigDecimal("50"), "USD", "Test");
+        return new TransactionInput(MOCK_USER_EMAIL,
+                new BigDecimal(BIG_DECIMAL), USD, DESCRIPTION);
     }
+
+    public static Exchange createMockExchange(User user) {
+        Exchange exchange = new Exchange();
+        exchange.setId(UUID.randomUUID());
+        exchange.setExchangeRate(BigDecimal.ONE);
+        exchange.setAmount(BigDecimal.TEN);
+        exchange.setToAmount(BigDecimal.TEN);
+        exchange.setFromCurrency(Currency.USD);
+        exchange.setToCurrency(Currency.EUR);
+        exchange.setRecipientUsername(user.getUsername());
+        exchange.setFromWallet(Helpers.createMockWallet(user));
+        exchange.setToWallet(Helpers.createMockWallet(user));
+        return exchange;
+    }
+
 
 }

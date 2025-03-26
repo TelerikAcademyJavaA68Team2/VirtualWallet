@@ -2,6 +2,8 @@ package com.example.virtualwallet.models.fillterOptions;
 
 import com.example.virtualwallet.models.enums.Currency;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,6 +13,8 @@ import java.util.Optional;
 
 import static com.example.virtualwallet.helpers.ValidationHelpers.*;
 
+@NoArgsConstructor
+@Setter
 @Data
 public class ExchangeFilterOptions {
 
