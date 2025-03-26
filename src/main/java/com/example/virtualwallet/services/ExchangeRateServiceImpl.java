@@ -7,8 +7,8 @@ import com.example.virtualwallet.models.dtos.exchangeRates.ExchangeRateOutput;
 import com.example.virtualwallet.models.dtos.wallet.WalletBasicOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 import com.example.virtualwallet.repositories.ExchangeRateRepository;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -41,10 +42,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     @Value("${exchangerate.api.key}")
     private String apiKey;
 
+    private final Environment env;
+
     private final RestTemplate restTemplate;
 
     private final ExchangeRateRepository exchangeRateRepository;
-
 
     @Override
     public void updateExchangeRate(String fromCurrency, String toCurrency, BigDecimal rate) {
@@ -70,7 +72,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         return sum.setScale(2, RoundingMode.HALF_UP);
     }
 
-
     @Override
     public ExchangeRate getExchangeRate(String fromCurrency, String toCurrency) {
         Currency enumFromCurrency;
@@ -92,7 +93,8 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         return exchangeRateRepository.findByFromCurrencyAndToCurrency(fromCurrency, toCurrency).getRate();
     }
 
-    @Scheduled(cron = "2 1 0 * * *", zone = "UTC")
+    @Scheduled(cron = "${EXCHANGE_RATE_SCHEDULER_CRON}", zone = "UTC")
+    @Override
     public void fetchAndUpdateAllExchangeRatesDaily() {
         LocalDateTime timeOfUpdate = LocalDateTime.now();
         for (Currency fromCurrency : Currency.values()) {
@@ -129,13 +131,15 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                 e.printStackTrace();
             }
         }
-        System.out.println(UPDATED_AT + timeOfUpdate);
+        System.out.println(UPDATED_AT + timeOfUpdate + "${EXCHANGE_RATE_SCHEDULER_CRON}");
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    @Profile("!test")
+    @Override
     public void initializeExchangeRatesAPIUpdate() {
-        fetchAndUpdateAllExchangeRatesDaily();
+        if (!Arrays.asList(env.getActiveProfiles()).contains("test")) {
+            fetchAndUpdateAllExchangeRatesDaily();
+        }
     }
 
     @Override
