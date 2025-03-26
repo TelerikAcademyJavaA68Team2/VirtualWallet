@@ -39,6 +39,10 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.validateAndCon
 public class ExchangeServiceImpl implements ExchangeService {
 
     public static final String INVALID_CURRENCY = "Invalid currency provided";
+    public static final String INSUFFICIENT_BALANCE_IN = "Insufficient balance in ";
+    public static final String CURRENCY = "currency";
+    public static final String WALLET = "Wallet";
+    public static final String EXCHANGE = "Exchange";
 
     private final ExchangeRepository exchangeRepository;
     private final ExchangeRateService exchangeRateService;
@@ -52,10 +56,10 @@ public class ExchangeServiceImpl implements ExchangeService {
         Exchange exchange;
         if (user.getRole().equals(Role.ADMIN)) {
             exchange = exchangeRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Exchange", id));
+                    .orElseThrow(() -> new EntityNotFoundException(EXCHANGE, id));
         } else {
             exchange = exchangeRepository.findByIdAndRecipientUsername(id, user.getUsername())
-                    .orElseThrow(() -> new EntityNotFoundException("Exchange", id));
+                    .orElseThrow(() -> new EntityNotFoundException(EXCHANGE, id));
         }
 
         return exchangeToFullExchangeOutput(exchange);
@@ -99,7 +103,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
         User user = userService.getAuthenticatedUser();
         if (!walletService.checkIfUserHasActiveWalletWithCurrency(user.getId(), fromCurrency)) {
-            throw new EntityNotFoundException("Wallet", "currency", fromCurrency.name());
+            throw new EntityNotFoundException(WALLET, CURRENCY, fromCurrency.name());
         }
 
         Wallet fromWallet = walletService.getOrCreateWalletByUsernameAndCurrency(user.getUsername(), fromCurrency);
@@ -110,7 +114,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         BigDecimal amountToAdd = amountToRemove.multiply(exchangeRate);
 
         if (fromWallet.getBalance().compareTo(amountToRemove) < 0) {
-            throw new InsufficientFundsException("Insufficient balance in " + fromCurrency + " wallet");
+            throw new InsufficientFundsException(INSUFFICIENT_BALANCE_IN + fromCurrency + " wallet");
         }
 
         fromWallet.setBalance(fromWallet.getBalance().subtract(amountToRemove));
