@@ -48,7 +48,8 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         if (!input.getPassword().equals(input.getPasswordConfirm())) {
             throw new InvalidUserInputException("Password confirmation failed");
         }
-        ResetPasswordToken token = resetRepository.findById(tokenId).orElseThrow(() -> new EntityNotFoundException("The token is invalid"));
+        ResetPasswordToken token = resetRepository.findById(tokenId).orElseThrow(
+                () -> new EntityNotFoundException("The token is invalid or"));
 
         User user = token.getUser();
         user.setPassword(passwordEncoder.encode(input.getPassword()));
