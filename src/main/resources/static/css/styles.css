@@ -13694,17 +13694,18 @@ td:not(.activity-column) {
 
 
 /* Base styling for the info icon */
-.hover-info {
+.hover-info-custom {
     position: relative;
     cursor: pointer;
 }
 
 /* Tooltip container */
-.hover-info::after {
+.hover-info-custom::after {
     content: attr(data-hover-text); /* Dynamically fetch the text from the data-hover-text attribute */
     position: absolute;
     bottom: 100%; /* Position the tooltip above the icon */
     left: 50%;
+    padding: 6px 12px; /* Comfortable padding */
     transform: translateX(-50%);
     background-color: #333; /* Background color of the tooltip */
     color: #fff; /* Text color */
@@ -13713,14 +13714,14 @@ td:not(.activity-column) {
     line-height: 1.4; /* Line height for readability */
     opacity: 0; /* Initially hidden */
     visibility: hidden; /* Initially hidden */
-    transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth fade-in effect */
-    z-index: 1000; /* Ensure the tooltip appears above other elements */
-    width: 310px; /* Set a fixed width for better formatting */
+    transition: opacity 0.2s ease, visibility 0.2s ease; /* Smooth fade-in effect */
+    z-index: 9999; /* Ensure the tooltip appears above other elements */
+    width: 330px; /* Set a fixed width for better formatting */
     text-align: center; /* Center-align the text */
 }
 
 /* Show the tooltip on hover */
-.hover-info:hover::after {
+.hover-info-custom:hover::after {
     opacity: 1; /* Make the tooltip visible */
     visibility: visible; /* Make the tooltip visible */
 }
