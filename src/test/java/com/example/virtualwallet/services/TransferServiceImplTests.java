@@ -37,6 +37,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TransferServiceImplTests {
 
+    public static final String AMOUNT = "100";
+    public static final String AMOUNT_2 = "50";
+    public static final String VALUE = "200";
+    public static final String MOCK_WITHDRAW_API_ERROR = "Mock Withdraw API error";
+    public static final String API_ERROR = "API Error";
+    public static final String VALUE_2 = "150";
     @Mock
     private TransferRepository transferRepository;
 
@@ -69,7 +75,7 @@ class TransferServiceImplTests {
 
     @Test
     void processTransfer_ApprovedStatus_UpdatesWalletBalance() {
-        TransferInput input = createMockTransferInput(validCard.getId(), "100");
+        TransferInput input = createMockTransferInput(validCard.getId(), AMOUNT);
 
         when(userService.getAuthenticatedUser()).thenReturn(user);
         when(cardService.getCardById(validCard.getId())).thenReturn(validCard);
@@ -86,13 +92,13 @@ class TransferServiceImplTests {
         FullTransferInfoOutput result = transferService.processTransfer(input);
 
         assertEquals(TransferStatus.APPROVED.toString(), result.getStatus());
-        assertEquals(new BigDecimal("100"), wallet.getBalance());
+        assertEquals(new BigDecimal(AMOUNT), wallet.getBalance());
         verify(walletService).update(wallet);
     }
 
     @Test
     void processTransfer_DeclinedStatus_DoesUpdateWallet() {
-        TransferInput input = createMockTransferInput(validCard.getId(), "50");
+        TransferInput input = createMockTransferInput(validCard.getId(), AMOUNT_2);
 
         when(userService.getAuthenticatedUser()).thenReturn(user);
         when(cardService.getCardById(validCard.getId())).thenReturn(validCard);
@@ -117,7 +123,7 @@ class TransferServiceImplTests {
     @Test
     void processTransfer_ExpiredCard_ThrowsException() {
         Card expiredCard = createMockExpiredCard(user);
-        TransferInput input = createMockTransferInput(expiredCard.getId(), "100");
+        TransferInput input = createMockTransferInput(expiredCard.getId(), AMOUNT);
 
         when(userService.getAuthenticatedUser()).thenReturn(user);
         when(cardService.getCardById(expiredCard.getId())).thenReturn(expiredCard);
@@ -132,7 +138,7 @@ class TransferServiceImplTests {
     void processTransfer_NotCardOwner_ThrowsException() {
         User otherUser = createMockUserWithoutCardsAndWallets();
         Card otherUserCard = createMockCard(otherUser);
-        TransferInput input = createMockTransferInput(otherUserCard.getId(), "100");
+        TransferInput input = createMockTransferInput(otherUserCard.getId(), AMOUNT);
 
         when(userService.getAuthenticatedUser()).thenReturn(user);
         when(cardService.getCardById(otherUserCard.getId())).thenReturn(otherUserCard);
@@ -199,8 +205,8 @@ class TransferServiceImplTests {
         TransferFilterOptions filters = new TransferFilterOptions();
         filters.setPage(0);
         filters.setSize(10);
-        filters.setSortBy("date");
-        filters.setSortOrder("asc");
+        filters.setSortBy(DATE);
+        filters.setSortOrder(SORT_ORDER);
 
         Transfer mockTransfer = createMockTransfer(validCard, wallet);
         Page<Transfer> mockPage = new PageImpl<>(List.of(mockTransfer));
@@ -219,8 +225,8 @@ class TransferServiceImplTests {
         TransferFilterOptions filters = new TransferFilterOptions();
         filters.setPage(0);
         filters.setSize(10);
-        filters.setSortBy("date");
-        filters.setSortOrder("asc");
+        filters.setSortBy(DATE);
+        filters.setSortOrder(SORT_ORDER);
 
         Page<Transfer> emptyPage = new PageImpl<>(List.of());
 
@@ -238,7 +244,7 @@ class TransferServiceImplTests {
         TransferInputMVC input = new TransferInputMVC();
         input.setCardId(validCard.getId());
         input.setWalletId(wallet.getId());
-        input.setAmount(new BigDecimal("200"));
+        input.setAmount(new BigDecimal(VALUE));
 
         when(userService.getAuthenticatedUser()).thenReturn(user);
         when(cardService.getCardById(validCard.getId())).thenReturn(validCard);
@@ -258,15 +264,15 @@ class TransferServiceImplTests {
 
         assertEquals(TransferStatus.APPROVED.toString(), result.getStatus());
         verify(walletService).update(wallet);
-        assertEquals(new BigDecimal("200"), wallet.getBalance());
+        assertEquals(new BigDecimal(VALUE), wallet.getBalance());
     }
 
     @Test
     void callMockWithdrawApi_Error_ThrowsRuntimeException() {
         when(restTemplate.getForEntity(anyString(), eq(Boolean.class)))
-                .thenThrow(new RuntimeException("API Error"));
+                .thenThrow(new RuntimeException(API_ERROR));
 
-        TransferInput input = createMockTransferInput(validCard.getId(), "100");
+        TransferInput input = createMockTransferInput(validCard.getId(), AMOUNT);
 
         when(userService.getAuthenticatedUser()).thenReturn(user);
         when(cardService.getCardById(validCard.getId())).thenReturn(validCard);
@@ -274,7 +280,7 @@ class TransferServiceImplTests {
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> transferService.processTransfer(input));
 
-        assertTrue(exception.getMessage().contains("Mock Withdraw API error"));
+        assertTrue(exception.getMessage().contains(MOCK_WITHDRAW_API_ERROR));
     }
 
     @Test
@@ -282,7 +288,7 @@ class TransferServiceImplTests {
         TransferInputMVC input = new TransferInputMVC();
         input.setCardId(validCard.getId());
         input.setWalletId(wallet.getId());
-        input.setAmount(new BigDecimal("150"));
+        input.setAmount(new BigDecimal(VALUE_2));
 
         when(userService.getAuthenticatedUser()).thenReturn(user);
         when(cardService.getCardById(validCard.getId())).thenReturn(validCard);

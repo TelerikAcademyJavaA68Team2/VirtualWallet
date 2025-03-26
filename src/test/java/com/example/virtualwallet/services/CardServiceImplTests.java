@@ -25,6 +25,7 @@ import java.util.*;
 
 import static com.example.virtualwallet.Helpers.*;
 import static com.example.virtualwallet.helpers.ValidationHelpers.CARD_MUST_NOT_BE_EXPIRED;
+import static com.example.virtualwallet.helpers.ValidationHelpers.UNAUTHORIZED_MESSAGE_CARD;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.*;
 public class CardServiceImplTests {
 
     public static final String REGISTERED_TO_ANOTHER_USER = "This card is already registered to another user!";
+    public static final String CARD_NUMBER_ALREADY_EXISTS = "Card with number: %s already exists.";
 
     @Mock
     private CardRepository cardRepository;
@@ -314,7 +316,7 @@ public class CardServiceImplTests {
 
         verify(cardRepository, never()).save(any(Card.class));
 
-        assertEquals(format("Card with number: %s already exists.", card.getCardNumber()), duplicateEntityException.getMessage());
+        assertEquals(format(CARD_NUMBER_ALREADY_EXISTS, card.getCardNumber()), duplicateEntityException.getMessage());
     }
 
     @Test
@@ -364,7 +366,7 @@ public class CardServiceImplTests {
                 () -> cardService.updateCard(cardEdit, card.getId()));
 
         verify(cardRepository, never()).save(any(Card.class));
-        assertEquals("Only the card's owner can modify card's details!", unauthorizedAccessException.getMessage());
+        assertEquals(UNAUTHORIZED_MESSAGE_CARD, unauthorizedAccessException.getMessage());
 
     }
 

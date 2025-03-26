@@ -32,7 +32,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class WalletServiceImplTests {
 
-    @Mock private WalletRepository walletRepository;
+    public static final String VALUE = "25.00";
+    @Mock
+    private WalletRepository walletRepository;
     @Mock private ExchangeRateService exchangeRateService;
     @Mock private UserService userService;
 
@@ -141,7 +143,7 @@ public class WalletServiceImplTests {
     void createAuthenticatedUserWalletWalletByCurrency_Duplicate_Throws() {
         when(userService.getAuthenticatedUser()).thenReturn(user);
         when(walletRepository.checkIfUserHasActiveWalletWithCurrency(user.getId(), Currency.USD)).thenReturn(true);
-        assertThrows(DuplicateEntityException.class, () -> walletService.createAuthenticatedUserWalletWalletByCurrency("USD"));
+        assertThrows(DuplicateEntityException.class, () -> walletService.createAuthenticatedUserWalletWalletByCurrency(USD));
     }
 
     @Test
@@ -174,19 +176,15 @@ public class WalletServiceImplTests {
                 .thenReturn(List.of());
 
         List<Object[]> historyData = new ArrayList<>();
-        historyData.add(new Object[] {
-                UUID.randomUUID(), "transaction", new BigDecimal("30.00"), null, "USD",
-                null, null, "alice", "bob", "/img/alice.png", "/img/bob.png", null,
-                Timestamp.valueOf("2024-01-01 10:00:00")
-        });
+        createActivityRows(historyData, "30.00");
 
         when(walletRepository.findUserWalletHistory(eq(user.getUsername()), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(historyData));
 
-        WalletsWithHistoryOutput result = walletService.getActiveWalletsOfAuthenticatedUser("USD", 0, 10);
+        WalletsWithHistoryOutput result = walletService.getActiveWalletsOfAuthenticatedUser(USD, 0, 10);
 
         assertEquals(BigDecimal.ZERO, result.getEstimatedBalance());
-        assertEquals("USD", result.getEstimatedCurrency());
+        assertEquals(USD, result.getEstimatedCurrency());
         assertTrue(result.getWallets().isEmpty());
         assertEquals(1, result.getHistory().size());
     }
@@ -213,26 +211,23 @@ public class WalletServiceImplTests {
         when(walletRepository.findActiveWalletsByUserId(user.getId())).thenReturn(List.of(wallet));
 
         List<Object[]> activityRows = new ArrayList<>();
-        activityRows.add(new Object[] {
-                UUID.randomUUID(), "transaction", new BigDecimal("25.00"), null, "USD",
-                null, null, "alice", "bob", "/img/alice.png", "/img/bob.png", null, Timestamp.valueOf("2024-01-01 10:00:00")
-        });
+
+        createActivityRows(activityRows, VALUE);
 
         when(walletRepository.findUserWalletHistory(eq(user.getUsername()), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(activityRows));
 
 
-        when(exchangeRateService.findCurrentBalanceByCurrency(eq("USD"), anyList()))
+        when(exchangeRateService.findCurrentBalanceByCurrency(eq(USD), anyList()))
                 .thenReturn(BigDecimal.valueOf(150));
 
-        WalletsWithHistoryOutput result = walletService.getActiveWalletsOfAuthenticatedUser("USD", 0, 5);
+        WalletsWithHistoryOutput result = walletService.getActiveWalletsOfAuthenticatedUser(USD, 0, 5);
 
-        assertEquals("USD", result.getEstimatedCurrency());
+        assertEquals(USD, result.getEstimatedCurrency());
         assertEquals(BigDecimal.valueOf(150), result.getEstimatedBalance());
         assertFalse(result.getWallets().isEmpty());
         assertFalse(result.getHistory().isEmpty());
     }
-
 
     @Test
     void getActiveWalletsOfAuthenticatedUser_NoMatchingCurrency_UsesFallback() {
@@ -241,10 +236,10 @@ public class WalletServiceImplTests {
         when(walletRepository.findActiveWalletsByUserId(user.getId())).thenReturn(List.of(wallet));
         when(walletRepository.findUserWalletHistory(eq(user.getUsername()), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of()));
-        when(exchangeRateService.findCurrentBalanceByCurrency(eq("USD"), anyList()))
+        when(exchangeRateService.findCurrentBalanceByCurrency(eq(USD), anyList()))
                 .thenReturn(BigDecimal.valueOf(99));
 
-        WalletsWithHistoryOutput result = walletService.getActiveWalletsOfAuthenticatedUser("USD", 0, 5);
+        WalletsWithHistoryOutput result = walletService.getActiveWalletsOfAuthenticatedUser(USD, 0, 5);
 
         assertEquals("EUR", result.getEstimatedCurrency());
         assertEquals(BigDecimal.valueOf(99), result.getEstimatedBalance());
@@ -258,20 +253,17 @@ public class WalletServiceImplTests {
         when(walletRepository.findActiveWalletsByUserId(user.getId())).thenReturn(List.of(wallet));
 
         List<Object[]> activityRows = new ArrayList<>();
-        activityRows.add(new Object[] {
-                UUID.randomUUID(), "transaction", new BigDecimal("25.00"), null, "USD",
-                null, null, "alice", "bob", "/img/alice.png", "/img/bob.png", null, Timestamp.valueOf("2024-01-01 10:00:00")
-        });
+        createActivityRows(activityRows, VALUE);
 
         Page<Object[]> mockPage = new PageImpl<>(activityRows);
         when(walletRepository.findUserWalletHistory(eq(user.getUsername()), any(Pageable.class)))
                 .thenReturn(mockPage);
 
-        when(exchangeRateService.findCurrentBalanceByCurrency(eq("USD"), anyList())).thenReturn(BigDecimal.valueOf(100));
+        when(exchangeRateService.findCurrentBalanceByCurrency(eq(USD), anyList())).thenReturn(BigDecimal.valueOf(100));
 
-        WalletsWithHistoryOutput result = walletService.getActiveWalletsOfAuthenticatedUser("USD", 0, 10);
+        WalletsWithHistoryOutput result = walletService.getActiveWalletsOfAuthenticatedUser(USD, 0, 10);
 
-        assertEquals("USD", result.getEstimatedCurrency());
+        assertEquals(USD, result.getEstimatedCurrency());
         assertEquals(BigDecimal.valueOf(100), result.getEstimatedBalance());
         assertEquals(1, result.getHistory().size());
         assertEquals(1, result.getWallets().size());
@@ -287,10 +279,7 @@ public class WalletServiceImplTests {
         when(walletRepository.findById(walletId)).thenReturn(Optional.of(wallet));
 
         List<Object[]> activityRows = new ArrayList<>();
-        activityRows.add(new Object[] {
-                UUID.randomUUID(), "transaction", new BigDecimal("25.00"), null, "USD",
-                null, null, "alice", "bob", "/img/alice.png", "/img/bob.png", null, Timestamp.valueOf("2024-01-01 10:00:00")
-        });
+        createActivityRows(activityRows, VALUE);
 
         Page<Object[]> mockPage = new PageImpl<>(activityRows);
         when(walletRepository.findWalletHistory(eq(walletId), any(Pageable.class))).thenReturn(mockPage);
@@ -325,6 +314,13 @@ public class WalletServiceImplTests {
 
         assertThrows(EntityNotFoundException.class, () ->
                 walletService.getWalletPageById(walletId, 0, 5));
+    }
+
+    private static void createActivityRows(List<Object[]> activityRows, String val) {
+        activityRows.add(new Object[]{
+                UUID.randomUUID(), "transaction", new BigDecimal(val), null, USD,
+                null, null, "alice", "bob", "/img/alice.png", "/img/bob.png", null, Timestamp.valueOf("2024-01-01 10:00:00")
+        });
     }
 
 }
