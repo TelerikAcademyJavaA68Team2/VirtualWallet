@@ -190,10 +190,12 @@
                                 <img th:if="${activity.senderUsername.equals(currentUserUsername)}"
                                      th:src="${activity.recipientPhoto}"
                                      alt="Profile Photo"
+                                     class="profile-picture"
                                      style="width: 60px; height: 60px; border-radius: 50%"/>
                                 <img th:if="${activity.recipientUsername.equals(currentUserUsername)}"
                                      th:src="${activity.senderPhoto}"
                                      alt="Profile Photo"
+                                     class="profile-picture"
                                      style="width: 60px; height: 60px; border-radius: 50%"/>
                             </div>
                             <div th:if="${activity.activity == 'transfer'}"

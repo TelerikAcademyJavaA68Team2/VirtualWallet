@@ -13678,6 +13678,14 @@ td:not(.activity-column) {
     margin: auto;
 }
 
+.profile-picture-small {
+    width: 60px; height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+    margin: auto;
+}
+
 .rounded-start-circle {
     border-radius: 50%;
     border-top-left-radius: 50% !important;
