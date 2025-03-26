@@ -14,7 +14,7 @@ public interface PasswordResetRepository extends JpaRepository<ResetPasswordToke
 
     @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END " +
             "FROM ResetPasswordToken e " +
-            "WHERE e.user.email = :email AND e.expiresAt > :timeThreshold")
+            "WHERE e.user.email = :email AND e.expiresAt > :timeThreshold AND e.confirmedAt IS NULL")
     boolean checkIfTokenWasAlreadySent(@Param("email") String email, @Param("timeThreshold") LocalDateTime timeThreshold);
 
 }
