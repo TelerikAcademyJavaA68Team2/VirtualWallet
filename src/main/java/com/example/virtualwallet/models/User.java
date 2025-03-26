@@ -95,8 +95,12 @@ public class User implements UserDetails {
         this.deletedAt = LocalDateTime.now();
         this.status = AccountStatus.DELETED;
         this.photo = "/images/default-profile-pic.png";
-        this.wallets.forEach(Wallet::markAsDeleted);
-        this.cards.forEach(Card::markAsDeleted);
+        if(wallets != null){
+            this.wallets.forEach(Wallet::markAsDeleted);
+        }
+        if (cards != null){
+            this.cards.forEach(Card::markAsDeleted);
+        }
     }
 
     @Override
