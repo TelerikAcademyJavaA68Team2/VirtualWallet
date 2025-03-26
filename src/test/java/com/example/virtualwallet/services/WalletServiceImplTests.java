@@ -205,8 +205,6 @@ public class WalletServiceImplTests {
         verify(walletRepository, never()).save(any());
     }
 
-
-
     @Test
     void getActiveWalletsOfAuthenticatedUser_MatchingCurrency_ReturnsCorrectOutput() {
         when(userService.getAuthenticatedUser()).thenReturn(user);
