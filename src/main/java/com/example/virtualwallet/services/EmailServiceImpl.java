@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class EmailServiceImpl implements EmailService {
 
     private static final String appName = "MoneyMe Virtual Wallet";
-    private static final String CONFIRMATION_FAILED = "Send email confirmation failed";
+    public static final String CONFIRMATION_FAILED = "Send email confirmation failed";
     public static final String EMAIL = "virtual.wallet.a68@gmail.com";
 
     private final JavaMailSender mailSender;
