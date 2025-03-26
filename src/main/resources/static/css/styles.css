@@ -13669,6 +13669,14 @@ td:not(.activity-column) {
     background-color: rgba(66, 66, 66, 0.8); /* Darker green on hover */
 }
 
+.profile-picture {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+    margin: auto;
+}
 
 .rounded-start-circle {
     border-radius: 50%;

@@ -38,8 +38,6 @@ public class CloudinaryHelper {
         Map<String, Object> uploadResult = cloudinary.uploader()
                 .upload(multipartFile.getBytes(), ObjectUtils.emptyMap());
 
-        //        user.setPhoto(photoUrl);
-//        userService.save(user);
         return uploadResult.get("url").toString();
     }
 }
