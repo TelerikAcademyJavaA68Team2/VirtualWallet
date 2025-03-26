@@ -8,6 +8,7 @@ import com.example.virtualwallet.services.contracts.EmailConfirmationService;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
 import com.example.virtualwallet.services.contracts.PasswordResetService;
+import com.example.virtualwallet.services.contracts.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,17 +29,40 @@ public class AuthenticationMvcController {
     private final AuthenticationService authenticationService;
     private final EmailConfirmationService emailConfirmationService;
     private final PasswordResetService passwordResetService;
+    private final UserService userService;
 
 
     @GetMapping("/login")
     public String getLoginPage(Model model, HttpSession session,
                                @RequestParam(value = "error", required = false) Boolean error,
                                @RequestParam(value = "deleted", required = false) Boolean deleted) {
+        try {
+            if (userService.getAuthenticatedUser() != null) {
+                return "redirect:/mvc/profile/wallets";
+            }
+        } catch (UnauthorizedAccessException e) {
+
+
+            if (Boolean.TRUE.equals(error)) {
+                model.addAttribute("errorMessage", "Invalid username or password");
+            } else if (Boolean.TRUE.equals(deleted)) {
+                model.addAttribute("errorMessage", "Invalid username or password");
+                // ToDo add restore account option or send to restore account page directly
+            }
+
+            Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
+            if (hasActiveUser != null && hasActiveUser) {
+                return "redirect:/mvc/home";
+            }
+
+            model.addAttribute("loginDto", new LoginUserInput());
+            return "Login-View";
+        }
         if (Boolean.TRUE.equals(error)) {
             model.addAttribute("errorMessage", "Invalid username or password");
         } else if (Boolean.TRUE.equals(deleted)) {
-            model.addAttribute("errorMessage", "Invalid username or password"); // no need to tell the user he is deleted
-            // ToDo add restore account option or send to restore account page directly
+            model.addAttribute("errorMessage", "Invalid username or password");
+
         }
 
         Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
@@ -52,6 +76,21 @@ public class AuthenticationMvcController {
 
     @GetMapping("/register")
     public String getRegisterPage(Model model, HttpSession session) {
+        try {
+            if (userService.getAuthenticatedUser() != null) {
+                return "redirect:/mvc/profile/wallets";
+            }
+        } catch (UnauthorizedAccessException e){
+
+        Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
+        if (hasActiveUser != null && hasActiveUser) {
+            return "redirect:/mvc/home";
+        }
+
+        model.addAttribute("registerRequest", new RegisterUserInput());
+        return "Register-View";
+        }
+
         Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
         if (hasActiveUser != null && hasActiveUser) {
             return "redirect:/mvc/home";
@@ -60,6 +99,7 @@ public class AuthenticationMvcController {
         model.addAttribute("registerRequest", new RegisterUserInput());
         return "Register-View";
     }
+
 
     @GetMapping("/logout")
     public String handleLogout(HttpSession session) {
