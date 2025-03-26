@@ -213,18 +213,21 @@
                                  class="d-flex align-items-center currency-exchange-container">
                                 <img th:if="${activity.senderUsername.equals(currentUserUsername)}"
                                      th:src="${activity.recipientPhoto}"
+                                     class="profile-picture"
                                      alt="Profile Photo"
                                      style="width: 60px; height: 60px; border-radius: 50%"/>
                                 <img th:if="${activity.recipientUsername.equals(currentUserUsername)}"
                                      th:src="${activity.senderPhoto}"
                                      alt="Profile Photo"
+                                     class="profile-picture"
                                      style="width: 60px; height: 60px; border-radius: 50%"/>
                             </div>
                             <div th:if="${activity.activity == 'transfer'}"
                                  class="d-flex align-items-center currency-exchange-container">
                                 <img src="/images/transfer.png"
                                      alt="Profile Photo"
-                                     style="width: 60px; height: 60px;"/>
+                                     class="profile-picture"
+                                     style="object-fit: cover; width: 60px; height: 60px;"/>
                             </div>
                         </td>
                         <!-- Middle Column: Conditional Logic -->
