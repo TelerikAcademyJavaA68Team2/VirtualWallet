@@ -9,21 +9,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import static com.example.virtualwallet.services.EmailServiceImpl.CONFIRMATION_FAILED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EmailServiceImplTests {
 
+    public static final String MAIL_SERVER_ERROR = "Mail server error";
+    private static final String MOCK_FIRST_NAME = "John";
+    private static final String MOCK_EMAIL = "john.doe@example.com";
+    private static final String MOCK_TOKEN_ID = "abc123";
     @Mock
     private JavaMailSender mailSender;
 
     @InjectMocks
     private EmailServiceImpl emailService;
-
-    private static final String MOCK_FIRST_NAME = "John";
-    private static final String MOCK_EMAIL = "john.doe@example.com";
-    private static final String MOCK_TOKEN_ID = "abc123";
 
     @Test
     void sendVerificationEmail_Success() {
@@ -62,24 +63,23 @@ public class EmailServiceImplTests {
         // Arrange
         MimeMessage mimeMessage = mock(MimeMessage.class);
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
-        doThrow(new RuntimeException("Mail server error")).when(mailSender).send(any(MimeMessage.class));
+        doThrow(new RuntimeException(MAIL_SERVER_ERROR)).when(mailSender).send(any(MimeMessage.class));
 
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () ->
                 emailService.sendVerificationEmail(MOCK_FIRST_NAME, MOCK_EMAIL, MOCK_TOKEN_ID, true));
-        assertEquals("Send email confirmation failed", exception.getMessage());
+        assertEquals(CONFIRMATION_FAILED, exception.getMessage());
     }
 
     @Test
     void sendResetPasswordEmail_ExceptionThrown() {
         // Arrange
         MimeMessage mimeMessage = mock(MimeMessage.class);
-        when(mailSender.createMimeMessage()).thenReturn(mimeMessage); // Mock createMimeMessage
-        lenient().doThrow(new RuntimeException("Mail server error")).when(mailSender).send(any(MimeMessage.class)); // Mock send with lenient()
-
+        when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+        lenient().doThrow(new RuntimeException(MAIL_SERVER_ERROR)).when(mailSender).send(any(MimeMessage.class));
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () ->
                 emailService.sendResetPasswordEmail(MOCK_FIRST_NAME, MOCK_EMAIL, MOCK_TOKEN_ID, true));
-        assertEquals("Send email confirmation failed", exception.getMessage());
+        assertEquals(CONFIRMATION_FAILED, exception.getMessage());
     }
 }

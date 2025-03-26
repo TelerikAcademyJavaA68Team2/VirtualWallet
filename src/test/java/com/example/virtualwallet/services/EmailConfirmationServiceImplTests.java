@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.virtualwallet.services.EmailConfirmationServiceImpl.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class EmailConfirmationServiceImplTests {
 
+    public static final String TOKEN_WAS_NOT_FOUND = "The confirmation token was not found.";
     @Mock
     private EmailConfirmationRepository emailConfirmationRepository;
 
@@ -81,7 +83,7 @@ public class EmailConfirmationServiceImplTests {
         // Act & Assert
         InvalidUserInputException exception = assertThrows(InvalidUserInputException.class, () ->
                 emailConfirmationService.createAndSendEmailConfirmationToUser(mockUser, false));
-        assertEquals("Your email is already confirmed.", exception.getMessage());
+        assertEquals(EMAIL_IS_ALREADY_CONFIRMED, exception.getMessage());
         verify(emailConfirmationRepository, never()).save(any());
         verify(emailService, never()).sendVerificationEmail(anyString(), anyString(), anyString(), anyBoolean());
     }
@@ -95,7 +97,7 @@ public class EmailConfirmationServiceImplTests {
         // Act & Assert
         DuplicateEntityException exception = assertThrows(DuplicateEntityException.class, () ->
                 emailConfirmationService.createAndSendEmailConfirmationToUser(mockUser, false));
-        assertEquals("Email confirmation was already sent", exception.getMessage());
+        assertEquals(CONFIRMATION_ALREADY_SENT, exception.getMessage());
         verify(emailConfirmationRepository, never()).save(any());
         verify(emailService, never()).sendVerificationEmail(anyString(), anyString(), anyString(), anyBoolean());
     }
@@ -124,7 +126,7 @@ public class EmailConfirmationServiceImplTests {
         // Act & Assert
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
                 emailConfirmationService.confirmEmailToken(invalidTokenId));
-        assertEquals("The confirmation token was not found.", exception.getMessage());
+        assertEquals(TOKEN_WAS_NOT_FOUND, exception.getMessage());
         verify(userService, never()).save(any());
         verify(emailConfirmationRepository, never()).save(any());
     }
@@ -138,7 +140,7 @@ public class EmailConfirmationServiceImplTests {
         // Act & Assert
         EmailConfirmedException exception = assertThrows(EmailConfirmedException.class, () ->
                 emailConfirmationService.confirmEmailToken(mockToken.getId()));
-        assertEquals("Your email is already confirmed.", exception.getMessage());
+        assertEquals(EMAIL_IS_ALREADY_CONFIRMED, exception.getMessage());
         verify(userService, never()).save(any());
         verify(emailConfirmationRepository, never()).save(any());
     }
@@ -152,7 +154,7 @@ public class EmailConfirmationServiceImplTests {
         // Act & Assert
         EmailConfirmationException exception = assertThrows(EmailConfirmationException.class, () ->
                 emailConfirmationService.confirmEmailToken(mockToken.getId()));
-        assertEquals("Email confirmation has expired please send new confirmation email.", exception.getMessage());
+        assertEquals(TOKEN_EXPIRED, exception.getMessage());
         verify(userService, never()).save(any());
         verify(emailConfirmationRepository, never()).save(any());
     }

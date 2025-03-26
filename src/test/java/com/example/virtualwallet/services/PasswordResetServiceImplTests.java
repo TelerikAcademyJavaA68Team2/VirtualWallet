@@ -22,12 +22,19 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.virtualwallet.services.PasswordResetServiceImpl.PASSWORD_CONFIRMATION_FAILED;
+import static com.example.virtualwallet.services.PasswordResetServiceImpl.PASSWORD_EMAIL_WAS_ALREADY_SEND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PasswordResetServiceImplTests {
+
+    public static final String ENCODED_PASSWORD = "encodedPassword";
+    public static final String WRONG_PASSWORD = "wrongPassword";
+    public static final String TOKEN_IS_INVALID_OR_NOT_FOUND = "The token is invalid or not found.";
+    public static final String NEW_PASSWORD = "newPassword";
 
     @Mock
     private PasswordResetRepository resetRepository;
@@ -60,8 +67,8 @@ public class PasswordResetServiceImplTests {
         mockPasswordResetInput.setEmail(mockUser.getEmail());
 
         mockNewPasswordResetInput = new NewPasswordResetInput();
-        mockNewPasswordResetInput.setPassword("newPassword");
-        mockNewPasswordResetInput.setPasswordConfirm("newPassword");
+        mockNewPasswordResetInput.setPassword(NEW_PASSWORD);
+        mockNewPasswordResetInput.setPasswordConfirm(NEW_PASSWORD);
     }
 
     @Test
@@ -97,7 +104,7 @@ public class PasswordResetServiceImplTests {
         EmailConfirmationException exception = assertThrows(EmailConfirmationException.class, () ->
                 passwordResetService.sendResetPasswordEmail(mockPasswordResetInput, false));
 
-        assertEquals("The reset password email was already send!", exception.getMessage());
+        assertEquals(PASSWORD_EMAIL_WAS_ALREADY_SEND, exception.getMessage());
         verify(resetRepository, never()).save(any());
         verify(emailService, never()).sendResetPasswordEmail(anyString(), anyString(), anyString(), anyBoolean());
     }
@@ -105,7 +112,7 @@ public class PasswordResetServiceImplTests {
     @Test
     void processResetPasswordInput_Success() {
         // Arrange
-        when(passwordEncoder.encode(mockNewPasswordResetInput.getPassword())).thenReturn("encodedPassword");
+        when(passwordEncoder.encode(mockNewPasswordResetInput.getPassword())).thenReturn(ENCODED_PASSWORD);
         when(resetRepository.findById(mockToken.getId())).thenReturn(Optional.of(mockToken));
 
         // Act
@@ -114,19 +121,19 @@ public class PasswordResetServiceImplTests {
         // Assert
         verify(userService).save(mockUser);
         verify(resetRepository).save(mockToken);
-        assertEquals("encodedPassword", mockUser.getPassword());
+        assertEquals(ENCODED_PASSWORD, mockUser.getPassword());
         assertNotNull(mockToken.getConfirmedAt());
     }
 
     @Test
     void processResetPasswordInput_PasswordsDoNotMatch_ThrowsException() {
         // Arrange
-        mockNewPasswordResetInput.setPasswordConfirm("wrongPassword");
+        mockNewPasswordResetInput.setPasswordConfirm(WRONG_PASSWORD);
 
         // Act & Assert
         InvalidUserInputException exception = assertThrows(InvalidUserInputException.class, () ->
                 passwordResetService.processResetPasswordInput(mockNewPasswordResetInput, mockToken.getId()));
-        assertEquals("Password confirmation failed", exception.getMessage());
+        assertEquals(PASSWORD_CONFIRMATION_FAILED, exception.getMessage());
         verify(userService, never()).save(any());
         verify(resetRepository, never()).save(any());
     }
@@ -140,7 +147,7 @@ public class PasswordResetServiceImplTests {
         // Act & Assert
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
                 passwordResetService.processResetPasswordInput(mockNewPasswordResetInput, invalidTokenId));
-        assertEquals("The token is invalid or not found.", exception.getMessage());
+        assertEquals(TOKEN_IS_INVALID_OR_NOT_FOUND, exception.getMessage());
         verify(userService, never()).save(any());
         verify(resetRepository, never()).save(any());
     }
