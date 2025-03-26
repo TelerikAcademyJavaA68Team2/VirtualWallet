@@ -13714,7 +13714,7 @@ td:not(.activity-column) {
     opacity: 0; /* Initially hidden */
     visibility: hidden; /* Initially hidden */
     transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth fade-in effect */
-    z-index: 10; /* Ensure the tooltip appears above other elements */
+    z-index: 1000; /* Ensure the tooltip appears above other elements */
     width: 310px; /* Set a fixed width for better formatting */
     text-align: center; /* Center-align the text */
 }

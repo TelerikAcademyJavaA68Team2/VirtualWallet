@@ -86,23 +86,23 @@ public class ProfileMvcController {
     public String showChangePasswordForm(Model model) {
         PasswordUpdateInput request = new PasswordUpdateInput();
         model.addAttribute("passwordUpdateInput", request);
-        return "Change-Password-View";
+        return "Profile-Change-Password-View";
     }
 
     @PostMapping("/change-password")
     public String executeChangePasswordForm(@Valid @ModelAttribute("passwordUpdateInput") PasswordUpdateInput request, BindingResult errors, Model model) {
         if (errors.hasErrors()) {
-            return "Change-Password-View";
+            return "Profile-Change-Password-View";
         }
         try {
             authenticationService.updateUserPassword(request);
             return "redirect:/mvc/profile";
         } catch (InvalidUserInputException e) {
             errors.rejectValue("password", "invalid password", e.getMessage());
-            return "Change-Password-View";
+            return "Profile-Change-Password-View";
         } catch (PasswordMismatchException e) {
             errors.rejectValue("newPassword", "invalid password confirmation", e.getMessage());
-            return "Change-Password-View";
+            return "Profile-Change-Password-View";
         }
     }
 
