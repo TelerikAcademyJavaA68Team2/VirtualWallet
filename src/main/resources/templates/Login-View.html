@@ -2,88 +2,122 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/Page-Layout :: head('Login')}">Login</head>
 <header th:insert="~{fragments/Page-Layout :: navigation}">
-  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </header>
 <header class="py-2 bg-light border-bottom mb-4">
-  <div class="container">
-    <div class="text-center ">
-      <h1 class="fw-bolder" th:text="#{navigation.login}">Page info</h1>
+    <div class="container">
+        <div class="text-center ">
+            <h1 class="fw-bolder" th:text="#{navigation.login}">Page info</h1>
+        </div>
     </div>
-  </div>
 </header>
 <body>
 <!-- Hero Start -->
 <section class="bg-home">
-  <div class="home-center">
-    <div class="home-desc-center">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-lg-7 col-md-6">
-            <div class="mr-lg-5">
-              <img src="/images/user/login.svg" th:src="@{/images/user/login.svg}" class="img-fluid d-block mx-auto" alt="Login Stock Image">
-            </div>
-          </div>
-          <div class="col-lg-5 col-md-6 mt-4 mt-sm-0 pt-2 pt-sm-0 move-up">
-            <div class="login-page bg-white shadow rounded p-4">
-              <div class="text-center">
-                <h4 class="mb-4">Login</h4>
-              </div>
-              <!-- Login Form -->
-              <form class="login-form" th:action="@{/mvc/auth/login}" th:object="${loginDto}" method="post">
-                <div class="row">
-                  <div class="col-lg-12">
-                    <div th:if="${errorMessage}" class="alert alert-danger alert-pills">
-                      <span class="alert-content" th:text="${errorMessage}"></span>
+    <div class="home-center">
+        <div class="home-desc-center">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 col-md-6">
+                        <div class="mr-lg-5">
+                            <img src="/images/user/login.svg" th:src="@{/images/user/login.svg}"
+                                 class="img-fluid d-block mx-auto" alt="Login Stock Image">
+                        </div>
                     </div>
-                    <div th:if="${emailConfirmationMessage}" class="alert alert-warning text-center mb-4" role="alert">
-                      <span th:text="#{emailConfirmationMessage}">You must confirm your email to activate your account.</span>
-                    </div>
-                    <!-- Username Field -->
-                    <div class="form-group position-relative">
-                      <label th:text="#{user.header.username}"></label><span
-                            class="text-danger"> *</span>
-                      <i class="mdi mdi-account ml-3 icons"></i>
-                      <input type="text" class="form-control pl-5" placeholder="Username"
-                             name="username" required="">
-                    </div>
-                  </div>
+                    <div class="col-lg-5 col-md-6 mt-4 mt-sm-0 pt-2 pt-sm-0 move-up">
+                        <div class="login-page bg-white shadow rounded p-4">
+                            <div class="text-center">
+                                <h4 class="mb-4">Login</h4>
+                            </div>
+                            <!-- Login Form -->
+                            <form class="login-form" th:action="@{/mvc/auth/login}" th:object="${loginDto}"
+                                  method="post">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div th:if="${errorMessage}" class="alert alert-danger alert-pills">
+                                            <span class="alert-content" th:text="${errorMessage}"></span>
+                                        </div>
+                                        <div th:if="${emailConfirmationMessage}"
+                                             class="alert alert-warning text-center mb-4" role="alert">
+                                            <span th:text="#{emailConfirmationMessage}">You must confirm your email to activate your account.</span>
+                                        </div>
+                                        <!-- Username Field -->
+                                        <div class="form-group position-relative">
+                                            <label th:text="#{user.header.username}"></label><span
+                                                class="text-danger"> *</span>
+                                            <i class="mdi mdi-account ml-3 icons"></i>
+                                            <input type="text" class="form-control pl-5" placeholder="Username"
+                                                   name="username" required="">
+                                        </div>
+                                    </div>
 
-                  <!-- Password Field -->
-                  <div class="col-lg-12">
-                    <div class="form-group position-relative">
-                      <label th:text="#{user.header.password}"></label><span
-                            class="text-danger"> *</span>
-                      <i class="mdi mdi-key ml-3 icons"></i>
-                      <input type="password" name="password" class="form-control pl-5"
-                             placeholder="Password" required="">
-                    </div>
-                  </div>
+                                    <!-- Password Field -->
+                                    <div class="col-lg-12">
+                                        <div class="form-group position-relative">
+                                            <label th:text="#{user.header.password}"></label>
+                                            <span class="text-danger"> *</span>
+                                            <i class="mdi mdi-key ml-3 icons"></i>
 
-                  <div class="col-lg-12">
-                    <p class="float-right forgot-pass"><a href="/mvc/auth/password-reset"
-                                                             th:href="@{/mvc/auth/password-reset}"
-                                                             th:text="#{login.forgottenPassword}"
-                                                             class="text-dark font-weight-bold"></a></p>
-                  </div>
-                  <div class="col-lg-12 mb-0">
-                    <button class="btn btn-primary rounded-pill w-100">Login</button>
-                  </div>
-                  <div class="col-12 text-center">
-                    <p class="mb-0 mt-3"><small class="text-dark mr-2"
-                                                th:text="#{login.noAccount}"></small> <a
-                            href="/mvc/auth/register" th:href="@{/mvc/auth/register}" class="text-dark font-weight-bold"
-                            th:text="#{login.signUp}">Register</a></p>
-                  </div>
-                </div>
-              </form>
-            </div><!---->
-          </div> <!--end col-->
-        </div><!--end row-->
-      </div> <!--end container-->
+                                            <div class="input-group d-flex align-items-center">
+                                                <input type="password" th:field="*{password}"
+                                                       class="form-control flex-grow-1 pl-5" id="passwordField"
+                                                       placeholder="Password" required="">
+                                                <!-- Show/Hide Password Button -->
+                                                <button type="button" class="btn btn-outline-dark toggle-password ml-2">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <p class="float-right forgot-pass"><a href="/mvc/auth/password-reset"
+                                                                              th:href="@{/mvc/auth/password-reset}"
+                                                                              th:text="#{login.forgottenPassword}"
+                                                                              class="text-dark font-weight-bold"></a>
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-12 mb-0">
+                                        <button class="btn btn-primary rounded-pill w-100">Login</button>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <p class="mb-0 mt-3"><small class="text-dark mr-2"
+                                                                    th:text="#{login.noAccount}"></small> <a
+                                                href="/mvc/auth/register" th:href="@{/mvc/auth/register}"
+                                                class="text-dark font-weight-bold"
+                                                th:text="#{login.signUp}">Register</a></p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div><!---->
+                    </div> <!--end col-->
+                </div><!--end row-->
+            </div> <!--end container-->
+        </div>
     </div>
-  </div>
 </section><!--end section-->
-<!-- Hero End -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all buttons with the class 'toggle-password'
+        const togglePasswordButtons = document.querySelectorAll(".toggle-password");
+
+        togglePasswordButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                // Find the associated password input field
+                const passwordField = button.previousElementSibling;
+
+                // Toggle the type between 'password' and 'text'
+                if (passwordField.type === "password") {
+                    passwordField.type = "text";
+                    button.innerHTML = '<i class="fas fa-eye-slash"></i>'; // Change icon to "eye-slash"
+                } else {
+                    passwordField.type = "password";
+                    button.innerHTML = '<i class="fas fa-eye"></i>'; // Change icon back to "eye"
+                }
+            });
+        });
+    });
+</script>
 <footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
 </body>
 </html>
