@@ -29,7 +29,6 @@ public class ProfileMvcController {
     private final AuthenticationService authenticationService;
     private final EmailConfirmationService emailConfirmationService;
 
-
     @GetMapping
     public String getProfile(@RequestParam(value = "emailError", required = false, defaultValue = "false") boolean emailError
             , @RequestParam(value = "emailTokenExpired", required = false, defaultValue = "false") boolean emailTokenExpired
