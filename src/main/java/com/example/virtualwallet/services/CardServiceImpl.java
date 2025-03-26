@@ -11,6 +11,7 @@ import com.example.virtualwallet.repositories.CardRepository;
 import com.example.virtualwallet.services.contracts.CardService;
 import com.example.virtualwallet.services.contracts.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +32,6 @@ public class CardServiceImpl implements CardService {
     @Override
     public CardOutput getCardOutputById(UUID cardId) {
         Card card = findCardById(cardId);
-        List<Transfer> transferHistory = cardRepository.getHistoryById(cardId);
         return ModelMapper.cardOutputFromCard(card);
     }
 

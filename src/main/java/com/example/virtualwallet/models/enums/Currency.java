@@ -7,7 +7,7 @@ public enum Currency {
     EUR,
     GBP,
     JPY,
-    CNH,
+    CNY,
     AUD,
     CAD,
     CHF

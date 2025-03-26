@@ -50,6 +50,7 @@ jobs:
       - name: Build and Run Tests
         run: ./gradlew clean build --info
         env:
+          SPRING_PROFILES_ACTIVE: test
           DB_URL: ${{ secrets.DB_URL }}
           MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
