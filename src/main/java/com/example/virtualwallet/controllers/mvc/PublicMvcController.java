@@ -47,7 +47,12 @@ public class PublicMvcController {
 
     @GetMapping("/mvc/error")
     public String showErrorPage() {
-        return "error2";
+        return "error";
+    }
+
+    @GetMapping("/error")
+    public String handleError() {
+        return "redirect:/mvc/error";
     }
 
     @GetMapping("/mvc/blocked")

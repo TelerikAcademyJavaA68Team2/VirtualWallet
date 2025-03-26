@@ -79,6 +79,7 @@ public class MvcUserValidationFilter extends OncePerRequestFilter {
                 requestUri.startsWith("/js/") ||
                 requestUri.startsWith("/images/") ||
                 requestUri.startsWith("/static") ||
+                requestUri.startsWith("/mvc/error") ||
                 requestUri.equals("/error");
     }
 

@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -57,12 +58,29 @@ public class GlobalExceptionHandlerMVC {
 //        return "redirect:" + uri;
 //    }
 
-    // Handle all other exceptions
-//    @ExceptionHandler(Exception.class)
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public String handleGlobalException(Exception ex, Model model) {
-//        model.addAttribute("error", "Something went wrong. Please try again later.");
-//        model.addAttribute("status", HttpStatus.NOT_FOUND);
-//        return "error";
-//    }
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public String handleTypeMismatch(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+
+        if (uri.startsWith("/mvc/profile/cards")){
+            return "redirect:/mvc/profile/cards";
+        }else if (uri.startsWith("/mvc/profile")){
+            return "redirect:/mvc/profile/wallets";
+        }else if (uri.startsWith("/mvc/admin/users")){
+            return "redirect:/mvc/admin/users";
+        }else if (uri.startsWith("/mvc/admin/transfers")){
+            return "redirect:/mvc/admin/transfers";
+        }else if (uri.startsWith("/mvc/admin/transactions")){
+            return "redirect:/mvc/admin/transactions";
+        }else if (uri.startsWith("/mvc/admin/exchanges")){
+            return "redirect:/mvc/admin/exchanges";
+        }
+
+        return "redirect:/mvc/profile/wallets";
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handleGlobalException() {
+        return "redirect:/mvc/error";
+    }
 }
