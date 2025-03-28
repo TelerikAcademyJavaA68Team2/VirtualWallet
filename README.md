@@ -23,7 +23,7 @@ We have deployed our project using **Heroku** and **AWS RDB**. Also, we provide 
   - Add and manage credit/debit cards securely.
   - Deposit money into the virtual wallet from linked bank cards.
   - Transfer funds to other users via phone number, username, or email (after account verification).
-  - Exchange money with daily live exchange rates.
+  - Exchange money with daily live exchange rates that update every 24 hours.
   - View and filter transaction history by date, recipient, sender, etc.
   - Set up and manage multiple virtual wallets, one wallet for each supported currency.
 
