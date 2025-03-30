@@ -1,6 +1,8 @@
 package com.example.virtualwallet;
 
 import com.example.virtualwallet.models.*;
+import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
+import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
 import com.example.virtualwallet.models.dtos.card.*;
 import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
@@ -27,6 +29,7 @@ public class Helpers {
     public static final String MOCK_CARD_CARDHOLDER_EDIT = "Mock Holder Edited";
     public static final String MOCK_CARD_CARD_NUMBER = "1234567891234567";
     public static final String MOCK_CARD_CARD_NUMBER_ANOTHER = "9234567891234567";
+    public static final String MOCK_PHONE_NUMBER = "1231231231";
     public static final String MOCK_USER_USERNAME = "MockUsername";
     public static final String MOCK_ADMIN_USERNAME = "MockAdminName";
     public static final String MOCK_PASSWORD = "MockPassword";
@@ -160,6 +163,20 @@ public class Helpers {
         return mockAdmin;
     }
 
+    public static User createMockUser() {
+        User mockUser = createMockUserWithCardsAndWallets();
+        mockUser.setId(UUID.randomUUID());
+
+        mockUser.setFirstName(MOCK_USER_FIRST_NAME);
+        mockUser.setLastName(MOCK_USER_LAST_NAME);
+        mockUser.setEmail(MOCK_USER_EMAIL);
+        mockUser.setUsername(MOCK_USER_USERNAME);
+        mockUser.setPassword(MOCK_PASSWORD);
+        mockUser.setRole(Role.USER);
+        mockUser.setStatus(AccountStatus.ACTIVE);
+        return mockUser;
+    }
+
     public static Card createMockExpiredCard(User owner) {
         Card mockCard = createMockCard(owner);
         mockCard.setExpirationDate(YearMonth.now().minusMonths(1));
@@ -213,4 +230,23 @@ public class Helpers {
     }
 
 
+    public static RegisterUserInput createMockAUserRegistrationDto() {
+        var registrationRequest = new RegisterUserInput();
+        registrationRequest.setFirstName(MOCK_USER_FIRST_NAME);
+        registrationRequest.setLastName(MOCK_USER_LAST_NAME);
+        registrationRequest.setEmail(MOCK_USER_EMAIL);
+        registrationRequest.setUsername(MOCK_USER_USERNAME);
+        registrationRequest.setPassword(MOCK_PASSWORD);
+        registrationRequest.setPasswordConfirm(MOCK_PASSWORD);
+        registrationRequest.setPhoneNumber(MOCK_PHONE_NUMBER);
+        return registrationRequest;
+    }
+
+    public static LoginUserInput createMockALoginDto() {
+        LoginUserInput out = new LoginUserInput();
+        out.setPassword(MOCK_PASSWORD);
+        out.setUsername(MOCK_USER_USERNAME);
+        return out;
+
+    }
 }
