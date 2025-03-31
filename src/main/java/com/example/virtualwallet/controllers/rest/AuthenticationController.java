@@ -1,6 +1,6 @@
 package com.example.virtualwallet.controllers.rest;
 
-import com.example.virtualwallet.auth.AuthenticationService;
+import com.example.virtualwallet.services.contracts.AuthenticationService;
 import com.example.virtualwallet.exceptions.DuplicateEntityException;
 import com.example.virtualwallet.exceptions.EmailConfirmationException;
 import com.example.virtualwallet.exceptions.EmailConfirmedException;
