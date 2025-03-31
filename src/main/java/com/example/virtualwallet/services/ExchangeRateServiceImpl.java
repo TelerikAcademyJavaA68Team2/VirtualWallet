@@ -134,7 +134,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         System.out.println(UPDATED_AT + timeOfUpdate);
     }
 
-    @EventListener(ApplicationReadyEvent.class)
+   // @EventListener(ApplicationReadyEvent.class)
     @Override
     public void initializeExchangeRatesAPIUpdate() {
         if (!Arrays.asList(env.getActiveProfiles()).contains("test")) {
