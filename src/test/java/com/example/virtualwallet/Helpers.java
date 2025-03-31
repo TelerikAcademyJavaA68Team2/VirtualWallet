@@ -1,11 +1,13 @@
 package com.example.virtualwallet;
 
 import com.example.virtualwallet.models.*;
+import com.example.virtualwallet.models.dtos.auth.DeleteAccountInput;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
 import com.example.virtualwallet.models.dtos.card.*;
 import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
 import com.example.virtualwallet.models.dtos.transfer.TransferInput;
+import com.example.virtualwallet.models.dtos.user.PasswordUpdateInput;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.enums.TransferStatus;
@@ -248,5 +250,20 @@ public class Helpers {
         out.setUsername(MOCK_USER_USERNAME);
         return out;
 
+    }
+
+    public static PasswordUpdateInput createMockPasswordUpdateDto() {
+        var output = new PasswordUpdateInput();
+        output.setPassword("password1Q!");
+        output.setNewPassword("newPassword1Q!");
+        output.setNewPasswordConfirm("newPassword1Q!");
+        return output;
+    }
+
+    public static DeleteAccountInput createMockDeleteAccountDto() {
+        var output = new DeleteAccountInput();
+        output.setPassword("password1Q!");
+        output.setCaptcha("Delete my account");
+        return output;
     }
 }
