@@ -1,7 +1,7 @@
 package com.example.virtualwallet.auth.filters;
 
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
-import com.example.virtualwallet.auth.jwt.JwtService;
+import com.example.virtualwallet.services.contracts.JwtService;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.enums.AccountStatus;
 import com.example.virtualwallet.services.contracts.UserService;
@@ -16,7 +16,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;

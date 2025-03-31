@@ -1,4 +1,4 @@
-package com.example.virtualwallet.auth;
+package com.example.virtualwallet.services.contracts;
 
 
 import com.example.virtualwallet.models.dtos.auth.DeleteAccountInput;
