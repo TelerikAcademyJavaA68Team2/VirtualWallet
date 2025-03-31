@@ -50,6 +50,18 @@
   </div>
 </section><!--end section-->
 
+<audio id="successSound" th:src="@{/sounds/transaction_successful_notification_sound.mp3}" preload="auto"></audio>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let success = [[${transactionSuccess}]];
+    if (success) {
+      let sound = document.getElementById("successSound");
+      sound.play().catch(error => console.warn("Autoplay blocked, enable manually."));
+    }
+  });
+</script>
+
 <footer th:insert="~{fragments/Page-Layout :: footer}"></footer>
 <div th:insert="~{fragments/Page-Layout :: coreJS}"></div>
 </body>

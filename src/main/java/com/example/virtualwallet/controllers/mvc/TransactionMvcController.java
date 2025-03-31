@@ -229,6 +229,7 @@ public class TransactionMvcController {
             model.addAttribute("transaction", transaction);
             model.addAttribute("wallet", wallet.getCurrency().toString());
             model.addAttribute("recipientUsername", recipient.getUsername());
+            model.addAttribute("transactionSuccess", true);
             return "Transaction-Success-View";
         }
         return "Transaction-Success-View";
