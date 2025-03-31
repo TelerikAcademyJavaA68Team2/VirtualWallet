@@ -151,8 +151,10 @@ public class WalletMvcController {
             if (transferInfoOutput.getStatus().equals(TransferStatus.APPROVED.toString())) {
                 model.addAttribute("amount", transferInfoOutput.getAmount());
                 model.addAttribute("currency", transferInfoOutput.getCurrency());
+                model.addAttribute("transferSuccess", true);
                 return "Funding-Successful-View";
             } else {
+                model.addAttribute("transferSuccess", false);
                 return "Funding-Declined-View";
             }
         } catch (Exception ex) {
