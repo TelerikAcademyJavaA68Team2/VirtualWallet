@@ -1,7 +1,8 @@
-package com.example.virtualwallet.auth.jwt;
+package com.example.virtualwallet.services;
 
 import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.services.contracts.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

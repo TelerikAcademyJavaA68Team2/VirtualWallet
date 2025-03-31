@@ -1,6 +1,6 @@
 package com.example.virtualwallet.controllers.mvc;
 
-import com.example.virtualwallet.auth.AuthenticationService;
+import com.example.virtualwallet.services.contracts.AuthenticationService;
 import com.example.virtualwallet.exceptions.*;
 import com.example.virtualwallet.models.dtos.auth.NewPasswordResetInput;
 import com.example.virtualwallet.models.dtos.auth.PasswordResetInput;
