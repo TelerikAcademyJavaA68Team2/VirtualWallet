@@ -78,6 +78,15 @@ public class AuthenticationController {
         }
     }
 
+    @Operation(
+            description = "Send password-reset email",
+            summary = "Send a email to a valid user email address with a link containing the UUID of the resetPasswordToken.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Email send successfully"),
+                    @ApiResponse(responseCode = "404", description = "User with provided email was not found"),
+                    @ApiResponse(responseCode = "400", description = "Email confirmation token was already sent less than 15min ago"),
+            }
+    )
     @PostMapping("/password-reset")
     public ResponseEntity<String> processPasswordResetInput(@Valid @RequestBody PasswordResetInput input) {
         try {
@@ -90,6 +99,15 @@ public class AuthenticationController {
         }
     }
 
+    @Operation(
+            description = "Process new password-input",
+            summary = "Verify the password input make sure the new password is confirmed correctly and the UUID of the token is valid.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Password Changed Successfully"),
+                    @ApiResponse(responseCode = "404", description = "The UUID provided was not found"),
+                    @ApiResponse(responseCode = "400", description = "The password confirmation failed"),
+            }
+    )
     @PostMapping("/password-reset/{id}")
     public ResponseEntity<String> processPasswordResetInput(@PathVariable UUID id, @Valid @RequestBody NewPasswordResetInput input) {
         try {
