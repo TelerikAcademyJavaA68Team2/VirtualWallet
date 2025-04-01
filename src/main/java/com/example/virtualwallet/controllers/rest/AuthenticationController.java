@@ -1,12 +1,13 @@
 package com.example.virtualwallet.controllers.rest;
 
+import com.example.virtualwallet.exceptions.*;
+import com.example.virtualwallet.models.dtos.auth.NewPasswordResetInput;
+import com.example.virtualwallet.models.dtos.auth.PasswordResetInput;
 import com.example.virtualwallet.services.contracts.AuthenticationService;
-import com.example.virtualwallet.exceptions.DuplicateEntityException;
-import com.example.virtualwallet.exceptions.EmailConfirmationException;
-import com.example.virtualwallet.exceptions.EmailConfirmedException;
 import com.example.virtualwallet.services.contracts.EmailConfirmationService;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;
+import com.example.virtualwallet.services.contracts.PasswordResetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,6 +15,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,14 +32,15 @@ public class AuthenticationController {
     public static final String CONFIRMED_SUCCESSFULLY = "Email confirmed successfully";
 
     private final AuthenticationService authService;
+    private final PasswordResetService passwordResetService;
     private final EmailConfirmationService emailConfirmationService;
 
     @Operation(summary = "Register a New User", description = "Register a new user account",
             responses = {
-            @ApiResponse(description = "Success", responseCode = "200"),
-            @ApiResponse(description = "Conflict - Duplicate user", responseCode = "409"),
-            @ApiResponse(description = "Bad Request - Invalid user input", responseCode = "400")
-    })
+                    @ApiResponse(description = "Success", responseCode = "200"),
+                    @ApiResponse(description = "Conflict - Duplicate user", responseCode = "409"),
+                    @ApiResponse(description = "Bad Request - Invalid user input", responseCode = "400")
+            })
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterUserInput request) {
         return ResponseEntity.ok(authService.register(request));
@@ -44,10 +48,10 @@ public class AuthenticationController {
 
     @Operation(summary = "User Login", description = "Authenticate an existing user",
             responses = {
-            @ApiResponse(description = "Success", responseCode = "200"),
-            @ApiResponse(description = "Bad Request - User not found", responseCode = "400"),
-            @ApiResponse(description = "Unauthorized - Account blocked", responseCode = "401")
-    }
+                    @ApiResponse(description = "Success", responseCode = "200"),
+                    @ApiResponse(description = "Bad Request - User not found", responseCode = "400"),
+                    @ApiResponse(description = "Unauthorized - Account blocked", responseCode = "401")
+            }
     )
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginUserInput request) {
@@ -73,4 +77,29 @@ public class AuthenticationController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
+    @PostMapping("/password-reset")
+    public ResponseEntity<String> processPasswordResetInput(@Valid @RequestBody PasswordResetInput input) {
+        try {
+            passwordResetService.sendResetPasswordEmail(input, true);
+            return ResponseEntity.ok("Email send successfully");
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (EmailConfirmationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/password-reset/{id}")
+    public ResponseEntity<String> processPasswordResetInput(@PathVariable UUID id, @Valid @RequestBody NewPasswordResetInput input) {
+        try {
+            passwordResetService.processResetPasswordInput(input, id);
+            return ResponseEntity.ok("Password Changed Successfully");
+        } catch (InvalidUserInputException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
