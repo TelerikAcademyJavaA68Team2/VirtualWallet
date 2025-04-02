@@ -30,6 +30,8 @@ import java.util.UUID;
 public class AuthenticationController {
 
     public static final String CONFIRMED_SUCCESSFULLY = "Email confirmed successfully";
+    public static final String CHANGED_SUCCESSFULLY = "Password Changed Successfully";
+    public static final String EMAIL_SEND_SUCCESSFULLY = "Email send successfully";
 
     private final AuthenticationService authService;
     private final PasswordResetService passwordResetService;
@@ -82,7 +84,7 @@ public class AuthenticationController {
             description = "Send password-reset email",
             summary = "Send a email to a valid user email address with a link containing the UUID of the resetPasswordToken.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Email send successfully"),
+                    @ApiResponse(responseCode = "200", description = EMAIL_SEND_SUCCESSFULLY),
                     @ApiResponse(responseCode = "404", description = "User with provided email was not found"),
                     @ApiResponse(responseCode = "400", description = "Email confirmation token was already sent less than 15min ago"),
             }
@@ -91,7 +93,7 @@ public class AuthenticationController {
     public ResponseEntity<String> processPasswordResetInput(@Valid @RequestBody PasswordResetInput input) {
         try {
             passwordResetService.sendResetPasswordEmail(input, true);
-            return ResponseEntity.ok("Email send successfully");
+            return ResponseEntity.ok(EMAIL_SEND_SUCCESSFULLY);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (EmailConfirmationException e) {
@@ -103,7 +105,7 @@ public class AuthenticationController {
             description = "Process new password-input",
             summary = "Verify the password input make sure the new password is confirmed correctly and the UUID of the token is valid.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Password Changed Successfully"),
+                    @ApiResponse(responseCode = "200", description = CHANGED_SUCCESSFULLY),
                     @ApiResponse(responseCode = "404", description = "The UUID provided was not found"),
                     @ApiResponse(responseCode = "400", description = "The password confirmation failed"),
             }
@@ -112,7 +114,7 @@ public class AuthenticationController {
     public ResponseEntity<String> processPasswordResetInput(@PathVariable UUID id, @Valid @RequestBody NewPasswordResetInput input) {
         try {
             passwordResetService.processResetPasswordInput(input, id);
-            return ResponseEntity.ok("Password Changed Successfully");
+            return ResponseEntity.ok(CHANGED_SUCCESSFULLY);
         } catch (InvalidUserInputException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException e) {
