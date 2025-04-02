@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
     public static final String PENDING_USERS_CAN_T_BE_BLOCKED = "Pending users can't be blocked";
     public static final String NO_CHANGES_WERE_MADE = "No changes were made";
     public static final String DEFAULT_PROFILE_PIC_PNG = "/images/default-profile-pic.png";
+    public static final String USER = "User";
 
     private final UserRepository userRepository;
     private final CloudinaryHelper cloudinaryHelper;
@@ -69,18 +70,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public String findByUsernameOrEmailOrPhoneNumber(String usernameOrEmailOrPhoneNumber) {
         return userRepository.findUsernameByUsernameOrEmailOrPhoneNumber(usernameOrEmailOrPhoneNumber)
-                .orElseThrow(() -> new EntityNotFoundException("User"));
+                .orElseThrow(() -> new EntityNotFoundException(USER));
     }
 
     @Override
     public User getUserByID(UUID uuid) {
-        return userRepository.getUserById(uuid, AccountStatus.DELETED).orElseThrow(() -> new EntityNotFoundException("User"));
+        return userRepository.getUserById(uuid, AccountStatus.DELETED).orElseThrow(() -> new EntityNotFoundException(USER));
     }
 
     @Override
     public User findUserByUsernameOrEmailOrPhoneNumber(String usernameOrEmailOrPhoneNumber) {
         return userRepository.findUserByUsernameOrEmailOrPhoneNumber(usernameOrEmailOrPhoneNumber)
-                .orElseThrow(() -> new EntityNotFoundException("User"));
+                .orElseThrow(() -> new EntityNotFoundException(USER));
     }
 
     @Override
@@ -106,7 +107,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void promoteToAdmin(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(USER, id));
         if (user.getRole().equals(Role.ADMIN)) {
             throw new InvalidUserInputException(USER_ALREADY_ADMIN);
         }
@@ -116,7 +117,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void demoteToUser(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(USER, id));
         if (user.getRole().equals(Role.USER)) {
             throw new InvalidUserInputException(USER_ALREADY_USER);
         }
@@ -126,7 +127,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void blockUser(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(USER, id));
         if (user.getStatus().equals(AccountStatus.BLOCKED)
                 || user.getStatus().equals(AccountStatus.BLOCKED_AND_DELETED)) {
             throw new InvalidUserInputException(USER_ALREADY_BLOCKED);
@@ -142,7 +143,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void unblockUser(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(USER, id));
         if (user.getStatus().equals(AccountStatus.ACTIVE) || user.getStatus().equals(AccountStatus.DELETED)) {
             throw new InvalidUserInputException(USER_NOT_BLOCKED);
         } else if (user.getStatus().equals(AccountStatus.BLOCKED)) {
@@ -247,7 +248,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileOutput getUserProfileById(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(USER, id));
         return ModelMapper.userProfileFromUser(user);
     }
 
