@@ -40,7 +40,7 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_MVC_URL_LIST =
             {"/mvc/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**", "/mvc/home", "/mvc/about", "/mvc/terms",
-                    "/mvc/privacy", "/mvc/faq", "/mvc/error" , "/mvc/auth/password-reset"};
+                    "/mvc/privacy", "/mvc/faq", "/mvc/error", "/mvc/auth/password-reset"};
 
     private static final String[] RESTRICTED_MVC_URL_LIST = {"/mvc/admin**"};
 
@@ -107,12 +107,24 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> {
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: You need to be logged in to access this page!");
-                            // Handle 401 (Unauthorized)
+                            response.setContentType("application/json");
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.getWriter().write("""
+                                        {
+                                          "error": "Unauthorized",
+                                          "message": "You need to be logged in to access this endpoint."
+                                        }
+                                    """);// Handle 401 (Unauthorized)
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden: You don't have permission to access this page!");
-                            // Handle 403 (Forbidden)
+                            response.setContentType("application/json");
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.getWriter().write("""
+                                        {
+                                          "error": "Forbidden",
+                                          "message": "You don't have permission to access this endpoint."
+                                        }
+                                    """);// Handle 403 (Forbidden)
                         }))
                 .build();
     }
