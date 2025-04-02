@@ -37,12 +37,12 @@ import org.springframework.context.annotation.Configuration;
         ),
         servers = {
                 @Server(
-                        description = "Local ENV",
-                        url = "http://localhost:8080"
+                        description = "Heroku Deployment",
+                        url = "https://money-me-84fb9ba46b45.herokuapp.com"
                 ),
                 @Server(
-                        description = "Heroku Deployment",
-                        url = "https://money-me-84fb9ba46b45.herokuapp.com/"
+                        description = "Local ENV",
+                        url = "http://localhost:8080"
                 )
         },
         externalDocs = @ExternalDocumentation(
