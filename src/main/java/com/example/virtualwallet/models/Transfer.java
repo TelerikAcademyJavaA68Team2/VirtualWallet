@@ -48,7 +48,6 @@ public class Transfer {
     @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet wallet;
 
-
     @PrePersist
     protected void onCreate() {
         this.date = LocalDateTime.now();
