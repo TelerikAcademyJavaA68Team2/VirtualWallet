@@ -27,7 +27,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,10 +66,10 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionOutput createTransaction(TransactionInput transactionInput) {
         User sender = userService.getAuthenticatedUser();
 
-        String recipientUsername = userService.findByUsernameOrEmailOrPhoneNumber(transactionInput.
+        User recipient = userService.findUserByUsernameOrEmailOrPhoneNumber(transactionInput.
                 getUsernameOrEmailOrPhoneNumber());
 
-        if (sender.getUsername().equals(recipientUsername)) {
+        if (sender.getUsername().equals(recipient.getUsername())) {
             throw new InvalidUserInputException(CANNOT_SEND_MONEY_TO_YOURSELF);
         }
 
@@ -87,11 +86,11 @@ public class TransactionServiceImpl implements TransactionService {
         BigDecimal senderWalletBalance = senderWallet.getBalance();
         if (senderWalletBalance.compareTo(amountToSend) < 0) {
             throw new InsufficientFundsException(format(NOT_ENOUGH_FUNDS,
-                    recipientUsername));
+                    recipient.getUsername()));
         }
 
         Wallet recipientWallet = walletService.getOrCreateWalletByUsernameAndCurrency(
-                recipientUsername, transactionCurrency
+                recipient.getUsername(), transactionCurrency
         );
 
         BigDecimal recipientWalletBalance = recipientWallet.getBalance();
@@ -99,21 +98,16 @@ public class TransactionServiceImpl implements TransactionService {
         senderWallet.setBalance(senderWalletBalance.subtract(amountToSend));
         recipientWallet.setBalance(recipientWalletBalance.add(amountToSend));
 
-        Transaction transaction = new Transaction();
-        transaction.setAmount(transactionInput.getAmount());
-        transaction.setCurrency(transactionCurrency);
-        transaction.setSenderWallet(senderWallet);
-        transaction.setRecipientWallet(recipientWallet);
-        transaction.setSenderUsername(sender.getUsername());
-        transaction.setRecipientUsername(recipientUsername);
         String description = (transactionInput.getDescription() == null || transactionInput.getDescription().isEmpty())
-                ? "transaction" : transactionInput.getDescription();
-        transaction.setDescription(description);
+                ? "Transaction"
+                : transactionInput.getDescription();
 
-        Transaction transactionToSave = transactionRepository.save(transaction);
-        walletService.update(senderWallet);
-        walletService.update(recipientWallet);
-        return transactionToTransactionOutput(transactionToSave);
+        Transaction transaction = ModelMapper.transactionInputToTransaction(
+                sender, recipient, senderWallet, recipientWallet, amountToSend, description
+        );
+
+        transaction = transactionRepository.save(transaction);
+        return transactionToTransactionOutput(transaction);
     }
 
     @Override
@@ -132,20 +126,14 @@ public class TransactionServiceImpl implements TransactionService {
         senderWallet.setBalance(senderWallet.getBalance().subtract(amount));
         recipientWallet.setBalance(recipientWallet.getBalance().add(amount));
 
-        Transaction transaction = new Transaction();
-        transaction.setSenderUsername(sender.getUsername());
-        transaction.setRecipientUsername(recipient.getUsername());
-        transaction.setSenderWallet(senderWallet);
-        transaction.setRecipientWallet(recipientWallet);
-        transaction.setAmount(amount);
-        transaction.setCurrency(senderWallet.getCurrency());
-        transaction.setDescription(description != null ? description : "Transaction");
-        transaction.setDate(LocalDateTime.now());
+        String descriptionToSave = (description == null || description.isEmpty())
+                ? "Transaction"
+                : description;
+
+        Transaction transaction = ModelMapper.transactionInputToTransaction(sender, recipient, senderWallet,
+                recipientWallet, amount, descriptionToSave);
 
         transactionRepository.save(transaction);
-
-        walletService.update(senderWallet);
-        walletService.update(recipientWallet);
     }
 
     @Override
