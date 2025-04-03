@@ -5,6 +5,7 @@ import com.example.virtualwallet.exceptions.InsufficientFundsException;
 import com.example.virtualwallet.exceptions.InvalidUserInputException;
 import com.example.virtualwallet.models.*;
 import com.example.virtualwallet.models.dtos.transactions.TransactionInput;
+import com.example.virtualwallet.models.dtos.transactions.TransactionOutput;
 import com.example.virtualwallet.models.enums.Currency;
 import com.example.virtualwallet.models.fillterOptions.TransactionFilterOptions;
 import com.example.virtualwallet.repositories.TransactionRepository;
@@ -13,6 +14,8 @@ import com.example.virtualwallet.services.contracts.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -38,9 +41,8 @@ class TransactionServiceImplTests {
     public static final String VALUE_2 = "30";
     public static final String SENDER = "Sender";
     public static final String RECIPIENT_MAIL = "user2@x.com";
-    public static final String OTHER_USER = "OtherUser";
-    public static final String MOCK_USERNAME = "MockUsername";
-    public static final String RECIPIENT_USER = "RecipientUser";
+    public static final int VALUE_3 = 70;
+    public static final String TRANSACTION = "Transaction";
 
     @Mock
     private TransactionRepository transactionRepository;
@@ -53,6 +55,9 @@ class TransactionServiceImplTests {
 
     @InjectMocks
     private TransactionServiceImpl transactionService;
+
+    @Captor
+    private ArgumentCaptor<Transaction> transactionCaptor;
 
     private User user;
     private Wallet wallet;
@@ -109,23 +114,41 @@ class TransactionServiceImplTests {
     @Test
     void createTransaction_Valid_Success() {
         TransactionInput input = createMockTransactionInput();
+        User recipientUser = createMockAdmin();
         when(userService.getAuthenticatedUser()).thenReturn(user);
-        when(userService.findByUsernameOrEmailOrPhoneNumber(anyString())).thenReturn(RECIPIENT_USER);
+        when(userService.findUserByUsernameOrEmailOrPhoneNumber(anyString())).thenReturn(recipientUser);
         when(walletService.checkIfUserHasActiveWalletWithCurrency(any(), any())).thenReturn(true);
         when(walletService.getOrCreateWalletByUsernameAndCurrency(eq(user.getUsername()), any())).thenReturn(wallet);
-        when(walletService.getOrCreateWalletByUsernameAndCurrency(eq(RECIPIENT_USER), any())).thenReturn(recipientWallet);
+        when(walletService.getOrCreateWalletByUsernameAndCurrency(eq(recipientUser.getUsername()), any())).thenReturn(recipientWallet);
         when(transactionRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         assertDoesNotThrow(() -> transactionService.createTransaction(input));
-        verify(walletService).update(wallet);
-        verify(walletService).update(recipientWallet);
+        verify(transactionRepository).save(any(Transaction.class));
+    }
+
+    @Test
+    void createTransaction_Valid_Success_With_No_Description() {
+        TransactionInput input = createMockTransactionInput();
+        input.setDescription(null);
+        User recipientUser = createMockAdmin();
+        when(userService.getAuthenticatedUser()).thenReturn(user);
+        when(userService.findUserByUsernameOrEmailOrPhoneNumber(anyString())).thenReturn(recipientUser);
+        when(walletService.checkIfUserHasActiveWalletWithCurrency(any(), any())).thenReturn(true);
+        when(walletService.getOrCreateWalletByUsernameAndCurrency(eq(user.getUsername()), any())).thenReturn(wallet);
+        when(walletService.getOrCreateWalletByUsernameAndCurrency(eq(recipientUser.getUsername()), any())).thenReturn(recipientWallet);
+        when(transactionRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        TransactionOutput output = assertDoesNotThrow(() -> transactionService.createTransaction(input));
+        verify(transactionRepository).save(any(Transaction.class));
+        assertNull(input.getDescription());
+        assertEquals(TRANSACTION, output.getDescription());
     }
 
     @Test
     void createTransaction_SendingToSelf_Throws() {
         TransactionInput input = createMockTransactionInput();
         when(userService.getAuthenticatedUser()).thenReturn(user);
-        when(userService.findByUsernameOrEmailOrPhoneNumber(any())).thenReturn(MOCK_USERNAME);
+        when(userService.findUserByUsernameOrEmailOrPhoneNumber(any())).thenReturn(user);
 
         assertThrows(InvalidUserInputException.class, () -> transactionService.createTransaction(input));
     }
@@ -134,7 +157,7 @@ class TransactionServiceImplTests {
     void createTransaction_NoWallet_Throws() {
         TransactionInput input = createMockTransactionInput();
         when(userService.getAuthenticatedUser()).thenReturn(user);
-        when(userService.findByUsernameOrEmailOrPhoneNumber(any())).thenReturn(OTHER_USER);
+        when(userService.findUserByUsernameOrEmailOrPhoneNumber(any())).thenReturn(createMockAdmin());
         when(walletService.checkIfUserHasActiveWalletWithCurrency(any(), any())).thenReturn(false);
 
         assertThrows(InvalidUserInputException.class, () -> transactionService.createTransaction(input));
@@ -146,7 +169,7 @@ class TransactionServiceImplTests {
         TransactionInput input = new TransactionInput(RECIPIENT_MAIL,
                 new BigDecimal(VALUE), USD, "");
         when(userService.getAuthenticatedUser()).thenReturn(user);
-        when(userService.findByUsernameOrEmailOrPhoneNumber(any())).thenReturn(OTHER_USER);
+        when(userService.findUserByUsernameOrEmailOrPhoneNumber(any())).thenReturn(createMockAdmin());
         when(walletService.checkIfUserHasActiveWalletWithCurrency(any(), any())).thenReturn(true);
         when(walletService.getOrCreateWalletByUsernameAndCurrency(eq(user.getUsername()), any())).thenReturn(wallet);
 
@@ -164,8 +187,30 @@ class TransactionServiceImplTests {
 
         assertDoesNotThrow(() -> transactionService.createTransactionMVC(user, recipient, wallet,
                 new BigDecimal(VALUE_2), TEST_DESCRIPTION));
-        verify(walletService).update(wallet);
-        verify(walletService).update(recipientWallet);
+        verify(transactionRepository).save(any(Transaction.class));
+        assertEquals(new BigDecimal(VALUE_3), wallet.getBalance());
+        verify(walletService).getOrCreateWalletByUsernameAndCurrency(eq(RECIPIENT), any(Currency.class));
+    }
+
+    @Test
+    void createTransactionMVC_Valid_Success_With_No_Description() {
+        user.setUsername(SENDER);
+        User recipient = createMockUserWithoutCardsAndWallets();
+        recipient.setUsername(RECIPIENT);
+        wallet.setBalance(new BigDecimal(VALUE));
+
+        when(walletService.getOrCreateWalletByUsernameAndCurrency(eq(RECIPIENT), any(Currency.class))).thenReturn(recipientWallet);
+
+        transactionCaptor = ArgumentCaptor.forClass(Transaction.class);
+
+        assertDoesNotThrow(() -> transactionService.createTransactionMVC(user, recipient, wallet,
+                new BigDecimal(VALUE_2), null));
+
+        verify(transactionRepository).save(transactionCaptor.capture());
+
+        Transaction savedTransaction = transactionCaptor.getValue();
+        assertEquals(TRANSACTION, savedTransaction.getDescription());
+
     }
 
     @Test
