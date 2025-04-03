@@ -21,4 +21,6 @@ public class TransactionOutput {
 
     private String recipientUsername;
 
+    private String description;
+
 }

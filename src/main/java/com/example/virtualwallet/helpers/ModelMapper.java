@@ -139,6 +139,21 @@ public class ModelMapper {
         return transferOutput;
     }
 
+    public static Transaction transactionInputToTransaction(User sender, User recipient, Wallet senderWallet,
+                                                            Wallet recipientWallet, BigDecimal amount,
+                                                            String description){
+        Transaction transaction = new Transaction();
+        transaction.setSenderUsername(sender.getUsername());
+        transaction.setRecipientUsername(recipient.getUsername());
+        transaction.setSenderWallet(senderWallet);
+        transaction.setRecipientWallet(recipientWallet);
+        transaction.setAmount(amount);
+        transaction.setCurrency(senderWallet.getCurrency());
+        transaction.setDescription(description != null ? description : "Transaction");
+        transaction.setDate(LocalDateTime.now());
+        return transaction;
+    }
+
     public static TransactionOutput transactionToTransactionOutput(Transaction transaction) {
         TransactionOutput transactionOutput = new TransactionOutput();
         transactionOutput.setTransactionId(transaction.getId());
@@ -147,6 +162,7 @@ public class ModelMapper {
         transactionOutput.setAmount(transaction.getAmount());
         transactionOutput.setSenderUsername(transaction.getSenderUsername());
         transactionOutput.setRecipientUsername(transaction.getRecipientUsername());
+        transactionOutput.setDescription(transaction.getDescription());
         return transactionOutput;
     }
 
