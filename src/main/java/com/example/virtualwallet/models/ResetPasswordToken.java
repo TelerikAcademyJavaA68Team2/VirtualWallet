@@ -37,6 +37,4 @@ public class ResetPasswordToken {
         this.createdAt = LocalDateTime.now();
         this.expiresAt = LocalDateTime.now().plusMinutes(15);
     }
-
-
 }
