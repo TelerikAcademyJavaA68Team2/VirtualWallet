@@ -80,10 +80,6 @@ Follow these steps to set up and run the application:
    CLOUDINARY_KEY=cloudinary.api.key
    CLOUDINARY_SECRET=cloudinary.api.secret
 
-   TWILIO_SID=twilio.sid
-   TWILIO_TOKEN=twilio.token
-   TWILIO_PHONE=twilio.phone
-
    DB_URL=your.db.url
    DB_USERNAME=db.username
    DB_PASSWORD=db.password
