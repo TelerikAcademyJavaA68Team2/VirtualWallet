@@ -1,4 +1,4 @@
-# MoneyMe - Virtual Wallet (Spring Boot Project) - Team 2
+# MoneyMe - Virtual Wallet (Spring Boot Project)
 ![MoneyMeLogo](https://github.com/user-attachments/assets/98547bea-8307-417d-b036-dfc0c4cf4f18)
 
 ## Access Our Project
