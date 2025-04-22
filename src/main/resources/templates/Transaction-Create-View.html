@@ -107,7 +107,14 @@
                                         <div class="text-danger mt-1" th:if="${#fields.hasErrors('amount')}"
                                              th:errors="*{amount}"></div>
                                     </div>
-
+                                    <script>
+                                        document.getElementById("amount").addEventListener("blur", function () {
+                                            const val = parseFloat(this.value);
+                                            if (!isNaN(val)) {
+                                                this.value = Math.floor(val * 100) / 100;
+                                            }
+                                        });
+                                    </script>
 
                                     <!-- Optional Description -->
                                     <div th:if="${activeWallets.size()} > 0" class="form-group position-relative mt-2">
