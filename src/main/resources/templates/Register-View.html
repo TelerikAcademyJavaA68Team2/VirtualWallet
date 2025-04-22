@@ -64,11 +64,11 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <div class="form-group position-relative">
+                                        <div class="form-group w-100">
                                             <label th:text="#{user.header.email}"></label><span
                                                 class="text-danger"> *</span>
                                             <i class="mdi mdi-email ml-3 icons"></i>
-                                            <input type="email" th:field="*{email}" class="form-control pl-5"
+                                            <input type="email" th:field="*{email}" class="form-control pl-4"
                                                    placeholder="Email" name="email" required="">
                                         </div>
                                         <div th:if="${#fields.hasErrors('email')}"
