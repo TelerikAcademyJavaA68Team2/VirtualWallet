@@ -168,7 +168,7 @@ public class TransactionMvcController {
             model.addAttribute("activeWallets", activeWallets);
             model.addAttribute("transactionInput", transactionInput);
 
-            return "Transaction-Create-View"; // Refresh the view with recipient details
+            return "Transaction-Create-View";
         } catch (EntityNotFoundException e) {
             model.addAttribute("error", e.getMessage());
             return "Transaction-Create-View";
@@ -187,14 +187,6 @@ public class TransactionMvcController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("user", sender);
-            model.addAttribute("recipient", recipient);
-            model.addAttribute("activeWallets", walletService.getActiveWalletsOfUser(sender.getId()));
-            return "Transaction-Create-View";
-        }
-
-        if (senderWallet.getBalance().compareTo(transactionInput.getAmount()) < 0) {
-            model.addAttribute("user", sender);
-            model.addAttribute("errorWallet", "Not enough funds in selected wallet.");
             model.addAttribute("recipient", recipient);
             model.addAttribute("activeWallets", walletService.getActiveWalletsOfUser(sender.getId()));
             return "Transaction-Create-View";

@@ -72,14 +72,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
-    // Jackson dependency for JSON processing
-//    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
-//    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.18.2'
-//    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
-//    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.2'
-
-
-//    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
