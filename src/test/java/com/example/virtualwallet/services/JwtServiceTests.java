@@ -4,6 +4,7 @@ import com.example.virtualwallet.exceptions.UnauthorizedAccessException;
 import com.example.virtualwallet.models.User;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,11 +13,18 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Date;
+
+import static com.example.virtualwallet.Helpers.createMockUser;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 public class JwtServiceTests {
-/*
-    private static final String SECRET_KEY = "9bfb230cbadfdf8af34f02be46188a222b105d14a1dd1f183e8934de0d78c354";
-*/
+    public static final String INVALID_TOKEN = "Invalid token: Please log in again.";
+    public static final String TOKEN = "eyJhbGciOiJIUzM4NCJ9";
+    public static final String EXPIRED_TOKEN = "expired-token";
+    public static final String INVALID_USERNAME = "invalidUser";
 
     @Mock
     private UserDetails mockUserDetails;
@@ -24,48 +32,44 @@ public class JwtServiceTests {
     @InjectMocks
     JwtServiceImpl service;
 
+    @Mock
+    User user;
+
+    @BeforeEach
+    void setup(){
+        user = createMockUser();
+    }
 
     @Test
     void generateToken_ShouldGenerateValidToken_Always() {
-        // Arrange
-        User mockUser = new User();
-        mockUser.setUsername("TestUser");
-        mockUser.setPassword("password");
 
         // Act
-        String token = service.generateToken(mockUser);
+        String token = service.generateToken(user);
 
         // Assert
         Assertions.assertNotNull(token);
-        Assertions.assertTrue(token.startsWith("eyJhbGciOiJIUzM4NCJ9"));
+        Assertions.assertTrue(token.startsWith(TOKEN));
     }
 
     @Test
     void extractUsername_ShouldReturnCorrectUsername_FromToken() {
         // Arrange
-        String mockUsername = "testUser";
-        User mockUser = new User();
-        mockUser.setUsername(mockUsername);
-        mockUser.setPassword("password");
-        String token = service.generateToken(mockUser);
+        String token = service.generateToken(user);
 
         // Act
         String extractedUsername = service.extractUsername(token);
 
         // Assert
-        Assertions.assertEquals(mockUsername, extractedUsername);
+        Assertions.assertEquals(user.getUsername(), extractedUsername);
     }
 
     @Test
     void isValid_ShouldReturnTrue_When_TokenIsValid() {
         // Arrange
-        String mockUsername = "testUser";
-        User mockUser = new User();
-        mockUser.setUsername(mockUsername);
-        mockUser.setPassword("password");
-        String token = service.generateToken(mockUser);
 
-        Mockito.when(mockUserDetails.getUsername()).thenReturn(mockUsername);
+        String token = service.generateToken(user);
+
+        when(mockUserDetails.getUsername()).thenReturn(user.getUsername());
 
         // Act
         boolean isValid = service.isValid(token, mockUserDetails);
@@ -76,37 +80,45 @@ public class JwtServiceTests {
 
     @Test
     void isValid_ShouldThrowException_When_TokenIsInvalid() {
-        // Arrange
-        String invalidUsername = "invalidUser";
-        User mockUser = new User();
-        mockUser.setUsername("User");
-        mockUser.setPassword("password");
 
-        String token = service.generateToken(mockUser);
+        String token = service.generateToken(user);
 
-        Mockito.when(mockUserDetails.getUsername()).thenReturn(invalidUsername);
+        when(mockUserDetails.getUsername()).thenReturn(INVALID_USERNAME);
 
         // Act & Assert
-        UnauthorizedAccessException exception = Assertions.assertThrows(UnauthorizedAccessException.class, () -> {
+        UnauthorizedAccessException exception = assertThrows(UnauthorizedAccessException.class, () -> {
             service.isValid(token, mockUserDetails);
         });
 
-        Assertions.assertEquals("Invalid token: Please log in again.", exception.getMessage());
+        Assertions.assertEquals(INVALID_TOKEN, exception.getMessage());
     }
 
     @Test
     void extractClaim_ShouldReturnCorrectClaim_WhenTokenIsValid() {
         // Arrange
-        String mockUsername = "testUser";
-        User mockUser = new User();
-        mockUser.setUsername(mockUsername);
-        mockUser.setPassword("password");
-        String token = service.generateToken(mockUser);
+        String token = service.generateToken(user);
 
         // Act
         String extractedSubject = service.extractClaim(token, Claims::getSubject);
 
         // Assert
-        Assertions.assertEquals(mockUsername, extractedSubject);
+        Assertions.assertEquals(user.getUsername(), extractedSubject);
     }
+
+    @Test
+    void isTokenExpired_ShouldThrowException_WhenTokenIsExpired() {
+        // Arrange
+        String fakeToken = EXPIRED_TOKEN;
+
+        JwtServiceImpl service = Mockito.spy(new JwtServiceImpl());
+
+        Claims mockClaims = mock(Claims.class);
+        when(mockClaims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() - 10000));
+
+        doReturn(mockClaims).when(service).extractAllClaims(fakeToken);
+
+        // Act + Assert
+        assertThrows(UnauthorizedAccessException.class, () -> service.isTokenExpired(fakeToken));
+    }
+
 }

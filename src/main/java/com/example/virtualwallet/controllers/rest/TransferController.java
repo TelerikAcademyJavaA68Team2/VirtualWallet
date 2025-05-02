@@ -28,6 +28,8 @@ import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithI
 @Tag(name = "Transfer Management", description = "API for making user transfers")
 public class TransferController {
 
+    public static final String NO_TRANSFERS = "No transfers with these filters!";
+
     private final TransferService transferService;
     private final UserService userService;
 
@@ -70,7 +72,7 @@ public class TransferController {
         TransfersPage result = transferService.filterTransfers(filterOptions);
 
         if (result.getTransfers().isEmpty()) {
-            return new ResponseEntity<>("No transfers with these filters!", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(NO_TRANSFERS, HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(result);
     }

@@ -20,6 +20,7 @@ public class JwtServiceImpl implements JwtService {
     private static final String SECRET_KEY = "e24e5f2c22201a0b13306507e74eed32d1e8b107f602b36ea369d14876da9b83";
     private static final String EXPIRED_TOKEN = "JWT Token has expired. Please log in again.";
     private static final String LOGIN_MESSAGE = "Please log in again.";
+    public static final String INVALID_TOKEN = "Invalid token: ";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -33,11 +34,11 @@ public class JwtServiceImpl implements JwtService {
             }
             return !isTokenExpired(token);
         } catch (Exception e) {
-            throw new UnauthorizedAccessException("Invalid token: " + e.getMessage());
+            throw new UnauthorizedAccessException(INVALID_TOKEN + e.getMessage());
         }
     }
 
-    private boolean isTokenExpired(String token) {
+    boolean isTokenExpired(String token) {
         if (extractExpiration(token).before(new Date())) {
             throw new UnauthorizedAccessException(EXPIRED_TOKEN);
         }
@@ -53,7 +54,7 @@ public class JwtServiceImpl implements JwtService {
         return resolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
+    Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignInKey())

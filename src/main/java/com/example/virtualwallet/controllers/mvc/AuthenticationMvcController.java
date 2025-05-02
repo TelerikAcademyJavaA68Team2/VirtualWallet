@@ -26,6 +26,11 @@ import java.util.UUID;
 @RequestMapping("/mvc/auth")
 public class AuthenticationMvcController {
 
+    public static final String INVALID_USERNAME_OR_PASSWORD = "Invalid username or password";
+    public static final String ERROR_MESSAGE = "errorMessage";
+    public static final String HAS_ACTIVE_USER = "hasActiveUser";
+    public static final String REDIRECT_HOME = "redirect:/mvc/home";
+
     private final AuthenticationService authenticationService;
     private final EmailConfirmationService emailConfirmationService;
     private final PasswordResetService passwordResetService;
@@ -44,29 +49,29 @@ public class AuthenticationMvcController {
 
 
             if (Boolean.TRUE.equals(error)) {
-                model.addAttribute("errorMessage", "Invalid username or password");
+                model.addAttribute(ERROR_MESSAGE, INVALID_USERNAME_OR_PASSWORD);
             } else if (Boolean.TRUE.equals(deleted)) {
-                model.addAttribute("errorMessage", "Invalid username or password");
+                model.addAttribute(ERROR_MESSAGE, INVALID_USERNAME_OR_PASSWORD);
             }
 
-            Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
+            Boolean hasActiveUser = (Boolean) session.getAttribute(HAS_ACTIVE_USER);
             if (hasActiveUser != null && hasActiveUser) {
-                return "redirect:/mvc/home";
+                return REDIRECT_HOME;
             }
 
             model.addAttribute("loginDto", new LoginUserInput());
             return "Login-View";
         }
         if (Boolean.TRUE.equals(error)) {
-            model.addAttribute("errorMessage", "Invalid username or password");
+            model.addAttribute(ERROR_MESSAGE, INVALID_USERNAME_OR_PASSWORD);
         } else if (Boolean.TRUE.equals(deleted)) {
-            model.addAttribute("errorMessage", "Invalid username or password");
+            model.addAttribute(ERROR_MESSAGE, INVALID_USERNAME_OR_PASSWORD);
 
         }
 
-        Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
+        Boolean hasActiveUser = (Boolean) session.getAttribute(HAS_ACTIVE_USER);
         if (hasActiveUser != null && hasActiveUser) {
-            return "redirect:/mvc/home";
+            return REDIRECT_HOME;
         }
 
         model.addAttribute("loginDto", new LoginUserInput());
@@ -81,18 +86,18 @@ public class AuthenticationMvcController {
             }
         } catch (UnauthorizedAccessException e){
 
-        Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
+        Boolean hasActiveUser = (Boolean) session.getAttribute(HAS_ACTIVE_USER);
         if (hasActiveUser != null && hasActiveUser) {
-            return "redirect:/mvc/home";
+            return REDIRECT_HOME;
         }
 
         model.addAttribute("registerRequest", new RegisterUserInput());
         return "Register-View";
         }
 
-        Boolean hasActiveUser = (Boolean) session.getAttribute("hasActiveUser");
+        Boolean hasActiveUser = (Boolean) session.getAttribute(HAS_ACTIVE_USER);
         if (hasActiveUser != null && hasActiveUser) {
-            return "redirect:/mvc/home";
+            return REDIRECT_HOME;
         }
 
         model.addAttribute("registerRequest", new RegisterUserInput());
@@ -105,7 +110,7 @@ public class AuthenticationMvcController {
         session.invalidate();
         SecurityContextHolder.clearContext();
 
-        return "redirect:/mvc/home";
+        return REDIRECT_HOME;
     }
 
     @PostMapping(("/register"))
@@ -160,7 +165,7 @@ public class AuthenticationMvcController {
         } catch (EmailConfirmedException e) {
             return "redirect:/mvc/profile";
         } catch (EntityNotFoundException e) {
-            return "redirect:/mvc/home";
+            return REDIRECT_HOME;
         }
     }
 
