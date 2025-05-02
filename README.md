@@ -51,6 +51,7 @@ We have deployed our project using **Heroku** and **AWS RDB**. Also, we provide 
 - **ExchangeRate API for Live Exchange Rate Update**
 - **Starter Mail for Email Verification**
 - **FormSpree for contact forms**
+- **OAuth2 Google Login via Google Cloud**
 - **Heroku for application hosting platform**
 - **AWS MARIADB RDB for database hosting**
 
