@@ -1,6 +1,7 @@
 package com.example.virtualwallet.services.contracts;
 
 
+import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.auth.DeleteAccountInput;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
 import com.example.virtualwallet.models.dtos.auth.RegisterUserInput;

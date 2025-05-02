@@ -41,7 +41,7 @@ public class TransactionServiceImpl implements TransactionService {
     public static final String CANNOT_SEND_MONEY_TO_YOURSELF = "Cannot send money to yourself!";
     public static final String NO_WALLET_WITH_CURRENCY = "You must first create a wallet with that currency " +
             "and have enough balance to make a transaction!";
-    public static final String NOT_ENOUGH_FUNDS = "You don't have enough funds in your wallet to send to %s";
+    public static final String NOT_ENOUGH_FUNDS = "You don't have enough funds in your wallet to send to %s.";
 
     private final TransactionRepository transactionRepository;
     private final UserService userService;
