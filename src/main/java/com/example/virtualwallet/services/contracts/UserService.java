@@ -1,6 +1,7 @@
 package com.example.virtualwallet.services.contracts;
 
 
+import com.example.virtualwallet.auth.filters.CustomOAuth2UserImpl;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.pageable.UserPageOutput;
 import com.example.virtualwallet.models.dtos.user.PasswordUpdateInput;
@@ -15,6 +16,8 @@ import java.util.UUID;
 public interface UserService extends UserDetailsService {
 
     void createUser(User user);
+
+    User processOAuthLogin(CustomOAuth2UserImpl oAuth2User);
 
     String findByUsernameOrEmailOrPhoneNumber(String input);
 

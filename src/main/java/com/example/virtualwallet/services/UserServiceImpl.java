@@ -1,5 +1,6 @@
 package com.example.virtualwallet.services;
 
+import com.example.virtualwallet.auth.filters.CustomOAuth2UserImpl;
 import com.example.virtualwallet.exceptions.*;
 import com.example.virtualwallet.helpers.CloudinaryHelper;
 import com.example.virtualwallet.helpers.ModelMapper;
@@ -24,11 +25,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static com.example.virtualwallet.helpers.ModelMapper.convertToSort;
 import static com.example.virtualwallet.helpers.ValidationHelpers.isValidImageFile;
@@ -57,13 +60,46 @@ public class UserServiceImpl implements UserService {
     public static final String NO_CHANGES_WERE_MADE = "No changes were made";
     public static final String DEFAULT_PROFILE_PIC_PNG = "/images/default-profile-pic.png";
     public static final String USER = "User";
+    public static final String USER_NOT_FOUND_MESSAGE = "User with username %s not found!";
 
     private final UserRepository userRepository;
     private final CloudinaryHelper cloudinaryHelper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void createUser(User user) {
         userRepository.save(user);
+    }
+
+    @Override
+    public User processOAuthLogin(CustomOAuth2UserImpl oAuth2User){
+        try{
+            return findUserByUsernameOrEmailOrPhoneNumber(oAuth2User.getEmail());
+        } catch (EntityNotFoundException e) {
+            User newUser = new User();
+            String email = oAuth2User.getEmail();
+            String fullName = oAuth2User.getName();
+            String firstName = fullName.split(" ")[0];
+            newUser.setFirstName(firstName);
+            if (fullName.contains(" ")){
+                String lastName = fullName.split(" ")[1];
+                newUser.setLastName(lastName);
+            } else {
+                newUser.setLastName(firstName);
+            }
+            newUser.setPhoneNumber(UUID.randomUUID().toString().substring(0, 10));
+            newUser.setPhoto(oAuth2User.getPicture());
+            newUser.setRole(Role.USER);
+            newUser.setStatus(AccountStatus.ACTIVE);
+            newUser.setUsername(email.substring(0, email.indexOf("@")));
+            newUser.setEmail(email);
+            newUser.setCreatedAt(LocalDateTime.now());
+            newUser.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
+            newUser.setWallets(new HashSet<>());
+            newUser.setCards(new HashSet<>());
+            save(newUser);
+            return newUser;
+        }
     }
 
     @Override
@@ -86,7 +122,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findUserByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(format("User with username %s not found!", username)));
+                .orElseThrow(() -> new UsernameNotFoundException(format(USER_NOT_FOUND_MESSAGE, username)));
     }
 
     @Override
