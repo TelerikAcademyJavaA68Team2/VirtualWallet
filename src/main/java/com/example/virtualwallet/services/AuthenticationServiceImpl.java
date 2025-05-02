@@ -1,12 +1,9 @@
 package com.example.virtualwallet.services;
 
+import com.example.virtualwallet.exceptions.*;
 import com.example.virtualwallet.services.contracts.AuthenticationService;
 import com.example.virtualwallet.services.contracts.EmailConfirmationService;
 import com.example.virtualwallet.services.contracts.JwtService;
-import com.example.virtualwallet.exceptions.CaptchaMismatchException;
-import com.example.virtualwallet.exceptions.DuplicateEntityException;
-import com.example.virtualwallet.exceptions.InvalidUserInputException;
-import com.example.virtualwallet.exceptions.PasswordMismatchException;
 import com.example.virtualwallet.models.User;
 import com.example.virtualwallet.models.dtos.auth.DeleteAccountInput;
 import com.example.virtualwallet.models.dtos.auth.LoginUserInput;
@@ -39,7 +36,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmailConfirmationService emailConfirmationService;
-
 
     @Override
     public String authenticate(LoginUserInput request) {
