@@ -1,9 +1,9 @@
 package com.example.virtualwallet.config;
 
 import com.example.virtualwallet.auth.CustomAuthenticationFailureHandler;
-import com.example.virtualwallet.auth.filters.JwtAuthorizationFilter;
-import com.example.virtualwallet.auth.filters.MvcUserValidationFilter;
+import com.example.virtualwallet.auth.filters.*;
 import com.example.virtualwallet.models.User;
+import com.example.virtualwallet.services.contracts.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -11,14 +11,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -39,8 +39,8 @@ public class SecurityConfig {
     private static final String[] RESTRICTED_REST_URL_LIST = {"/api/admin/**"};
 
     private static final String[] PUBLIC_MVC_URL_LIST =
-            {"/mvc/auth/**", "/error", "/", "/css/**", "/js/**", "/images/**", "/mvc/home", "/mvc/about", "/mvc/terms",
-                    "/mvc/privacy", "/mvc/faq", "/mvc/error" , "/mvc/auth/password-reset"};
+            {"/mvc/auth/**", "/login/oauth2/**", "/oauth/**", "/oauth2/**", "/error", "/", "/css/**", "/js/**", "/images/**", "/mvc/home", "/mvc/about", "/mvc/terms",
+                    "/mvc/privacy", "/mvc/faq", "/mvc/error", "/mvc/auth/password-reset"};
 
     private static final String[] RESTRICTED_MVC_URL_LIST = {"/mvc/admin**"};
 
@@ -48,13 +48,15 @@ public class SecurityConfig {
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final MvcUserValidationFilter mvcUserValidationFilter;
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final UserService userService;
 
     @Bean
     @Order(1)
     public SecurityFilterChain mvcSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .securityMatcher("/mvc/**")
+                .securityMatcher("/mvc/**", "/oauth/**", "/oauth2/**", "/login/oauth2/**")
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PUBLIC_MVC_URL_LIST).permitAll()
                         .requestMatchers(RESTRICTED_MVC_URL_LIST).hasAuthority("ADMIN")
@@ -66,6 +68,14 @@ public class SecurityConfig {
                         .successHandler(customSuccessHandler())
                         .failureHandler(customAuthenticationFailureHandler)
                         .permitAll())
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/mvc/auth/login")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                        .successHandler(customOAuth2SuccessHandler())
+                        .failureHandler(customAuthenticationFailureHandler)
+                )
                 .logout(logout -> logout
                         .logoutUrl("/mvc/auth/logout")
                         .invalidateHttpSession(true)
@@ -79,7 +89,7 @@ public class SecurityConfig {
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.sendRedirect("/mvc/access-denied");
                         }))
-                .build();
+                        .build();
     }
 
     @Bean
@@ -87,6 +97,25 @@ public class SecurityConfig {
         return (request, response, authentication) -> {
             HttpSession session = request.getSession();
             User user = (User) authentication.getPrincipal();
+            session.setAttribute("currentUser", user.getUsername());
+            response.sendRedirect("/mvc/profile/wallets");
+        };
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler customOAuth2SuccessHandler() {
+        return (request, response, authentication) -> {
+            CustomOAuth2UserImpl oauthUser = (CustomOAuth2UserImpl) authentication.getPrincipal();
+            User user = userService.processOAuthLogin(oauthUser);
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    user,
+                    null,
+                    user.getAuthorities()
+            );
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+            HttpSession session = request.getSession(true);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
             session.setAttribute("currentUser", user.getUsername());
             response.sendRedirect("/mvc/profile/wallets");
         };
@@ -115,11 +144,6 @@ public class SecurityConfig {
                             // Handle 403 (Forbidden)
                         }))
                 .build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
