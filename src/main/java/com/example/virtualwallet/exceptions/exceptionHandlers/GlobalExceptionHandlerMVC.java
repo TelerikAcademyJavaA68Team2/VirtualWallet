@@ -12,6 +12,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.sql.SQLException;
+
 @ControllerAdvice(basePackages = "com.example.virtualwallet.controllers.mvc")
 public class GlobalExceptionHandlerMVC {
 
@@ -56,6 +58,12 @@ public class GlobalExceptionHandlerMVC {
     public String handleNumberFormatException(HttpServletRequest request) {
         String uri = request.getRequestURI();
         return "redirect:" + uri;
+    }
+
+    @ExceptionHandler(SQLException.class)
+    public String handleSQLException() {
+
+        return "redirect:/mvc/error";
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
