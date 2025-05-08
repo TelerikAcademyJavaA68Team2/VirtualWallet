@@ -60,7 +60,7 @@ public class AdminMvcController {
             @RequestParam(defaultValue = "10") int size,
             Model model
     ) {
-        if (requestIsWithInvalidPageOrSize(page, size)) {
+        if (validatePageOrSize(page, size)) {
             page = 0;
             size = 10;
         }
@@ -123,7 +123,7 @@ public class AdminMvcController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model) {
-        if (requestIsWithInvalidPageOrSize(page, size)) {
+        if (validatePageOrSize(page, size)) {
             page = 0;
             size = 10;
         }
@@ -193,7 +193,7 @@ public class AdminMvcController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model) {
-        if (requestIsWithInvalidPageOrSize(page, size)) {
+        if (validatePageOrSize(page, size)) {
             page = 0;
             size = 10;
         }
@@ -267,7 +267,7 @@ public class AdminMvcController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model) {
-        if (requestIsWithInvalidPageOrSize(page, size)) {
+        if (validatePageOrSize(page, size)) {
             page = 0;
             size = 10;
         }

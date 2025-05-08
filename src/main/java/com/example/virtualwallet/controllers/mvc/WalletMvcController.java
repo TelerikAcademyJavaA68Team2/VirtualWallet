@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
+import static com.example.virtualwallet.helpers.ValidationHelpers.validatePageOrSize;
 
 @RequiredArgsConstructor
 @Controller
@@ -47,7 +47,7 @@ public class WalletMvcController {
                              @RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "10") int size,
                              Model model) {
-        if (requestIsWithInvalidPageOrSize(page, size)) {
+        if (validatePageOrSize(page, size)) {
             page = 0;
             size = 10;
         }
@@ -71,7 +71,7 @@ public class WalletMvcController {
                                     @RequestParam(defaultValue = "0") int page,
                                     @RequestParam(defaultValue = "10") int size,
                                     Model model) {
-        if (requestIsWithInvalidPageOrSize(page, size)) {
+        if (validatePageOrSize(page, size)) {
             page = 0;
             size = 10;
         }

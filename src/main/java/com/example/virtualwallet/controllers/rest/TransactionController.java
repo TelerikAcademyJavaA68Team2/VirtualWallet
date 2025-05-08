@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
-import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
+import static com.example.virtualwallet.helpers.ValidationHelpers.validatePageOrSize;
 
 @RequiredArgsConstructor
 @RestController
@@ -54,7 +54,7 @@ public class TransactionController {
                                                        @RequestParam(defaultValue = "desc") String sortOrder,
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {
-        if (requestIsWithInvalidPageOrSize(page, size)) {
+        if (validatePageOrSize(page, size)) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
 

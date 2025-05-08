@@ -57,7 +57,7 @@ public class TransferMvcController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model) {
-        if (requestIsWithInvalidPageOrSize(page, size)) {
+        if (validatePageOrSize(page, size)) {
             page = 0;
             size = 10;
         }

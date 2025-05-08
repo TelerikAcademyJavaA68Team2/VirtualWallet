@@ -163,7 +163,7 @@ public class ValidationHelpers {
         }
     }
 
-    public static boolean requestIsWithInvalidPageOrSize(int page, int size) {
+    public static boolean validatePageOrSize(int page, int size) {
         return page < 0 || size <= 0;
     }
 }

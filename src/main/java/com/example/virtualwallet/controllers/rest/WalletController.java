@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 import static com.example.virtualwallet.controllers.rest.AdminRestController.INVALID_PAGE_OR_SIZE_PARAMETERS;
-import static com.example.virtualwallet.helpers.ValidationHelpers.requestIsWithInvalidPageOrSize;
+import static com.example.virtualwallet.helpers.ValidationHelpers.validatePageOrSize;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,7 +36,7 @@ public class WalletController {
                                            @RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "10") int size) {
 
-        if (requestIsWithInvalidPageOrSize(page, size)) {
+        if (validatePageOrSize(page, size)) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
         return new ResponseEntity<>(walletService.getActiveWalletsOfAuthenticatedUser(mainCurrency, page, size), HttpStatus.OK);
@@ -86,7 +86,7 @@ public class WalletController {
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size) {
 
-        if (requestIsWithInvalidPageOrSize(page, size)) {
+        if (validatePageOrSize(page, size)) {
             return ResponseEntity.badRequest().body(INVALID_PAGE_OR_SIZE_PARAMETERS);
         }
         return new ResponseEntity<>(walletService.getWalletPageById(walletId, page, size), HttpStatus.OK);
