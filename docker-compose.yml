@@ -1,0 +1,23 @@
+services:
+  db:
+    image: mariadb:latest
+    container_name: mariadb-docker
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: virtual_wallet
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data.sql:/docker-entrypoint-initdb.d/data.sql:ro
+
+  app:
+    image: virtual-wallet-image:latest
+    container_name: virtual-wallet
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
