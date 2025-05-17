@@ -2,7 +2,7 @@ CREATE SCHEMA IF NOT EXISTS virtual_wallet;
 USE virtual_wallet;
 
 -- User Table
-CREATE TABLE user
+CREATE TABLE IF NOT EXISTS user
 (
     id           UUID PRIMARY KEY,
     first_name   VARCHAR(255)                                     NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE user
 );
 
 -- Card Table
-CREATE TABLE card
+CREATE TABLE IF NOT EXISTS card
 (
     id              UUID PRIMARY KEY,
     card_holder     VARCHAR(255)         NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE card
 );
 
 -- Email Confirmation Token
-CREATE TABLE email_confirmation_token
+CREATE TABLE IF NOT EXISTS email_confirmation_token
 (
     id           UUID PRIMARY KEY,
     user_id      UUID        NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE email_confirmation_token
 );
 
 -- Password Reset Token
-CREATE TABLE reset_password_token
+CREATE TABLE IF NOT EXISTS reset_password_token
 (
     id           UUID PRIMARY KEY,
     user_id      UUID        NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE reset_password_token
 );
 
 -- Wallet Table
-CREATE TABLE wallet
+CREATE TABLE IF NOT EXISTS wallet
 (
     id         UUID PRIMARY KEY,
     balance    DECIMAL(38, 2)                                                     NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE wallet
 );
 
 -- Exchange Table
-CREATE TABLE exchange
+CREATE TABLE IF NOT EXISTS exchange
 (
     id                 UUID PRIMARY KEY,
     amount             DECIMAL(38, 2)                                                 NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE exchange
 );
 
 -- Transaction Table
-CREATE TABLE transaction
+CREATE TABLE IF NOT EXISTS transaction
 (
     id                  UUID PRIMARY KEY,
     amount              DECIMAL(38, 2)                                                 NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE transaction
 );
 
 -- Transfer Table
-CREATE TABLE transfer
+CREATE TABLE IF NOT EXISTS transfer
 (
     id                 UUID PRIMARY KEY,
     amount             DECIMAL(38, 2)                                                 NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE transfer
 );
 
 -- Exchange Rate Table
-CREATE TABLE exchange_rate
+CREATE TABLE IF NOT EXISTS exchange_rate
 (
     id            UUID PRIMARY KEY,
     rate          DECIMAL(38, 10)                                                NOT NULL,

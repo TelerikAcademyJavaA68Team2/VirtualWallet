@@ -1,3 +1,122 @@
+CREATE SCHEMA IF NOT EXISTS virtual_wallet;
+USE virtual_wallet;
+
+CREATE TABLE IF NOT EXISTS user
+(
+    id           UUID PRIMARY KEY,
+    first_name   VARCHAR(255)                                     NOT NULL,
+    last_name    VARCHAR(255)                                     NOT NULL,
+    username     VARCHAR(255)                                     NOT NULL UNIQUE,
+    email        VARCHAR(255)                                     NOT NULL UNIQUE,
+    password     VARCHAR(255)                                     NOT NULL,
+    phone_number VARCHAR(255)                                     NOT NULL UNIQUE,
+    photo        VARCHAR(255)                                     NOT NULL,
+    role         ENUM ('ADMIN', 'USER')                           NOT NULL,
+    status       ENUM ('ACTIVE', 'BLOCKED', 'DELETED', 'PENDING', 'BLOCKED_AND_DELETED') NOT NULL,
+    created_at   DATETIME(6),
+    deleted_at   DATETIME(6)
+);
+
+CREATE TABLE IF NOT EXISTS card
+(
+    id              UUID PRIMARY KEY,
+    card_holder     VARCHAR(255)         NOT NULL,
+    card_number     VARCHAR(255)         NOT NULL UNIQUE,
+    created_at      DATETIME(6)          NOT NULL,
+    cvv             VARCHAR(5)           NOT NULL,
+    owner_id        UUID                 NOT NULL,
+    expiration_date VARCHAR(10)          NOT NULL,
+    is_deleted      TINYINT(1) DEFAULT 0 NOT NULL,
+    deleted_at      DATETIME(6),
+    FOREIGN KEY (owner_id) REFERENCES user (id)
+);
+
+CREATE TABLE IF NOT EXISTS email_confirmation_token
+(
+    id           UUID PRIMARY KEY,
+    user_id      UUID        NOT NULL,
+    confirmed_at DATETIME(6),
+    created_at   DATETIME(6) NOT NULL,
+    expires_at   DATETIME(6) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id)
+);
+
+CREATE TABLE IF NOT EXISTS reset_password_token
+(
+    id           UUID PRIMARY KEY,
+    user_id      UUID        NOT NULL,
+    confirmed_at DATETIME(6),
+    created_at   DATETIME(6) NOT NULL,
+    expires_at   DATETIME(6) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id)
+);
+
+CREATE TABLE IF NOT EXISTS wallet
+(
+    id         UUID PRIMARY KEY,
+    balance    DECIMAL(38, 2)                                                     NOT NULL,
+    currency   ENUM ('BGN', 'EUR', 'USD','GBP', 'JPY', 'CNY','AUD', 'CAD', 'CHF') NOT NULL,
+    owner_id   UUID                                                               NOT NULL,
+    created_at DATETIME(6)                                                        NOT NULL,
+    deleted_at DATETIME(6),
+    is_deleted TINYINT(1) DEFAULT 0                                               NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES user (id)
+);
+
+CREATE TABLE IF NOT EXISTS exchange
+(
+    id                 UUID PRIMARY KEY,
+    amount             DECIMAL(38, 2)                                                 NOT NULL,
+    to_amount          DECIMAL(38, 2)                                                 NOT NULL,
+    exchange_rate      DECIMAL(38, 10)                                                NOT NULL,
+    from_currency      ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
+    to_currency        ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
+    recipient_username VARCHAR(255)                                                   NOT NULL,
+    from_wallet_id     UUID                                                           NOT NULL,
+    to_wallet_id       UUID                                                           NOT NULL,
+    date               DATETIME(6)                                                    NOT NULL,
+    FOREIGN KEY (from_wallet_id) REFERENCES wallet (id),
+    FOREIGN KEY (to_wallet_id) REFERENCES wallet (id)
+);
+
+CREATE TABLE IF NOT EXISTS transaction
+(
+    id                  UUID PRIMARY KEY,
+    amount              DECIMAL(38, 2)                                                 NOT NULL,
+    currency            ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
+    sender_username     VARCHAR(255)                                                   NOT NULL,
+    recipient_username  VARCHAR(255)                                                   NOT NULL,
+    description         VARCHAR(255)                                                   NOT NULL,
+    date                DATETIME(6)                                                    NOT NULL,
+    recipient_wallet_id UUID                                                           NOT NULL,
+    sender_wallet_id    UUID                                                           NOT NULL,
+    FOREIGN KEY (sender_wallet_id) REFERENCES wallet (id),
+    FOREIGN KEY (recipient_wallet_id) REFERENCES wallet (id)
+);
+
+CREATE TABLE IF NOT EXISTS transfer
+(
+    id                 UUID PRIMARY KEY,
+    amount             DECIMAL(38, 2)                                                 NOT NULL,
+    currency           ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
+    status             ENUM ('APPROVED', 'DECLINED')                                  NOT NULL,
+    recipient_username VARCHAR(255)                                                   NOT NULL,
+    date               DATETIME(6)                                                    NOT NULL,
+    card_id            UUID                                                           NOT NULL,
+    wallet_id          UUID                                                           NOT NULL,
+    FOREIGN KEY (card_id) REFERENCES card (id),
+    FOREIGN KEY (wallet_id) REFERENCES wallet (id)
+);
+
+CREATE TABLE IF NOT EXISTS exchange_rate
+(
+    id            UUID PRIMARY KEY,
+    rate          DECIMAL(38, 10)                                                NOT NULL,
+    from_currency ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
+    to_currency   ENUM ('BGN', 'EUR', 'USD','GBP','JPY','CNY','AUD','CAD','CHF') NOT NULL,
+    last_updated   DATETIME(6)
+);
+
 INSERT INTO virtual_wallet.user (id, first_name, last_name, username, email, password, phone_number, photo, role,
                                  status, created_at)
 VALUES ('001e4567-e89b-12d3-a456-426614174000', 'Georgi', 'Benchev', 'georgi', 'georgi@gmail.com',
@@ -40,7 +159,7 @@ VALUES ('001e4567-e89b-12d3-a456-426614174000', 'Georgi', 'Benchev', 'georgi', '
         '$2a$10$ML33hI.7hTPKXMV1s35D/udMXQtjFpOdYIGfu/IQ4GqqITPCP088m',
         '0000000008', 'https://avatars.githubusercontent.com/u/87434779?s=130&v=4', 'ADMIN', 'ACTIVE', NOW());
 
--- Cards -------------------------------------------------------------------
+
 INSERT INTO virtual_wallet.card (id, card_holder, card_number, created_at, cvv, expiration_date, owner_id)
 VALUES ('101e4567-e89b-12d3-a452-426614184001', 'Georgi Benchev', '5723191723910001', NOW(), '001', '12/25',
         '001e4567-e89b-12d3-a456-426614174000'),
@@ -132,7 +251,6 @@ VALUES ('101e4567-e89b-12d3-a452-426614184001', 'Georgi Benchev', '5723191723910
        ('020e4567-e89b-12d3-a452-416614874002', 'Viktor Angelov', '9723191723910020', NOW(), '952', '10/27',
         '010e4567-e89b-12d3-a456-426614174000');
 
--- Wallets -----------------------------------------------------------------
 INSERT INTO virtual_wallet.wallet (id, balance, currency, created_at, owner_id)
 VALUES ('111e4567-e89b-12d3-a452-426614874000', 5000.00, 'BGN', NOW(), '001e4567-e89b-12d3-a456-426614174000'),
        ('111e4567-e89b-12d3-a452-426614874001', 5000.00, 'EUR', NOW(), '001e4567-e89b-12d3-a456-426614174000'),
@@ -174,8 +292,6 @@ VALUES ('111e4567-e89b-12d3-a452-426614874000', 5000.00, 'BGN', NOW(), '001e4567
        ('000e4567-e89b-12d3-a452-426614874001', 5000.00, 'EUR', NOW(), '010e4567-e89b-12d3-a456-426614174000'),
        ('000e4567-e89b-12d3-a452-426614874002', 30000.00, 'USD', NOW(), '010e4567-e89b-12d3-a456-426614174000');
 
-
--- Exchanges ---------------------------------------------------------------
 INSERT INTO virtual_wallet.exchange
 (id, amount, to_amount, from_currency, to_currency, exchange_rate, from_wallet_id, to_wallet_id, recipient_username,
  date)
@@ -289,8 +405,6 @@ VALUES ('001e0001-e89b-12d3-a452-426614874000', 100.00, 100.00 * 1.9558, 'EUR', 
        ('050e0005-e89b-12d3-a452-426614874000', 450.00, 450.00 * 0.5113, 'BGN', 'EUR', 0.5113,
         '000e4567-e89b-12d3-a452-426614874000', '000e4567-e89b-12d3-a452-426614874001', 'viktor', NOW());
 
-
--- Transactions ------------------------------------------------------------
 INSERT INTO virtual_wallet.transaction (id, amount, currency, sender_username, recipient_username, sender_wallet_id,
                          recipient_wallet_id, date, description)
 VALUES ('050e1000-e89b-12d3-a452-426614874000', 100.00, 'BGN', 'georgi', 'vankata',
@@ -484,7 +598,6 @@ VALUES ('050e1000-e89b-12d3-a452-426614874000', 100.00, 'BGN', 'georgi', 'vankat
         '000e4567-e89b-12d3-a452-426614874002', '111e4567-e89b-12d3-a452-426614874002', NOW(), 'transaction')
 ;
 
--- Transfers
 INSERT INTO virtual_wallet.transfer (id, amount, currency, card_id, wallet_id, status, recipient_username, date)
 VALUES ('090e0001-e89b-12d3-a456-426682274099', 5347.43, 'BGN', '101e4567-e89b-12d3-a452-426614184001',
         '111e4567-e89b-12d3-a452-426614874000', 'APPROVED', 'georgi', NOW()),
@@ -557,8 +670,6 @@ VALUES ('090e0001-e89b-12d3-a456-426682274099', 5347.43, 'BGN', '101e4567-e89b-1
         '000e4567-e89b-12d3-a452-426614874002', 'APPROVED', 'viktor', NOW())
 ;
 
-
--- Exchange Rates ----------------------------------------------------------
 INSERT INTO virtual_wallet.exchange_rate (id, from_currency, to_currency, rate)
 VALUES ('123e1234-e01b-12d3-a456-426614174013', 'BGN', 'EUR', 0.5113),
        ('123e1234-e02b-12d3-a456-426614174016', 'BGN', 'USD', 0.5543),
@@ -642,8 +753,6 @@ VALUES ('123e1234-e01b-12d3-a456-426614174013', 'BGN', 'EUR', 0.5113),
        ('123e1234-e73b-12d3-a456-426614174100', 'CHF', 'CAD', 1.464)
 ;
 
-
--- Email Confirmation Tokens -----------------------------------------------
 INSERT INTO virtual_wallet.email_confirmation_token
     (id, user_id, expires_at, created_at)
 VALUES ('001e4567-e77b-77d3-a456-776614174000', '001e4567-e89b-12d3-a456-426614174000',
