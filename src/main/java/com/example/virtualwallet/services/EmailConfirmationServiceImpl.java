@@ -8,14 +8,14 @@ import com.example.virtualwallet.repositories.EmailConfirmationRepository;
 import com.example.virtualwallet.services.contracts.EmailConfirmationService;
 import com.example.virtualwallet.services.contracts.EmailService;
 import com.example.virtualwallet.services.contracts.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EmailConfirmationServiceImpl implements EmailConfirmationService {
 
     public static final String EMAIL_IS_ALREADY_CONFIRMED = "Your email is already confirmed.";
