@@ -1,12 +1,10 @@
 # MoneyMe - Virtual Wallet (Spring Boot Project)
 ![MoneyMeLogo](https://github.com/user-attachments/assets/98547bea-8307-417d-b036-dfc0c4cf4f18)
 
-## Access Our Project
+## About Our Project
 
-We have deployed our project using **Heroku** and **AWS RDB**. Also, we provide **Swagger API Documentation** to facilitate testing and exploration of the REST API’s endpoints.
-
-- **App URL**: [`https://money-me-84fb9ba46b45.herokuapp.com/`](https://money-me-84fb9ba46b45.herokuapp.com/)  
-- **Swagger URL**: [`https://money-me-84fb9ba46b45.herokuapp.com/swagger-ui/index.html`](https://money-me-84fb9ba46b45.herokuapp.com/swagger-ui/index.html)
+We had our project deployed using **Heroku** and **AWS RDB**. Also, we provided **Swagger API Documentation** to facilitate testing and exploration of the REST API’s endpoints.
+Since our graduation and employment, we have discontinued hosting. Screenshots of our project can be seen below.
 
 ## Overview
 
